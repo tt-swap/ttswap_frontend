@@ -81,7 +81,6 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
         (async () => {
             setResult(None);
             let response;
-            console.log(await GoodsDatas(),"***");
             try {
                 
                 response =
@@ -95,6 +94,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                     //     }
                     // );
                     await GoodsDatas();
+                    console.log(response,"***");
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
                 setResult(new Some(response.items));
@@ -263,8 +263,8 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             },
         },
         {
-            id: "tradeValue24",
-            accessorKey: "tradeValue24",
+            id: "totalFee",
+            accessorKey: "totalFee",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
@@ -274,15 +274,15 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
-                    row.original.tradeValue24
+                    row.original.totalFee
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "tradeValue24",
-            accessorKey: "tradeValue24",
+            id: "totalFeeValue",
+            accessorKey: "totalFeeValue",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
@@ -292,7 +292,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
-                    row.original.tradeValue24
+                    row.original.totalFeeValue
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
@@ -335,8 +335,8 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
         //     },
         // },
         {
-            id: "quote_rate_24h",
-            accessorKey: "quote_rate_24h",
+            id: "price_24h",
+            accessorKey: "price_24h",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
@@ -349,8 +349,8 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                     <div className="text-right">
                         <BalancePriceDelta
                             // @ts-ignore
-                            numerator={row.original.quote_rate_24h}
-                            denominator={row.original.quote_rate}
+                            numerator={row.original.price_24h}
+                            denominator={row.original.price}
                         />{" "}
                     </div>
                 );

@@ -38,8 +38,13 @@ export function iconUrl(chainName: string, address: string) {
     return `https://raw.githubusercontent.com/tt-swap/assets/master/blockchains/${chainName}/assets/${address}/logo.png`;
 }
 
+// 数字处理
 export function prettifyCurrencys(value: number) {
     if (value < 1000000) {
+
+        if (value < 0.01 && value > 0) {
+            return '<0.01'
+        }
 
         return toThousands(value.toFixed(2));
     }
@@ -64,4 +69,13 @@ function toThousands(value: string) {
     }
     if (num) { result = num + result; }
     return result + '.' + b;
+}
+
+
+// 数据编码处理
+export function splitNumber(values: number) {
+    let value = values / powerIterative(2,128);
+    let quantity = values % powerIterative(2,128);
+
+    return {value:value,quantity:quantity};
 }
