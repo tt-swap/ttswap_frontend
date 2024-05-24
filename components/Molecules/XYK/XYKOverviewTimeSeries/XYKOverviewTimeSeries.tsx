@@ -19,9 +19,11 @@ import {
 } from "@covalenthq/client-sdk";
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize";
 
-import { questionById } from '@/graphql/article';
+import { ecosystemChartDatas } from '@/graphql/data.processing';
+import { prettifyCurrencys } from '@/graphql/data.processing.util';
 
 
+let  currencys:string ='';
 export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
     chain_name,
     dex_name,
@@ -37,7 +39,6 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
         displayMetrics !== "both" ? displayMetrics : "liquidity"
     );
     const { covalentClient } = useGoldRush();
-
     useEffect(() => {
         maybeResult.match({
             None: () => null,
@@ -55,15 +56,17 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
                     ] as UniswapLikeEcosystemCharts["liquidity_chart_7d"]
                     // @ts-ignore
                 ).map((x) => {
+                    currencys= x.quote_currency;
                     const dt = timestampParser(x.dt, "DD MMM YY");
                     return {
+                        // currency: x.quote_currency,
                         date: dt,
-                        [`${capitalizeFirstLetter(timeSeries)} (USD)`]:
+                        [`${capitalizeFirstLetter(timeSeries)} (${x.quote_currency})`]:
                             x[value_key as keyof LiquidityEcosystemChart],
                     };
                 });
                 setChartData(new Some(result));
-                // console.log(chart_key,value_key,0)
+                // console.log(chart_key,value_key,0,`${capitalizeFirstLetter(timeSeries)} (USD)`,"****",currencys)
             },
         });
     }, [maybeResult, period, timeSeries, displayMetrics]);
@@ -75,16 +78,18 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
         }
         (async () => {
             setResult(None);
-            const response =
-            //  await questionById({id: 126628556787679232});
+            const response = 
+            
+             await ecosystemChartDatas();
 
-                await covalentClient.XykService.getEcosystemChartData(
-                    chain_name,
-                    dex_name
-                );
+                // await covalentClient.XykService.getEcosystemChartData(
+                //     chain_name,
+                //     dex_name
+                // );
                 // console.log(response,0)
                 // console.log(response.data.items[0],1)
-            setResult(new Some(response.data.items[0]));
+            // setResult(new Some(response.data.items[0]));
+            setResult(new Some(response));
         })();
     }, [overview_data, dex_name, chain_name, displayMetrics]);
 
@@ -102,20 +107,20 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
             );
         },
         Some: (result) => {
-            // console.log(result,"###")
+            // console.log(result,"###**")
             if (timeSeries === "liquidity") {
                 return (
                     <AreaChart
                         className="mt-2 p-2"
                         data={result}
                         index="date"
-                        valueFormatter={prettifyCurrency}
+                        valueFormatter={prettifyCurrencys}
                         yAxisWidth={100}
                         // categories={[
                         //     `${capitalizeFirstLetter(timeSeries === "liquidity" ? "investment":timeSeries)} (USD)`,
                         // ]}
                         categories={[
-                            `${capitalizeFirstLetter(timeSeries)} (USD)`,
+                            `${capitalizeFirstLetter(timeSeries)} (${currencys})`,
                         ]}
                         colors={CHART_COLORS}
                     />
@@ -127,10 +132,10 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
                         className="mt-2 p-2"
                         data={result}
                         index="date"
-                        valueFormatter={prettifyCurrency}
+                        valueFormatter={prettifyCurrencys}
                         yAxisWidth={100}
                         categories={[
-                            `${capitalizeFirstLetter(timeSeries)} (USD)`,
+                            `${capitalizeFirstLetter(timeSeries)} (${currencys})`,
                         ]}
                         colors={CHART_COLORS}
                     />
@@ -144,7 +149,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
             <div className="pb-4">
                 <TypographyH4>{`${capitalizeFirstLetter(
                     timeSeries === "liquidity" ? "investment":timeSeries
-                )} (USD)`}</TypographyH4>
+                )} (${currencys})`}</TypographyH4>
             </div>
 
             <div className="flex justify-between">
