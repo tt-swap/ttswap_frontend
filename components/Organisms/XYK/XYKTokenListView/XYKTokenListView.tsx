@@ -107,7 +107,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             }
         })();
     }, [chain_name, dex_name, pagination]);
-
+//aa
     useEffect(() => {
         setWindowWidth(window.innerWidth);
 
@@ -121,7 +121,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             window.removeEventListener("resize", handleResize);
         };
     }, []);
-
+//   conggrfasfasf
     const columns: ColumnDef<TokenV2Volume>[] = [
         {
             id: "name",
