@@ -20,7 +20,7 @@ export default function Overview({ params }: { params: { chain: string, dex: str
           Overview
         </h1>
         <div className="flex gap-4">
-          <GoldRushProvider
+          {/* <GoldRushProvider
                 apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
                 newTheme={{
                     borderRadius: 10,
@@ -38,7 +38,7 @@ export default function Overview({ params }: { params: { chain: string, dex: str
               dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
               displayMetrics={"volume"}
             />
-          </GoldRushProvider>
+          </GoldRushProvider> */}
         </div>
         <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
         Goods
