@@ -15,6 +15,8 @@ import { Toaster } from "@/components/ui/toaster"
 import { KeyDialog } from "@/components/key-dialog"
 import { Footer } from '@/components/footer';
 import { usePathname } from "next/navigation";
+import { Web3ReactProvider } from "@web3-react/core";
+import connectors from "@/connectors";
 
 
 interface RootLayoutProps {
@@ -37,6 +39,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           {/* <Theme>
             <ThemeProvider attribute="class" defaultTheme="system" forcedTheme='dark' enableSystem={false}> */}
+             <Web3ReactProvider connectors={connectors}>
               <DexProvider>
                 <div className="relative flex min-h-screen flex-col">
                   <SiteHeader />
@@ -47,6 +50,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                   <Toaster />
                 </div>
               </DexProvider>
+            </Web3ReactProvider>
             {/* </ThemeProvider>
           </Theme> */}
         </body>
