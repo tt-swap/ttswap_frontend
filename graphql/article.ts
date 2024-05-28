@@ -146,3 +146,63 @@ export function parGoodDatas(params) {
 		variables: params
 	})
 }
+
+
+//投资列表
+export function InvestGoodDatas(params) {
+	return apolloClient.query({
+		query: gql`query($id: BigInt,$first: Int,$time: BigInt) {
+			goodState(id: $id) {
+				currentValue
+				currentQuantity
+				id
+				tokendecimals
+				tokenname
+				tokensymbol
+			}
+			parGoodStates(
+				first: $first
+				where: {id_not: "#"}
+				) {
+					id
+					goodCount
+					tokenname
+					tokensymbol
+					tokendecimals
+					erc20Address
+					currentQuantity
+					currentValue
+					totalInvestQuantity
+					totalInvestCount
+					investQuantity
+					feeQuantity
+			  }
+			  parGoodDatas(
+				orderBy: modifiedTime
+				orderDirection: asc
+				first: 1
+				where: {modifiedTime_gte: $time, timetype: "d"}
+			  ) {
+				decimals
+				modifiedTime
+				pargood {
+				tokenname
+				tokendecimals
+				tokensymbol
+				id
+				currentQuantity
+				currentValue
+				investQuantity
+				}
+				open
+				id
+				timetype
+				totalInvestQuantity
+				totalInvestCount
+				feeQuantity
+				investQuantity
+			}
+		}`,
+		variables: params
+	})
+}

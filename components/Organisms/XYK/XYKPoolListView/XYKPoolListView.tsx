@@ -43,6 +43,9 @@ import {
 } from "@/components/ui/pagination";
 import { SkeletonTable } from "@/components/ui/skeletonTable";
 
+import { investGoodsDatas } from '@/graphql/data.processing';
+import { prettifyCurrencys } from '@/graphql/data.processing.util';
+
 export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
     chain_name,
     dex_name,
@@ -80,18 +83,20 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             setResult(None);
             let response;
             try {
-                response = await covalentClient.XykService.getPools(
-                    chain_name,
-                    dex_name,
-                    // @ts-ignore
-                    {
-                        pageNumber: pagination.page_number - 1,
-                        pageSize: page_size,
-                    }
-                );
-                setHasMore(response.data.pagination.has_more);
+                response = 
+                // await covalentClient.XykService.getPools(
+                //     chain_name,
+                //     dex_name,
+                //     // @ts-ignore
+                //     {
+                //         pageNumber: pagination.page_number - 1,
+                //         pageSize: page_size,
+                //     }
+                // );
+                await investGoodsDatas();
+                setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
-                setResult(new Some(response.data.items));
+                setResult(new Some(response.items));
             } catch (exception) {
                 setResult(new Some([]));
                 setError({
@@ -118,8 +123,8 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
 
     const columns: ColumnDef<Pool>[] = [
         {
-            id: "contract_name",
-            accessorKey: "contract_name",
+            id: "name",
+            accessorKey: "name",
             header: ({ column }) => (
                 <div className="ml-4">
                     <TableHeaderSorting
@@ -130,16 +135,16 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                 </div>
             ),
             cell: ({ row }) => {
-                const token_0 = row.original.token_0;
-                const token_1 = row.original.token_1;
-                const pool = `${token_0.contract_ticker_symbol}-${token_1.contract_ticker_symbol}`;
+                // const token_0 = row.original.token_0;
+                // const token_1 = row.original.token_1;
+                // const pool = `${token_0.contract_ticker_symbol}-${token_1.contract_ticker_symbol}`;
 
                 return (
                     <div className="ml-4 flex items-center gap-3">
                         <div className="relative mr-2 flex">
                             <TokenAvatar
                                 size={GRK_SIZES.EXTRA_SMALL}
-                                token_url={token_0.logo_url}
+                                token_url={row.original.logo_url}
                             />
                             {/* <div className="absolute left-4">
                                 <TokenAvatar
@@ -147,9 +152,34 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                                     token_url={token_1.logo_url}
                                 />
                             </div> */}
+                            
+                        <div className="flex flex-col">
+                            {on_pool_click ? (
+                                <a
+                                    className="cursor-pointer hover:opacity-75"
+                                    onClick={() => {
+                                        if (on_pool_click) {
+                                            on_pool_click(
+                                                row.original.id
+                                            );
+                                        }
+                                    }}
+                                >
+                                    {row.original.name
+                                        ? row.original.name
+                                        : ""}
+                                </a>
+                            ) : (
+                                <label className="text-base">
+                                    {row.original.name
+                                        ? row.original.name
+                                        : ""}
+                                </label>
+                            )}
+                        </div>
                         </div>
 
-                        <div className="flex flex-col">
+                        {/* <div className="flex flex-col">
                             {on_pool_click ? (
                                 <a
                                     className="cursor-pointer hover:opacity-75"
@@ -168,32 +198,104 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                                     {pool ? pool.split('-')[0] : ""}
                                 </label>
                             )}
-                        </div>
+                        </div> */}
                     </div>
                 );
             },
         },
         {
-            id: "total_liquidity_quote",
-            accessorKey: "total_liquidity_quote",
+            id: "symbol",
+            accessorKey: "symbol",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"investment"}
+                    header_name={"Symbol"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.total_liquidity_quote
+                return (
+                    <div className="text-right">
+                        {row.original.symbol}
+                    </div>
+                );
+            },
+        },
+        {
+            id: "investQuantity",
+            accessorKey: "investQuantity",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Invest Volume"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investQuantity
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "volume_24h_quote",
-            accessorKey: "volume_24h_quote",
+            id: "investValue",
+            accessorKey: "investValue",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Invest Price"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investValue
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
+            id: "totalInvestQuantity",
+            accessorKey: "totalInvestQuantity",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Total Volume"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalInvestQuantity
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
+            id: "totalInvestValue",
+            accessorKey: "totalInvestValue",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Total Price"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalInvestValue
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
+            id: "investQuantity24",
+            accessorKey: "investQuantity24",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
@@ -202,34 +304,34 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.volume_24h_quote
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investQuantity24
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "volume_7d_quote",
-            accessorKey: "volume_7d_quote",
+            id: "investValue24",
+            accessorKey: "investValue24",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Disinvest (24h)"}
+                    header_name={"Price (24h)"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.volume_7d_quote
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investValue24
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "quote_rate",
-            accessorKey: "quote_rate",
+            id: "totalFeeValue",
+            accessorKey: "totalFeeValue",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
@@ -237,23 +339,18 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                     column={column}
                 />
             ),
+            
             cell: ({ row }) => {
-                return (
-                    <div className="text-right">
-                        {" "}
-                        {prettifyCurrency(
-                            row.getValue("quote_rate"),
-                            2,
-                            "USD",
-                            true
-                        )}{" "}
-                    </div>
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalFeeValue
                 );
+
+                return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "fee_24h_quote",
-            accessorKey: "fee_24h_quote",
+            id: "totalFee",
+            accessorKey: "totalFee",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
@@ -262,16 +359,16 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.fee_24h_quote
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalFee
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "annualized_fee",
-            accessorKey: "annualized_fee",
+            id: "APY",
+            accessorKey: "APY",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
@@ -281,14 +378,14 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = calculateFeePercentage(
-                    +row.original.annualized_fee
+                    +row.original.APY
                 );
 
                 return (
                     <div
                         className={`text-right ${
                             // @ts-ignore
-                            parseFloat(row.original.annualized_fee) > 0 &&
+                            parseFloat(row.original.APY) > 0 &&
                             "text-green-600"
                         }`}
                     >

@@ -44,6 +44,8 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
             None: () => null,
             Some: (response) => {
                 
+                currencys= response.quote_currency;
+                
                 const chart_key = `${timeSeries}_chart_${period}d`;
                 const value_key =
                     timeSeries === "price"
@@ -56,7 +58,6 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
                     ] as UniswapLikeEcosystemCharts["liquidity_chart_7d"]
                     // @ts-ignore
                 ).map((x) => {
-                    currencys= x.quote_currency;
                     const dt = timestampParser(x.dt, "DD MMM YY");
                     return {
                         // currency: x.quote_currency,
