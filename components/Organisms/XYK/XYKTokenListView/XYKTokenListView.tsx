@@ -94,7 +94,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                     //     }
                     // );
                     await GoodsDatas();
-                    console.log(response,"***");
+                    // console.log(response,"***");
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
                 setResult(new Some(response.items));
@@ -107,7 +107,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             }
         })();
     }, [chain_name, dex_name, pagination]);
-//aa
+
     useEffect(() => {
         setWindowWidth(window.innerWidth);
 
@@ -121,7 +121,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             window.removeEventListener("resize", handleResize);
         };
     }, []);
-//   conggrfasfasf
+
     const columns: ColumnDef<TokenV2Volume>[] = [
         {
             id: "name",
@@ -136,7 +136,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                 </div>
             ),
             cell: ({ row }) => {
-                console.log(row,"((((")
+                // console.log(row,"((((")
                 return (
                     <div className="ml-4 flex items-center gap-3">
                         <TokenAvatar
@@ -232,7 +232,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Volume(24hrs)"}
+                    header_name={"Volume(24h)"}
                     column={column}
                 />
             ),
@@ -250,7 +250,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Price(24hrs)"}
+                    header_name={"Price(24h)"}
                     column={column}
                 />
             ),
@@ -298,49 +298,13 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
-        // {
-        //     id: "tradeValue24",
-        //     accessorKey: "tradeValue24",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Fee(24hrs)"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         const valueFormatted = prettifyCurrencys(
-        //             row.original.tradeValue24
-        //         );
-
-        //         return <div className="text-right">{valueFormatted}</div>;
-        //     },
-        // },
-        // {
-        //     id: "tradeValue24",
-        //     accessorKey: "tradeValue24",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Fee Price(24hrs)"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         const valueFormatted = prettifyCurrencys(
-        //             row.original.tradeValue24
-        //         );
-
-        //         return <div className="text-right">{valueFormatted}</div>;
-        //     },
-        // },
         {
             id: "price_24h",
             accessorKey: "price_24h",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Price Change (24hrs)"}
+                    header_name={"Price Change (24h)"}
                     column={column}
                 />
             ),
@@ -463,7 +427,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Volume (24hrs)"}
+                    header_name={"Volume (24h)"}
                     column={column}
                 />
             ),

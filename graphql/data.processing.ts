@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { ecosystemChartData, parGoodDatas } from '@/graphql/article';
+import { ecosystemChartData, parGoodDatas,InvestGoodDatas } from '@/graphql/article';
 import { timestampdToDateSub, powerIterative, iconUrl,splitNumber } from '@/graphql/data.processing.util';
-// x的n次方
+
+// overview charts
 export async function ecosystemChartDatas(): Promise<object> {
-    // useEffect(() => {
     const data = await ecosystemChartData({ id: 1, eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) });
     let goodValue = data.data.goodState.currentValue / data.data.goodState.currentQuantity;
     let tokendecimals = powerIterative(10, data.data.goodState.tokendecimals);
-    let item = { volume_chart_7d: {}, volume_chart_30d: {}, liquidity_chart_7d: {}, liquidity_chart_30d: {} };
+    let item = { quote_currency:'',volume_chart_7d: {}, volume_chart_30d: {}, liquidity_chart_7d: {}, liquidity_chart_30d: {} };
 
+    item.quote_currency = data.data.goodState.tokensymbol;
     let volume_chart_7d: object[] = [];
     let volume_chart_30d: object[] = [];
     let liquidity_chart_7d: object[] = [];
@@ -61,6 +62,7 @@ export async function ecosystemChartDatas(): Promise<object> {
 }
 
 
+//物品列表
 export async function GoodsDatas(): Promise<object> {
     const goodsDatas = await parGoodDatas({ id: 1, first: 10, time: timestampdToDateSub(1) });
 
@@ -95,7 +97,7 @@ export async function GoodsDatas(): Promise<object> {
             goodsDatas.data.parGoodDatas.forEach((en: any) => {
                 if (e.id===en.pargood.id) {
                     let current_price_24h = ((en.pargood.currentValue / tokendecimals) / (en.pargood.currentQuantity / base_decimals)) / jz;
-                    let s = splitNumber(en.open);
+                    // let s = splitNumber(en.open);
                     map.tradeQuantity24 = (e.totalTradeQuantity - en.totalTradeQuantity) / base_decimals;
                     map.fee24 = (e.totalProfit - en.totalProfit) / base_decimals;
                     map.tradeValue24 = (e.totalTradeQuantity - en.totalTradeQuantity) / base_decimals * current_price_24h;
@@ -121,6 +123,79 @@ export async function GoodsDatas(): Promise<object> {
         map.logo_url = iconUrl("ethereum",e.id);
         map.price = current_price;
 
+
+        items.push(map);
+    });
+
+
+    console.log(item)
+    return item;
+}
+
+
+//投资列表
+export async function investGoodsDatas(): Promise<object> {
+    const goodsDatas = await InvestGoodDatas({ id: 1, first: 10, time: timestampdToDateSub(1) });
+
+    let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
+    let tokendecimals = powerIterative(10, goodsDatas.data.goodState.tokendecimals);
+    let jz = goodValue;
+
+    let item = { items: {}, pagination: {}, error: false, error_message: "" };
+
+    let items: object[] = [];
+    let pagination = {
+        "has_more": true,
+        "page_number": 0,
+        "page_size": 10,
+        "total_count": null
+    };
+
+    item.items = items;
+    item.pagination = pagination;
+
+    goodsDatas.data.parGoodStates.forEach((e: any) => {
+        let base_decimals = powerIterative(10,e.tokendecimals);
+        let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
+        
+        let map = {
+            id: "", name: "", decimals: 0, symbol: "", logo_url:"",investQuantity:0,investValue:0,
+            totalInvestQuantity: 0, totalInvestValue: 0,investQuantity24: 0, investValue24: 0,
+            totalFee: 0, price: 0,price_24h:0, totalFeeValue: 0, fee24: 0, feeValue24: 0,unitFee:0,APY:0
+        };
+
+        map.id = e.id;
+        map.name = e.tokenname;
+        map.symbol = e.tokensymbol;
+        map.decimals = e.tokendecimals;
+        map.totalInvestQuantity = e.totalInvestQuantity / base_decimals;
+        map.totalFee = e.feeQuantity / base_decimals;
+        map.totalInvestValue = e.totalInvestQuantity / base_decimals * current_price;
+        map.totalFeeValue = e.feeQuantity / base_decimals * current_price;
+        map.logo_url = iconUrl("ethereum",e.id);
+        map.price = current_price;
+        map.unitFee =  map.totalFee / map.totalInvestQuantity;
+
+        if (goodsDatas.data.parGoodDatas.lenght > 0) {
+            goodsDatas.data.parGoodDatas.forEach((en: any) => {
+                if (e.id===en.pargood.id) {
+                    let current_price_24h = ((en.pargood.currentValue / tokendecimals) / (en.pargood.currentQuantity / base_decimals)) / jz;
+                    // let s = splitNumber(en.open);
+                    map.investQuantity24 = (e.totalInvestQuantity - en.totalInvestQuantity) / base_decimals;
+                    map.fee24 = (e.feeQuantity - en.feeQuantity) / base_decimals;
+                    map.investValue24 = (e.totalInvestQuantity - en.totalInvestQuantity) / base_decimals * current_price_24h;
+                    map.feeValue24 = (e.feeQuantity - en.feeQuantity) / base_decimals * current_price_24h;
+                    map.price_24h = current_price_24h;
+                    map.APY = (map.totalFee - map.fee24) / map.totalFee * 365;
+                }
+            });
+        } else {
+            map.investQuantity24 = 0;
+            map.fee24 = 0;
+            map.investValue24 = 0;
+            map.feeValue24 = 0;
+            map.APY = 0;
+        }
 
         items.push(map);
     });
