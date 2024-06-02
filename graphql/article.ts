@@ -64,28 +64,42 @@ export function goodState(params) {
 		variables: params
 	})
 }
-//交易列表
+//记录列表
 export function transactions(params) {
 	return apolloClient.query({
-		query: gql`query($first: Int) {
+		query: gql`query($id: BigInt,$first: Int) {
+			goodState(id: $id) {
+				currentQuantity
+				currentValue
+				id
+				tokenname
+				tokensymbol
+				tokendecimals
+			}
 			transactions(first: $first, orderDirection: desc, orderBy: timestamp) {
+				blockNumber
+				hash
+				id
+				recipent
+				timestamp
+				transtype
 				fromgoodQuanity
 				fromgoodfee
-				id
-				timestamp
+				frompargood {
+				tokenname
+				tokensymbol
+				tokendecimals
+				currentValue
+				currentQuantity
+				}
 				togoodQuantity
 				togoodfee
-				transtype
-				fromgood {
-				  id
-				  tokenname
-				  tokendecimals
-				  tokensymbol
-				}
 				togood {
-				  tokenname
-				  tokendecimals
-				  tokensymbol
+				tokenname
+				tokensymbol
+				tokendecimals
+				currentValue
+				currentQuantity
 				}
 			  }
 		}`,
@@ -107,7 +121,7 @@ export function parGoodDatas(params) {
 			}
 			parGoodStates(
 				first: $first
-				where: {id_not: "#"}
+				where: {id_not: "0"}
 				) {
 				id
 				goodCount
@@ -162,7 +176,7 @@ export function InvestGoodDatas(params) {
 			}
 			parGoodStates(
 				first: $first
-				where: {id_not: "#"}
+				where: {id_not: "0"}
 				) {
 					id
 					goodCount
@@ -206,3 +220,4 @@ export function InvestGoodDatas(params) {
 		variables: params
 	})
 }
+

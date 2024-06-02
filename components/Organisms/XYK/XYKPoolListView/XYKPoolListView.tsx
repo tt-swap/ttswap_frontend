@@ -227,7 +227,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Invest Volume"}
+                    header_name={"Invest Quantity"}
                     column={column}
                 />
             ),
@@ -245,7 +245,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Invest Price"}
+                    header_name={"Invest Amount"}
                     column={column}
                 />
             ),
@@ -263,7 +263,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Total Volume"}
+                    header_name={"Total Invest Quantity"}
                     column={column}
                 />
             ),
@@ -281,7 +281,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Total Price"}
+                    header_name={"Total Invest Amount"}
                     column={column}
                 />
             ),
@@ -293,49 +293,49 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
-        {
-            id: "investQuantity24",
-            accessorKey: "investQuantity24",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Invest (24h)"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    row.original.investQuantity24
-                );
+        // {
+        //     id: "investQuantity24",
+        //     accessorKey: "investQuantity24",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Invest Quantity(24h)"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencys(
+        //             row.original.investQuantity24
+        //         );
 
-                return <div className="text-right">{valueFormatted}</div>;
-            },
-        },
-        {
-            id: "investValue24",
-            accessorKey: "investValue24",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Price (24h)"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    row.original.investValue24
-                );
+        //         return <div className="text-right">{valueFormatted}</div>;
+        //     },
+        // },
+        // {
+        //     id: "investValue24",
+        //     accessorKey: "investValue24",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Invest Amount(24h)"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencys(
+        //             row.original.investValue24
+        //         );
 
-                return <div className="text-right">{valueFormatted}</div>;
-            },
-        },
+        //         return <div className="text-right">{valueFormatted}</div>;
+        //     },
+        // },
         {
             id: "totalFeeValue",
             accessorKey: "totalFeeValue",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Fee Price"}
+                    header_name={"Fee Amount"}
                     column={column}
                 />
             ),
@@ -354,7 +354,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Fees"}
+                    header_name={"Fee"}
                     column={column}
                 />
             ),
@@ -433,8 +433,8 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
 
     const mobile_columns: ColumnDef<Pool>[] = [
         {
-            id: "contract_name",
-            accessorKey: "contract_name",
+            id: "name",
+            accessorKey: "name",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="left"
@@ -443,9 +443,9 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                 />
             ),
             cell: ({ row }) => {
-                const token_0 = row.original.token_0;
-                const token_1 = row.original.token_1;
-                const pool = `${token_0.contract_ticker_symbol}/${token_1.contract_ticker_symbol}`;
+                // const token_0 = row.original.token_0;
+                // const token_1 = row.original.token_1;
+                // const pool = `${token_0.contract_ticker_symbol}/${token_1.contract_ticker_symbol}`;
 
                 return (
                     <div className="flex items-center gap-3">
@@ -454,15 +454,41 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                                 size={GRK_SIZES.EXTRA_SMALL}
                                 token_url={token_0.logo_url}
                             />
-                            <div className="absolute left-4">
+                            {/* <div className="absolute left-4">
                                 <TokenAvatar
                                     size={GRK_SIZES.EXTRA_SMALL}
                                     token_url={token_1.logo_url}
                                 />
-                            </div>
+                            </div> */}
+                            
+                            
+                        <div className="flex flex-col">
+                            {on_pool_click ? (
+                                <a
+                                    className="cursor-pointer hover:opacity-75"
+                                    onClick={() => {
+                                        if (on_pool_click) {
+                                            on_pool_click(
+                                                row.original.id
+                                            );
+                                        }
+                                    }}
+                                >
+                                    {row.original.name
+                                        ? row.original.name
+                                        : ""}
+                                </a>
+                            ) : (
+                                <label className="text-base">
+                                    {row.original.name
+                                        ? row.original.name
+                                        : ""}
+                                </label>
+                            )}
+                        </div>
                         </div>
 
-                        <div className="flex flex-col">
+                        {/* <div className="flex flex-col">
                             {on_pool_click ? (
                                 <a
                                     className="cursor-pointer hover:opacity-75"
@@ -481,42 +507,114 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                                     {pool ? pool : ""}
                                 </label>
                             )}
-                        </div>
+                        </div> */}
                     </div>
                 );
             },
         },
         {
-            id: "total_liquidity_quote",
-            accessorKey: "total_liquidity_quote",
+            id: "investQuantity",
+            accessorKey: "investQuantity",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Liquidity"}
+                    header_name={"Invest Quantity"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.total_liquidity_quote
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investQuantity
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "total_volume_24h_quote",
-            accessorKey: "total_volume_24h_quote",
+            id: "investValue",
+            accessorKey: "investValue",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Volume (24hrs)"}
+                    header_name={"Invest Amount"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.volume_24h_quote
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investValue
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
+            id: "totalInvestQuantity",
+            accessorKey: "totalInvestQuantity",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Total Invest Quantity"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalInvestQuantity
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
+            id: "totalInvestValue",
+            accessorKey: "totalInvestValue",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Total Invest Amount"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalInvestValue
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
+            id: "investQuantity24",
+            accessorKey: "investQuantity24",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Invest Quantity(24h)"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investQuantity24
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
+            id: "investValue24",
+            accessorKey: "investValue24",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Invest Amount(24h)"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investValue24
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;

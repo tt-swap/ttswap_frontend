@@ -214,7 +214,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                 // console.log(column,"&&&");
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Total Price"}
+                    header_name={"Total Amount"}
                     column={column}
                 />
             ),
@@ -250,7 +250,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Price(24h)"}
+                    header_name={"Amount(24h)"}
                     column={column}
                 />
             ),
@@ -268,7 +268,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Total Fee"}
+                    header_name={"Fee"}
                     column={column}
                 />
             ),
@@ -286,7 +286,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Total Fee Pirce"}
+                    header_name={"Fee Amount"}
                     column={column}
                 />
             ),
@@ -359,8 +359,8 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
 
     const mobile_columns: ColumnDef<TokenV2Volume>[] = [
         {
-            id: "contract_name",
-            accessorKey: "contract_name",
+            id: "name",
+            accessorKey: "name",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="left"
@@ -382,19 +382,19 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                                     onClick={() => {
                                         if (on_token_click) {
                                             on_token_click(
-                                                row.original.contract_address
+                                                row.original.id
                                             );
                                         }
                                     }}
                                 >
-                                    {row.original.contract_name
-                                        ? row.original.contract_name
+                                    {row.original.name
+                                        ? row.original.name
                                         : ""}
                                 </a>
                             ) : (
                                 <label className="text-base">
-                                    {row.original.contract_name
-                                        ? row.original.contract_name
+                                    {row.original.name
+                                        ? row.original.name
                                         : ""}
                                 </label>
                             )}
@@ -404,26 +404,26 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             },
         },
         {
-            id: "total_liquidity_quote",
-            accessorKey: "total_liquidity_quote",
+            id: "totalTradeQuantity",
+            accessorKey: "totalTradeQuantity",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Liquidity"}
+                    header_name={"Volume"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.total_liquidity_quote
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalTradeQuantity
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "total_volume_24h_quote",
-            accessorKey: "total_volume_24h_quote",
+            id: "tradeQuantity24",
+            accessorKey: "tradeQuantity24",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
@@ -432,8 +432,8 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.total_volume_24h_quote
+                const valueFormatted = prettifyCurrencys(
+                    row.original.tradeQuantity24
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
@@ -457,7 +457,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                                     onClick={() => {
                                         if (on_token_click) {
                                             on_token_click(
-                                                row.original.contract_address
+                                                row.original.id
                                             );
                                         }
                                     }}
