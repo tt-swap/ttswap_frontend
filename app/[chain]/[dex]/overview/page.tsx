@@ -1,9 +1,9 @@
 'use client'
 import { Chain } from "@covalenthq/client-sdk"
 import { useRouter } from "next/navigation";
-import { XYKOverviewTransactionsListView  } from "@covalenthq/goldrush-kit";
+// import { XYKOverviewTransactionsListView  } from "@covalenthq/goldrush-kit";
 import { GoldRushProvider } from "@/utils/store";
-import { XYKPoolListView, XYKTokenListView } from "@/components/Organisms"
+import { XYKPoolListView, XYKTokenListView, XYKOverviewTransactionsListView } from "@/components/Organisms"
 import { XYKOverviewTimeSeries } from "@/components/Molecules"
 import { Flex } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ export default function Overview({ params }: { params: { chain: string, dex: str
           Overview
         </h1>
         <div className="flex gap-4">
-          {/* <GoldRushProvider
+          <GoldRushProvider
                 apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
                 newTheme={{
                     borderRadius: 10,
@@ -38,7 +38,7 @@ export default function Overview({ params }: { params: { chain: string, dex: str
               dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
               displayMetrics={"volume"}
             />
-          </GoldRushProvider> */}
+          </GoldRushProvider>
         </div>
         <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
         Goods

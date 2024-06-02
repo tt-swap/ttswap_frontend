@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ecosystemChartData, parGoodDatas,InvestGoodDatas } from '@/graphql/article';
+import { ecosystemChartData, parGoodDatas,InvestGoodDatas,transactions } from '@/graphql/article';
 import { timestampdToDateSub, powerIterative, iconUrl,splitNumber } from '@/graphql/data.processing.util';
 
 // overview charts
@@ -202,5 +202,72 @@ export async function investGoodsDatas(): Promise<object> {
 
 
     console.log(item)
+    return item;
+}
+
+//记录列表
+export async function transactionsDatas(): Promise<object> {
+    const goodsDatas = await transactions({ id: 1, first: 10 });
+
+    let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
+    let tokendecimals = powerIterative(10, goodsDatas.data.goodState.tokendecimals);
+    let jz = goodValue;
+    
+
+    let item = { items: {}, pagination: {}, error: false, error_message: "", tokensymbol:""};
+
+    let items: object[] = [];
+    let pagination = {
+        "has_more": true,
+        "page_number": 0,
+        "page_size": 10,
+        "total_count": null
+    };
+
+    item.items = items;
+    item.tokensymbol = goodsDatas.data.goodState.tokensymbol;
+    item.pagination = pagination;
+
+    goodsDatas.data.transactions.forEach((e: any) => {
+        let from_decimals = powerIterative(10,e.frompargood.tokendecimals);
+        let to_decimals = powerIterative(10,e.togood.tokendecimals);
+        let from_price =0;
+        if (e.frompargood.currentValue >0 || e.frompargood.currentQuantity >0 ||e.frompargood.tokendecimals > 0) {
+            from_price =((e.frompargood.currentValue / tokendecimals) / (e.frompargood.currentQuantity / from_decimals)) / jz;
+        }
+        let to_price = 0;
+        if (e.togood.currentValue >0 || e.togood.currentQuantity >0 ||e.togood.tokendecimals > 0) {
+            to_price = ((e.togood.currentValue / tokendecimals) / (e.togood.currentQuantity / to_decimals)) / jz;
+        }
+
+        let map = {
+            id: "", blockNumber: "", type: "", symbol1: "",symbol2: "",fromgoodQuanity:0,togoodQuantity:0,
+            hash:"",totalValue:0,time:0
+        };
+
+        map.id = e.id;
+        map.time = e.timestamp * 1000;
+        map.blockNumber = e.blockNumber;
+        map.type = e.transtype;
+        map.hash = e.hash;
+        map.symbol1 = e.frompargood.tokensymbol;
+        map.symbol2 = e.togood.tokensymbol;
+        if (from_decimals >0) {
+            map.fromgoodQuanity = e.fromgoodQuanity / from_decimals;
+        } else {
+            map.fromgoodQuanity = 0;
+        }
+        if (to_decimals >0) {
+            map.togoodQuantity = e.togoodQuantity / to_decimals;
+        } else {
+            map.togoodQuantity = 0;
+        }
+        map.totalValue = (map.fromgoodQuanity * from_price) + (map.togoodQuantity * to_price)
+        console.log(map.fromgoodQuanity,"********",from_price,"***",map.togoodQuantity,"**",to_price)
+        items.push(map);
+    });
+
+
+    console.log(item,"********")
     return item;
 }
