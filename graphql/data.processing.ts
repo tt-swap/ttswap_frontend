@@ -63,8 +63,10 @@ export async function ecosystemChartDatas(): Promise<object> {
 
 
 //物品列表
-export async function GoodsDatas(): Promise<object> {
-    const goodsDatas = await parGoodDatas({ id: 1, first: 10, time: timestampdToDateSub(1) });
+export async function GoodsDatas(params: { pageNumber: number; pageSize: number; }): Promise<object> {
+
+
+    const goodsDatas = await parGoodDatas({ id: 1, first: params.pageSize, time: timestampdToDateSub(1),skips:params.pageSize*params.pageNumber });
 
     let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
     let tokendecimals = powerIterative(10, goodsDatas.data.goodState.tokendecimals);
@@ -74,14 +76,15 @@ export async function GoodsDatas(): Promise<object> {
 
     let items: object[] = [];
     let pagination = {
-        "has_more": true,
-        "page_number": 0,
-        "page_size": 10,
-        "total_count": null
+        has_more: true,
+        page_number: 0,
+        page_size: 10,
+        total_count: null
     };
 
     item.items = items;
-    item.pagination = pagination;
+    item.pagination.page_number = params.pageNumber;
+    item.pagination.page_size = params.pageSize;
 
     goodsDatas.data.parGoodStates.forEach((e: any) => {
         let base_decimals = powerIterative(10,e.tokendecimals);
@@ -134,8 +137,8 @@ export async function GoodsDatas(): Promise<object> {
 
 
 //投资列表
-export async function investGoodsDatas(): Promise<object> {
-    const goodsDatas = await InvestGoodDatas({ id: 1, first: 10, time: timestampdToDateSub(1) });
+export async function investGoodsDatas(params: { pageNumber: number; pageSize: number; }): Promise<object> {
+    const goodsDatas = await InvestGoodDatas({ id: 1, first: 10, time: timestampdToDateSub(1),skip:params.pageSize*params.pageNumber });
 
     let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
     let tokendecimals = powerIterative(10, goodsDatas.data.goodState.tokendecimals);
@@ -145,14 +148,15 @@ export async function investGoodsDatas(): Promise<object> {
 
     let items: object[] = [];
     let pagination = {
-        "has_more": true,
-        "page_number": 0,
-        "page_size": 10,
-        "total_count": null
+        has_more: true,
+        page_number: 0,
+        page_size: 10,
+        total_count: null
     };
 
     item.items = items;
-    item.pagination = pagination;
+    item.pagination.page_number = params.pageNumber;
+    item.pagination.page_size = params.pageSize;
 
     goodsDatas.data.parGoodStates.forEach((e: any) => {
         let base_decimals = powerIterative(10,e.tokendecimals);

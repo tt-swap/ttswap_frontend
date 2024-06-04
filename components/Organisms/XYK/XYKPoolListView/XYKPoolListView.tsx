@@ -93,7 +93,10 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                 //         pageSize: page_size,
                 //     }
                 // );
-                await investGoodsDatas();
+                await investGoodsDatas({
+                    pageNumber: pagination.page_number - 1,
+                    pageSize: page_size,
+                });
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
                 setResult(new Some(response.items));

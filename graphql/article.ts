@@ -110,7 +110,7 @@ export function transactions(params) {
 //物品列表
 export function parGoodDatas(params) {
 	return apolloClient.query({
-		query: gql`query($id: BigInt,$first: Int,$time: BigInt) {
+		query: gql`query($id: BigInt,$first: Int,$time: BigInt,$skips: Int) {
 			goodState(id: $id) {
 				currentQuantity
 				currentValue
@@ -121,6 +121,7 @@ export function parGoodDatas(params) {
 			}
 			parGoodStates(
 				first: $first
+				skip: $skips
 				where: {id_not: "0"}
 				) {
 				id
@@ -165,7 +166,7 @@ export function parGoodDatas(params) {
 //投资列表
 export function InvestGoodDatas(params) {
 	return apolloClient.query({
-		query: gql`query($id: BigInt,$first: Int,$time: BigInt) {
+		query: gql`query($id: BigInt,$first: Int,$time: BigInt,$skip: Int) {
 			goodState(id: $id) {
 				currentValue
 				currentQuantity
@@ -176,6 +177,7 @@ export function InvestGoodDatas(params) {
 			}
 			parGoodStates(
 				first: $first
+				skip: $skip
 				where: {id_not: "0"}
 				) {
 					id
