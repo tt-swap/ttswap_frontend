@@ -93,7 +93,10 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                     //         pageSize: page_size,
                     //     }
                     // );
-                    await GoodsDatas();
+                    await GoodsDatas({
+                                pageNumber: pagination.page_number - 1,
+                                pageSize: page_size,
+                            });
                     // console.log(response,"***");
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
