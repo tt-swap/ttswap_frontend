@@ -226,7 +226,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                     row.original.totalTradeValue
                 );
 
-                return <div className="text-right">{valueFormatted}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
             },
         },
         {
@@ -262,7 +262,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                     row.original.tradeValue24
                 );
 
-                return <div className="text-right">{valueFormatted}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
             },
         },
         {
@@ -298,7 +298,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                     row.original.totalFeeValue
                 );
 
-                return <div className="text-right">{valueFormatted}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
             },
         },
         {

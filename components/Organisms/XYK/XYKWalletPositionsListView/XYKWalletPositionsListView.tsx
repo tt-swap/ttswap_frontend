@@ -36,6 +36,10 @@ import { GRK_SIZES } from "@/utils/constants/shared.constants";
 import { useGoldRush } from "@/utils/store";
 import { type XYKWalletPositionsListViewProps } from "@/utils/types/organisms.types";
 import { SkeletonTable } from "@/components/ui/skeletonTable";
+import { calculateFeePercentage } from "@/utils/functions/calculate-fees-percentage";
+
+import { myInvestGoodsDatas } from '@/graphql/data.processing';
+import { prettifyCurrencys } from '@/graphql/data.processing.util';
 
 export const XYKWalletPositionsListView: React.FC<
     XYKWalletPositionsListViewProps
@@ -59,13 +63,15 @@ export const XYKWalletPositionsListView: React.FC<
             let response;
             try {
                 response =
-                    await covalentClient.XykService.getAddressExchangeBalances(
-                        chain_name,
-                        dex_name,
-                        wallet_address
-                    );
+                    // await covalentClient.XykService.getAddressExchangeBalances(
+                    //     chain_name,
+                    //     dex_name,
+                    //     wallet_address
+                    // );
+
+                    await myInvestGoodsDatas(wallet_address);
                 setError({ error: false, error_message: "" });
-                setResult(new Some(response.data.items));
+                setResult(new Some(response.items));
             } catch (exception) {
                 setResult(new Some([]));
                 setError({
@@ -77,9 +83,28 @@ export const XYKWalletPositionsListView: React.FC<
     }, [chain_name, dex_name, wallet_address]);
 
     const columns: ColumnDef<UniswapLikeBalanceItem>[] = [
+        
         {
-            id: "contract_name",
-            accessorKey: "contract_name",
+            id: "id",
+            accessorKey: "id",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="left"
+                    header_name={"Proof No"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className="text-left">
+                        {row.original.id}
+                    </div>
+                );
+            },
+        },
+        {
+            id: "name",
+            accessorKey: "name",
             header: ({ column }) => (
                 <div className="ml-4">
                     <TableHeaderSorting
@@ -90,119 +115,157 @@ export const XYKWalletPositionsListView: React.FC<
                 </div>
             ),
             cell: ({ row }) => {
-                const token_0 = row.original.token_0;
-                const token_1 = row.original.token_1;
-                const pool = `${token_0.contract_ticker_symbol}-${token_1.contract_ticker_symbol}`;
-
                 return (
                     <div className="ml-4 flex items-center gap-3">
                         <div className="relative mr-2 flex">
                             <TokenAvatar
                                 size={GRK_SIZES.EXTRA_SMALL}
-                                token_url={token_0.logo_url}
+                                token_url={row.original.logo_url}
                             />
-                            <div className="absolute left-4">
-                                <TokenAvatar
-                                    size={GRK_SIZES.EXTRA_SMALL}
-                                    token_url={token_1.logo_url}
-                                />
+                            <div className="flex flex-col">
+                                {on_pool_click ? (
+                                    <a
+                                        className="cursor-pointer hover:opacity-75"
+                                        onClick={() => {
+                                            if (on_pool_click) {
+                                                on_pool_click(
+                                                    row.original.id
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        {row.original.name
+                                            ? row.original.name
+                                            : ""}
+                                    </a>
+                                ) : (
+                                    <label className="text-base">
+                                        {row.original.name
+                                            ? row.original.name
+                                            : ""}
+                                    </label>
+                                )}
                             </div>
-                        </div>
-
-                        <div className="flex flex-col">
-                            {on_pool_click ? (
-                                <a
-                                    className="cursor-pointer hover:opacity-75"
-                                    onClick={() => {
-                                        if (on_pool_click) {
-                                            on_pool_click(
-                                                row.original.pool_token
-                                                    .contract_address
-                                            );
-                                        }
-                                    }}
-                                >
-                                    {pool ? pool : ""}
-                                </a>
-                            ) : (
-                                <label className="text-base">
-                                    {pool ? pool : ""}
-                                </label>
-                            )}
                         </div>
                     </div>
                 );
             },
         },
         {
-            id: "total_liquidity_quote",
-            accessorKey: "total_liquidity_quote",
+            id: "symbol",
+            accessorKey: "symbol",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Quantity"}
+                    header_name={"Symbol"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.token_0.quote + row.original.token_1.quote
+                return (
+                    <div className="text-right">
+                        {row.original.symbol}
+                    </div>
                 );
+            },
+        },
+        {
+            id: "totalInvestValue",
+            accessorKey: "totalInvestValue",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Proof Value"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalInvestValue
+                );
+
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
+            },
+        },
+        {
+            id: "investQuantity",
+            accessorKey: "investQuantity",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Invest Quanity"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investQuantity
+                );
+
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "token_0",
-            accessorKey: "token_0",
+            id: "unitFee",
+            accessorKey: "unitFee",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Token amount"}
+                    header_name={"Unit Fee"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const token = row.original.token_0;
-                const valueFormatted = token.balance
-                    ? calculatePrettyBalance(
-                          token.balance,
-                          token.contract_decimals,
-                          true,
-                          4
-                      )
-                    : 0;
-
-                return (
-                    <div className="text-right">
-                        {`${valueFormatted} ${token.contract_ticker_symbol}`}
-                    </div>
+                const valueFormatted = prettifyCurrencys(
+                    row.original.unitFee
                 );
+
+                return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "token_1",
-            accessorKey: "token_1",
+            id: "profit",
+            accessorKey: "profit",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Token amount"}
+                    header_name={"Profit"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const token = row.original.token_1;
-                const valueFormatted = token.balance
-                    ? calculatePrettyBalance(
-                          token.balance,
-                          token.contract_decimals,
-                          true,
-                          4
-                      )
-                    : 0;
+                const valueFormatted = prettifyCurrencys(
+                    row.original.profit
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
+            id: "APY",
+            accessorKey: "APY",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"APY"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = calculateFeePercentage(
+                    +row.original.APY
+                );
 
                 return (
-                    <div className="text-right">
-                        {`${valueFormatted} ${token.contract_ticker_symbol}`}
+                    <div
+                        className={`text-right ${
+                            // @ts-ignore
+                            parseFloat(row.original.APY) > 0 &&
+                            "text-green-600"
+                            }`}
+                    >
+                        {valueFormatted}
                     </div>
                 );
             },
@@ -313,10 +376,10 @@ export const XYKWalletPositionsListView: React.FC<
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
-                                                  header.column.columnDef
-                                                      .header,
-                                                  header.getContext()
-                                              )}
+                                                header.column.columnDef
+                                                    .header,
+                                                header.getContext()
+                                            )}
                                     </TableHead>
                                 );
                             })}

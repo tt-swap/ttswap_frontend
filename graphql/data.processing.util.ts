@@ -72,6 +72,15 @@ function toThousands(value: string) {
 }
 
 
+// 时间戳相减换算为小时
+export function timestampSubH(values: number) {
+    let value = (new Date().getTime() - (values * 1000)) / 86400000;
+
+    return Math.ceil(value);
+}
+
+
+
 // 数据编码处理
 export function splitNumber(values: number) {
     let value = values / powerIterative(2,128);
