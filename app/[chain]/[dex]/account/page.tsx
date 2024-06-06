@@ -1,8 +1,8 @@
 'use client'
 import { useRouter } from "next/navigation";
-import { XYKWalletTransactionsListView, XYKWalletPoolListView, XYKWalletInformation  } from "@covalenthq/goldrush-kit";
+import { XYKWalletInformation  } from "@covalenthq/goldrush-kit";
 import { GoldRushProvider } from "@/utils/store";
-import { XYKPoolListView, XYKTokenListView, XYKWalletPositionsListView } from "@/components/Organisms"
+import { XYKPoolListView, XYKTokenListView, XYKWalletPositionsListView,XYKWalletTransactionsListView } from "@/components/Organisms"
 import { XYKOverviewTimeSeries } from "@/components/Molecules"
 import { Flex } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
@@ -11,12 +11,22 @@ import { Input } from "@/components/ui/input";
 // import { useState } from "react";
 import { useEffect,useState } from "react";
 
+import { useWeb3React } from "@web3-react/core";
+
 export default function Account({ params }: { params: { chain: string, dex: string } }) {
+  
+  const { account } = useWeb3React();
   const router = useRouter();
   const [walletAddress, setAddress] = useState("")
   const [input, setInput] = useState("");
+  useEffect(() => {
+    // console.log(account,"**")
+    if (account !==undefined) {
+      setInput(account);
+      setAddress(account);
+    }
 
-
+  }, [account]);
   return (
     <div className="w-full flex flex-col gap-4">
         <h1 className="pt-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">

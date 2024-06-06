@@ -257,7 +257,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                     row.original.investValue
                 );
 
-                return <div className="text-right">{valueFormatted}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
             },
         },
         {
@@ -293,7 +293,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                     row.original.totalInvestValue
                 );
 
-                return <div className="text-right">{valueFormatted}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
             },
         },
         // {
@@ -348,7 +348,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                     row.original.totalFeeValue
                 );
 
-                return <div className="text-right">{valueFormatted}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
             },
         },
         {

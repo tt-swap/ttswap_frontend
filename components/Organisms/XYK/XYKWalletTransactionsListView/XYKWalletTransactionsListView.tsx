@@ -36,6 +36,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
+import { myTransactionsDatas } from '@/graphql/data.processing';
+import { prettifyCurrencys } from '@/graphql/data.processing.util';
+
 export const XYKWalletTransactionsListView: React.FC<
     XYKWalletTransactionsListViewProps
 > = ({
@@ -65,13 +68,14 @@ export const XYKWalletTransactionsListView: React.FC<
             let response;
             try {
                 response =
-                    await covalentClient.XykService.getTransactionsForAccountAddress(
-                        chain_name,
-                        dex_name,
-                        wallet_address.trim()
-                    );
-                    // @ts-ignore
-                setResult(new Some(response.data.items));
+                    // await covalentClient.XykService.getTransactionsForAccountAddress(
+                    //     chain_name,
+                    //     dex_name,
+                    //     wallet_address.trim()
+                    // );
+                    await myTransactionsDatas(wallet_address);
+                // @ts-ignore
+                setResult(new Some(response.items));
                 setError({ error: false, error_message: "" });
             } catch (error) {
                 setResult(new Some([]));
@@ -85,7 +89,7 @@ export const XYKWalletTransactionsListView: React.FC<
 
     const columns: ColumnDef<ExchangeTransaction>[] = [
         {
-            accessorKey: "block_signed_at",
+            accessorKey: "time",
             header: ({ column }) => (
                 <div className="ml-4">
                     <TableHeaderSorting
@@ -96,7 +100,7 @@ export const XYKWalletTransactionsListView: React.FC<
                 </div>
             ),
             cell: ({ row }) => {
-                const t = row.getValue("block_signed_at") as string;
+                const t = row.original.time;
 
                 return (
                     <div className="ml-4">{timestampParser(t, "relative")}</div>
@@ -104,7 +108,7 @@ export const XYKWalletTransactionsListView: React.FC<
             },
         },
         {
-            accessorKey: "act",
+            accessorKey: "type",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="left"
@@ -113,45 +117,10 @@ export const XYKWalletTransactionsListView: React.FC<
                 />
             ),
             cell: ({ row }) => {
-                const token_0 = row.original.token_0;
-                const token_1 = row.original.token_1;
+                const token_0 = row.original.symbol1;
+                const token_1 = row.original.symbol2;
 
-                if (row.original.act !== "SWAP") {
-                    return (
-                        <div
-                            className={
-                                on_transaction_click
-                                    ? "cursor-pointer hover:opacity-75"
-                                    : ""
-                            }
-                            onClick={() => {
-                                if (on_transaction_click) {
-                                    on_transaction_click(row.original);
-                                }
-                            }}
-                        >
-                            <Badge
-                                className="mr-2"
-                                variant={
-                                    POOL_TRANSACTION_MAP[row.original.act].color
-                                }
-                            >
-                                {POOL_TRANSACTION_MAP[row.original.act].name}
-                            </Badge>{" "}
-                            {token_0.contract_ticker_symbol}{" "}
-                            {row.original.act === "SWAP" ? "for" : "and"}{" "}
-                            {token_1.contract_ticker_symbol}
-                        </div>
-                    );
-                }
-                const token_in =
-                    handleExchangeType(row.original, 0) === "in"
-                        ? token_0
-                        : token_1;
-                const token_out =
-                    handleExchangeType(row.original, 0) === "out"
-                        ? token_0
-                        : token_1;
+                // if (row.original.type !== "SWAP") {
                 return (
                     <div
                         className={
@@ -167,22 +136,55 @@ export const XYKWalletTransactionsListView: React.FC<
                     >
                         <Badge
                             className="mr-2"
-                            variant={
-                                POOL_TRANSACTION_MAP[row.original.act].color
-                            }
+                            variant={POOL_TRANSACTION_MAP["SWAP"].color}
                         >
-                            {POOL_TRANSACTION_MAP[row.original.act].name}
+                            {row.original.type}
                         </Badge>{" "}
-                        {token_in.contract_ticker_symbol}{" "}
-                        {row.original.act === "SWAP" ? "for" : "and"}{" "}
-                        {token_out.contract_ticker_symbol}
+                        {token_0}{" "}
+                        {token_1 === "#" ? "" : "/"}{" "}
+                        {token_1 === "#" ? "" : token_1}
                     </div>
                 );
+                // }
+                // const token_in =
+                //     handleExchangeType(row.original, 0) === "in"
+                //         ? token_0
+                //         : token_1;
+                // const token_out =
+                //     handleExchangeType(row.original, 0) === "out"
+                //         ? token_0
+                //         : token_1;
+                // return (
+                //     <div
+                //         className={
+                //             on_transaction_click
+                //                 ? "cursor-pointer hover:opacity-75"
+                //                 : ""
+                //         }
+                //         onClick={() => {
+                //             if (on_transaction_click) {
+                //                 on_transaction_click(row.original);
+                //             }
+                //         }}
+                //     >
+                //         <Badge
+                //             className="mr-2"
+                //             variant={
+                //                 POOL_TRANSACTION_MAP[row.original.act].color
+                //             }
+                //         >
+                //             {POOL_TRANSACTION_MAP[row.original.act].name}
+                //         </Badge>{" "}
+                //         {token_in.contract_ticker_symbol}{" "}
+                //         {row.original.act === "SWAP" ? "for" : "and"}{" "}
+                //         {token_out.contract_ticker_symbol}
+                //     </div>
+                // );
             },
         },
         {
-            id: "total_quote",
-            accessorKey: "total_quote",
+            id: "totalValue",
+            accessorKey: "totalValue",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="left"
@@ -192,12 +194,12 @@ export const XYKWalletTransactionsListView: React.FC<
             ),
             cell: ({ row }) => {
                 // @ts-ignore
-                return <>{row.original.pretty_total_quote}</>;
+                return <>{prettifyCurrencys(row.original.totalValue)}{" "}{row.original.valueSymbol}</>;
             },
         },
         {
-            id: "amount_0",
-            accessorKey: "amount_0",
+            id: "fromgoodQuanity",
+            accessorKey: "fromgoodQuanity",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="left"
@@ -206,40 +208,13 @@ export const XYKWalletTransactionsListView: React.FC<
                 />
             ),
             cell: ({ row }) => {
-                if (row.original.act !== "SWAP") {
-                    return (
-                        <span>
-                            {handleTokenTransactions(
-                                row.original.act,
-                                "0",
-                                row.original,
-                                row.original.token_0.contract_decimals
-                            )}{" "}
-                            {row.original.token_0.contract_ticker_symbol}
-                        </span>
-                    );
-                }
-                const token_in =
-                    handleExchangeType(row.original, 0) === "in" ? "0" : "1";
-                return (
-                    <span>
-                        {handleTokenTransactions(
-                            row.original.act,
-                            token_in,
-                            row.original,
-                            row.original[`token_${token_in}`].contract_decimals
-                        )}{" "}
-                        {
-                            row.original[`token_${token_in}`]
-                                .contract_ticker_symbol
-                        }
-                    </span>
-                );
+                // @ts-ignore
+                return (<span>{prettifyCurrencys(row.original.fromgoodQuanity)}{" "}{row.original.symbol1}</span>);
             },
         },
         {
-            id: "amount_1",
-            accessorKey: "amount_1",
+            id: "togoodQuantity",
+            accessorKey: "togoodQuantity",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="left"
@@ -248,38 +223,96 @@ export const XYKWalletTransactionsListView: React.FC<
                 />
             ),
             cell: ({ row }) => {
-                if (row.original.act !== "SWAP") {
-                    return (
-                        <span>
-                            {handleTokenTransactions(
-                                row.original.act,
-                                "1",
-                                row.original,
-                                row.original.token_1.contract_decimals
-                            )}{" "}
-                            {row.original.token_1.contract_ticker_symbol}
-                        </span>
-                    );
-                }
-                const token_in =
-                    handleExchangeType(row.original, 0) === "out" ? "0" : "1";
-                const token_amount = handleTokenTransactions(
-                    row.original.act,
-                    token_in,
-                    row.original,
-                    row.original[`token_${token_in}`].contract_decimals
-                );
-                return (
-                    <span>
-                        {token_amount}{" "}
-                        {
-                            row.original[`token_${token_in}`]
-                                .contract_ticker_symbol
-                        }
-                    </span>
-                );
+                // @ts-ignore
+                const name = prettifyCurrencys(row.original.togoodQuantity) +" "+ row.original.symbol2;
+                return (<span>{row.original.symbol2 === "#" ? "-" : name}</span>);
             },
         },
+        // {
+        //     id: "fromgoodQuanity",
+        //     accessorKey: "fromgoodQuanity",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="left"
+        //             header_name={"Token Amount"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         if (row.original.act !== "SWAP") {
+        //             return (
+        //                 <span>
+        //                     {handleTokenTransactions(
+        //                         row.original.act,
+        //                         "0",
+        //                         row.original,
+        //                         row.original.token_0.contract_decimals
+        //                     )}{" "}
+        //                     {row.original.token_0.contract_ticker_symbol}
+        //                 </span>
+        //             );
+        //         }
+        //         const token_in =
+        //             handleExchangeType(row.original, 0) === "in" ? "0" : "1";
+        //         return (
+        //             <span>
+        //                 {handleTokenTransactions(
+        //                     row.original.act,
+        //                     token_in,
+        //                     row.original,
+        //                     row.original[`token_${token_in}`].contract_decimals
+        //                 )}{" "}
+        //                 {
+        //                     row.original[`token_${token_in}`]
+        //                         .contract_ticker_symbol
+        //                 }
+        //             </span>
+        //         );
+        //     },
+        // },
+        // {
+        //     id: "amount_1",
+        //     accessorKey: "amount_1",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="left"
+        //             header_name={"Token Amount"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         if (row.original.act !== "SWAP") {
+        //             return (
+        //                 <span>
+        //                     {handleTokenTransactions(
+        //                         row.original.act,
+        //                         "1",
+        //                         row.original,
+        //                         row.original.token_1.contract_decimals
+        //                     )}{" "}
+        //                     {row.original.token_1.contract_ticker_symbol}
+        //                 </span>
+        //             );
+        //         }
+        //         const token_in =
+        //             handleExchangeType(row.original, 0) === "out" ? "0" : "1";
+        //         const token_amount = handleTokenTransactions(
+        //             row.original.act,
+        //             token_in,
+        //             row.original,
+        //             row.original[`token_${token_in}`].contract_decimals
+        //         );
+        //         return (
+        //             <span>
+        //                 {token_amount}{" "}
+        //                 {
+        //                     row.original[`token_${token_in}`]
+        //                         .contract_ticker_symbol
+        //                 }
+        //             </span>
+        //         );
+        //     },
+        // },
         {
             id: "actions",
             cell: ({ row }) => {
@@ -364,11 +397,6 @@ export const XYKWalletTransactionsListView: React.FC<
                 </TableRow>
             ) : !error.error && table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => {
-                    if (
-                        !row.original.token_0?.contract_ticker_symbol &&
-                        !row.original.token_1?.contract_ticker_symbol
-                    )
-                        return;
                     return (
                         <Fragment key={row.id}>
                             <TableRow
@@ -412,10 +440,10 @@ export const XYKWalletTransactionsListView: React.FC<
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
-                                                  header.column.columnDef
-                                                      .header,
-                                                  header.getContext()
-                                              )}
+                                                header.column.columnDef
+                                                    .header,
+                                                header.getContext()
+                                            )}
                                     </TableHead>
                                 );
                             })}

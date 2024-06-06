@@ -193,7 +193,7 @@ export const XYKOverviewTransactionsListView: React.FC<
                 ),
                 cell: ({ row }) => {
                     // @ts-ignore
-                    return <>{prettifyCurrencys(row.original.totalValue)}</>;
+                    return <>{prettifyCurrencys(row.original.totalValue)}{" "}{row.original.valueSymbol}</>;
                 },
             },
             {
