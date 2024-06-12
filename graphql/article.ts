@@ -278,7 +278,7 @@ export function myInvestGoodDatas(params) {
 				tokenname
 				tokensymbol
 			}
-			proofStates {
+			proofStates(where: {owner: $address}) {
 				createTime
 				good1ContructFee
 				good1Quantity
