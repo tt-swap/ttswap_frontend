@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/pagination";
 
 import { GoodsDatas } from '@/graphql/data.processing';
-import { prettifyCurrencys } from '@/graphql/data.processing.util';
+import { prettifyCurrencys } from '@/graphql/util';
 
 export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
     chain_name,

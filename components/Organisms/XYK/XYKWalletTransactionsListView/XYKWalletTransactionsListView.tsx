@@ -37,7 +37,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { myTransactionsDatas } from '@/graphql/data.processing';
-import { prettifyCurrencys } from '@/graphql/data.processing.util';
+import { prettifyCurrencys } from '@/graphql/util';
 
 export const XYKWalletTransactionsListView: React.FC<
     XYKWalletTransactionsListViewProps

@@ -7,8 +7,13 @@ import { isMobile } from 'react-device-detect';
 type Props = PropsWithChildren<{
   open: boolean;
   setOpen: (value: boolean) => void;
+  title: string;
 }>;
-const TokenSwapModal = ({ open, setOpen, children }: Props) => {
+const TokenSwapModal = ({ open, setOpen, title, children }: Props) => {
+  const handleClose = (a: boolean, b: string) => {
+    setOpen(a);
+    document.body.style.overflow = b;
+  };
   return (
     <Modal
       style={{
@@ -18,16 +23,18 @@ const TokenSwapModal = ({ open, setOpen, children }: Props) => {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.9)",
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
           display: "flex",
-          zIndex: 10,
+          zIndex: 9999,
           justifyContent: "center",
           alignItems: "center",
+          overflow: "hidden",
+
         },
         content: {
-          height: isMobile ? "80%": "450px",
+          height: isMobile ? "80%" : "450px",
           position: "unset",
-          background: "transparent",
+          background: "#fff",
           outline: "none",
           padding: 0,
           border: "none",
@@ -35,21 +42,33 @@ const TokenSwapModal = ({ open, setOpen, children }: Props) => {
           overflowY: "auto",
           display: "flex",
           justifyContent: "center",
+          width: "50vw",
+          overflow: "hidden auto",
+          maxWidth: "420px",
+          maxHeight: "660px",
+          minHeight: "300px",
+          borderRadius: "20px",
+          margin: "auto",
+          fontFamily: "Basel, sans-serif",
         },
       }}
       isOpen={open}
-      onRequestClose={() => setOpen(false)}
+      onRequestClose={() => handleClose(false, "")}
       shouldReturnFocusAfterClose={false}
     >
       <div className="relative w-full md:w-[450px]">
-        <button
-          className={"text-black z-50 cursor-pointer absolute top-4 right-4"}
-          type="button"
-          onClick={() => setOpen(false)}
+        <div
+          style={{ padding: "20px 20px 16px 20px", fontWeight: "500" }}
+          className="flex justify-between"
         >
-          {/* <img className="text-black" src={assets.close} alt="close" /> */}
-          <img className="text-black" src={"/close.svg"} alt="close" />
-        </button>
+          <div>{title}</div>
+          <button
+            type="button"
+            onClick={() => handleClose(false, "")}
+          >
+            <img className="text-black" src={"/close_1.svg"} alt="close" />
+          </button>
+        </div>
         {children}
       </div>
     </Modal>

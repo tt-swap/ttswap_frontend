@@ -20,7 +20,7 @@ import {
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize";
 
 import { ecosystemChartDatas } from '@/graphql/data.processing';
-import { prettifyCurrencys } from '@/graphql/data.processing.util';
+import { prettifyCurrencys } from '@/graphql/util';
 
 
 let  currencys:string ='';

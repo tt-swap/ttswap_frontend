@@ -13,7 +13,7 @@ export const useBlockChainPriceStore = create<PriceStore>((set) => ({
   getPrices: async () => {
     set({ isFetching: true });
     const prices = await priceService.getPrices();
-    console.log("prices:", prices);
+    // console.log("prices:", prices);
     set({ prices: prices, isFetching: false });
   },
 }));

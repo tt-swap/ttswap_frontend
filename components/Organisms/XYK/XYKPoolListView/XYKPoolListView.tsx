@@ -44,7 +44,7 @@ import {
 import { SkeletonTable } from "@/components/ui/skeletonTable";
 
 import { investGoodsDatas } from '@/graphql/data.processing';
-import { prettifyCurrencys } from '@/graphql/data.processing.util';
+import { prettifyCurrencys } from '@/graphql/util';
 
 export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
     chain_name,

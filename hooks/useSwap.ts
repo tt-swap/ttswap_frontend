@@ -9,7 +9,8 @@ const useSwap = () => {
   const { swaps, setSwap } = useSwapStore();
   const { pricesMap, estimate } = usePrices();
 
-  const setToken = (element: SwapKeys, value: string) => {
+  const setToken = (element: string, value: string) => {
+    console.log(element,"******",swaps)
     if (element === SwapKeys.From) {
       const estimation = estimate({
         from: swaps.to.token,

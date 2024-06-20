@@ -39,7 +39,7 @@ import { SkeletonTable } from "@/components/ui/skeletonTable";
 import { calculateFeePercentage } from "@/utils/functions/calculate-fees-percentage";
 
 import { myInvestGoodsDatas } from '@/graphql/data.processing';
-import { prettifyCurrencys } from '@/graphql/data.processing.util';
+import { prettifyCurrencys } from '@/graphql/util';
 
 export const XYKWalletPositionsListView: React.FC<
     XYKWalletPositionsListViewProps

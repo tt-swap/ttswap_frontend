@@ -29,13 +29,16 @@ export default function Swap({ params }: { params: { chain: string, dex: string 
   },[])
   
   return (
-    <div className="w-full flex flex-col gap-4 bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%">
+    <div
+    style={{margin: "68px auto"}}
+    //  className="w-full flex flex-col gap-4 bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%"
+     >
         <TokenSwap />
         <Flex onClick={()=>{
           router.back()
         }}>
             
-          <Button>Back</Button>
+          {/* <Button>Back</Button> */}
         </Flex>
     </div>
   )
