@@ -14,6 +14,7 @@ import bsc_Logo from "assets/svg/bsc_Logo.svg";
 import optimistim_Logo from "assets/svg/optimistim_Logo.svg";
 import { chainIds } from "data/chainIds";
 import { useSwitchChain, useWindowSize } from "hooks";
+import { StaticImageData } from "next/image";
 
 const styles = {
   item: {
@@ -36,13 +37,13 @@ const ChainSelector: FC = () => {
   const switchChain = useSwitchChain();
   const { chainId, isActive } = useWeb3React();
   const { isTablet } = useWindowSize();
+  const [chainId1, setChainId] = useState(1);
   const [selected, setSelected] = useState<MenuItem>();
   const [label, setLabel] = useState<JSX.Element>();
-
-  const labelToShow = (logo: string, alt: string) => {
+  const labelToShow = (logo: StaticImageData, alt: string) => {
     return (
       <div style={{ display: "inline-flex", alignItems: "center" }}>
-        <img src={logo} alt={alt} style={{ width: "25px", height: "25px", borderRadius: "10px", marginRight: "5px" }} />
+        <img src={logo.src} alt={alt} style={{ width: "25px", height: "25px", borderRadius: "10px", marginRight: "0" }} />
       </div>
     );
   };
@@ -66,45 +67,53 @@ const ChainSelector: FC = () => {
     ],
     []
   );
-
+  
+  // useEffect(() => {setChainId(1);});
   useEffect(() => {
-    if (!chainId) return;
-
+    if (chainId) setChainId(chainId);
+    
+// if (!chainId1) return;
     let selectedLabel;
-    if (chainId === 1 || chainId === 11155111) {
+    if (chainId1 === 1 || chainId1 === 11155111) {
       selectedLabel = labelToShow(ethereum_Logo, "Ethereum_logo");
-    } else if (chainId === 137 || chainId === 80001) {
+    } else if (chainId1 === 137 || chainId1 === 80001) {
       selectedLabel = labelToShow(polygon_logo, "Polygon_logo");
-    } else if (chainId === 10 || chainId === 420) {
+    } else if (chainId1 === 10 || chainId1 === 420) {
       selectedLabel = labelToShow(optimistim_Logo, "Optimistim_Logo");
-    } else if (chainId === 280 || chainId === 324) {
+    } else if (chainId1 === 280 || chainId1 === 324) {
       selectedLabel = labelToShow(zksync_Logo, "zksync_Logo");
-    } else if (chainId === 250 || chainId === 4002) {
+    } else if (chainId1 === 250 || chainId1 === 4002) {
       selectedLabel = labelToShow(fantom_Logo, "Fantom_Logo");
-    } else if (chainId === 42161 || chainId === 421614) {
+    } else if (chainId1 === 42161 || chainId1 === 421614) {
       selectedLabel = labelToShow(arbitrum_Logo, "Arbitrum_Logo");
     } else {
       selectedLabel = undefined;
     }
 
     setLabel(selectedLabel);
-    setSelected(items.find((item) => item?.key === chainId.toString()));
-  }, [chainId]);
+    setSelected(items.find((item) => item?.key === chainId1.toString()));
+  }, [chainId1,chainId]);
 
   const onClick: MenuProps["onClick"] = async ({ key }) => {
-    await switchChain(Number(key)).catch((error) => {
-      console.error(`"Failed to switch chains: " ${error}`);
-    });
+    if (!isActive) {
+      setChainId(key*1);
+    } else {
+      // setChainId(key*1);
+      await switchChain(Number(key)).catch((error) => {
+        console.error(`"Failed to switch chains: " ${error}`);
+      });
+    }
+    console.log(chainId1,key,999)
   };
 
-  if (!chainId || !isActive) return null;
+  // if (!chainId || !isActive) return null;
 
   return (
     <div>
       <Dropdown menu={{ items, onClick }}>
         <Button style={{ ...styles.button, ...styles.item }}>
           {!selected && <span style={{ marginLeft: "5px" }}>Select Chain</span>}
-          {selected && isTablet ? (
+          {selected ? (
             <div style={{ display: "flex", alignItems: "center", minWidth: "25px" }}>
               <span style={{ paddingTop: "5px" }}>{label}</span>
             </div>

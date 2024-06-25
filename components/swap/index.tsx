@@ -9,11 +9,17 @@ import InputNumber from "rc-input-number";
 import { useMemo, useEffect, useState } from "react";
 
 import { ArrowDownOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider, Collapse } from 'antd';
+import { Button, ConfigProvider, Collapse, Select, Avatar } from 'antd';
 import type { CollapseProps } from 'antd';
 
-import { splitNumber } from '@/graphql/util';
+import { prettifyCurrencys } from '@/graphql/util';
 import { GoodsDatas } from '@/graphql/swap/index';
+
+import ChainSelector from "@/components/ChainSelector";
+
+// git提交描述
+// swap module overall change adjustment；
+// ﻿graphql catalog optimization and adjustment.
 
 const styles = {
   wrapper:
@@ -36,33 +42,47 @@ const styles = {
   price: "w-full text-black flex flex-row justify-between px-3",
   label: "block px-2 text-sm font-medium text-black",
   inputWrapper: "w-full flex flex-row gap-12",
-  balance: "px-2 flex justify-between text-sm",
+  balance: "p-2 flex justify-between text-sm",
 };
 
 const TokenSwap = () => {
   const {
     swaps,
-    computedPrice,
+    swapsAmount,
+    fromPrice,
+    toPrice,
+    priceImpact,
     handleSwap,
     setAmount,
     setToken,
+    setFocus,
     handleFlip,
     swapArray,
     disabled,
   } = useSwap();
   const { balanceMap } = useWallet();
 
-  const isDisabled = useMemo(() => {
-    if (!balanceMap[swaps.from.token]) {
+  const isDisabled = useMemo(async () => {
+    const bal = await balanceMap;
+    if (!bal?.from) {
       return disabled;
     }
-    return swaps.from.amount > balanceMap[swaps.from.token].balance || disabled;
-  }, [swaps.from.amount, disabled, balanceMap[swaps.from.token]]);
+    return swapsAmount.from.amount > bal.from || disabled;
+  }, [swapsAmount.from.amount, disabled, balanceMap]);
 
   const [isFees, setFees] = useState(false);
   const [istotal, setIstotal] = useState(false);
   const [tolerance, setTolerance] = useState(0.5);
+  const [balanceF, setBalanceF] = useState(0);
+  const [balanceT, setBalanceT] = useState(0);
 
+  useMemo(async () => {
+    const bal = await balanceMap;
+    if(bal?.from)
+    setBalanceF(bal?.from)
+    if(bal?.to)
+    setBalanceT(bal?.to)
+  },[balanceMap]);
 
   const handleFees = () => {
     if (isFees) {
@@ -71,23 +91,26 @@ const TokenSwap = () => {
       setFees(true);
     }
   };
-  // useEffect(() => {
-  //   (async () => {
-  //     console.log(await GoodsDatas({ id: 1 }), 9999)
-  //   })();
-  // })
+  useEffect(() => {
+    console.log(0);
+    (async () => {
+      let tokens: any = await GoodsDatas({ id: 0 });
+      console.log(tokens.tokenValue[0], 9999)
+      setToken("from", tokens.tokenValue[0])
+    })();
+  }, [])
   // console.log(balanceMap)
   return (
     <div className={""} >
+      {/* <ChainSelector/> */}
       <div className={cn(styles.boxContainer, "box-shadow")}>
-
         <form className="">
           <div className="flex justify-between h-[30px]">
             <h5 className="text-2xl font-semibold mb-4">Swap Token</h5>
             <TokenSwapSetting
               value={tolerance}
               value1={istotal}
-              onChange={(val,val1) => {
+              onChange={(val, val1) => {
                 setTolerance(val)
                 setIstotal(val1)
               }}
@@ -101,7 +124,7 @@ const TokenSwap = () => {
               );
             })} */}
           <div
-            key={swaps["from"].token + 0}
+            // key={swaps.from.symbol + 0}
             className="border z-11 rounded-xl p-2 space-y-4"
             style={{ marginTop: "20px" }}
           >
@@ -110,50 +133,52 @@ const TokenSwap = () => {
             </label>
             <div className="swToFT">
               <InputNumber
-                // disabled={swaps["from"].token === DEFAULT_TOKEN}
+                disabled={swaps.from.symbol === DEFAULT_TOKEN}
                 // width={85}
                 min={0}
                 type="number"
                 max={999999999}
                 pattern="[0-9]*[.]?[0-9]+"
                 name={"from"}
-                value={swaps["from"].amount}
-                onChange={(e) => setAmount("from", e || 0)}
+                value={swapsAmount.from.amount}
+                onChange={(e) => {setAmount("from", e);setFocus("from")}}
                 className={styles.input}
+                controls={false}
+                placeholder="0"
               />
               <TokenSwapSelector
-                value={"ATOM"}
+                value={swaps.from}
                 onChange={(val) => setToken("from", val)}
               />
             </div>
             <div className={styles.balance}>
               <span>
-                ${computedPrice}{" "}
-                {computedPrice !== 0 &&
-                  swaps["from"].token !== DEFAULT_TOKEN && (
-                    <span className="text-[#63ae8e] ml-2">0,05%</span>
+                {fromPrice>0?fromPrice:0}{" TTSUSDT"}{" "}
+                {fromPrice !== 0 &&
+                  swaps.from.symbol !== DEFAULT_TOKEN && (
+                    <span className="text-[#63ae8e] ml-2">{swaps.from.sellFee*100}%</span>
                   )}
               </span>
-              {/* <span
+              <span
                   className={cn(
-                    swaps["from"].token !== DEFAULT_TOKEN &&
-                    swaps["from"].amount >
-                    balanceMap[swaps["from"].token].balance &&
+                    swaps.from.symbol !== DEFAULT_TOKEN &&
+                    swapsAmount.from.amount >
+                    balanceF &&
                     "text-red-500 shake"
                   )}
-                > */}
-              {/* Balance:{" "} */}
-              {/* <span
+                >
+              Balance:{" "}
+              <span
                     className="cursor-pointer"
                   // onClick={() =>
-                  //   setAmount(el, balanceMap[swaps["from"].token].balance)
+                  //   setAmount(el, balanceMap[swaps.from.symbol].balance)
                   // }
                   >
-                    {swaps["from"].token !== DEFAULT_TOKEN
-                      ? balanceMap[swaps["from"].token].balance
+                    {swaps.from.symbol !== DEFAULT_TOKEN
+                      ? balanceF
                       : 0}
-                  </span> */}
-              {/* </span> */}
+                  </span>
+              </span>
             </div>
           </div>
           <div className="swapBut">
@@ -165,7 +190,7 @@ const TokenSwap = () => {
             </Button>
           </div>
           <div
-            key={swaps["from"].token + 0}
+            // key={swaps.from.symbol + 0}
             className="border z-11 rounded-xl p-2"
           >
             <label className={styles.label}>
@@ -173,35 +198,37 @@ const TokenSwap = () => {
             </label>
             <div className="swToFT">
               <InputNumber
-                disabled={swaps["to"].token === DEFAULT_TOKEN}
+                disabled={swaps.to.symbol === DEFAULT_TOKEN}
                 width={85}
                 min={0}
                 type="number"
                 max={999999999}
                 pattern="[0-9]*[.,]?[0-9]+"
                 name={"to"}
-                value={swaps["to"].amount}
-                // onChange={(e) => setAmount("from", e || 0)}
+                value={swapsAmount.to.amount}
+                onChange={(e) => {setAmount("to", e);setFocus("to")}}
                 className={styles.input}
+                controls={false}
+                placeholder="0"
               />
               <TokenSwapSelector
-                value={swaps["to"].token}
+                value={swaps.to}
                 onChange={(val) => setToken("to", val)}
               />
             </div>
             <div className={styles.balance}>
               <span>
-                ${computedPrice}{" "}
-                {computedPrice !== 0 &&
-                  swaps["to"].token !== DEFAULT_TOKEN && (
-                    <span className="text-[#63ae8e] ml-2">0,05%</span>
+                {toPrice>0?toPrice:0}{" TTSUSDT"}{" "}
+                {toPrice !== 0 &&
+                  swaps.to.symbol !== DEFAULT_TOKEN && (
+                    <span className="text-[#63ae8e] ml-2">{swaps.to.buyFee*100}%</span>
                   )}
               </span>
               <span
                 className={cn(
-                  swaps["to"].token !== DEFAULT_TOKEN &&
-                  swaps["to"].amount >
-                  balanceMap[swaps["to"].token].balance &&
+                  swaps.to.symbol !== DEFAULT_TOKEN &&
+                  swapsAmount.to.amount >
+                  balanceT &&
                   "text-red-500 shake"
                 )}
               >
@@ -209,11 +236,11 @@ const TokenSwap = () => {
                 <span
                   className="cursor-pointer"
                 // onClick={() =>
-                //   setAmount(el, balanceMap[swaps["from"].token].balance)
+                //   setAmount(el, balanceMap[swaps.from.token].balance)
                 // }
                 >
-                  {swaps["to"].token !== DEFAULT_TOKEN
-                    ? balanceMap[swaps["to"].token].balance
+                  {swaps.to.symbol !== DEFAULT_TOKEN
+                    ? balanceT
                     : 0}
                 </span>
               </span>
@@ -233,49 +260,52 @@ const TokenSwap = () => {
         </form>
         <div>
           <div>
-            <div className="flex justify-between">
+            <div className="flex justify-between pt-4">
               <div>Price impact warning</div>
-              <div>-33.55%</div>
+              <div>{priceImpact?priceImpact+'%':''}</div>
             </div>
           </div>
         </div>
-        <div className="p-4 text-sm">
-          {/* <span>Price</span> <span>${computedPrice}</span> */}
-          <div className="flex cursor-pointer justify-between"
-            onClick={handleFees}>
-            <div>1 DAI = 0.00029 ETH($1.00)</div>
-            <div>
-              {isFees && (
-                <UpOutlined />
-              )}
-              {!isFees && (
-                <DownOutlined />
-              )}
-            </div>
-          </div>
-          {isFees && (
-            <div>
-              <div className="se pt-4">
-                <div className="flex justify-between">
-                  <div>Price impact</div>
-                  <div>-33.55%</div>
-                </div>
-                <div className="flex justify-between">
-                  <div>Tolerance</div>
-                  <div>0.5%</div>
-                </div>
-                <div className="flex justify-between">
-                  <div>Fee</div>
-                  <div>0.1%</div>
-                </div>
-                <div className="flex justify-between">
-                  <div>Network cost</div>
-                  <div>11 Usdt</div>
-                </div>
+        {swaps.to.symbol !== DEFAULT_TOKEN && (
+
+          <div className="p-4 text-sm">
+            {/* <span>Price</span> <span>${computedPrice}</span> */}
+            <div className="flex cursor-pointer justify-between"
+              onClick={handleFees}>
+              <div>1 {swaps.to.symbol} = {(swaps.to.price / swaps.from.price).toFixed(6)} {swaps.from.symbol}</div>
+              <div>
+                {isFees && (
+                  <UpOutlined />
+                )}
+                {!isFees && (
+                  <DownOutlined />
+                )}
               </div>
             </div>
-          )}
-        </div>
+            {isFees && (
+              <div>
+                <div className="se pt-4">
+                  <div className="flex justify-between">
+                    <div>Price impact</div>
+                    <div>{priceImpact?priceImpact+'%':''}</div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div>Tolerance</div>
+                    <div>{tolerance}%</div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div>Fee</div>
+                    <div>{(swaps.to.buyFee + swaps.from.sellFee)*100}%</div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div>Network cost</div>
+                    <div>11 Usdt</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

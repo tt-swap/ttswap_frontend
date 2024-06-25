@@ -5,9 +5,10 @@ import { WalletConnect } from "@web3-react/walletconnect-v2";
 import { getAddChainParameters } from "data/networks";
 
 export function useSwitchChain() {
-  const { connector } = useWeb3React();
+  const { connector,isActive } = useWeb3React();
 
   const switchChain = async (desiredChain: number) => {
+    if (!isActive) return;
     if (connector instanceof WalletConnect || connector instanceof Network) {
       await connector.activate(desiredChain === -1 ? undefined : desiredChain);
     } else {

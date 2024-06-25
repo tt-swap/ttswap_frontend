@@ -1,5 +1,5 @@
 import { DEFAULT_TOKEN } from "@/shared/constants/common";
-import { SwapState } from "@/shared/types/token";
+import { SwapState,AmountState } from "@/shared/types/token";
 import { create } from "zustand";
 
 interface SwapStore {
@@ -9,16 +9,34 @@ interface SwapStore {
 
 const initDefaultSwap = (): SwapState => ({
   from: {
-    token: DEFAULT_TOKEN,
-    amount: 0,
+    symbol: DEFAULT_TOKEN,
+    id: "",
+    buyFee: 0,
+    sellFee: 0,
+    price: 0,
+    logo_url: "",
+    address: "",
+    currentQuantity: 0,
+    currentValue: 0
   },
   to: {
-    token: DEFAULT_TOKEN,
-    amount: 0,
+    symbol: DEFAULT_TOKEN,
+    id: "",
+    buyFee: 0,
+    sellFee: 0,
+    price: 0,
+    logo_url: "",
+    address: "",
+    currentQuantity: 0,
+    currentValue: 0
   },
 });
 
 export const useSwapStore = create<SwapStore>((set) => ({
+  
   swaps: initDefaultSwap(),
-  setSwap: async (newSwaps: SwapState) => set({ swaps: newSwaps }),
+  setSwap: async (newSwaps: SwapState) => {
+    console.log(newSwaps,"****");
+    set({ swaps: newSwaps })
+  },
 }));

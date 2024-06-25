@@ -1,8 +1,25 @@
 export type Token = { currency: string; file: string };
 
-export interface TokenPayload {
+export interface TokenAmount {
+  id: string | number | '';
   token: string;
-  amount: number;
+  amount: number | '';
+}
+
+export interface AmountState {
+  from: TokenAmount;
+  to: TokenAmount;
+}
+export interface TokenPayload {
+  id: string | number;
+  symbol: string;
+  buyFee: number;
+  sellFee: number;
+  price: number;
+  logo_url: string;
+  address: string;
+  currentQuantity: number;
+  currentValue: number;
 }
 
 export interface SwapState {
@@ -16,6 +33,7 @@ export interface SwapTokenValue {
   decimals: number;
   symbol: string;
   currentQuantity: number;
+  currentValue: number;
   buyFee: number;
   sellFee: number;
   price: number;

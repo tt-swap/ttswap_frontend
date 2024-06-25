@@ -2,27 +2,37 @@ import usePrices from "@/hooks/usePrices";
 import useTokens from "@/hooks/useTokens";
 import { DEFAULT_TOKEN } from "@/shared/constants/common";
 import { Price } from "@/shared/types/price";
-import { SwapToken, SwapTokenValue } from "@/shared/types/token";
+import { TokenPayload, SwapTokenValue } from "@/shared/types/token";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 // @ts-ignore
 import Modal from "react-modal";
 import TokenSwapModal from "./TokenSwapModal";
 import ImgCache from "./components/common/ImgCache";
+import ChainSelector from "@/components/ChainSelector";
 
 import { SearchOutlined, DownOutlined } from '@ant-design/icons';
-import { Input, Select, Button, Tree } from 'antd';
-import type { TreeProps , TreeDataNode } from 'antd';
+import { Input, Select, Button, Tree,Avatar } from 'antd';
+import type { TreeProps, TreeDataNode } from 'antd';
 
 import { prettifyCurrencys } from '@/graphql/util';
 import { GoodsDatas } from '@/graphql/swap/index';
 
+const { Option } = Select;
+
+
+const sel = [
+  { value: 'jack', label: 'Jack' },
+  { value: 'lucy', label: 'Lucy' },
+  { value: 'Yiminghe', label: 'yiminghe' },
+  { value: 'disabled', label: 'Disabled', disabled: true },
+];
 // type DirectoryTreeProps = GetProps<typeof Tree.DirectoryTree>;
 
 const { DirectoryTree } = Tree;
 
 interface Props {
-  value: string;
-  onChange: (value: string) => void;
+  value: TokenPayload;
+  onChange: (value:SwapTokenValue) => void;
 }
 
 type LocalCurrency = Partial<SwapTokenValue>;
@@ -63,8 +73,8 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
               </span>
               <span className="magL">
                 <span>stock:{prettifyCurrencys(el1.currentQuantity)}</span>
-                <span>buyFee:{el1.buyFee}%</span>
-                <span>sellFee:{el1.sellFee}%</span>
+                <span>buyFee:{el1.buyFee*100}%</span>
+                <span>sellFee:{el1.sellFee*100}%</span>
               </span>
             </>);
 
@@ -74,14 +84,18 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
     })()
   }, [keyword]);
   // console.log(availableTokens,222)
-  const isDefault = value === DEFAULT_TOKEN;
+  const isDefault = value.symbol === DEFAULT_TOKEN;
 
-  const showModal = (el: any) => {
+  const showModal = (el:SwapTokenValue) => {
     // console.log(222)
     setOpen(false);
-    onChange(el.symbol || DEFAULT_TOKEN)
+    onChange(el)
   };
 
+  const onSearch = (value: string) => {
+    console.log('search:', value);
+    };
+    
   useEffect(() => {
     Modal.setAppElement("body");
     const input: HTMLInputElement | null = document.querySelector('input');
@@ -93,7 +107,8 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
   const onSelect: TreeProps['onSelect'] = (keys: any, info: any) => {
     // console.log('Trigger Select', info);
     if (info.node.nodePd) {
-
+      setOpen(false);
+      onChange(info.node);
       console.log('Trigger Select', keys, info);
     }
   };
@@ -110,26 +125,26 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
               autoFocus
               placeholder="Search name or paste address"
               prefix={<SearchOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
-              onChange={(e:any) => setKeyword(e.target.value)}
+              onChange={(e: any) => setKeyword(e.target.value)}
               value={keyword}
             />
-            <Select
-              placeholder="Select Chain"
-              options={[
-                {
-                  value: 'jack',
-                  label: 'Jack',
-                },
-                {
-                  value: 'lucy',
-                  label: 'Lucy',
-                },
-                {
-                  value: 'tom',
-                  label: 'Tom',
-                },
-              ]}
-            />
+            <ChainSelector/>
+            {/* <Select
+              defaultValue={sel[0].value}
+              popupMatchSelectWidth={false}
+              onChange={onSearch}
+            >
+              {sel.map(item => (
+                <Option key={item.value} value={item.value}>
+                  <div>
+                    <Avatar size="small" src={<img src="/token.png" alt="avatar" />} >
+                      {item.value[0]}
+                    </Avatar>{" "}
+                    {item.label}
+                  </div>
+                </Option>
+              ))}
+            </Select> */}
           </div>
           <div className="flex sel-token flexWap">
             {availableTokens.map((el: any) => (
@@ -138,14 +153,18 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
                 key={el.id}
                 className="flex row cursor-pointer butSty but-hov"
               >
-                <ImgCache alt="icon" className="w-6" src={"/token.png"} />
+                <ImgCache alt="icon"
+                 className="w-6"
+                  src={"/token.png"}
+                  // src={value.logo_url}
+                 />
                 <span className="text-lg block">{el.symbol}</span>
               </div>
             ))}
           </div>
         </div >
         <div className="divider" />
-        <div style={{ padding: "10px 0" }}>
+        <div style={{ paddingTop: "10px" }}>
           <DirectoryTree
             showIcon={false}
             switcherIcon={<DownOutlined />}
@@ -164,26 +183,17 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
           onClick={() => handleClose(true, "hidden")}
           icon={<DownOutlined />}
           iconPosition={"end"}
-          >
-          <span className="text-lg block">{value}</span>
+        >
+          <span className="text-lg block">{value.symbol}</span>
           {!isDefault && (
             <ImgCache
               alt="icon"
               className="w-6"
               src={"/token.png"}
+              // src={value.logo_url}
             />
           )}
-          {/* <DownOutlined onPointerEnterCapture={undefined} onPointerLeaveCapture={undefined} /> */}
         </Button>
-        {/* {!isDefault && (
-          <ImgCache
-            alt="icon"
-            className="w-6"
-            src={"/token.png"}
-          />
-        )}
-        <span className="text-lg block">{value}</span>
-        <DownOutlined /> */}
       </div>
     </>
   );

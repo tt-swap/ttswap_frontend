@@ -6,7 +6,7 @@ import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
 import ConnectAccount from "components/components/Account/ConnectAccount";
-import ChainSelector from "components/components/ChainSelector";
+import ChainSelector from "@/components/ChainSelector";
 import { useWindowSize } from "hooks";
 
 export function SiteHeader() {
@@ -16,7 +16,7 @@ export function SiteHeader() {
         <MainNav items={siteConfig.mainNav} />
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
-            {/* <ChainSelector /> */}
+            <ChainSelector />
             <ConnectAccount />
             <Link
               href={siteConfig.links.github}

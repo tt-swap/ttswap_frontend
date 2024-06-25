@@ -4,13 +4,6 @@ import TokenSwapModal from "./TokenSwapModal";
 import "./swap.css";
 import { Switch,Input } from 'antd';
 
-const settingStyle = {
-  display:"flex",
-  justifyContent:"space-between",
-  backgroundColor:"rgb(246 246 246)"
-
-}
-
 interface Props {
   value: number;
   value1: boolean;
