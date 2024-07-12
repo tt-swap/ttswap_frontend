@@ -15,6 +15,7 @@ export interface XYKPoolDetailViewProps {
     chain_name: Chain;
     dex_name: string;
     pool_address: string;
+    value_good_id:string;
 }
 
 export interface NFTWalletCollectionViewProps {
@@ -46,18 +47,22 @@ export interface TokenTransferMeta {
     chain_name: string;
     contract_ticker_symbol: string;
     logo_url: string;
+    value_good_id:string;
 }
 
 export interface BlockTransactionWithContractTransfersWithDelta
     extends BlockTransactionWithContractTransfers {
     delta_quote: number;
     delta: bigint | null;
+    value_good_id:string;
 }
 
 export interface TokenTransfersListViewProps {
     chain_name: Chain;
     address: string;
     contract_address: string;
+    value_good_id:string;
+    is_over:boolean;
 }
 
 export interface XYKPoolTransactionsListViewProps {
@@ -67,6 +72,8 @@ export interface XYKPoolTransactionsListViewProps {
     on_transaction_click?: Function;
     on_native_explorer_click?: Function;
     on_goldrush_receipt_click?: Function;
+    value_good_id:string;
+    is_over:boolean;
 }
 
 export interface XYKTokenTransactionsListViewProps {
@@ -76,6 +83,8 @@ export interface XYKTokenTransactionsListViewProps {
     on_transaction_click?: Function;
     on_native_explorer_click?: Function;
     on_goldrush_receipt_click?: Function;
+    value_good_id:string;
+    is_over:boolean;
 }
 
 export interface XYKWalletTransactionsListViewProps {
@@ -85,6 +94,9 @@ export interface XYKWalletTransactionsListViewProps {
     on_transaction_click?: Function;
     on_native_explorer_click?: Function;
     on_goldrush_receipt_click?: Function;
+    data_num:number;
+    value_good_id:string;
+    is_over:boolean;
 }
 
 export interface TokenBalancesListViewProps {
@@ -93,6 +105,8 @@ export interface TokenBalancesListViewProps {
     hide_small_balances?: boolean;
     mask_balances?: boolean;
     on_transfer_click?: Function;
+    value_good_id:string;
+    is_over:boolean;
 }
 
 export interface XYKTokenListViewProps {
@@ -100,6 +114,8 @@ export interface XYKTokenListViewProps {
     dex_name: string;
     on_token_click: Function;
     page_size?: number;
+    value_good_id:string;
+    is_over:boolean;
 }
 
 export interface CrossChainBalanceItem extends BalanceItem {
@@ -111,6 +127,10 @@ export interface XYKPoolListViewProps {
     dex_name: string;
     on_pool_click?: Function;
     page_size?: number;
+    value_good_id:string;
+    is_over:boolean;
+    wallet_address: string;
+    data_num:number;
 }
 
 export interface XYKTokenPoolListViewProps {
@@ -118,6 +138,9 @@ export interface XYKTokenPoolListViewProps {
     dex_name: string;
     token_address: string;
     on_pool_click?: Function;
+    value_good_id:string;
+    is_over:boolean;
+    data_num:number;
 }
 
 export interface XYKWalletPoolListViewProps {
@@ -125,6 +148,9 @@ export interface XYKWalletPoolListViewProps {
     dex_name: string;
     wallet_address: string;
     on_pool_click?: Function;
+    data_num:number;
+    value_good_id:string;
+    is_over:boolean;
 }
 
 export interface XYKWalletPositionsListViewProps {
@@ -132,12 +158,18 @@ export interface XYKWalletPositionsListViewProps {
     dex_name: string;
     wallet_address: string;
     on_pool_click?: Function;
+    data_num:number;
+    value_good_id:string;
+    is_over:boolean;
+
 }
 
 export interface XYKTokenDetailViewProps {
     chain_name: Chain;
     dex_name: string;
     token_address: string;
+    value_good_id:string;
+    is_over:boolean;
 }
 
 export interface XYKOverviewTransactionsListViewProps {
@@ -146,6 +178,8 @@ export interface XYKOverviewTransactionsListViewProps {
     on_transaction_click?: Function;
     on_native_explorer_click?: Function;
     on_goldrush_receipt_click?: Function;
+    value_good_id:string;
+    is_over:boolean;
 }
 
 export interface TransactionReceiptViewProps {

@@ -56,7 +56,7 @@ export const TokenAvatar: React.FC<TokenAvatarProps> = ({
                 } else {
                     const response = await fetch(
                         token_url ??
-                            "https://goldrush.vercel.app/icons/token.svg"
+                            "/token.svg"
                     );
                     data = await response.text();
                     svgCache.set(token_url, data);
@@ -97,13 +97,13 @@ export const TokenAvatar: React.FC<TokenAvatarProps> = ({
             style={{ background: chain_color ?? "", padding: "2px" }}
         >
             <img
-                src={token_url ?? "https://goldrush.vercel.app/icons/token.svg"}
+                src={token_url ?? "/token.svg"}
                 alt="Token Image"
                 style={{ background: "#fff" }}
                 className={`h-full w-full rounded-[100%] p-0.5`}
                 onError={(e) => {
                     e.currentTarget.src =
-                        "https://goldrush.vercel.app/icons/token.svg";
+                        "/token.svg";
                 }}
             />
             {sub_url && (
@@ -117,7 +117,7 @@ export const TokenAvatar: React.FC<TokenAvatarProps> = ({
                     className={`${SUB_SIZE} absolute -bottom-2 -left-3 rounded-[100%] p-0.5`}
                     onError={(e) => {
                         e.currentTarget.src =
-                            "https://goldrush.vercel.app/icons/token.svg";
+                            "/token.svg";
                     }}
                 />
             )}

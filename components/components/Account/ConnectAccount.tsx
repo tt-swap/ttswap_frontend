@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 
 import { useWeb3React } from "@web3-react/core";
 import { Button } from "antd";
@@ -45,7 +45,7 @@ interface WantedChain {
 }
 
 const ConnectAccount: React.FC<WantedChain> = () => {
-  const { account } = useWeb3React();
+  const { account,chainId } = useWeb3React();
   const { isTablet } = useWindowSize();
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
@@ -65,11 +65,20 @@ const ConnectAccount: React.FC<WantedChain> = () => {
       // @ts-expect-error close can be returned by wallet
       await connector.close();
     }
+    localStorage.removeItem("wallet");
+    localStorage.removeItem("chainId");
   }, []);
 
+  useMemo(() => {
+    if (account !== undefined) {
+      localStorage.setItem("wallet", account);
+      localStorage.setItem("chainId", chainId);
+    }
+  }, [account, localStorage.getItem("wallet")]);
+  console.log(localStorage.getItem("wallet"), 999)
   return (
     <>
-      {account === undefined ? (
+      {localStorage.getItem("wallet") === "undefined" || localStorage.getItem("wallet") === null ? (
         <div>
           <Button shape="round" type="primary" style={styles.button} onClick={() => setIsAuthModalOpen(true)}>
             Connect Wallet
@@ -80,10 +89,10 @@ const ConnectAccount: React.FC<WantedChain> = () => {
       ) : (
         <>
           <Button style={styles.account} onClick={() => setIsModalVisible(true)}>
-            {account && typeof account === "string" && (
-              <p style={{ marginRight: "5px" }}>{getEllipsisTxt(account, isTablet ? 3 : 6)}</p>
+            {localStorage.getItem("wallet") && typeof localStorage.getItem("wallet") === "string" && (
+              <p style={{ marginRight: "5px" }}>{getEllipsisTxt(localStorage.getItem("wallet"), isTablet ? 3 : 6)}</p>
             )}
-            <Jazzicons seed={account} />
+            <Jazzicons seed={localStorage.getItem("wallet")} />
           </Button>
 
           <DisconnectModal isModalOpen={isModalVisible} setIsModalOpen={setIsModalVisible} disconnect={disconnect} />

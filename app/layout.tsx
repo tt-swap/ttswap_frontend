@@ -17,6 +17,10 @@ import { Footer } from '@/components/footer';
 import { usePathname } from "next/navigation";
 import { Web3ReactProvider } from "@web3-react/core";
 import connectors from "@/connectors";
+import { useMemo, useEffect, useState } from "react";
+import { useValueGood } from "@/stores/valueGood";
+
+import { valueGood } from '@/graphql';
 
 
 interface RootLayoutProps {
@@ -25,6 +29,24 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   let pathname = usePathname();
+
+  const { info, setValueGood } = useValueGood();
+
+  // useEffect(() => {
+  //   (async () => {
+  //     const bal = await valueGood();
+  //     console.log(bal,99999999999)
+  //     // setValueGood({
+  //     //   id: bal.data.goodStates.id,
+  //     //   symbol: "",
+  //     //   name: 0,
+  //     //   logo_url: "",
+  //     //   address: "",
+  //     //   decimals: 0
+  //     // });
+  //   })();
+
+  // }, []);
 
   return (
     <>
@@ -44,10 +66,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <div className="relative flex min-h-screen flex-col">
                   <SiteHeader />
                   <div className="flex-1">{children}</div>
-                  <Analytics />
+                  {/* <Analytics />
                   <Footer/>
                   <KeyDialog />
-                  <Toaster />
+                  <Toaster /> */}
                 </div>
               </DexProvider>
             </Web3ReactProvider>

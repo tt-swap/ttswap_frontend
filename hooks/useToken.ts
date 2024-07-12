@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { BigNumberish } from "ethers";
 import useSWR from "swr";
 
 import GenericERC20Abi from "data/abi/GenericERC20.json";
@@ -30,7 +30,7 @@ export const useToken = (address: string) => {
   const useAllowance = (spender: string, owner: string) => {
     const key = `allowance/${spender}/${owner}`;
     const { data } = useSWR(contract ? [key, "allowance", owner, spender] : null, async () => {
-      const allowance: BigNumber = await fetcher([key, "allowance", owner, spender]);
+      const allowance: BigNumberish = await fetcher([key, "allowance", owner, spender]);
       return parseBigNumberToFloat(allowance, Number(decimals));
     });
 
@@ -40,7 +40,7 @@ export const useToken = (address: string) => {
   const useBalance = (owner: string) => {
     const key = `balance/${owner}`;
     const { data } = useSWR(contract ? [key, "balanceOf", owner] : null, async () => {
-      const bal: BigNumber = await fetcher([key, "balanceOf", owner]);
+      const bal: BigNumberish = await fetcher([key, "balanceOf", owner]);
       return parseBigNumberToFloat(bal, Number(decimals));
     });
 

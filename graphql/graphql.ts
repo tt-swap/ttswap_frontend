@@ -1,12 +1,37 @@
-import { ApolloClient, InMemoryCache } from '@apollo/client'
+import apolloClient from '@/graphql/apollo'
+import { gql } from '@apollo/client'
 
-const APIURL = 'https://api.studio.thegraph.com/query/57827/ttswap/version/latest';
-//实例化apolloClient
-const apolloClient = new ApolloClient({
-  // 你需要在这里使用绝对路径
-  uri: APIURL,
-  cache: new InMemoryCache(),
-})
-
-//导出实例
-export default apolloClient;
+//价值物品列表
+export function goodStates() {
+	return apolloClient.query({
+		query: gql`query {
+			goodStates(where: {isvaluegood: true}) {
+				id
+				tokenname
+				tokendecimals
+				tokensymbol
+				erc20Address
+			}
+		}`
+	})
+}
+//价值物品
+export function goodState() {
+	return apolloClient.query({
+		query: gql`query {
+			goodStates(
+				orderBy: goodseq
+				orderDirection: asc
+				first: 1
+				where: {id_not: "0", isvaluegood: true}
+			  ) {
+				id
+				tokenname
+				tokensymbol
+				tokendecimals
+				erc20Address
+			  }
+		}`,
+		// variables: params
+	})
+}

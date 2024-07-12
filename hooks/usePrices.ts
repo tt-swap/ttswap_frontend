@@ -20,7 +20,7 @@ const usePrices = () => {
   }: {
     from: string;
     to: string;
-    amount: number;
+    amount: number | '';
   }):number => {
     if (from === DEFAULT_TOKEN || to === DEFAULT_TOKEN) {
       return 0;

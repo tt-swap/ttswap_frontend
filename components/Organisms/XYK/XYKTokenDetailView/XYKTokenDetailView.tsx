@@ -16,7 +16,7 @@ import { type TokenV2VolumeWithChartData } from "@covalenthq/client-sdk";
 export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
     chain_name,
     dex_name,
-    token_address,
+    token_address,value_good_id
 }) => {
     const [maybeResult, setResult] =
         useState<Option<TokenV2VolumeWithChartData>>(None);

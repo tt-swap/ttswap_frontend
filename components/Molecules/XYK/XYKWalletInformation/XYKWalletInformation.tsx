@@ -2,26 +2,26 @@ import React, { useEffect } from "react";
 import { type Option, Some, None } from "@/utils/option";
 import { useGoldRush } from "@/utils/store";
 import { copyToClipboard } from "@/utils/functions";
-import {
-    prettifyCurrency,
-    type ExchangeTransaction,
-} from "@covalenthq/client-sdk";
 import { useState } from "react";
 import { useToast } from "../../../../utils/hooks";
 import { IconWrapper } from "@/components/Shared";
 import { type XYKWalletInformationProps } from "@/utils/types/molecules.types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GRK_SIZES } from "@/utils/constants/shared.constants";
+import { useValueGood } from "@/stores/valueGood";
+
+import { myIndexes } from '@/graphql/account';
+import { prettifyCurrencys } from '@/graphql/util';
 
 export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
     wallet_address,
     chain_name,
     dex_name,
-    wallet_data,
+    wallet_data, value_good_id
 }) => {
-    const [maybeResult, setResult] =
-        useState<Option<ExchangeTransaction[]>>(None);
+    const [maybeResult, setResult] = useState(None);
     const { toast } = useToast();
+    const { info } = useValueGood();
     const { covalentClient } = useGoldRush();
 
     const handlePoolInformation = async () => {
@@ -29,13 +29,12 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
         let response;
         try {
             response =
-                await covalentClient.XykService.getTransactionsForAccountAddress(
-                    chain_name,
-                    dex_name,
+                await myIndexes(
+                    value_good_id,
                     wallet_address
                 );
             // @ts-ignore
-            setResult(new Some(response.data.items));
+            setResult(response);
         } catch (error) {
             console.error(`Error fetching token for ${chain_name}:`, error);
         }
@@ -86,52 +85,65 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
     };
 
     useEffect(() => {
-        if (wallet_data) {
-            setResult(new Some(wallet_data));
-            return;
-        }
         handlePoolInformation();
-    }, [dex_name, wallet_address, chain_name]);
+    }, [dex_name, wallet_address, chain_name, value_good_id]);
 
+    console.log(7777, maybeResult);
     return (
         <>
             <div className="flex items-center rounded border p-4">
-                {maybeResult.match({
-                    None: () => {
-                        return (
-                            <div className="flex flex-grow items-center gap-x-8">
-                                {[1, 2].map((o, i) => {
-                                    return (
-                                        <Skeleton
-                                            key={i}
-                                            size={GRK_SIZES.LARGE}
-                                        />
-                                    );
-                                })}
+                {!maybeResult.isEmpty && (
+                    <div className="flex flex-grow flex-wrap items-center gap-8">
+                        <div className="flex flex-grow flex-wrap items-center gap-8">
+                            <div className="flex flex-col gap-1">
+                                <div className="flex gap-2">
+                                    <h2 className="text-xl">{prettifyCurrencys(maybeResult.tradeValue)}{" "}{info.symbol}</h2>
+                                </div>
+                                <div className="text-md text-secondary-light">Total Value Swapped</div>
                             </div>
-                        );
-                    },
-                    Some: (result) => {
-                        const sumOfValueQuotes = result
-                            .filter((o) => o.act === "SWAP")
-                            .reduce((acc, obj) => {
-                                const valueQuote = obj.total_quote;
-                                return acc + valueQuote;
-                            }, 0);
-                        return (
-                            <div className="flex flex-grow flex-wrap items-center gap-8">
-                                <InformationContainer
-                                    label="Total Value Swapped"
-                                    text={prettifyCurrency(sumOfValueQuotes)}
-                                />
-                                <InformationContainer
-                                    label="Total Transactions"
-                                    text={result.length.toString()}
-                                />
+                        </div>
+                        <div className="flex flex-grow flex-wrap items-center gap-8">
+                            <div className="flex flex-col gap-1">
+                                <div className="flex gap-2">
+                                    <h2 className="text-xl">{maybeResult.tradeCount}</h2>
+                                </div>
+                                <div className="text-md text-secondary-light">Total tradeCount</div>
                             </div>
-                        );
-                    },
-                })}
+                        </div>
+                        <div className="flex flex-grow flex-wrap items-center gap-8">
+                            <div className="flex flex-col gap-1">
+                                <div className="flex gap-2">
+                                    <h2 className="text-xl">{prettifyCurrencys(maybeResult.investValue)}{" "}{info.symbol}</h2>
+                                </div>
+                                <div className="text-md text-secondary-light">Total Value Invest</div>
+                            </div>
+                        </div>
+                        <div className="flex flex-grow flex-wrap items-center gap-8">
+                            <div className="flex flex-col gap-1">
+                                <div className="flex gap-2">
+                                    <h2 className="text-xl">{maybeResult.investCount}</h2>
+                                </div>
+                                <div className="text-md text-secondary-light">Total investCount</div>
+                            </div>
+                        </div>
+                        <div className="flex flex-grow flex-wrap items-center gap-8">
+                            <div className="flex flex-col gap-1">
+                                <div className="flex gap-2">
+                                    <h2 className="text-xl">{prettifyCurrencys(maybeResult.disinvestValue)}{" "}{info.symbol}</h2>
+                                </div>
+                                <div className="text-md text-secondary-light">Total Value Disinvest</div>
+                            </div>
+                        </div>
+                        <div className="flex flex-grow flex-wrap items-center gap-8">
+                            <div className="flex flex-col gap-1">
+                                <div className="flex gap-2">
+                                    <h2 className="text-xl">{maybeResult.disinvestCount}</h2>
+                                </div>
+                                <div className="text-md text-secondary-light">Total DisinvestCount</div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </>
     );

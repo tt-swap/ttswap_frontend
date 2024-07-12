@@ -1,8 +1,5 @@
 import { type Option, None, Some } from "@/utils/option";
-import {
-    type PoolsDexDataItem,
-    prettifyCurrency,
-} from "@covalenthq/client-sdk";
+import { type Pool, prettifyCurrency } from "@covalenthq/client-sdk";
 import { useEffect, useState } from "react";
 import {
     DropdownMenu,
@@ -33,14 +30,27 @@ import { TableHeaderSorting } from "@/components/ui/tableHeaderSorting";
 import { IconWrapper } from "@/components/Shared";
 import { GRK_SIZES } from "@/utils/constants/shared.constants";
 import { useGoldRush } from "@/utils/store";
-import { type XYKWalletPoolListViewProps } from "@/utils/types/organisms.types";
+import { type XYKPoolListViewProps } from "@/utils/types/organisms.types";
+import { calculateFeePercentage } from "@/utils/functions/calculate-fees-percentage";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination";
 import { SkeletonTable } from "@/components/ui/skeletonTable";
 
-export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
+import { myGoodsDatas } from '@/graphql/account';
+import { prettifyCurrencys } from '@/graphql/util';
+
+export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
     chain_name,
     dex_name,
     on_pool_click,
-    wallet_address,
+    page_size,value_good_id,is_over,wallet_address,data_num
 }) => {
     const { covalentClient } = useGoldRush();
 
@@ -51,26 +61,39 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
         },
     ]);
     const [rowSelection, setRowSelection] = useState({});
-    const [maybeResult, setResult] = useState<Option<PoolsDexDataItem[]>>(None);
+    const [maybeResult, setResult] = useState<Option<Pool[]>>(None);
     const [error, setError] = useState({ error: false, error_message: "" });
     const [windowWidth, setWindowWidth] = useState<number>(0);
+    const [pagination, setPagination] = useState({
+        page_number: 1,
+    });
+    const [hasMore, setHasMore] = useState<boolean>();
+
+    const handlePagination = (page_number: number) => {
+        setPagination((prev) => {
+            return {
+                ...prev,
+                page_number,
+            };
+        });
+    };
 
     useEffect(() => {
         (async () => {
             setResult(None);
-            let response;
+            let response: any;
             try {
                 response =
-                    await covalentClient.XykService.getPoolsForWalletAddress(
-                        chain_name,
-                        wallet_address,
-                        0,
-                        {
-                            dexName: dex_name,
-                        }
-                    );
+                    await myGoodsDatas({
+                        id:value_good_id,
+                        pageNumber: pagination.page_number - 1,
+                        pageSize: page_size,
+                        address:wallet_address,
+                    });
+                console.log(response)
+                setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
-                setResult(new Some(response.data.items));
+                setResult(new Some(response.items));
             } catch (exception) {
                 setResult(new Some([]));
                 setError({
@@ -79,7 +102,7 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
                 });
             }
         })();
-    }, [chain_name, dex_name, wallet_address]);
+    }, [chain_name, dex_name, pagination,value_good_id,wallet_address,data_num]);
 
     useEffect(() => {
         setWindowWidth(window.innerWidth);
@@ -95,56 +118,47 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
         };
     }, []);
 
-    const columns: ColumnDef<PoolsDexDataItem>[] = [
+    const columns: ColumnDef<Pool>[] = [
         {
-            id: "contract_name",
-            accessorKey: "contract_name",
+            id: "name",
+            accessorKey: "name",
             header: ({ column }) => (
                 <div className="ml-4">
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Pool"}
+                        header_name={"Goods"}
                         column={column}
                     />
                 </div>
             ),
             cell: ({ row }) => {
-                const token_0 = row.original.token_0;
-                const token_1 = row.original.token_1;
-                const pool = `${token_0.contract_ticker_symbol}-${token_1.contract_ticker_symbol}`;
-
                 return (
                     <div className="ml-4 flex items-center gap-3">
-                        <div className="relative mr-2 flex">
-                            <TokenAvatar
-                                size={GRK_SIZES.EXTRA_SMALL}
-                                token_url={token_0.logo_url}
-                            />
-                            <div className="absolute left-4">
-                                <TokenAvatar
-                                    size={GRK_SIZES.EXTRA_SMALL}
-                                    token_url={token_1.logo_url}
-                                />
-                            </div>
-                        </div>
-
+                        <TokenAvatar
+                            size={GRK_SIZES.EXTRA_SMALL}
+                            token_url={row.original.logo_url}
+                        />
                         <div className="flex flex-col">
                             {on_pool_click ? (
                                 <a
                                     className="cursor-pointer hover:opacity-75"
-                                    onClick={() => {
-                                        if (on_pool_click) {
-                                            on_pool_click(
-                                                row.original.exchange
-                                            );
-                                        }
-                                    }}
+                                    // onClick={() => {
+                                    //     if (on_pool_click) {
+                                    //         on_pool_click(
+                                    //             row.original.id
+                                    //         );
+                                    //     }
+                                    // }}
                                 >
-                                    {pool ? pool : ""}
+                                    {row.original.name
+                                        ? row.original.name
+                                        : ""}
                                 </a>
                             ) : (
                                 <label className="text-base">
-                                    {pool ? pool : ""}
+                                    {row.original.name
+                                        ? row.original.name
+                                        : ""}
                                 </label>
                             )}
                         </div>
@@ -153,99 +167,194 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
             },
         },
         {
-            id: "total_liquidity_quote",
-            accessorKey: "total_liquidity_quote",
+            id: "symbol",
+            accessorKey: "symbol",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Liquidity"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.total_liquidity_quote
-                );
-
-                return <div className="text-right">{valueFormatted}</div>;
-            },
-        },
-        {
-            id: "volume_24h_quote",
-            accessorKey: "volume_24h_quote",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Volume (24hrs)"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.volume_24h_quote
-                );
-
-                return <div className="text-right">{valueFormatted}</div>;
-            },
-        },
-        {
-            id: "volume_7d_quote",
-            accessorKey: "volume_7d_quote",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Volume (7d)"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.volume_7d_quote
-                );
-
-                return <div className="text-right">{valueFormatted}</div>;
-            },
-        },
-        {
-            id: "quote_rate",
-            accessorKey: "quote_rate",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Quote Rate"}
+                    header_name={"Symbol"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
                 return (
                     <div className="text-right">
-                        {" "}
-                        {prettifyCurrency(
-                            row.getValue("quote_rate"),
-                            2,
-                            "USD",
-                            true
-                        )}{" "}
+                        {row.original.symbol}
                     </div>
                 );
             },
         },
         {
-            id: "fee_24h_quote",
-            accessorKey: "fee_24h_quote",
+            id: "investQuantity",
+            accessorKey: "investQuantity",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Fees (24hrs)"}
+                    header_name={"Invest Quantity"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.fee_24h_quote
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investQuantity
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
+            id: "investValue",
+            accessorKey: "investValue",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Invest Amount"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investValue
+                );
+
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
+            },
+        },
+        {
+            id: "totalInvestQuantity",
+            accessorKey: "totalInvestQuantity",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Total Invest Quantity"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalInvestQuantity
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
+            id: "totalInvestValue",
+            accessorKey: "totalInvestValue",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Total Invest Amount"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalInvestValue
+                );
+
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
+            },
+        },
+        // {
+        //     id: "investQuantity24",
+        //     accessorKey: "investQuantity24",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Invest Quantity(24h)"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencys(
+        //             row.original.investQuantity24
+        //         );
+
+        //         return <div className="text-right">{valueFormatted}</div>;
+        //     },
+        // },
+        // {
+        //     id: "investValue24",
+        //     accessorKey: "investValue24",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Invest Amount(24h)"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencys(
+        //             row.original.investValue24
+        //         );
+
+        //         return <div className="text-right">{valueFormatted}</div>;
+        //     },
+        // },
+        {
+            id: "totalFeeValue",
+            accessorKey: "totalFeeValue",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Fee Amount"}
+                    column={column}
+                />
+            ),
+
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalFeeValue
+                );
+
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
+            },
+        },
+        {
+            id: "totalFee",
+            accessorKey: "totalFee",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Fee"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.totalFee
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
+            id: "APY",
+            accessorKey: "APY",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"APY"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = calculateFeePercentage(
+                    +row.original.APY
+                );
+
+                return (
+                    <div
+                        className={`text-right ${
+                            // @ts-ignore
+                            parseFloat(row.original.APY) > 0 &&
+                            "text-green-600"
+                            }`}
+                    >
+                        {valueFormatted}
+                    </div>
+                );
             },
         },
         {
@@ -265,9 +374,10 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
                                 <DropdownMenuItem
                                     onClick={() => {
                                         if (on_pool_click) {
-                                            on_pool_click(
-                                                row.original.exchange
-                                            );
+                                            on_pool_click("invest",row.original.id);
+                                            // on_pool_click(
+                                            //     row.original.exchange
+                                            // );
                                         }
                                     }}
                                 >
@@ -275,7 +385,7 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
                                         icon_class_name="swap_horiz"
                                         class_name="mr-2"
                                     />{" "}
-                                    View Pool
+                                    Invest
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -285,10 +395,10 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
         },
     ];
 
-    const mobile_columns: ColumnDef<PoolsDexDataItem>[] = [
+    const mobile_columns: ColumnDef<Pool>[] = [
         {
-            id: "contract_name",
-            accessorKey: "contract_name",
+            id: "name",
+            accessorKey: "name",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="left"
@@ -297,85 +407,162 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
                 />
             ),
             cell: ({ row }) => {
-                const token_0 = row.original.token_0;
-                const token_1 = row.original.token_1;
-                const pool = `${token_0.contract_ticker_symbol}/${token_1.contract_ticker_symbol}`;
+                // const token_0 = row.original.token_0;
+                // const token_1 = row.original.token_1;
+                // const pool = `${token_0.contract_ticker_symbol}/${token_1.contract_ticker_symbol}`;
 
                 return (
                     <div className="flex items-center gap-3">
                         <div className="relative mr-2 flex">
                             <TokenAvatar
                                 size={GRK_SIZES.EXTRA_SMALL}
-                                token_url={token_0.logo_url}
+                                token_url={row.original.logo_url}
                             />
-                            <div className="absolute left-4">
+                            {/* <div className="absolute left-4">
                                 <TokenAvatar
                                     size={GRK_SIZES.EXTRA_SMALL}
                                     token_url={token_1.logo_url}
                                 />
-                            </div>
-                        </div>
+                            </div> */}
 
-                        <div className="flex flex-col">
-                            {on_pool_click ? (
-                                <a
-                                    className="cursor-pointer hover:opacity-75"
-                                    onClick={() => {
-                                        if (on_pool_click) {
-                                            on_pool_click(
-                                                row.original.exchange
-                                            );
-                                        }
-                                    }}
-                                >
-                                    {pool ? pool : ""}
-                                </a>
-                            ) : (
-                                <label className="text-base">
-                                    {pool ? pool : ""}
-                                </label>
-                            )}
+
+                            <div className="flex flex-col">
+                                {on_pool_click ? (
+                                    <a
+                                        className="cursor-pointer hover:opacity-75"
+                                        onClick={() => {
+                                            if (on_pool_click) {
+                                                on_pool_click(
+                                                    row.original.id
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        {row.original.name
+                                            ? row.original.name
+                                            : ""}
+                                    </a>
+                                ) : (
+                                    <label className="text-base">
+                                        {row.original.name
+                                            ? row.original.name
+                                            : ""}
+                                    </label>
+                                )}
+                            </div>
                         </div>
                     </div>
                 );
             },
         },
         {
-            id: "total_liquidity_quote",
-            accessorKey: "total_liquidity_quote",
+            id: "investQuantity",
+            accessorKey: "investQuantity",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Liquidity"}
+                    header_name={"Invest Quantity"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.total_liquidity_quote
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investQuantity
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "total_volume_24h_quote",
-            accessorKey: "total_volume_24h_quote",
+            id: "investValue",
+            accessorKey: "investValue",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Volume (24hrs)"}
+                    header_name={"Invest Amount"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrency(
-                    row.original.volume_24h_quote
+                const valueFormatted = prettifyCurrencys(
+                    row.original.investValue
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
+        // {
+        //     id: "totalInvestQuantity",
+        //     accessorKey: "totalInvestQuantity",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Total Invest Quantity"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencys(
+        //             row.original.totalInvestQuantity
+        //         );
+
+        //         return <div className="text-right">{valueFormatted}</div>;
+        //     },
+        // },
+        // {
+        //     id: "totalInvestValue",
+        //     accessorKey: "totalInvestValue",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Total Invest Amount"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencys(
+        //             row.original.totalInvestValue
+        //         );
+
+        //         return <div className="text-right">{valueFormatted}</div>;
+        //     },
+        // },
+        // {
+        //     id: "investQuantity24",
+        //     accessorKey: "investQuantity24",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Invest Quantity(24h)"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencys(
+        //             row.original.investQuantity24
+        //         );
+
+        //         return <div className="text-right">{valueFormatted}</div>;
+        //     },
+        // },
+        // {
+        //     id: "investValue24",
+        //     accessorKey: "investValue24",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Invest Amount(24h)"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencys(
+        //             row.original.investValue24
+        //         );
+
+        //         return <div className="text-right">{valueFormatted}</div>;
+        //     },
+        // },
         {
             id: "actions",
             cell: ({ row }) => {
@@ -393,8 +580,8 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
                                 <DropdownMenuItem
                                     onClick={() => {
                                         if (on_pool_click) {
-                                            on_pool_click(
-                                                row.original.exchange
+                                            on_pool_click("invent",
+                                                row.original.id
                                             );
                                         }
                                     }}
@@ -403,7 +590,7 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
                                         icon_class_name="swap_horiz"
                                         class_name="mr-2"
                                     />{" "}
-                                    View Pool
+                                    Invent
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -430,7 +617,7 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
     });
 
     const body = maybeResult.match({
-        None: () => <SkeletonTable cols={5} float="right" />,
+        None: () => <SkeletonTable float="right" />,
         Some: () =>
             error.error ? (
                 <TableRow>
@@ -481,10 +668,10 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
-                                                  header.column.columnDef
-                                                      .header,
-                                                  header.getContext()
-                                              )}
+                                                header.column.columnDef
+                                                    .header,
+                                                header.getContext()
+                                            )}
                                     </TableHead>
                                 );
                             })}
@@ -493,6 +680,58 @@ export const XYKWalletPoolListView: React.FC<XYKWalletPoolListViewProps> = ({
                 </TableHeader>
                 <TableBody>{body}</TableBody>
             </Table>
+            {!is_over && (
+                <Pagination className="select-none">
+                    <PaginationContent>
+                        <PaginationItem
+                            disabled={pagination.page_number === 1}
+                            onClick={() => {
+                                handlePagination(pagination.page_number - 1);
+                            }}
+                        >
+                            <PaginationPrevious />
+                        </PaginationItem>
+                        {pagination.page_number > 1 && (
+                            <PaginationItem
+                                onClick={() => {
+                                    handlePagination(pagination.page_number - 1);
+                                }}
+                            >
+                                <PaginationLink>
+                                    {pagination.page_number - 1}
+                                </PaginationLink>
+                            </PaginationItem>
+                        )}
+                        <PaginationItem>
+                            <PaginationLink isActive>
+                                {pagination.page_number}
+                            </PaginationLink>
+                        </PaginationItem>
+                        {hasMore && (
+                            <PaginationItem
+                                onClick={() => {
+                                    handlePagination(pagination.page_number + 1);
+                                }}
+                            >
+                                <PaginationLink>
+                                    {pagination.page_number + 1}
+                                </PaginationLink>
+                            </PaginationItem>
+                        )}
+                        <PaginationItem>
+                            <PaginationEllipsis />
+                        </PaginationItem>
+                        <PaginationItem
+                            disabled={!hasMore}
+                            onClick={() => {
+                                handlePagination(pagination.page_number + 1);
+                            }}
+                        >
+                            <PaginationNext />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+            )}
         </div>
     );
 };

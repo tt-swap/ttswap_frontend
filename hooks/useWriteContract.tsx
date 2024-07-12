@@ -32,10 +32,10 @@ export const useWriteContract = () => {
     async (
       receiver: string,
       amount: number
-    ): Promise<{ success: boolean; data: ethers.providers.TransactionReceipt | undefined }> => {
+    ): Promise<{ success: boolean; data: ethers.TransactionReceipt | undefined }> => {
       setLoading(true);
       try {
-        if (!ethers.utils.isAddress(receiver)) {
+        if (!ethers.isAddress(receiver)) {
           throw new Error("Invalid address");
         }
         if (!amount || amount <= 0) {
@@ -45,7 +45,7 @@ export const useWriteContract = () => {
         const amountToString = amount.toString();
         const tx = {
           to: receiver,
-          value: ethers.utils.parseEther(amountToString)
+          value: ethers.parseEther(amountToString)
         };
 
         const transaction = await signer?.sendTransaction(tx);

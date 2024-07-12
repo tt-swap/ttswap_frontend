@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { AddressZero } from "@ethersproject/constants";
 import { Provider } from "@ethersproject/providers";
 import { Contract, ContractInterface, Signer } from "ethers";
-import { isAddress } from "ethers/lib/utils";
+import { isAddress } from "ethers";
 
 import { useSignerOrProvider } from "./useSignerOrProvider";
 

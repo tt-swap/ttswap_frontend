@@ -7,8 +7,11 @@ import { XYKOverviewTimeSeries } from "@/components/Molecules"
 import { Flex } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
 
+import { useValueGood } from "@/stores/valueGood";
+
 export default function Token({ params }: { params: { chain: string, dex: string, token_id: string} }) {
   const router = useRouter();
+  const { info } = useValueGood();
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -23,6 +26,7 @@ export default function Token({ params }: { params: { chain: string, dex: string
           chain_name={params.chain}
           dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
           token_address={params.token_id}
+          value_good_id={info.id}
         />
         {/* <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
           Pools
@@ -46,6 +50,7 @@ export default function Token({ params }: { params: { chain: string, dex: string
           on_native_explorer_click={(e: { explorers: { url: string | URL | undefined; }[]; })=>{
             window.open(e.explorers[0].url, '_blank');
           }}
+          value_good_id={info.id}
           on_goldrush_receipt_click={(e: { tx_hash: any; })=>{
             window.open(`https://goldrush-tx-receipt-ui.vercel.app/tx/${params.chain}/${e.tx_hash}/`, '_blank');
           }}

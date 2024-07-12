@@ -37,8 +37,8 @@ const Address: React.FC<AddressProps> = (props) => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
   useEffect(() => {
-    if (account !== undefined) setAddress(account);
-  }, [account]);
+    setAddress(localStorage.getItem("wallet"));
+  }, [localStorage.getItem("wallet")]);
 
   useEffect(() => {
     if (isClicked === true)

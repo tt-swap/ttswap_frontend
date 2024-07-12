@@ -38,12 +38,12 @@ import { type XYKWalletPositionsListViewProps } from "@/utils/types/organisms.ty
 import { SkeletonTable } from "@/components/ui/skeletonTable";
 import { calculateFeePercentage } from "@/utils/functions/calculate-fees-percentage";
 
-import { myInvestGoodsDatas } from '@/graphql/data.processing';
-import { prettifyCurrencys } from '@/graphql/data.processing.util';
+import { myInvestGoodsDatas } from '@/graphql/account';
+import { prettifyCurrencys } from '@/graphql/util';
 
 export const XYKWalletPositionsListView: React.FC<
     XYKWalletPositionsListViewProps
-> = ({ chain_name, dex_name, on_pool_click, wallet_address }) => {
+> = ({ chain_name, dex_name, on_pool_click, wallet_address,value_good_id,data_num }) => {
     const { covalentClient } = useGoldRush();
 
     const [sorting, setSorting] = useState<SortingState>([
@@ -62,14 +62,7 @@ export const XYKWalletPositionsListView: React.FC<
             setResult(None);
             let response;
             try {
-                response =
-                    // await covalentClient.XykService.getAddressExchangeBalances(
-                    //     chain_name,
-                    //     dex_name,
-                    //     wallet_address
-                    // );
-
-                    await myInvestGoodsDatas(wallet_address);
+                response = await myInvestGoodsDatas(wallet_address,value_good_id);
                 setError({ error: false, error_message: "" });
                 setResult(new Some(response.items));
             } catch (exception) {
@@ -80,10 +73,10 @@ export const XYKWalletPositionsListView: React.FC<
                 });
             }
         })();
-    }, [chain_name, dex_name, wallet_address]);
+    }, [chain_name, dex_name, wallet_address,data_num,value_good_id]);
 
     const columns: ColumnDef<UniswapLikeBalanceItem>[] = [
-        
+
         {
             id: "id",
             accessorKey: "id",
@@ -117,35 +110,33 @@ export const XYKWalletPositionsListView: React.FC<
             cell: ({ row }) => {
                 return (
                     <div className="ml-4 flex items-center gap-3">
-                        <div className="relative mr-2 flex">
-                            <TokenAvatar
-                                size={GRK_SIZES.EXTRA_SMALL}
-                                token_url={row.original.logo_url}
-                            />
-                            <div className="flex flex-col">
-                                {on_pool_click ? (
-                                    <a
-                                        className="cursor-pointer hover:opacity-75"
-                                        onClick={() => {
-                                            if (on_pool_click) {
-                                                on_pool_click(
-                                                    row.original.id
-                                                );
-                                            }
-                                        }}
-                                    >
-                                        {row.original.name
-                                            ? row.original.name
-                                            : ""}
-                                    </a>
-                                ) : (
-                                    <label className="text-base">
-                                        {row.original.name
-                                            ? row.original.name
-                                            : ""}
-                                    </label>
-                                )}
-                            </div>
+                        <TokenAvatar
+                            size={GRK_SIZES.EXTRA_SMALL}
+                            token_url={row.original.logo_url}
+                        />
+                        <div className="flex flex-col">
+                            {on_pool_click ? (
+                                <a
+                                    className="cursor-pointer hover:opacity-75"
+                                    // onClick={() => {
+                                    //     if (on_pool_click) {
+                                    //         on_pool_click(
+                                    //             row.original.id
+                                    //         );
+                                    //     }
+                                    // }}
+                                >
+                                    {row.original.name
+                                        ? row.original.name
+                                        : ""}
+                                </a>
+                            ) : (
+                                <label className="text-base">
+                                    {row.original.name
+                                        ? row.original.name
+                                        : ""}
+                                </label>
+                            )}
                         </div>
                     </div>
                 );
@@ -180,7 +171,7 @@ export const XYKWalletPositionsListView: React.FC<
                 />
             ),
             cell: ({ row }) => {
-                
+
                 const valueFormatted = prettifyCurrencys(
                     row.original.totalInvestValue
                 );
@@ -284,21 +275,27 @@ export const XYKWalletPositionsListView: React.FC<
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem
+                                {/* <DropdownMenuItem
                                     onClick={() => {
                                         if (on_pool_click) {
-                                            on_pool_click(
-                                                row.original.pool_token
-                                                    .contract_address
-                                            );
+                                            on_pool_click("invest");
                                         }
                                     }}
                                 >
-                                    <IconWrapper
+                                    Invest
+                                </DropdownMenuItem> */}
+                                <DropdownMenuItem
+                                    onClick={() => {
+                                        if (on_pool_click) {
+                                            on_pool_click(row.original.id);
+                                        }
+                                    }}
+                                >
+                                    {/* <IconWrapper
                                         icon_class_name="swap_horiz"
                                         class_name="mr-2"
-                                    />{" "}
-                                    View Pool
+                                    />{" "} */}
+                                    disInvest
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
