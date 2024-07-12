@@ -7,6 +7,7 @@ import erc20 from '@/data/abi/erc20.json';
 import MarketManager from '@/data/abi/MarketManager.json';
 import { useSwapAmountStore } from "@/stores/swapAmount";
 import { powerIterative } from '@/graphql/util';
+import {useWalletAddress} from "@/stores/walletAddress";
 
 const useWallet = () => {
     // if (typeof window !== 'undefined') {
@@ -15,7 +16,8 @@ const useWallet = () => {
     // }
     const provider = new ethers.BrowserProvider(ethereum);
     // const provider = new ethers.JsonRpcProvider('http://142.171.157.66:8545');
-    const contractAddress = '0xB756137A6fE9acD420fEECD9dE30282b93d35861'; // multicall 合约地址
+    const contractAddress = '0xB756137A6fE9acD420fEECD9dE30282b93d35861'; // MarketManager 合约地址
+    const gater = '0x0f18a2428c934db7b9e040f8fc6e08975cbef07a'; // gater address
 
 
     // const { isActive, account } = useWeb3React();
@@ -27,6 +29,7 @@ const useWallet = () => {
     const [balanceMap1, setbalanceMap1] = useState({});
     const [account, setAccount] = useState(null);
     const [isActive, setIsActive] = useState(false);
+    const { address } = useWalletAddress();
     // useEffect(() => {
     //   (async () => {
     //     const signer = await provider.getSigner()
@@ -41,17 +44,19 @@ const useWallet = () => {
     //   })();
     // }, []);
     useMemo(() => {
-        console.log(23794237429873,localStorage.getItem("wallet"))
-        if (localStorage.getItem("wallet") === null ) {
+        // console.log(23794237429873,window.localStorage.getItem("wallet"))
+        if (window.localStorage.getItem("wallet") === null ) {
             setIsActive(false);
         } else {
             setIsActive(true);
-            setAccount(localStorage.getItem("wallet"));
+            // @ts-ignore
+            setAccount(window.localStorage.getItem("wallet"));
         }
-    }, [localStorage.getItem("wallet"),account,isActive]);
+    }, [window.localStorage.getItem("wallet"),account,isActive,address]);
 
 
     useMemo(() => {
+        // @ts-ignore
         if (swapsAmount.from.amount > 0) {
             // const fromV = swaps.from.currentValue / swaps.from.currentQuantity * 10 ** swaps.from.decimals;
             // const toV = swaps.to.currentValue / swaps.to.currentQuantity * 10 ** swaps.to.decimals;
@@ -79,16 +84,17 @@ const useWallet = () => {
         }
     }, [swaps, swapsAmount]);
 
-    const balanceSel = async (address: string) => {
-        if (account !== undefined || account !== "undefined")
+    const balanceSel = async (ConAddress: string) => {
+        if (address !== null)
             try {
-                if (address === "0x0000000000000000000000000000000000000000") {
-                    const senderBalanceBefore = await provider.getBalance(account); //账户1余额
+                if (ConAddress === "0x0000000000000000000000000000000000000000") {
+                    // @ts-ignore
+                    const senderBalanceBefore = await provider.getBalance(address); //账户1余额
                     return ethers.formatEther(senderBalanceBefore);
                 } else {
-                    const contract = new ethers.Contract(address, erc20, provider);
+                    const contract = new ethers.Contract(ConAddress, erc20, provider);
                     let decimals = await contract.decimals();
-                    const balance = await contract.balanceOf(account);
+                    const balance = await contract.balanceOf(address);
                     return ethers.formatUnits(balance, decimals);
                 }
             } catch (e) {
@@ -98,27 +104,27 @@ const useWallet = () => {
 
     // const balanceMap =
     useMemo(async () => {
-        // console.log(account)
-        if (isActive && account !== null) {
+        // console.log("balanceMap",account,isActive,address)
+        if (address !== null) {
             const from = await balanceSel(swaps.from.address);
             const to = await balanceSel(swaps.to.address);
-            console.log("swapsbalanceMap", from, to);
+            // console.log("swapsbalanceMap", from, to);
             setbalanceMap({ from: from, to: to });
             return { from: from, to: to }
         } else setbalanceMap({ from: 0, to: 0 }) //return { from: 0, to: 0 }
-    }, [swaps, isActive]);
+    }, [swaps, isActive,address]);
 
 
     // const balanceMap1 = 
     useMemo(async () => {
-        if (isActive && account !== null) {
+        if (address !== null) {
             const from = await balanceSel(invest.from.address);
             const to = await balanceSel(invest.to.address);
-            console.log("investbalanceMap", from, to)
+            // console.log("investbalanceMap", from, to)
             setbalanceMap1({ from: from, to: to });
             return { from: from, to: to }
         } else setbalanceMap1({ from: 0, to: 0 }) // return { from: 0, to: 0 }
-    }, [invest, isActive]);
+    }, [invest, isActive,address]);
 
     const disinvest = async (pid: number, qut: any) => {
 
@@ -126,7 +132,7 @@ const useWallet = () => {
         const contract = new ethers.Contract(contractAddress, MarketManager, signer);
 
         console.log(pid, qut);
-        return await contract.disinvestProof(pid, qut,account,"0x0000000000000000000000000000000000000000").then((transaction) => {
+        return await contract.disinvestProof(pid, qut,gater,"0x0000000000000000000000000000000000000000").then((transaction) => {
             console.log('Transaction sent:', transaction);
             return true;
             // return transaction.wait().then((receipt: any) => {

@@ -60,7 +60,7 @@ export const CreatGood = ({ setDataNum }: Props) => {
   const isDisabled = useMemo(() => {
     console.log(buyF, sellF, inF, disinF, swapS, disinS, goodQ, goodVQ, goodC, goodV)
     // @ts-ignore
-    if (buyF < 1 || sellF < 1 || inF < 1 || disinF < 1 || swapS < 1 || disinS < 1 || goodQ === "" || goodQ === "0" || goodQ < 0 || goodVQ === "" || goodVQ === "0" || goodVQ < 0 || goodV === ""|| goodC === "")
+    if (buyF < 1 || sellF < 1 || inF < 1 || disinF < 1 || swapS < 1 || disinS < 1 || goodQ === "" || goodQ === "0" || goodQ < 0 || goodVQ === "" || goodVQ === "0" || goodVQ < 0 || goodV === "" || goodC === "")
       return true;
     return false;
   }, [buyF, sellF, inF, disinF, swapS, disinS, goodQ, goodVQ, goodV])
@@ -72,10 +72,12 @@ export const CreatGood = ({ setDataNum }: Props) => {
     // @ts-ignore
     const qunt = Number(goodQ * 2 ** 128 + goodVQ)
     const config = inF * 2 ** 246 + disinF * 2 ** 240 + buyF * 2 ** 233 + sellF * 2 ** 226 + swapS * 2 ** 216 + disinS * 2 ** 206
+
+    // @ts-ignore
     const isSuccess = await newGoods(goodVAddr, goodV, goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0");
     // const isSuccess = await newGoods("0x5FC8d32690cc91D4c39d9d3abcBD16989F875707", "14700013424982216455688397208100595100161518504028027706369398309082945288267", goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0")
     // form.resetFields();
-  console.log("isSuccess:",isSuccess)
+    console.log("isSuccess:", isSuccess)
     if (isSuccess) {
       messageApi.open({
         type: 'success',
@@ -234,6 +236,7 @@ export const CreatGood = ({ setDataNum }: Props) => {
                 optionLabelProp="label"
                 value={goodV}
                 onChange={(e) => {
+                  // @ts-ignore
                   const op: any = selectVgood.find(option => option.id === e)
                   setGoodV(e);
                   setGoodVAddr(op.address);
@@ -241,14 +244,19 @@ export const CreatGood = ({ setDataNum }: Props) => {
                 }}
               >
                 {selectVgood.map(item => (
+                  // @ts-ignore
                   <Option key={item.id} value={item.id} label={item.symbol}>
                     <div>
-                      <Avatar size="small" src={<img src={item.logo_url ?? "/token.svg"} alt="avatar" onError={(e) => {
-                        e.currentTarget.src =
-                          "/token.svg";
-                      }} />}>
+                      <Avatar size="small" src={
+                        // @ts-ignore
+                        <img src={item.logo_url ?? "/token.svg"} alt="avatar" onError={(e) => {
+                          e.currentTarget.src =
+                            "/token.svg";
+                        }} />}>
                       </Avatar>{" "}
-                      {item.symbol}
+                      {
+                        // @ts-ignore
+                        item.symbol}
                     </div>
                   </Option>
                 ))}

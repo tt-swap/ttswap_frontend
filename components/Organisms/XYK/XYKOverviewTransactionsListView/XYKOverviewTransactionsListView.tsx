@@ -79,8 +79,8 @@ export const XYKOverviewTransactionsListView: React.FC<
                 } catch (error) {
                     setResult(new Some([]));
                     setError({
-                        error: response ? response.error : false,
-                        error_message: response ? response.error_message : "",
+                        // @ts-ignore
+                        error: response ? response.error : false, error_message: response ? response.error_message : "",
                     });
                 }
             })();
@@ -99,6 +99,8 @@ export const XYKOverviewTransactionsListView: React.FC<
                     </div>
                 ),
                 cell: ({ row }) => {
+                    // @ts-ignore
+                    
                     const t = row.original.time;
 
                     return (
@@ -116,8 +118,9 @@ export const XYKOverviewTransactionsListView: React.FC<
                     />
                 ),
                 cell: ({ row }) => {
-                    const token_0 = row.original.symbol1;
-                    const token_1 = row.original.symbol2;
+                    // @ts-ignore
+                    
+                    const token_0 = row.original.symbol1; const token_1 = row.original.symbol2;
 
                     // if (row.original.type !== "SWAP") {
                     return (
@@ -137,7 +140,9 @@ export const XYKOverviewTransactionsListView: React.FC<
                                 className="mr-2"
                                 variant={POOL_TRANSACTION_MAP["SWAP"].color}
                             >
-                                {row.original.type}
+                                {
+                                // @ts-ignore
+                                row.original.type}
                             </Badge>{" "}
                             {token_0}{" "}
                             {token_1 === "#" ? "" : "/"}{" "}
@@ -224,6 +229,7 @@ export const XYKOverviewTransactionsListView: React.FC<
                 cell: ({ row }) => {
                     // @ts-ignore
                     const name = prettifyCurrencys(row.original.togoodQuantity) +" "+ row.original.symbol2;
+                    // @ts-ignore
                     return (<span>{row.original.symbol2 === "#" ? "-" : name}</span>);
                 },
             },

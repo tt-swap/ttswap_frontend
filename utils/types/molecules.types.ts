@@ -116,7 +116,7 @@ export interface XYKTokenTimeSeriesProps {
 }
 
 export interface XYKWalletInformationProps {
-    wallet_address: string|null;
+    wallet_address: any;
     chain_name: Chain;
     dex_name: string;
     wallet_data?: object;

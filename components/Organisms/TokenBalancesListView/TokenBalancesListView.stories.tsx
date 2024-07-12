@@ -68,8 +68,7 @@ export const MultiChainTokenBalancesList: Story = {
                             chain_names={chain_names}
                             address={address}
                             mask_balances={mask_balances}
-                            hide_small_balances={hide_small_balances}
-                        />
+                            hide_small_balances={hide_small_balances} value_good_id={""} is_over={false}                        />
                     </div>
                 );
             },

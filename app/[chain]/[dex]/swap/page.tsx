@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 // import { useState } from "react";
 import TokenSwap from "@/components/swap"
-import usePrices from "@/hooks/usePrices";
 import { cleanupImgCache } from "@/utils/icon";
 import { useEffect,useState } from "react";
 import { useTheme } from "next-themes"
@@ -17,7 +16,6 @@ export default function Swap({ params }: { params: { chain: string, dex: string 
   const router = useRouter();
   const [walletAddress, setAddress] = useState("")
   const [input, setInput] = useState("");
-  const { getPrices } = usePrices();
   const { setTheme, theme } = useTheme()
 
   useEffect(()=>{

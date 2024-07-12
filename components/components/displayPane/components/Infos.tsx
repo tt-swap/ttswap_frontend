@@ -59,7 +59,8 @@ const Infos = ({ chainId }: { chainId: ReturnType<Web3ReactHooks["useChainId"]> 
         <span style={styles.statusValue}>
           {balance
             ? `
-          Ξ ${parseBigNumberToFloat(balance).toFixed(4)}`
+          Ξ ${// @ts-ignore
+            parseBigNumberToFloat(balance).toFixed(4)}`
             : 0}
         </span>
       </Paragraph>

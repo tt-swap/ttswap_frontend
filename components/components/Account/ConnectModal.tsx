@@ -44,18 +44,20 @@ const ConnectModal: React.FC<ConnectModalProps> = ({ isModalOpen, setIsModalOpen
     try {
       switch (label) {
         case "MetaMask":
+          console.log("011:", metamask_Logo);
           await metaMask.activate();
-          window.localStorage.setItem("connectorId", getName(metaMask));
+          console.log("02211:", metamask_Logo);
+          window.window.localStorage.setItem("connectorId", getName(metaMask));
           break;
 
         case "WalletConnect":
           await walletConnect.activate();
-          window.localStorage.setItem("connectorId", getName(walletConnect));
+          window.window.localStorage.setItem("connectorId", getName(walletConnect));
           break;
 
         case "Coinbase Wallet":
           await coinbaseWallet.activate();
-          window.localStorage.setItem("connectorId", getName(coinbaseWallet));
+          window.window.localStorage.setItem("connectorId", getName(coinbaseWallet));
           break;
 
         default:

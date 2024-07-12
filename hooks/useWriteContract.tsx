@@ -49,7 +49,7 @@ export const useWriteContract = () => {
         };
 
         const transaction = await signer?.sendTransaction(tx);
-        const receipt = await transaction?.wait(2);
+        const receipt = await transaction?.wait(2);// @ts-ignore
         return { success: true, data: receipt };
       } catch (error: any) {
         const message = error.reason ?? error.message ?? error;

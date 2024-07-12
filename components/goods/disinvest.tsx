@@ -20,7 +20,7 @@ interface Props {
   setOpen: (value: boolean) => void;
   setDataNum: (value: number) => void;
 }
-export const Disinvest = ({ open_zt, dis_id, setOpen,setDataNum }: Props) => {
+export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
 
   const [spinning, setSpinning] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -91,10 +91,12 @@ export const Disinvest = ({ open_zt, dis_id, setOpen,setDataNum }: Props) => {
     document.body.style.overflow = "";
   };
 
-  const goodQOn = (e) => {
+  const goodQOn = (e: any) => {
     console.log(e.target)
+    // @ts-ignore
     if (disgood.isvaluegood) {
       let num = 0;
+      // @ts-ignore
       if (e.target.value < disgood.good1.quantity && e.target.value < disgood.good1.maxNum) {
         setGoodQ(e.target.value);
         num = Number(e.target.value);
@@ -103,16 +105,21 @@ export const Disinvest = ({ open_zt, dis_id, setOpen,setDataNum }: Props) => {
         num = Number(goodQ);
       }
       count.good1.quantity = num;
+      // @ts-ignore
       count.good1.profit = disgood.good1.nowUnitFee * num - num / disgood.good1.quantity * disgood.good1.contructFee;
+      // @ts-ignore
       count.good1.disfee = num * disgood.good1.rate;
       count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
       setDisgoodCot(count);
       console.log(count, 999)
     } else {
       let num = Number(e.target.value);
+      // @ts-ignore
       let num1 = disgood.good1.unitV / disgood.good2.unitV * num;
+      // @ts-ignore
       if (num < disgood.good1.quantity && num < disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum) {
         setGoodQ(e.target.value);
+        // @ts-ignore
         setGoodVQ(num1);
       } else {
         setGoodQ(goodQ);
@@ -121,11 +128,15 @@ export const Disinvest = ({ open_zt, dis_id, setOpen,setDataNum }: Props) => {
         num1 = Number(goodVQ);
       }
       count.good1.quantity = num;
+      // @ts-ignore
       count.good1.profit = disgood.good1.nowUnitFee * num - num / disgood.good1.quantity * disgood.good1.contructFee;
+      // @ts-ignore
       count.good1.disfee = num * disgood.good1.rate;
       count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
       count.good2.quantity = num1;
+      // @ts-ignore
       count.good2.profit = disgood.good2.nowUnitFee * num1 - num1 / disgood.good2.quantity * disgood.good2.contructFee;
+      // @ts-ignore
       count.good2.disfee = num1 * disgood.good2.rate;
       count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
       setDisgoodCot(count);
@@ -133,13 +144,17 @@ export const Disinvest = ({ open_zt, dis_id, setOpen,setDataNum }: Props) => {
     }
 
   };
-  const goodVQOn = (e) => {
+  // @ts-ignore
+  const goodVQOn = (e: any) => {
 
     let num1 = Number(e.target.value);
+    // @ts-ignore
     let num = disgood.good2.unitV / disgood.good1.unitV * num1;
+    // @ts-ignore
     if (num < disgood.good1.quantity && num < disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum) {
-      setGoodQ(num);
-      setGoodVQ(e.target.value);
+
+      // @ts-ignore
+      setGoodQ(num); setGoodVQ(e.target.value);
     } else {
       setGoodQ(goodQ);
       setGoodVQ(goodVQ);
@@ -147,11 +162,15 @@ export const Disinvest = ({ open_zt, dis_id, setOpen,setDataNum }: Props) => {
       num1 = Number(goodVQ);
     }
     count.good1.quantity = num;
+    // @ts-ignore
     count.good1.profit = disgood.good1.nowUnitFee * num - num / disgood.good1.quantity * disgood.good1.contructFee;
+    // @ts-ignore
     count.good1.disfee = num * disgood.good1.rate;
     count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
     count.good2.quantity = num1;
+    // @ts-ignore
     count.good2.profit = disgood.good2.nowUnitFee * num1 - num1 / disgood.good2.quantity * disgood.good2.contructFee;
+    // @ts-ignore
     count.good2.disfee = num1 * disgood.good2.rate;
     count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
     setDisgoodCot(count);
@@ -168,37 +187,67 @@ export const Disinvest = ({ open_zt, dis_id, setOpen,setDataNum }: Props) => {
               {/* {disgood} */}
               <div className='pt-2 pb-2'>
                 <div className='flex justify-between items-center'>
-                  <div><Space><Avatar src={<img src={disgood.good1.logo_url} alt="avatar" onError={(e) => {
-                    e.currentTarget.src =
-                      "/token.svg";
-                  }} />} /><span>{disgood.good1.symbol}</span></Space></div>
-                  <div><span>Current unit handling fee{prettifyCurrencys(disgood.good1.nowUnitFee)}</span></div>
-                </div>
-                <div className='pt-2 pb-2'>
-                  <div><Space><span>Invest quantity:</span><span>{prettifyCurrencys(disgood.good1.quantity)}</span></Space></div>
-                  <div><Space><span>Handling fees for investment units:</span><span>{prettifyCurrencys(disgood.good1.unitFee)}</span></Space></div>
-                  <div><Space><span>Estimated return on investment:</span><span>{prettifyCurrencys(disgood.good1.profit)}</span></Space></div>
-                  <div><Space><span>APY:</span><span>{prettifyCurrencys(disgood.good1.APY * 100)}%</span></Space></div>
-                </div>
-              </div>
-              {!disgood.isvaluegood && (
-
-                <div className='pt-2 pb-2'>
-                  <div className='flex justify-between items-center'>
-                    <div><Space><Avatar src={<img src={disgood.good2.logo_url} alt="avatar" onError={(e) => {
+                  <div><Space><Avatar src={
+                    // @ts-ignore
+                    <img src={disgood.good1.logo_url} alt="avatar" onError={(e) => {
                       e.currentTarget.src =
                         "/token.svg";
-                    }} />} /><span>{disgood.good2.symbol}</span></Space></div>
-                    <div><span>Current unit handling fee{prettifyCurrencys(disgood.good2.nowUnitFee)}</span></div>
-                  </div>
-                  <div className='pt-2 pb-2'>
-                    <div><Space><span>Invest quantity:</span><span>{prettifyCurrencys(disgood.good2.quantity)}</span></Space></div>
-                    <div><Space><span>Handling fees for investment units:</span><span>{prettifyCurrencys(disgood.good2.unitFee)}</span></Space></div>
-                    <div><Space><span>Estimated return on investment:</span><span>{prettifyCurrencys(disgood.good2.profit)}</span></Space></div>
-                    <div><Space><span>APY:</span><span>{prettifyCurrencys(disgood.good2.APY * 100)}%</span></Space></div>
-                  </div>
+                    }} />} /><span>{
+                      // @ts-ignore
+                      disgood.good1.symbol}</span></Space></div>
+                  <div><span>Current unit handling fee{
+                    // @ts-ignore
+                    prettifyCurrencys(disgood.good1.nowUnitFee)}</span></div>
                 </div>
-              )}
+                <div className='pt-2 pb-2'>
+                  <div><Space><span>Invest quantity:</span><span>{
+                    // @ts-ignore
+                    prettifyCurrencys(disgood.good1.quantity)}</span></Space></div>
+                  <div><Space><span>Handling fees for investment units:</span><span>{
+                    // @ts-ignore
+                    prettifyCurrencys(disgood.good1.unitFee)}</span></Space></div>
+                  <div><Space><span>Estimated return on investment:</span><span>{
+                    // @ts-ignore
+                    prettifyCurrencys(disgood.good1.profit)}</span></Space></div>
+                  <div><Space><span>APY:</span><span>{
+                    // @ts-ignore
+                    prettifyCurrencys(disgood.good1.APY * 100)}%</span></Space></div>
+                </div>
+              </div>
+              {
+                // @ts-ignore
+                !disgood.isvaluegood && (
+
+                  <div className='pt-2 pb-2'>
+                    <div className='flex justify-between items-center'>
+                      <div><Space><Avatar src={<img src={
+                        // @ts-ignore
+                        disgood.good2.logo_url} alt="avatar" onError={(e) => {
+                          e.currentTarget.src =
+                            "/token.svg";
+                        }} />} /><span>{
+                          // @ts-ignore
+                          disgood.good2.symbol}</span></Space></div>
+                      <div><span>Current unit handling fee{
+                        // @ts-ignore
+                        prettifyCurrencys(disgood.good2.nowUnitFee)}</span></div>
+                    </div>
+                    <div className='pt-2 pb-2'>
+                      <div><Space><span>Invest quantity:</span><span>{
+                        // @ts-ignore
+                        prettifyCurrencys(disgood.good2.quantity)}</span></Space></div>
+                      <div><Space><span>Handling fees for investment units:</span><span>{
+                        // @ts-ignore
+                        prettifyCurrencys(disgood.good2.unitFee)}</span></Space></div>
+                      <div><Space><span>Estimated return on investment:</span><span>{
+                        // @ts-ignore
+                        prettifyCurrencys(disgood.good2.profit)}</span></Space></div>
+                      <div><Space><span>APY:</span><span>{
+                        // @ts-ignore
+                        prettifyCurrencys(disgood.good2.APY * 100)}%</span></Space></div>
+                    </div>
+                  </div>
+                )}
             </div>
 
             <Form className='form-new' colon={false}>
@@ -210,8 +259,12 @@ export const Disinvest = ({ open_zt, dis_id, setOpen,setDataNum }: Props) => {
                   type='number'
                   onChange={goodQOn}
                   min={0}
+                  // @ts-ignore
+
                   max={disgood.good1.maxNum}
                   value={goodQ}
+                  // @ts-ignore
+
                   suffix={<Avatar src={<img src={disgood.good1.logo_url} alt="avatar" onError={(e) => {
                     e.currentTarget.src =
                       "/token.svg";
@@ -219,40 +272,62 @@ export const Disinvest = ({ open_zt, dis_id, setOpen,setDataNum }: Props) => {
                 />
                 <div className='pt-2 pb-2'>
                   <div className='flex justify-between'>
-                    <div><Space><span>principal:</span><span>{prettifyCurrencys(disgoodCot.good1.quantity)}</span></Space></div>
-                    <div><Space><span>profit:</span><span>{prettifyCurrencys(disgoodCot.good1.profit)}</span></Space></div>
+                    <div><Space><span>principal:</span><span>{
+                      // @ts-ignore
+                      prettifyCurrencys(disgoodCot.good1.quantity)}</span></Space></div>
+                    <div><Space><span>profit:</span><span>{
+                      // @ts-ignore
+                      prettifyCurrencys(disgoodCot.good1.profit)}</span></Space></div>
                   </div>
-                  <div className='text-end'><Space><span>fee:</span><span>{prettifyCurrencys(disgoodCot.good1.disfee)}</span></Space></div>
-                  <div className='text-end'><Space><span>total:</span><span>{prettifyCurrencys(disgoodCot.good1.count)}</span></Space></div>
+                  <div className='text-end'><Space><span>fee:</span><span>{
+                    // @ts-ignore
+                    prettifyCurrencys(disgoodCot.good1.disfee)}</span></Space></div>
+                  <div className='text-end'><Space><span>total:</span><span>{
+                    // @ts-ignore
+                    prettifyCurrencys(disgoodCot.good1.count)}</span></Space></div>
                 </div>
               </Form.Item>
-              {!disgood.isvaluegood && (
-                <>
-                  <h2>disinvest value</h2>
-                  <Form.Item>
-                    <Input
-                      placeholder="0"
-                      type='number'
-                      min={0}
-                      max={disgood.good2.maxNum}
-                      onChange={goodVQOn}
-                      value={goodVQ}
-                      suffix={<Avatar src={<img src={disgood.good2.logo_url} alt="avatar" onError={(e) => {
-                        e.currentTarget.src =
-                          "/token.svg";
-                      }} />} />}
-                    />
-                    <div className='pt-2 pb-2'>
-                      <div className='flex justify-between'>
-                        <div><Space><span>principal:</span><span>{prettifyCurrencys(disgoodCot.good2.quantity)}</span></Space></div>
-                        <div><Space><span>profit:</span><span>{prettifyCurrencys(disgoodCot.good2.profit)}</span></Space></div>
+              {
+                // @ts-ignore
+                !disgood.isvaluegood && (
+                  <>
+                    <h2>disinvest value</h2>
+                    <Form.Item>
+                      <Input
+                        placeholder="0"
+                        type='number'
+                        min={0}
+                        max={
+                          // @ts-ignore
+                          disgood.good2.maxNum}
+                        onChange={goodVQOn}
+                        value={goodVQ}
+                        suffix={<Avatar src={<img src={
+                          // @ts-ignore
+                          disgood.good2.logo_url} alt="avatar" onError={(e) => {
+                            e.currentTarget.src =
+                              "/token.svg";
+                          }} />} />}
+                      />
+                      <div className='pt-2 pb-2'>
+                        <div className='flex justify-between'>
+                          <div><Space><span>principal:</span><span>{
+                            // @ts-ignore
+                            prettifyCurrencys(disgoodCot.good2.quantity)}</span></Space></div>
+                          <div><Space><span>profit:</span><span>{
+                            // @ts-ignore
+                            prettifyCurrencys(disgoodCot.good2.profit)}</span></Space></div>
+                        </div>
+                        <div className='text-end'><Space><span>fee:</span><span>{
+                          // @ts-ignore
+                          prettifyCurrencys(disgoodCot.good2.disfee)}</span></Space></div>
+                        <div className='text-end'><Space><span>total:</span><span>{
+                          // @ts-ignore
+                          prettifyCurrencys(disgoodCot.good2.count)}</span></Space></div>
                       </div>
-                      <div className='text-end'><Space><span>fee:</span><span>{prettifyCurrencys(disgoodCot.good2.disfee)}</span></Space></div>
-                      <div className='text-end'><Space><span>total:</span><span>{prettifyCurrencys(disgoodCot.good2.count)}</span></Space></div>
-                    </div>
-                  </Form.Item>
-                </>
-              )}
+                    </Form.Item>
+                  </>
+                )}
             </Form>
             <Button
               className='newButton'

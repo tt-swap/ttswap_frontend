@@ -87,6 +87,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                     await GoodsDatas({
                         id: value_good_id,
                         pageNumber: pagination.page_number - 1,
+                        // @ts-ignore
                         pageSize: page_size,
                     });
                 // console.log(response,"***");
@@ -142,23 +143,23 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                             {on_token_click ? (
                                 <a
                                     className="cursor-pointer hover:opacity-75"
-                                    // onClick={() => {
-                                    //     if (on_token_click) {
-                                    //         on_token_click(
-                                    //             row.original.id
-                                    //         );
-                                    //     }
-                                    // }}
+                                // onClick={() => {
+                                //     if (on_token_click) {
+                                //         on_token_click(
+                                //             row.original.id
+                                //         );
+                                //     }
+                                // }}
                                 >
-                                    {row.original.name
-                                        ? row.original.name
-                                        : ""}
+                                    {
+                                        // @ts-ignore
+                                        row.original.name ? row.original.name : ""}
                                 </a>
                             ) : (
                                 <label className="text-base">
-                                    {row.original.name
-                                        ? row.original.name
-                                        : ""}
+                                    {
+                                        // @ts-ignore
+                                        row.original.name ? row.original.name : ""}
                                 </label>
                             )}
                         </div>
@@ -179,7 +180,9 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             cell: ({ row }) => {
                 return (
                     <div className="text-right">
-                        {row.original.symbol}
+                        {
+                            // @ts-ignore
+                            row.original.symbol}
                     </div>
                 );
             },
@@ -196,6 +199,8 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+
+                    // @ts-ignore
                     row.original.totalTradeQuantity
                 );
 
@@ -215,10 +220,12 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
                     row.original.totalTradeValue
                 );
 
-                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
+                    row.original.valueSymbol}</div>;
             },
         },
         {
@@ -233,6 +240,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
                     row.original.tradeQuantity24
                 );
 
@@ -251,10 +259,12 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
                     row.original.tradeValue24
                 );
 
-                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
+                    row.original.valueSymbol}</div>;
             },
         },
         {
@@ -269,6 +279,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
                     row.original.totalFee
                 );
 
@@ -287,10 +298,12 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
                     row.original.totalFeeValue
                 );
 
-                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
+                    row.original.valueSymbol}</div>;
             },
         },
         {
@@ -308,8 +321,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                     <div className="text-right">
                         <BalancePriceDelta
                             // @ts-ignore
-                            numerator={row.original.price_24h}
-                            denominator={row.original.price}
+                            numerator={row.original.price_24h} denominator={row.original.price}
                         />{" "}
                     </div>
                 );
@@ -332,7 +344,8 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                                 <DropdownMenuItem
                                     onClick={() => {
                                         // console.log(on_token_click);
-                                        on_token_click("swap",row.original.id);
+                                        // @ts-ignore
+                                        on_token_click("swap", row.original.id);
                                         // if (on_token_click) {
                                         //     on_token_click(
                                         //         row.original.id
@@ -379,20 +392,19 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                                     onClick={() => {
                                         if (on_token_click) {
                                             on_token_click(
+                                                // @ts-ignore
                                                 row.original.id
                                             );
                                         }
                                     }}
                                 >
-                                    {row.original.name
-                                        ? row.original.name
-                                        : ""}
+                                    {// @ts-ignore
+                                        row.original.name ? row.original.name : ""}
                                 </a>
                             ) : (
                                 <label className="text-base">
-                                    {row.original.name
-                                        ? row.original.name
-                                        : ""}
+                                    {// @ts-ignore
+                                        row.original.name ? row.original.name : ""}
                                 </label>
                             )}
                         </div>
@@ -412,6 +424,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
                     row.original.totalTradeQuantity
                 );
 
@@ -430,6 +443,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
                     row.original.tradeQuantity24
                 );
 

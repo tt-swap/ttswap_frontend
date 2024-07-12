@@ -69,11 +69,13 @@ const TokenInvest = () => {
 
   const isDisabled = useMemo(() => {
     if (isValueGood) {
+      // @ts-ignore
       if (investAmount.from.amount > balanceMap1.from || balanceMap1.from === 0 || investAmount.from.amount === 0 || investAmount.from.amount < 0 || investAmount.from.amount ==="") {
         return true;
       } 
       return disabled;
     } else {
+      // @ts-ignore
       if (investAmount.from.amount > balanceMap1.from || investAmount.to.amount > balanceMap1.to || balanceMap1.from === 0 || balanceMap1.to === 0 || investAmount.from.amount === 0 || investAmount.from.amount < 0 || investAmount.from.amount ==="" || disabled) {
         return true;
       }  
@@ -84,8 +86,8 @@ const TokenInvest = () => {
 console.log(9999,isDisabled,investAmount.from.amount)
 
   useMemo(() => {
-    setBalanceF(balanceMap1.from);
-    setBalanceT(balanceMap1.to);
+    // @ts-ignore
+    setBalanceF(balanceMap1.from); setBalanceT(balanceMap1.to);
   }, [balanceMap1]);
 
   useMemo(() => {
@@ -200,6 +202,7 @@ console.log(9999,isDisabled,investAmount.from.amount)
                   <span
                     className="cursor-pointer"
                   onClick={() =>
+                    // @ts-ignore
                     setAmount("from", balanceF)
                   }
                   >
@@ -260,6 +263,7 @@ console.log(9999,isDisabled,investAmount.from.amount)
                     <span
                       className="cursor-pointer"
                     onClick={() =>
+                      // @ts-ignore
                       setAmount("to", balanceT)
                     }
                     >

@@ -233,8 +233,8 @@ export const TokenTransfersListView: React.FC<TokenTransfersListViewProps> = ({
                     );
 
                 if (response.data.items.length > 0) {
-                    setMeta(
-                        new Some({
+                    // @ts-ignore
+                    setMeta( new Some({
                             chain_name: response.data.chain_name,
                             contract_ticker_symbol:
                                 response.data.items[0].transfers[0]
@@ -261,6 +261,7 @@ export const TokenTransfersListView: React.FC<TokenTransfersListViewProps> = ({
                     );
                 } else {
                     setMeta(
+                        // @ts-ignore
                         new Some({
                             chain_name: "",
                             contract_ticker_symbol: "",
@@ -273,6 +274,7 @@ export const TokenTransfersListView: React.FC<TokenTransfersListViewProps> = ({
                 setError({ error: false, error_message: "" });
             } catch (exception) {
                 setMeta(
+                    // @ts-ignore
                     new Some({
                         chain_name: "",
                         contract_ticker_symbol: "",

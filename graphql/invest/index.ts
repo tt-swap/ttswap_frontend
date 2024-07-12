@@ -21,7 +21,9 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
         let items: object[] = [];
         let items1: object[] = [];
 
+        // @ts-ignore
         item.tokenValue = items;
+        // @ts-ignore
         item.tokens = items1;
 
         goodsDatas.data.goodStates.forEach((e: any) => {

@@ -36,7 +36,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
 
   useMemo(() => {
     // console.log(account, "**")
-    setAddress(localStorage.getItem("wallet"));
+    setAddress(window.localStorage.getItem("wallet"));
     // if (account !== undefined) {
     //   setInput(account);
     // }
@@ -55,7 +55,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
     //     console.error(`Error fetching token for`, error);
     //   }
     // })()
-  }, [account,localStorage.getItem("wallet")]);
+  }, [account,window.localStorage.getItem("wallet")]);
 
   return (
     <div className="w-full flex flex-col gap-4">

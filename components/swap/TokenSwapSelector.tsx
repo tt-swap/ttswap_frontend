@@ -1,7 +1,4 @@
-import usePrices from "@/hooks/usePrices";
-import useTokens from "@/hooks/useTokens";
 import { DEFAULT_TOKEN } from "@/shared/constants/common";
-import { Price } from "@/shared/types/price";
 import { TokenPayload, SwapTokenValue } from "@/shared/types/token";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useSwapStore } from "@/stores/swap";
@@ -33,8 +30,6 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
   const [keyword, setKeyword] = useState("");
   const [availableTokens, setTokensValue] = useState<Array<LocalCurrency>>([]);
   const [treeData, setTokens] = useState<TreeDataNode[]>();
-  const { prices } = usePrices();
-  const { tokenMap } = useTokens();
   const { swaps } = useSwapStore();
   const { info } = useValueGood();
   const [spinning, setSpinning] = useState(false);

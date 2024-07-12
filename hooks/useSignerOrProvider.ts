@@ -11,7 +11,7 @@ interface SignerOrProvider {
 
 export const useSignerOrProvider = (): SignerOrProvider => {
   const { provider, account } = useWeb3React();
-
+// @ts-ignore
   return useMemo(() => {
     let signer;
     if (provider?.getSigner) {

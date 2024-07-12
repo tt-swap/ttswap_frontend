@@ -16,7 +16,7 @@ import { type TokenV2VolumeWithChartData } from "@covalenthq/client-sdk";
 export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
     chain_name,
     dex_name,
-    token_address,value_good_id
+    token_address, value_good_id
 }) => {
     const [maybeResult, setResult] =
         useState<Option<TokenV2VolumeWithChartData>>(None);
@@ -29,7 +29,7 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
             setErrorMessage(null);
             try {
                 const { data, ...error } =
-                // @ts-ignore
+                    // @ts-ignore
                     await covalentClient.XykService.getLpTokenView(
                         chain_name,
                         dex_name,
@@ -174,8 +174,7 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                             })}
                             chain_name={chain_name}
                             dex_name={dex_name}
-                            token_address={token_address}
-                        />
+                            token_address={token_address} value_good_id={""} />
                     </div>
                 </div>
             </div>
@@ -186,8 +185,7 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                 })}
                 chain_name={chain_name}
                 dex_name={dex_name}
-                token_address={token_address}
-            />
+                token_address={token_address} value_good_id={""} />
         </div>
     );
 };

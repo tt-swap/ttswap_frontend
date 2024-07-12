@@ -91,6 +91,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
                 // console.log(response,0)
                 // console.log(response.data.items[0],1)
             // setResult(new Some(response.data.items[0]));
+    // @ts-ignore
             setResult(new Some(response));
         })();
     }, [overview_data, dex_name, chain_name, displayMetrics,value_good_id]);

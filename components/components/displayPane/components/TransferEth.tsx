@@ -45,6 +45,7 @@ const TransferEth: React.FC = () => {
 
     if (success) {
       messageApi.success(
+        // @ts-ignore
         `Success! Transaction Hash: ${getEllipsisTxt(data?.transactionHash ?? "Transactions Hash missing.", 8)}`
       );
     } else {
@@ -62,7 +63,7 @@ const TransferEth: React.FC = () => {
             value={amount}
             onChange={setAmount}
             placeholder="Amount to transfer"
-            min={0}
+            min={0}// @ts-ignore
             max={balance ? parseBigNumberToFloat(balance) : 0}
             style={{ width: "100%", height: "80%", marginBlock: "auto" }}
           />

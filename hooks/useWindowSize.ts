@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { theme } from "../styles/theme";
-
 export const useWindowSize = () => {
-  const [windowSize, setWindowSize] = useState({
+  const [windowSize] = useState({
     width: "",
     height: ""
   });
