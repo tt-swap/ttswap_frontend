@@ -9,6 +9,7 @@ import { hooks as coinbaseWallethooks, coinbaseWallet } from "connectors/coinbas
 import { getName } from "connectors/getConnectorName";
 import { hooks as metaMaskhooks, metaMask } from "connectors/metaMask";
 import { hooks as walletConnecthooks, walletConnect } from "connectors/walletConnect";
+import { useWeb3React } from "@web3-react/core";
 
 import ConnectButton from "./ConnectButton";
 
@@ -37,6 +38,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({ isModalOpen, setIsModalOpen
   const isMMActivating = useMMIsActivating();
   const isWCActivating = useWCIsActivating();
   const isCBActivating = useCBIsActivating();
+  const { account } = useWeb3React();
 
   const activateConnector = useCallback(async (label: string) => {
     try {

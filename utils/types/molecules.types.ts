@@ -54,6 +54,7 @@ export interface NFTSalesCountProps {
     chain_name: Chain;
     collection_address: string;
     token_id?: string;
+    value_good_id:string;
 }
 
 export interface TransactionListProps {
@@ -62,6 +63,7 @@ export interface TransactionListProps {
     on_native_explorer_click?: Function;
     on_goldrush_receipt_click?: Function;
     on_transaction_click?: Function;
+    value_good_id:string;
 }
 
 export interface XYKPoolTimeSeriesProps {
@@ -70,12 +72,14 @@ export interface XYKPoolTimeSeriesProps {
     pool_address: string;
     pool_data?: PoolWithTimeseries | null;
     displayMetrics?: "both" | "liquidity" | "volume";
+    value_good_id:string;
 }
 
 export interface NFTVolumeProps {
     chain_name: Chain;
     collection_address: string;
     token_id?: string;
+    value_good_id:string;
 }
 
 export interface XYKPoolInformationProps {
@@ -83,6 +87,7 @@ export interface XYKPoolInformationProps {
     chain_name: Chain;
     dex_name: string;
     pool_data?: PoolWithTimeseries | null;
+    value_good_id:string;
 }
 
 export interface XYKTokenInformationProps {
@@ -90,6 +95,7 @@ export interface XYKTokenInformationProps {
     chain_name: Chain;
     dex_name: string;
     token_data?: TokenV2VolumeWithChartData | null;
+    value_good_id:string;
 }
 
 export interface XYKOverviewTimeSeriesProps {
@@ -97,6 +103,7 @@ export interface XYKOverviewTimeSeriesProps {
     dex_name: string;
     overview_data?: UniswapLikeEcosystemCharts;
     displayMetrics?: "both" | "liquidity" | "volume";
+    value_good_id:string;
 }
 
 export interface XYKTokenTimeSeriesProps {
@@ -105,13 +112,15 @@ export interface XYKTokenTimeSeriesProps {
     token_address: string;
     token_data?: TokenV2VolumeWithChartData | null;
     displayMetrics?: "both" | "liquidity" | "volume";
+    value_good_id:string;
 }
 
 export interface XYKWalletInformationProps {
-    wallet_address: string;
+    wallet_address: string|null;
     chain_name: Chain;
     dex_name: string;
-    wallet_data?: ExchangeTransaction[];
+    wallet_data?: object;
+    value_good_id:string;
 }
 
 export interface DecodedTransactionProps {

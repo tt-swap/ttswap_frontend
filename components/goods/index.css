@@ -1,0 +1,17 @@
+.newgood{
+  padding: 20px;
+}
+.spanS{
+  width: 100%;
+  justify-content: space-between;
+}
+.newgood h2 {
+  font-size: 14px;
+  font-weight: 700;
+}
+.ant-form-item-label{
+  width: 60px;
+}
+.newButton {
+  background-color: #10b981;
+}

@@ -13,6 +13,7 @@ export interface AmountState {
 export interface TokenPayload {
   id: string | number;
   symbol: string;
+  decimals: number;
   buyFee: number;
   sellFee: number;
   price: number;
@@ -24,6 +25,12 @@ export interface TokenPayload {
 
 export interface SwapState {
   from: TokenPayload;
+  to: TokenPayload;
+}
+export interface SwapStateF {
+  from: TokenPayload;
+}
+export interface SwapStateT {
   to: TokenPayload;
 }
 
@@ -57,16 +64,47 @@ export interface SwapTokens {
 }
 
 
-// 创建实现Item接口的类
-// export class SwapTokensClass implements SwapTokens {
-//   tokenValue: SwapTokenValue[];
-//   tokens: SwapToken[];
+export interface InvestToken {
+  id: string | number;
+  name: string;
+  symbol: string;
+  investFee: number;
+  price: number;
+  logo_url: string;
+  address: string;
+  isvaluegood: boolean;
+  decimals: number;
+}
 
-//   // 构造函数初始化对象的属性
-//   constructor() {
-//       this.tokenValue = [{ id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0,
-//       buyFee: 0, sellFee: 0, price: 0, logo_url: "", address: "" }];
-//       this.tokens = [{ id: "", name: "", symbol: "", logo_url: "", address: "", children: [{ id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0,
-//       buyFee: 0, sellFee: 0, price: 0, logo_url: "", address: "" }] }];
-//   }
-// }
+export interface InvestTokenValue {
+  id: string | number;
+  name: string;
+  decimals: number;
+  symbol: string;
+  investQuantity: number;
+  disinvestFee: number;
+  investFee: number;
+  price: number;
+  logo_url: string;
+  address: string;
+  isvaluegood: boolean;
+}
+
+export interface InvestTokens {
+  id: string | number;
+  name: string;
+  symbol: string;
+  logo_url: string;
+  address: string;
+  children?: InvestTokenValue[];
+}
+
+export interface InvestState {
+  from: InvestToken;
+  to: InvestToken;
+}
+export interface InvestTokenD {
+  tokenValue: InvestTokenValue[];
+  tokens: InvestTokens[];
+  
+}

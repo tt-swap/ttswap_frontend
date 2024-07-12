@@ -1,39 +1,69 @@
 'use client'
-import { useRouter } from "next/navigation";
-import { XYKWalletInformation  } from "@covalenthq/goldrush-kit";
+import { useRouter, usePathname } from "next/navigation";
+// import { XYKWalletInformation } from "@covalenthq/goldrush-kit";
 import { GoldRushProvider } from "@/utils/store";
-import { XYKPoolListView, XYKTokenListView, XYKWalletPositionsListView,XYKWalletTransactionsListView } from "@/components/Organisms"
-import { XYKOverviewTimeSeries } from "@/components/Molecules"
+import { XYKWalletPositionsListView, XYKWalletTransactionsListView, XYKWalletPoolListView } from "@/components/Organisms"
+import { XYKWalletInformation } from "@/components/Molecules"
+import { CreatGood } from "@/components/goods/creatGood"
+import { Disinvest } from "@/components/goods/disinvest"
 import { Flex } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { handleTabSwitch } from "@/utils/router";
 // import { useState } from "react";
-import { useEffect,useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useValueGood,useGoodId } from "@/stores/valueGood";
 
 import { useWeb3React } from "@web3-react/core";
+import { myIndexes } from '@/graphql/account';
+import { prettifyCurrencys } from '@/graphql/util';
 
 export default function Account({ params }: { params: { chain: string, dex: string } }) {
-  
+
   const { account } = useWeb3React();
   const router = useRouter();
-  const [walletAddress, setAddress] = useState("")
-  const [input, setInput] = useState("");
-  useEffect(() => {
-    // console.log(account,"**")
-    if (account !==undefined) {
-      setInput(account);
-      setAddress(account);
-    }
+  const [walletAddress, setAddress] = useState<string|null>("")
+  // const [input, setInput] = useState("");
+  const [proofid, setProofid] = useState(0);
+  const [dataNum, setDataNum] = useState(0);
+  const [open, setOpen] = useState(false);
+  const { info } = useValueGood();
+  const [maybeResult, setResult] = useState({});
+  const { setGoodId } = useGoodId();
 
-  }, [account]);
+  const pathname = usePathname()
+
+  useMemo(() => {
+    // console.log(account, "**")
+    setAddress(localStorage.getItem("wallet"));
+    // if (account !== undefined) {
+    //   setInput(account);
+    // }
+    // (async () => {
+    //   let response;
+    //   try {
+    //     response =
+    //       await myIndexes(
+    //         info.id,
+    //         walletAddress
+    //       );
+    //     // console.log(response)
+    //     // @ts-ignore
+    //     setResult(response);
+    //   } catch (error) {
+    //     console.error(`Error fetching token for`, error);
+    //   }
+    // })()
+  }, [account,localStorage.getItem("wallet")]);
+
   return (
     <div className="w-full flex flex-col gap-4">
-        <h1 className="pt-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-          Account
-        </h1>
-        <Flex align="end" gap="4">
-          <div>
+      <h1 className="pt-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
+        Account
+      </h1>
+      <Flex align="end" gap="4">
+        {/* <div>
             <Label htmlFor="wallet_address">Wallet address</Label>
             <Input
               className="w-[400px]"
@@ -45,57 +75,107 @@ export default function Account({ params }: { params: { chain: string, dex: stri
                 setInput(e.target.value)
               }}
             />
-          </div>
-          <Button onClick={()=>{
-            setAddress(input)
-          }}>Load account details</Button>
-        </Flex>
-        
-        <XYKWalletInformation
+          </div>*/}
+        {/* <Button onClick={()=>{
+            setDataNum(dataNum+1)
+          }}>Load account details</Button>  */}
+        <CreatGood
+          setDataNum={(e) => setDataNum(e + dataNum)}
+        ></CreatGood>
+        <Disinvest
+          open_zt={open}
+          dis_id={proofid}
+          setOpen={setOpen}
+          setDataNum={(e) => setDataNum(e + dataNum)}
+        ></Disinvest>
+      </Flex>
+      <XYKWalletInformation
+        // @ts-ignore
+        chain_name={params.chain}
+        dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
+        wallet_address={walletAddress}
+        value_good_id={info.id}
+        wallet_data={maybeResult}
+      />
+      <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
+        Invest Proof
+      </h2>
+      <GoldRushProvider
+        apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
+        newTheme={{
+          borderRadius: 10,
+        }}
+      >
+        <XYKWalletPositionsListView
           // @ts-ignore
           chain_name={params.chain}
           dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
           wallet_address={walletAddress}
+          data_num={dataNum}
+          value_good_id={info.id}
+          on_pool_click={(e: any) => {
+            if (e === "invest") {
+              router.push(`${handleTabSwitch(e, pathname)}`);
+            } else {
+              setProofid(e);
+              setOpen(true);
+            }
+          }}
         />
-        <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
-          Invest Proof
-        </h2>
-        <GoldRushProvider
-                apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
-                newTheme={{
-                    borderRadius: 10,
-                }}
-            >
-        <XYKWalletPositionsListView
-         // @ts-ignore
+      </GoldRushProvider>
+
+      <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
+        My goods
+      </h2>
+      <GoldRushProvider
+        apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
+        newTheme={{
+          borderRadius: 10,
+        }}
+      >
+        <XYKWalletPoolListView
+          // @ts-ignore
           chain_name={params.chain}
           dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
+          page_size={20}
           wallet_address={walletAddress}
-          on_pool_click={(e: any)=>{
-            router.push(`/${params.chain}/${params.dex}/pools/${e}`)
+          data_num={dataNum}
+          value_good_id={info.id}
+          is_over={true}
+          on_pool_click={(e: any, id: string) => {
+            if (e === "invest") {
+              setGoodId({invest:{id:id},swap:{id:""}});
+              // sessionStorage.setItem("invest", id);
+            } else {
+              setGoodId({invest:{id:""},swap:{id:id}});
+              // sessionStorage.setItem("swap", id);
+            }
+            router.push(`${handleTabSwitch(e, pathname)}`);
           }}
         />
-        </GoldRushProvider>
-        <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
-          Transactions
-        </h2>
-        <XYKWalletTransactionsListView
-         // @ts-ignore
-          chain_name={params.chain}
-          dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
-          wallet_address={walletAddress}
-          on_native_explorer_click={(e: { explorers: { url: string | URL | undefined; }[]; })=>{
-            window.open(e.explorers[0].url, '_blank');
-          }}
-          on_goldrush_receipt_click={(e: { tx_hash: any; })=>{
-            window.open(`https://goldrush-tx-receipt-ui.vercel.app/tx/${params.chain}/${e.tx_hash}/`, '_blank');
-          }}
-        />
-        <Flex onClick={()=>{
-          router.back()
-        }}>
-          <Button>Back</Button>
-        </Flex>
+      </GoldRushProvider>
+      <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
+        Transactions
+      </h2>
+      <XYKWalletTransactionsListView
+        // @ts-ignore
+        chain_name={params.chain}
+        dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
+        wallet_address={walletAddress}
+        data_num={dataNum}
+        value_good_id={info.id}
+        on_native_explorer_click={(e: { explorers: { url: string | URL | undefined; }[]; }) => {
+          window.open(e.explorers[0].url, '_blank');
+        }}
+        on_goldrush_receipt_click={(e: { tx_hash: any; }) => {
+          window.open(`https://goldrush-tx-receipt-ui.vercel.app/tx/${params.chain}/${e.tx_hash}/`, '_blank');
+        }}
+      />
+      <Flex onClick={() => {
+        router.back()
+      }}>
+        <Button>Back</Button>
+      </Flex>
     </div>
   )
 

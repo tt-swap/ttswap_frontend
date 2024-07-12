@@ -19,7 +19,7 @@ import {
 } from "@covalenthq/client-sdk";
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize";
 
-import { ecosystemChartDatas } from '@/graphql/data.processing';
+import { ecosystemChartDatas } from '@/graphql/overview';
 import { prettifyCurrencys } from '@/graphql/util';
 
 
@@ -29,6 +29,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
     dex_name,
     overview_data,
     displayMetrics = "both",
+    value_good_id,
 }) => {
     const [maybeResult, setResult] =
         useState<Option<UniswapLikeEcosystemCharts>>(None);
@@ -81,7 +82,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
             setResult(None);
             const response = 
             
-             await ecosystemChartDatas();
+             await ecosystemChartDatas(value_good_id);
 
                 // await covalentClient.XykService.getEcosystemChartData(
                 //     chain_name,
@@ -92,7 +93,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
             // setResult(new Some(response.data.items[0]));
             setResult(new Some(response));
         })();
-    }, [overview_data, dex_name, chain_name, displayMetrics]);
+    }, [overview_data, dex_name, chain_name, displayMetrics,value_good_id]);
 
     useEffect(() => {
         if (displayMetrics === "both") return;

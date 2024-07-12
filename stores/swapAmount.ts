@@ -24,7 +24,6 @@ export const useSwapAmountStore = create<SwapAmountStore>((set) => ({
   
   swapsAmount: initDefaultSwapAmount(),
   setSwapAmount: async (amount: AmountState) => {
-    console.log(amount,"****");
     set({ swapsAmount: amount })
   },
 }));

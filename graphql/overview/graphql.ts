@@ -4,7 +4,7 @@ import apolloClient from '@/graphql/apollo'
 import { gql } from '@apollo/client'
 
 //Overview 走势图数据
-export function ecosystemChartData(params) {
+export function ecosystemChartData(params: { id: string; eq7: number; eq30: number }) {
 	return apolloClient.query({
 		query: gql`query($id: BigInt,$eq7: BigInt,$eq30: BigInt) {
 			goodState(id: $id) {
@@ -35,7 +35,7 @@ export function ecosystemChartData(params) {
 }
 
 //记录列表
-export function transactions(params) {
+export function transactions(params: { id: string; first: number }) {
 	return apolloClient.query({
 		query: gql`query($id: BigInt,$first: Int) {
 			goodState(id: $id) {
@@ -78,7 +78,7 @@ export function transactions(params) {
 }
 
 //物品列表
-export function parGoodDatas(params) {
+export function parGoodDatas(params: { id: string; first: number; time: number; skips: number }) {
 	return apolloClient.query({
 		query: gql`query($id: BigInt,$first: Int,$time: BigInt,$skips: Int) {
 			goodState(id: $id) {
@@ -104,29 +104,29 @@ export function parGoodDatas(params) {
 				erc20Address
 				currentQuantity
 				currentValue
-			  }
-			parGoodDatas(
-				orderBy: modifiedTime
-				orderDirection: asc
-				first: 1
-				where: {modifiedTime_gte: $time, timetype: "d"}
-			  ) {
-				decimals
-				modifiedTime
-				pargood {
-				  tokenname
-				  tokendecimals
-				  tokensymbol
-				  id
-				  currentQuantity
-				  currentValue
+				parGooddata(
+					orderBy: modifiedTime
+					orderDirection: asc
+					first: 1
+					where: {modifiedTime_gte: $time, timetype: "d"}
+				  ) {
+					id
+					decimals
+					modifiedTime
+					totalProfit
+					totalTradeQuantity
+					open
+					timetype
+					pargood {
+					  tokenname
+					  tokendecimals
+					  tokensymbol
+					  id
+					  currentQuantity
+					  currentValue
+					}
 				}
-				totalProfit
-				totalTradeQuantity
-				open
-				id
-				timetype
-			}
+			  }
 		}`,
 		variables: params
 	})
@@ -134,7 +134,9 @@ export function parGoodDatas(params) {
 
 
 //投资列表
-export function InvestGoodDatas(params) {
+export function InvestGoodDatas(params: {
+	id: string; first: number; time: number; skip: number
+}) {
 	return apolloClient.query({
 		query: gql`query($id: BigInt,$first: Int,$time: BigInt,$skip: Int) {
 			goodState(id: $id) {
@@ -162,32 +164,33 @@ export function InvestGoodDatas(params) {
 					totalInvestCount
 					investQuantity
 					feeQuantity
+					parGooddata(
+						orderBy: modifiedTime
+						orderDirection: desc
+						first: 1
+						where: {modifiedTime_lte: $time, timetype: "d"}
+					  ) {
+						id
+						decimals
+						modifiedTime
+						open
+						timetype
+						totalInvestQuantity
+						totalInvestCount
+						feeQuantity
+						investQuantity
+						pargood {
+							id
+							tokenname
+							tokendecimals
+							tokensymbol
+							currentQuantity
+							currentValue
+							investQuantity
+						}
+					}
 			  }
-			  parGoodDatas(
-				orderBy: modifiedTime
-				orderDirection: asc
-				first: 1
-				where: {modifiedTime_gte: $time, timetype: "d"}
-			  ) {
-				decimals
-				modifiedTime
-				pargood {
-				tokenname
-				tokendecimals
-				tokensymbol
-				id
-				currentQuantity
-				currentValue
-				investQuantity
-				}
-				open
-				id
-				timetype
-				totalInvestQuantity
-				totalInvestCount
-				feeQuantity
-				investQuantity
-			}
+			  
 		}`,
 		variables: params
 	})

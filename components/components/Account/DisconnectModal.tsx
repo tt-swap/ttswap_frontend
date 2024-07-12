@@ -31,14 +31,14 @@ const DisconnectModal: React.FC<ConnectModalProps> = ({ isModalOpen, setIsModalO
         bodyStyle={{ padding: "15px" }}
       >
         <Address avatar="left" size={6} copyable style={{ fontSize: "20px" }} />
-        <div style={{ marginTop: "10px", padding: "0 10px" }}>
-          {chainId !== undefined && (
-            <a href={`${getExplorer(chainId)}/address/${account}`} target="_blank" rel="noreferrer">
+        {/* <div style={{ marginTop: "10px", padding: "0 10px" }}>
+          {localStorage.getItem("wallet") !== undefined && (
+            <a href={`${getExplorer(localStorage.getItem("wallet"))}/address/${localStorage.getItem("wallet")}`} target="_blank" rel="noreferrer">
               <SelectOutlined style={{ marginRight: "5px" }} />
               View on Explorer
             </a>
           )}
-        </div>
+        </div> */}
       </Card>
       <Button
         size="large"

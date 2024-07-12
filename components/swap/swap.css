@@ -155,3 +155,7 @@
   padding-left: 0px;
   padding-right: 0px;
 } */
+
+.ant-tree.ant-tree-directory .ant-tree-treenode .ant-tree-node-content-wrapper.ant-tree-node-selected, .ant-tree.ant-tree-directory .ant-tree-treenode-selected .ant-tree-switcher {
+ color: #230f0f;
+}

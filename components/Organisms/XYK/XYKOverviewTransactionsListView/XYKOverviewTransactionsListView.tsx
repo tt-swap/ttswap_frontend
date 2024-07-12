@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-import { transactionsDatas } from '@/graphql/data.processing';
+import { transactionsDatas } from '@/graphql/overview';
 import { prettifyCurrencys } from '@/graphql/util';
 
 export const XYKOverviewTransactionsListView: React.FC<
@@ -46,7 +46,7 @@ export const XYKOverviewTransactionsListView: React.FC<
     dex_name,
     on_transaction_click,
     on_native_explorer_click,
-    on_goldrush_receipt_click,
+    on_goldrush_receipt_click,value_good_id,is_over
 }) => {
         const { covalentClient } = useGoldRush();
 
@@ -72,7 +72,7 @@ export const XYKOverviewTransactionsListView: React.FC<
                         //     chain_name,
                         //     dex_name
                         // );
-                        await transactionsDatas();
+                        await transactionsDatas(value_good_id);
                     // @ts-ignore
                     setResult(new Some(response.items));
                     setError({ error: false, error_message: "" });
@@ -84,7 +84,7 @@ export const XYKOverviewTransactionsListView: React.FC<
                     });
                 }
             })();
-        }, [dex_name, chain_name]);
+        }, [dex_name, chain_name,value_good_id]);
 
         const columns: ColumnDef<ExchangeTransaction>[] = [
             {
@@ -312,58 +312,58 @@ export const XYKOverviewTransactionsListView: React.FC<
             //         );
             //     },
             // },
-            {
-                id: "actions",
-                cell: ({ row }) => {
-                    if (!on_native_explorer_click && !on_goldrush_receipt_click)
-                        return;
-                    return (
-                        <div className="text-right">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="ml-auto  ">
-                                        <span className="sr-only">Open menu</span>
-                                        <IconWrapper icon_class_name="expand_more" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                    {on_native_explorer_click && (
-                                        <DropdownMenuItem
-                                            onClick={() => {
-                                                on_native_explorer_click(
-                                                    row.original
-                                                );
-                                            }}
-                                        >
-                                            <IconWrapper
-                                                icon_class_name="open_in_new"
-                                                class_name="mr-2"
-                                            />{" "}
-                                            View on explorer
-                                        </DropdownMenuItem>
-                                    )}
-                                    {on_goldrush_receipt_click && (
-                                        <DropdownMenuItem
-                                            onClick={() => {
-                                                on_goldrush_receipt_click(
-                                                    row.original
-                                                );
-                                            }}
-                                        >
-                                            <IconWrapper
-                                                icon_class_name="open_in_new"
-                                                class_name="mr-2"
-                                            />{" "}
-                                            View goldrush receipt
-                                        </DropdownMenuItem>
-                                    )}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </div>
-                    );
-                },
-            },
+            // {
+            //     id: "actions",
+            //     cell: ({ row }) => {
+            //         if (!on_native_explorer_click && !on_goldrush_receipt_click)
+            //             return;
+            //         return (
+            //             <div className="text-right">
+            //                 <DropdownMenu>
+            //                     <DropdownMenuTrigger asChild>
+            //                         <Button variant="ghost" className="ml-auto  ">
+            //                             <span className="sr-only">Open menu</span>
+            //                             <IconWrapper icon_class_name="expand_more" />
+            //                         </Button>
+            //                     </DropdownMenuTrigger>
+            //                     <DropdownMenuContent align="end">
+            //                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            //                         {on_native_explorer_click && (
+            //                             <DropdownMenuItem
+            //                                 onClick={() => {
+            //                                     on_native_explorer_click(
+            //                                         row.original
+            //                                     );
+            //                                 }}
+            //                             >
+            //                                 <IconWrapper
+            //                                     icon_class_name="open_in_new"
+            //                                     class_name="mr-2"
+            //                                 />{" "}
+            //                                 View on explorer
+            //                             </DropdownMenuItem>
+            //                         )}
+            //                         {on_goldrush_receipt_click && (
+            //                             <DropdownMenuItem
+            //                                 onClick={() => {
+            //                                     on_goldrush_receipt_click(
+            //                                         row.original
+            //                                     );
+            //                                 }}
+            //                             >
+            //                                 <IconWrapper
+            //                                     icon_class_name="open_in_new"
+            //                                     class_name="mr-2"
+            //                                 />{" "}
+            //                                 View goldrush receipt
+            //                             </DropdownMenuItem>
+            //                         )}
+            //                     </DropdownMenuContent>
+            //                 </DropdownMenu>
+            //             </div>
+            //         );
+            //     },
+            // },
         ];
 
         const table = useReactTable({

@@ -42,14 +42,14 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination";
 
-import { GoodsDatas } from '@/graphql/data.processing';
+import { GoodsDatas } from '@/graphql/overview';
 import { prettifyCurrencys } from '@/graphql/util';
 
 export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
     chain_name,
     dex_name,
     on_token_click,
-    page_size = 10,
+    page_size, value_good_id, is_over
 }) => {
     const { covalentClient } = useGoldRush();
 
@@ -80,24 +80,16 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
     useEffect(() => {
         (async () => {
             setResult(None);
-            let response;
+            let response: any;
             try {
-                
+
                 response =
-                    // await covalentClient.XykService.getNetworkExchangeTokens(
-                    //     chain_name,
-                    //     dex_name,
-                    //     // @ts-ignore
-                    //     {
-                    //         pageNumber: pagination.page_number - 1,
-                    //         pageSize: page_size,
-                    //     }
-                    // );
                     await GoodsDatas({
-                                pageNumber: pagination.page_number - 1,
-                                pageSize: page_size,
-                            });
-                    // console.log(response,"***");
+                        id: value_good_id,
+                        pageNumber: pagination.page_number - 1,
+                        pageSize: page_size,
+                    });
+                // console.log(response,"***");
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
                 setResult(new Some(response.items));
@@ -109,7 +101,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                 });
             }
         })();
-    }, [chain_name, dex_name, pagination]);
+    }, [chain_name, dex_name, pagination, value_good_id]);
 
     useEffect(() => {
         setWindowWidth(window.innerWidth);
@@ -150,13 +142,13 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                             {on_token_click ? (
                                 <a
                                     className="cursor-pointer hover:opacity-75"
-                                    onClick={() => {
-                                        if (on_token_click) {
-                                            on_token_click(
-                                                row.original.id
-                                            );
-                                        }
-                                    }}
+                                    // onClick={() => {
+                                    //     if (on_token_click) {
+                                    //         on_token_click(
+                                    //             row.original.id
+                                    //         );
+                                    //     }
+                                    // }}
                                 >
                                     {row.original.name
                                         ? row.original.name
@@ -339,18 +331,20 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                 <DropdownMenuItem
                                     onClick={() => {
-                                        if (on_token_click) {
-                                            on_token_click(
-                                                row.original.id
-                                            );
-                                        }
+                                        // console.log(on_token_click);
+                                        on_token_click("swap",row.original.id);
+                                        // if (on_token_click) {
+                                        //     on_token_click(
+                                        //         row.original.id
+                                        //     );
+                                        // }
                                     }}
                                 >
                                     <IconWrapper
                                         icon_class_name="swap_horiz"
                                         class_name="mr-2"
                                     />{" "}
-                                    View Token
+                                    Swap
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -459,9 +453,10 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                                 <DropdownMenuItem
                                     onClick={() => {
                                         if (on_token_click) {
-                                            on_token_click(
-                                                row.original.id
-                                            );
+                                            on_token_click("swap");
+                                            // on_token_click(
+                                            //     row.original.id
+                                            // );
                                         }
                                     }}
                                 >
@@ -469,7 +464,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                                         icon_class_name="swap_horiz"
                                         class_name="mr-2"
                                     />{" "}
-                                    View Token
+                                    Swap
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -547,10 +542,10 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
-                                                  header.column.columnDef
-                                                      .header,
-                                                  header.getContext()
-                                              )}
+                                                header.column.columnDef
+                                                    .header,
+                                                header.getContext()
+                                            )}
                                     </TableHead>
                                 );
                             })}
@@ -559,56 +554,58 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                 </TableHeader>
                 <TableBody>{body}</TableBody>
             </Table>
-            <Pagination className="select-none">
-                <PaginationContent>
-                    <PaginationItem
-                        disabled={pagination.page_number === 1}
-                        onClick={() => {
-                            handlePagination(pagination.page_number - 1);
-                        }}
-                    >
-                        <PaginationPrevious />
-                    </PaginationItem>
-                    {pagination.page_number > 1 && (
+            {!is_over && (
+                <Pagination className="select-none">
+                    <PaginationContent>
                         <PaginationItem
+                            disabled={pagination.page_number === 1}
                             onClick={() => {
                                 handlePagination(pagination.page_number - 1);
                             }}
                         >
-                            <PaginationLink>
-                                {pagination.page_number - 1}
+                            <PaginationPrevious />
+                        </PaginationItem>
+                        {pagination.page_number > 1 && (
+                            <PaginationItem
+                                onClick={() => {
+                                    handlePagination(pagination.page_number - 1);
+                                }}
+                            >
+                                <PaginationLink>
+                                    {pagination.page_number - 1}
+                                </PaginationLink>
+                            </PaginationItem>
+                        )}
+                        <PaginationItem>
+                            <PaginationLink isActive>
+                                {pagination.page_number}
                             </PaginationLink>
                         </PaginationItem>
-                    )}
-                    <PaginationItem>
-                        <PaginationLink isActive>
-                            {pagination.page_number}
-                        </PaginationLink>
-                    </PaginationItem>
-                    {hasMore && (
+                        {hasMore && (
+                            <PaginationItem
+                                onClick={() => {
+                                    handlePagination(pagination.page_number + 1);
+                                }}
+                            >
+                                <PaginationLink>
+                                    {pagination.page_number + 1}
+                                </PaginationLink>
+                            </PaginationItem>
+                        )}
+                        <PaginationItem>
+                            <PaginationEllipsis />
+                        </PaginationItem>
                         <PaginationItem
+                            disabled={!hasMore}
                             onClick={() => {
                                 handlePagination(pagination.page_number + 1);
                             }}
                         >
-                            <PaginationLink>
-                                {pagination.page_number + 1}
-                            </PaginationLink>
+                            <PaginationNext />
                         </PaginationItem>
-                    )}
-                    <PaginationItem>
-                        <PaginationEllipsis />
-                    </PaginationItem>
-                    <PaginationItem
-                        disabled={!hasMore}
-                        onClick={() => {
-                            handlePagination(pagination.page_number + 1);
-                        }}
-                    >
-                        <PaginationNext />
-                    </PaginationItem>
-                </PaginationContent>
-            </Pagination>
+                    </PaginationContent>
+                </Pagination>
+            )}
         </div>
     );
 };

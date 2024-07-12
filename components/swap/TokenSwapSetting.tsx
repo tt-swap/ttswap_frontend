@@ -45,8 +45,7 @@ const TokenSwapSetting = ({ value,value1, onChange }: Props)  => {
         <Input suffix="%" value={value} onChange={(e:any) => onInput(e.target.value)}/>
           <div className=" flex justify-between gap-4 pt-5">
             <p>
-              When available, aggregates liquidity sources for better prices and
-              gas free swaps.
+              only whole confirm.
               {/* <a
                 target="_blank"
                 rel="noopener noreferrer"

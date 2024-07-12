@@ -29,13 +29,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const handleTabSwitch = (route: string) => {
     const routeSegments = pathname.split('/');
     routeSegments[3] = route;
-    if(routeSegments.length > 4){
+    if (routeSegments.length > 4) {
       routeSegments.pop();
     }
     const newRoute = routeSegments.join('/');
+    console.log(newRoute)
     router.push(newRoute);
-   
-    
   }
 
   return (
@@ -45,7 +44,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       className="container min-h-[calc(100vh-150px)] py-8"
     >
       <Tabs value={path} className="w-full ">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger
             value="overview"
             onClick={() => {
@@ -55,12 +54,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             Overview
           </TabsTrigger>
           <TabsTrigger
-            value="tokens"
+            value="goods"
             onClick={() => {
-              handleTabSwitch("tokens")
+              handleTabSwitch("goods")
             }}
           >
-            Trade
+            Goods
           </TabsTrigger>
           <TabsTrigger
             value="pools"
@@ -68,7 +67,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               handleTabSwitch("pools")
             }}
           >
-            Invest
+            Pools
           </TabsTrigger>
           <TabsTrigger
             value="account"
@@ -85,6 +84,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             }}
           >
             Swap
+          </TabsTrigger>
+          <TabsTrigger
+            value="invest"
+            onClick={() => {
+              handleTabSwitch("invest")
+            }}
+          >
+            Invest
           </TabsTrigger>
         </TabsList>
       </Tabs>

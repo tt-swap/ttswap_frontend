@@ -4,35 +4,27 @@ import { DEFAULT_TOKEN } from "@/shared/constants/common";
 import { Price } from "@/shared/types/price";
 import { TokenPayload, SwapTokenValue } from "@/shared/types/token";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-// @ts-ignore
-import Modal from "react-modal";
+import { useSwapStore } from "@/stores/swap";
+
 import TokenSwapModal from "./TokenSwapModal";
 import ImgCache from "./components/common/ImgCache";
 import ChainSelector from "@/components/ChainSelector";
 
-import { SearchOutlined, DownOutlined } from '@ant-design/icons';
-import { Input, Select, Button, Tree,Avatar } from 'antd';
-import type { TreeProps, TreeDataNode } from 'antd';
+import { SearchOutlined, DownOutlined,LoadingOutlined } from '@ant-design/icons';
+import { Input, Select, Button, Tree, Spin,Avatar } from 'antd';
+import type { GetProps, TreeDataNode } from 'antd';
+import { useValueGood } from "@/stores/valueGood";
 
 import { prettifyCurrencys } from '@/graphql/util';
 import { GoodsDatas } from '@/graphql/swap/index';
 
-const { Option } = Select;
-
-
-const sel = [
-  { value: 'jack', label: 'Jack' },
-  { value: 'lucy', label: 'Lucy' },
-  { value: 'Yiminghe', label: 'yiminghe' },
-  { value: 'disabled', label: 'Disabled', disabled: true },
-];
-// type DirectoryTreeProps = GetProps<typeof Tree.DirectoryTree>;
+type DirectoryTreeProps = GetProps<typeof Tree.DirectoryTree>;
 
 const { DirectoryTree } = Tree;
 
 interface Props {
   value: TokenPayload;
-  onChange: (value:SwapTokenValue) => void;
+  onChange: (value: SwapTokenValue) => void;
 }
 
 type LocalCurrency = Partial<SwapTokenValue>;
@@ -43,19 +35,29 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
   const [treeData, setTokens] = useState<TreeDataNode[]>();
   const { prices } = usePrices();
   const { tokenMap } = useTokens();
+  const { swaps } = useSwapStore();
+  const { info } = useValueGood();
+  const [spinning, setSpinning] = useState(false);
 
   useMemo(() => {
-    // setTokens(None);
+    setSpinning(true);
     (async () => {
-      let a: any = await GoodsDatas({ id: 0 });
+      let a: any = await GoodsDatas({
+        id: info.id,
+        sel: keyword
+      });
       let rest: Array<LocalCurrency> = a.tokenValue;
-      // console.log(rest,33332)
+      // console.log(a,33332)
       setTokensValue(rest);
       a.tokens.map((el: any, index: number) => {
         a.tokens[index].key = el.id;
         a.tokens[index].title = (
           <>
-            <img src="/token.png" alt="folder" className="treeImg" />
+            <img src={el.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
+              onError={(e) => {
+                e.currentTarget.src =
+                  "/token.svg";
+              }} />
             <span>
               <span>{el.name}</span><br />
               <span className="text-xs">{el.symbol}</span>
@@ -66,52 +68,63 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
           a.tokens[index].children[index1].nodePd = true;
           a.tokens[index].children[index1].title = (
             <>
-              <img src="/token.png" alt="folder" className="treeImg" />
+              <img src={el1.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
+                onError={(e) => {
+                  e.currentTarget.src =
+                    "/token.svg";
+                }} />
               <span>
                 <span>{el1.name}</span><br />
                 <span className="text-xs">{el1.symbol}</span>
               </span>
               <span className="magL">
-                <span>stock:{prettifyCurrencys(el1.currentQuantity)}</span>
-                <span>buyFee:{el1.buyFee*100}%</span>
-                <span>sellFee:{el1.sellFee*100}%</span>
+                <span>stock:{prettifyCurrencys(el1.currentQuantity / 10**el1.decimals)}</span>
+                <span>buyFee:{(el1.buyFee * 100).toFixed(2)}%</span>
+                <span>sellFee:{(el1.sellFee * 100).toFixed(2)}%</span>
               </span>
             </>);
 
         })
       })
       setTokens(a.tokens);
+      setSpinning(false);
     })()
-  }, [keyword]);
+  }, [info, keyword]);
   // console.log(availableTokens,222)
   const isDefault = value.symbol === DEFAULT_TOKEN;
 
-  const showModal = (el:SwapTokenValue) => {
-    // console.log(222)
+  const showModal = (el: SwapTokenValue) => {
     setOpen(false);
-    onChange(el)
+    onChange(el);
+    document.body.style.overflow = "";
+    console.log(222, el)
   };
 
   const onSearch = (value: string) => {
     console.log('search:', value);
-    };
-    
-  useEffect(() => {
-    Modal.setAppElement("body");
-    const input: HTMLInputElement | null = document.querySelector('input');
-    if (input) {
-      input.focus();
-    }
-  }, []);
+  };
 
-  const onSelect: TreeProps['onSelect'] = (keys: any, info: any) => {
-    // console.log('Trigger Select', info);
+  // useEffect(() => {
+  //   Modal.setAppElement("body");
+  //   const input: HTMLInputElement | null = document.querySelector('input');
+  //   if (input) {
+  //     input.focus();
+  //   }
+  // }, []);
+
+  const onSelect: DirectoryTreeProps['onSelect'] = (keys: any, info: any) => {
+    // console.log('Trigger Select', keys);
     if (info.node.nodePd) {
       setOpen(false);
       onChange(info.node);
-      console.log('Trigger Select', keys, info);
+      document.body.style.overflow = "";
+      console.log('Trigger Select', swaps, keys, info);
     }
   };
+  const onExpand: DirectoryTreeProps['onExpand'] = (keys, info) => {
+    console.log('Trigger Expand', keys, info);
+  };
+
   const handleClose = (a: boolean, b: string) => {
     setOpen(a);
     document.body.style.overflow = b;
@@ -128,23 +141,7 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
               onChange={(e: any) => setKeyword(e.target.value)}
               value={keyword}
             />
-            <ChainSelector/>
-            {/* <Select
-              defaultValue={sel[0].value}
-              popupMatchSelectWidth={false}
-              onChange={onSearch}
-            >
-              {sel.map(item => (
-                <Option key={item.value} value={item.value}>
-                  <div>
-                    <Avatar size="small" src={<img src="/token.png" alt="avatar" />} >
-                      {item.value[0]}
-                    </Avatar>{" "}
-                    {item.label}
-                  </div>
-                </Option>
-              ))}
-            </Select> */}
+            {/* <ChainSelector /> */}
           </div>
           <div className="flex sel-token flexWap">
             {availableTokens.map((el: any) => (
@@ -153,11 +150,15 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
                 key={el.id}
                 className="flex row cursor-pointer butSty but-hov"
               >
-                <ImgCache alt="icon"
-                 className="w-6"
-                  src={"/token.png"}
-                  // src={value.logo_url}
-                 />
+                <img alt="icon"
+                  className="w-6"
+                  // src={"/token.png"}
+                  src={value.logo_url ?? "/token.svg"}
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "/token.svg";
+                  }}
+                />
                 <span className="text-lg block">{el.symbol}</span>
               </div>
             ))}
@@ -165,13 +166,19 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
         </div >
         <div className="divider" />
         <div style={{ paddingTop: "10px" }}>
-          <DirectoryTree
-            showIcon={false}
-            switcherIcon={<DownOutlined />}
-            height={492}
-            onSelect={onSelect}
-            treeData={treeData}
-          />
+          {spinning ? (
+            <div style={{ padding: "40px", justifyContent: "center", display: "flex" }}>
+              <Spin spinning={spinning} indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} />
+            </div>
+          ) : (
+            <DirectoryTree
+              showIcon={false}
+              switcherIcon={<DownOutlined />}
+              height={492}
+              onSelect={onSelect}
+              treeData={treeData}
+            />
+          )}
         </div>
       </TokenSwapModal>
 
@@ -186,11 +193,14 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
         >
           <span className="text-lg block">{value.symbol}</span>
           {!isDefault && (
-            <ImgCache
+            <img
               alt="icon"
               className="w-6"
-              src={"/token.png"}
-              // src={value.logo_url}
+              src={value.logo_url ?? "/token.svg"}
+              onError={(e) => {
+                e.currentTarget.src =
+                  "/token.svg";
+              }}
             />
           )}
         </Button>
