@@ -8,6 +8,7 @@ import { isAddress } from "ethers";
 import { useSignerOrProvider } from "./useSignerOrProvider";
 
 function getContract<T = Contract>(address: string, abi: ContractInterface, provider: Signer | Provider) {
+  // @ts-ignore
   return <T>(<unknown>new Contract(address, abi, provider));
 }
 

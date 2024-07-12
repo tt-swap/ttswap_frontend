@@ -39,7 +39,7 @@ const ChainSelector: FC = () => {
   const [selected, setSelected] = useState<MenuItem>();
   const [label, setLabel] = useState<JSX.Element>();
 
-  const labelToShow = (logo: string, alt: string) => {
+  const labelToShow = (logo: any, alt: string) => {
     return (
       <div style={{ display: "inline-flex", alignItems: "center" }}>
         <img src={logo} alt={alt} style={{ width: "25px", height: "25px", borderRadius: "10px", marginRight: "5px" }} />

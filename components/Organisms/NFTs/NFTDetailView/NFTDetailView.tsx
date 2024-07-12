@@ -133,8 +133,7 @@ export const NFTDetailView: React.FC<NFTDetailViewProps> = ({
                         <NFTSalesCount
                             chain_name={chain_name}
                             collection_address={collection_address}
-                            token_id={token_id}
-                        />
+                            token_id={token_id} value_good_id={""}                        />
                     </div>
                     <div className="">
                         <NFTFloorPrice

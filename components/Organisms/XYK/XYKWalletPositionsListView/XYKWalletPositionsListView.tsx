@@ -43,7 +43,7 @@ import { prettifyCurrencys } from '@/graphql/util';
 
 export const XYKWalletPositionsListView: React.FC<
     XYKWalletPositionsListViewProps
-> = ({ chain_name, dex_name, on_pool_click, wallet_address,value_good_id,data_num }) => {
+> = ({ chain_name, dex_name, on_pool_click, wallet_address, value_good_id, data_num }) => {
     const { covalentClient } = useGoldRush();
 
     const [sorting, setSorting] = useState<SortingState>([
@@ -62,18 +62,17 @@ export const XYKWalletPositionsListView: React.FC<
             setResult(None);
             let response;
             try {
-                response = await myInvestGoodsDatas(wallet_address,value_good_id);
+                response = await myInvestGoodsDatas(wallet_address, value_good_id);
                 setError({ error: false, error_message: "" });
+                // @ts-ignore
                 setResult(new Some(response.items));
             } catch (exception) {
                 setResult(new Some([]));
-                setError({
-                    error: response ? response.error : false,
-                    error_message: response ? response.error_message : "",
-                });
+                // @ts-ignore
+                setError({ error: response ? response.error : false, error_message: response ? response.error_message : "", });
             }
         })();
-    }, [chain_name, dex_name, wallet_address,data_num,value_good_id]);
+    }, [chain_name, dex_name, wallet_address, data_num, value_good_id]);
 
     const columns: ColumnDef<UniswapLikeBalanceItem>[] = [
 
@@ -90,7 +89,8 @@ export const XYKWalletPositionsListView: React.FC<
             cell: ({ row }) => {
                 return (
                     <div className="text-left">
-                        {row.original.id}
+                        {// @ts-ignore
+                            row.original.id}
                     </div>
                 );
             },
@@ -112,29 +112,28 @@ export const XYKWalletPositionsListView: React.FC<
                     <div className="ml-4 flex items-center gap-3">
                         <TokenAvatar
                             size={GRK_SIZES.EXTRA_SMALL}
-                            token_url={row.original.logo_url}
+                            token_url={// @ts-ignore
+                                row.original.logo_url}
                         />
                         <div className="flex flex-col">
                             {on_pool_click ? (
                                 <a
                                     className="cursor-pointer hover:opacity-75"
-                                    // onClick={() => {
-                                    //     if (on_pool_click) {
-                                    //         on_pool_click(
-                                    //             row.original.id
-                                    //         );
-                                    //     }
-                                    // }}
+                                // onClick={() => {
+                                //     if (on_pool_click) {
+                                //         on_pool_click(
+                                //             row.original.id
+                                //         );
+                                //     }
+                                // }}
                                 >
-                                    {row.original.name
-                                        ? row.original.name
-                                        : ""}
+                                    {// @ts-ignore
+                                        row.original.name ? row.original.name : ""}
                                 </a>
                             ) : (
                                 <label className="text-base">
-                                    {row.original.name
-                                        ? row.original.name
-                                        : ""}
+                                    {// @ts-ignore
+                                        row.original.name ? row.original.name : ""}
                                 </label>
                             )}
                         </div>
@@ -155,7 +154,8 @@ export const XYKWalletPositionsListView: React.FC<
             cell: ({ row }) => {
                 return (
                     <div className="text-right">
-                        {row.original.symbol}
+                        {// @ts-ignore
+                            row.original.symbol}
                     </div>
                 );
             },
@@ -173,10 +173,12 @@ export const XYKWalletPositionsListView: React.FC<
             cell: ({ row }) => {
 
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
                     row.original.totalInvestValue
                 );
 
-                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
+                    row.original.valueSymbol}</div>;
             },
         },
         {
@@ -191,6 +193,7 @@ export const XYKWalletPositionsListView: React.FC<
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
                     row.original.investQuantity
                 );
 
@@ -209,6 +212,7 @@ export const XYKWalletPositionsListView: React.FC<
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
                     row.original.unitFee
                 );
 
@@ -227,6 +231,7 @@ export const XYKWalletPositionsListView: React.FC<
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
                     row.original.profit
                 );
 
@@ -245,6 +250,7 @@ export const XYKWalletPositionsListView: React.FC<
             ),
             cell: ({ row }) => {
                 const valueFormatted = calculateFeePercentage(
+                    // @ts-ignore
                     +row.original.APY
                 );
 
@@ -287,6 +293,7 @@ export const XYKWalletPositionsListView: React.FC<
                                 <DropdownMenuItem
                                     onClick={() => {
                                         if (on_pool_click) {
+                                            // @ts-ignore
                                             on_pool_click(row.original.id);
                                         }
                                     }}

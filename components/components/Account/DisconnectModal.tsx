@@ -32,8 +32,8 @@ const DisconnectModal: React.FC<ConnectModalProps> = ({ isModalOpen, setIsModalO
       >
         <Address avatar="left" size={6} copyable style={{ fontSize: "20px" }} />
         {/* <div style={{ marginTop: "10px", padding: "0 10px" }}>
-          {localStorage.getItem("wallet") !== undefined && (
-            <a href={`${getExplorer(localStorage.getItem("wallet"))}/address/${localStorage.getItem("wallet")}`} target="_blank" rel="noreferrer">
+          {window.localStorage.getItem("wallet") !== undefined && (
+            <a href={`${getExplorer(window.localStorage.getItem("wallet"))}/address/${window.localStorage.getItem("wallet")}`} target="_blank" rel="noreferrer">
               <SelectOutlined style={{ marginRight: "5px" }} />
               View on Explorer
             </a>

@@ -1,14 +1,9 @@
-import usePrices from "@/hooks/usePrices";
-import useTokens from "@/hooks/useTokens";
 import { DEFAULT_TOKEN } from "@/shared/constants/common";
-import { Price } from "@/shared/types/price";
 import { InvestToken, InvestTokenValue } from "@/shared/types/token";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 // @ts-ignore
 import Modal from "react-modal";
 import TokenInvestModal from "./TokenInvestModal";
-import ImgCache from "../swap/components/common/ImgCache";
-import ChainSelector from "@/components/ChainSelector";
 import { useValueGood } from "@/stores/valueGood";
 
 import { SearchOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
@@ -37,8 +32,6 @@ const TokenInvestSelector = ({ value, onChange, isValue }: Props) => {
   const [keyword, setKeyword] = useState("");
   const [availableTokens, setTokensValue] = useState<Array<LocalCurrency>>([]);
   const [treeData, setTokens] = useState<TreeDataNode[]>();
-  const { prices } = usePrices();
-  const { tokenMap } = useTokens();
   const { info } = useValueGood();
   const [spinning, setSpinning] = useState(false);
 

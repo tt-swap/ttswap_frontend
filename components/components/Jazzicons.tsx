@@ -7,7 +7,7 @@ import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
  * @returns <Jazzicons /> JSX Elemenet
  */
 
-const Jazzicons = ({ seed, size }: { seed: string; size?: number }) => {
+const Jazzicons = ({ seed, size }: { seed: any; size?: number }) => {
   if (!seed) return <Skeleton.Avatar active size={40} />;
 
   if (size) return <Jazzicon seed={jsNumberForAddress(seed)} diameter={size} />;

@@ -5,7 +5,7 @@ import { powerIterative, iconUrl } from '@/graphql/util';
 
 
 //物品列表
-export async function GoodsDatas(params: { id: string;sel:string }): Promise<object> {
+export async function GoodsDatas(params: { id: string; sel: string }): Promise<object> {
 
     // console.log(params,7777)
     let item: SwapTokens = {
@@ -14,7 +14,7 @@ export async function GoodsDatas(params: { id: string;sel:string }): Promise<obj
     };
     if (params.id) {
 
-        const goodsDatas = await parGoodDatas({ id: params.id,sel:params.sel });
+        const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel });
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -24,7 +24,9 @@ export async function GoodsDatas(params: { id: string;sel:string }): Promise<obj
         let items: object[] = [];
         let items1: object[] = [];
 
+        // @ts-ignore
         item.tokenValue = items;
+        // @ts-ignore
         item.tokens = items1;
 
         goodsDatas.data.goodStates.forEach((e: any) => {

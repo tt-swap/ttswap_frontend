@@ -23,7 +23,7 @@ const styles = {
 
 interface ConnectButtonProps {
   label: string;
-  image: string;
+  image: any;
   onClick: () => void;
   loading: boolean;
 }

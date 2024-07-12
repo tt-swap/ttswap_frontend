@@ -73,16 +73,16 @@ const TokenSwap = () => {
   const [balanceT, setBalanceT] = useState<string | number>(0);
 
   const isDisabled = useMemo(() => {
-    // const bal = await balanceMap;
-    if (swapsAmount.from.amount > balanceMap.from || swapsAmount.from.amount === 0 || swapsAmount.from.amount < 0 || localStorage.getItem("wallet") ===null) {
+    // @ts-ignore
+    if (swapsAmount.from.amount > balanceMap.from || swapsAmount.from.amount === 0 || swapsAmount.from.amount < 0 || window.localStorage.getItem("wallet") ===null) {
       return true;
     }
     return disabled;
-  }, [swapsAmount.from.amount, disabled, balanceMap, localStorage.getItem("wallet")]);
+  }, [swapsAmount.from.amount, disabled, balanceMap, window.localStorage.getItem("wallet")]);
 // console.log()
   useMemo(() => {
-    setBalanceF(balanceMap.from);
-    setBalanceT(balanceMap.to);
+    // @ts-ignore
+    setBalanceF(balanceMap.from); setBalanceT(balanceMap.to);
   }, [balanceMap]);
 
   const handleFees = () => {
@@ -228,6 +228,7 @@ const TokenSwap = () => {
                   <span
                     className="cursor-pointer"
                     onClick={() =>
+                      // @ts-ignore
                       setAmount("from", balanceF)
                     }
                   >
@@ -352,7 +353,9 @@ const TokenSwap = () => {
                       </div>
                       <div className="flex justify-between">
                         <div>Fee</div>
-                        <div>{((swaps.to.buyFee * swaps.to.price * swapsAmount.to.amount + swaps.from.sellFee * swapsAmount.from.amount * swaps.from.price)).toFixed(6)}{" "}{info.symbol}</div>
+                        <div>{
+        // @ts-ignore
+                        ((swaps.to.buyFee * swaps.to.price * swapsAmount.to.amount + swaps.from.sellFee * swapsAmount.from.amount * swaps.from.price)).toFixed(6)}{" "}{info.symbol}</div>
                       </div>
                       {/* <div className="flex justify-between">
                         <div>Network cost</div>

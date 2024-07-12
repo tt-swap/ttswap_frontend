@@ -90,7 +90,7 @@ export interface XYKTokenTransactionsListViewProps {
 export interface XYKWalletTransactionsListViewProps {
     chain_name: Chain;
     dex_name: string;
-    wallet_address: string;
+    wallet_address: any;
     on_transaction_click?: Function;
     on_native_explorer_click?: Function;
     on_goldrush_receipt_click?: Function;
@@ -129,7 +129,7 @@ export interface XYKPoolListViewProps {
     page_size?: number;
     value_good_id:string;
     is_over:boolean;
-    wallet_address: string;
+    wallet_address: any;
     data_num:number;
 }
 
@@ -146,7 +146,7 @@ export interface XYKTokenPoolListViewProps {
 export interface XYKWalletPoolListViewProps {
     chain_name: Chain;
     dex_name: string;
-    wallet_address: string;
+    wallet_address: any;
     on_pool_click?: Function;
     data_num:number;
     value_good_id:string;
@@ -156,7 +156,7 @@ export interface XYKWalletPoolListViewProps {
 export interface XYKWalletPositionsListViewProps {
     chain_name: Chain;
     dex_name: string;
-    wallet_address: string;
+    wallet_address: any;
     on_pool_click?: Function;
     data_num:number;
     value_good_id:string;

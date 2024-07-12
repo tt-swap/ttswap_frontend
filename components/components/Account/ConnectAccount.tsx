@@ -11,6 +11,7 @@ import { getEllipsisTxt } from "utils/formatters";
 import ConnectModal from "./ConnectModal";
 import DisconnectModal from "./DisconnectModal";
 import Jazzicons from "../Jazzicons";
+import {useWalletAddress} from "@/stores/walletAddress";
 
 const styles = {
   account: {
@@ -49,12 +50,13 @@ const ConnectAccount: React.FC<WantedChain> = () => {
   const { isTablet } = useWindowSize();
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const { address,setAccount } = useWalletAddress();
 
   const disconnect = useCallback(async () => {
     const connector = metaMask || walletConnect;
     setIsModalVisible(false);
     setIsAuthModalOpen(false);
-    localStorage.removeItem("connectorId");
+    window.localStorage.removeItem("connectorId");
     if (connector.deactivate) {
       connector.deactivate();
     } else {
@@ -65,20 +67,26 @@ const ConnectAccount: React.FC<WantedChain> = () => {
       // @ts-expect-error close can be returned by wallet
       await connector.close();
     }
-    localStorage.removeItem("wallet");
-    localStorage.removeItem("chainId");
+    window.localStorage.removeItem("wallet");
+    window.localStorage.removeItem("chainId");
+    setAccount(null);
   }, []);
 
   useMemo(() => {
     if (account !== undefined) {
-      localStorage.setItem("wallet", account);
-      localStorage.setItem("chainId", chainId);
+      window.localStorage.setItem("wallet", account);
+      setAccount(account);
+      // @ts-ignore
+      // window.localStorage.setItem("chainId", chainId);
+    } else {
+      // setAccount(window.localStorage.getItem("wallet"));
     }
-  }, [account, localStorage.getItem("wallet")]);
-  console.log(localStorage.getItem("wallet"), 999)
+  }, [account, address]);
+  // console.log(address, 999)
   return (
     <>
-      {localStorage.getItem("wallet") === "undefined" || localStorage.getItem("wallet") === null ? (
+    {console.log(address,7779999)}
+      {address === "undefined" || address === null ? (
         <div>
           <Button shape="round" type="primary" style={styles.button} onClick={() => setIsAuthModalOpen(true)}>
             Connect Wallet
@@ -89,10 +97,11 @@ const ConnectAccount: React.FC<WantedChain> = () => {
       ) : (
         <>
           <Button style={styles.account} onClick={() => setIsModalVisible(true)}>
-            {localStorage.getItem("wallet") && typeof localStorage.getItem("wallet") === "string" && (
-              <p style={{ marginRight: "5px" }}>{getEllipsisTxt(localStorage.getItem("wallet"), isTablet ? 3 : 6)}</p>
+            {address && typeof address === "string" && (
+        // @ts-ignore
+              <p style={{ marginRight: "5px" }}>{getEllipsisTxt(address, isTablet ? 3 : 6)}</p>
             )}
-            <Jazzicons seed={localStorage.getItem("wallet")} />
+            <Jazzicons seed={address} />
           </Button>
 
           <DisconnectModal isModalOpen={isModalVisible} setIsModalOpen={setIsModalVisible} disconnect={disconnect} />

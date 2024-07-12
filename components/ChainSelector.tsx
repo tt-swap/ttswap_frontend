@@ -96,6 +96,7 @@ const ChainSelector: FC = () => {
 
   const onClick: MenuProps["onClick"] = async ({ key }) => {
     if (!isActive) {
+      // @ts-ignore
       setChainId(key*1);
     } else {
       // setChainId(key*1);

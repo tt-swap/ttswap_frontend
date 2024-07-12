@@ -50,7 +50,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
     chain_name,
     dex_name,
     on_pool_click,
-    page_size,value_good_id,is_over
+    page_size, value_good_id, is_over
 }) => {
     const { covalentClient } = useGoldRush();
 
@@ -93,11 +93,9 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                     //         pageSize: page_size,
                     //     }
                     // );
-                    await investGoodsDatas({
-                        id:value_good_id,
-                        pageNumber: pagination.page_number - 1,
-                        pageSize: page_size,
-                    });
+
+                    // @ts-ignore
+                    await investGoodsDatas({ id: value_good_id, pageNumber: pagination.page_number - 1, pageSize: page_size });
                 console.log(response)
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
@@ -110,7 +108,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                 });
             }
         })();
-    }, [chain_name, dex_name, pagination,value_good_id]);
+    }, [chain_name, dex_name, pagination, value_good_id]);
 
     useEffect(() => {
         setWindowWidth(window.innerWidth);
@@ -144,29 +142,30 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                     <div className="ml-4 flex items-center gap-3">
                         <TokenAvatar
                             size={GRK_SIZES.EXTRA_SMALL}
+                            // @ts-ignore
                             token_url={row.original.logo_url}
                         />
                         <div className="flex flex-col">
                             {on_pool_click ? (
                                 <a
                                     className="cursor-pointer hover:opacity-75"
-                                    // onClick={() => {
-                                    //     if (on_pool_click) {
-                                    //         on_pool_click(
-                                    //             row.original.id
-                                    //         );
-                                    //     }
-                                    // }}
+                                // onClick={() => {
+                                //     if (on_pool_click) {
+                                //         on_pool_click(
+                                //             row.original.id
+                                //         );
+                                //     }
+                                // }}
                                 >
-                                    {row.original.name
-                                        ? row.original.name
-                                        : ""}
+                                    {
+                                        // @ts-ignore
+                                        row.original.name ? row.original.name : ""}
                                 </a>
                             ) : (
                                 <label className="text-base">
-                                    {row.original.name
-                                        ? row.original.name
-                                        : ""}
+                                    {
+                                        // @ts-ignore
+                                        row.original.name ? row.original.name : ""}
                                 </label>
                             )}
                         </div>
@@ -187,7 +186,9 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             cell: ({ row }) => {
                 return (
                     <div className="text-right">
-                        {row.original.symbol}
+                        {
+                            // @ts-ignore
+                            row.original.symbol}
                     </div>
                 );
             },
@@ -203,9 +204,9 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    row.original.investQuantity
-                );
+                // @ts-ignore
+
+                const valueFormatted = prettifyCurrencys(row.original.investQuantity);
 
                 return <div className="text-right">{valueFormatted}</div>;
             },
@@ -221,9 +222,11 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    row.original.investValue
-                );
+                // @ts-ignore
+
+                const valueFormatted = prettifyCurrencys(row.original.investValue);
+
+                // @ts-ignore
 
                 return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
             },
@@ -240,6 +243,8 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
+
                     row.original.totalInvestQuantity
                 );
 
@@ -258,8 +263,12 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
+
                     row.original.totalInvestValue
                 );
+
+                // @ts-ignore
 
                 return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
             },
@@ -313,8 +322,12 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
 
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
+
                     row.original.totalFeeValue
                 );
+
+                // @ts-ignore
 
                 return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
             },
@@ -331,6 +344,8 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
+
                     row.original.totalFee
                 );
 
@@ -349,6 +364,8 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = calculateFeePercentage(
+                    // @ts-ignore
+
                     +row.original.APY
                 );
 
@@ -382,7 +399,9 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                                 <DropdownMenuItem
                                     onClick={() => {
                                         if (on_pool_click) {
-                                            on_pool_click("invest",row.original.id);
+                                            // @ts-ignore
+
+                                            on_pool_click("invest", row.original.id);
                                             // on_pool_click(
                                             //     row.original.exchange
                                             // );
@@ -424,6 +443,8 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                         <div className="relative mr-2 flex">
                             <TokenAvatar
                                 size={GRK_SIZES.EXTRA_SMALL}
+                                // @ts-ignore
+
                                 token_url={row.original.logo_url}
                             />
                             {/* <div className="absolute left-4">
@@ -441,20 +462,22 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                                         onClick={() => {
                                             if (on_pool_click) {
                                                 on_pool_click(
+                                                    // @ts-ignore
+
                                                     row.original.id
                                                 );
                                             }
                                         }}
                                     >
-                                        {row.original.name
-                                            ? row.original.name
-                                            : ""}
+                                        {
+                                            // @ts-ignore
+                                            row.original.name ? row.original.name : ""}
                                     </a>
                                 ) : (
                                     <label className="text-base">
-                                        {row.original.name
-                                            ? row.original.name
-                                            : ""}
+                                        {
+                                            // @ts-ignore
+                                            row.original.name ? row.original.name : ""}
                                     </label>
                                 )}
                             </div>
@@ -475,6 +498,8 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
+
                     row.original.investQuantity
                 );
 
@@ -493,6 +518,8 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
+
                     row.original.investValue
                 );
 
@@ -588,9 +615,9 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                                 <DropdownMenuItem
                                     onClick={() => {
                                         if (on_pool_click) {
-                                            on_pool_click("invent",
-                                                row.original.id
-                                            );
+                                            // @ts-ignore
+
+                                            on_pool_click("invent", row.original.id);
                                         }
                                     }}
                                 >

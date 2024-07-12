@@ -19,6 +19,7 @@ import { Web3ReactProvider } from "@web3-react/core";
 import connectors from "@/connectors";
 import { useMemo, useEffect, useState } from "react";
 import { useValueGood } from "@/stores/valueGood";
+import {useWalletAddress} from "@/stores/walletAddress";
 
 import { valueGood } from '@/graphql';
 
@@ -32,21 +33,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
   const { info, setValueGood } = useValueGood();
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const bal = await valueGood();
-  //     console.log(bal,99999999999)
-  //     // setValueGood({
-  //     //   id: bal.data.goodStates.id,
-  //     //   symbol: "",
-  //     //   name: 0,
-  //     //   logo_url: "",
-  //     //   address: "",
-  //     //   decimals: 0
-  //     // });
-  //   })();
+  const { address,setAccount } = useWalletAddress();
 
-  // }, []);
+  useEffect(() => {
+    setAccount(window.localStorage.getItem("wallet"));
+  }, []);
 
   return (
     <>
