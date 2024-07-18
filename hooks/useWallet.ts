@@ -7,7 +7,9 @@ import erc20 from '@/data/abi/erc20.json';
 import MarketManager from '@/data/abi/MarketManager.json';
 import { useSwapAmountStore } from "@/stores/swapAmount";
 import { powerIterative } from '@/graphql/util';
-import {useWalletAddress} from "@/stores/walletAddress";
+import { useWalletAddress } from "@/stores/walletAddress";
+
+import { getContractAddress } from '@/data/contractConfig';
 
 const useWallet = () => {
     // if (typeof window !== 'undefined') {
@@ -16,7 +18,11 @@ const useWallet = () => {
     // }
     const provider = new ethers.BrowserProvider(ethereum);
     // const provider = new ethers.JsonRpcProvider('http://142.171.157.66:8545');
-    const contractAddress = '0xB756137A6fE9acD420fEECD9dE30282b93d35861'; // MarketManager 合约地址
+    let chainId = 0;
+    if (sessionStorage.getItem("chainId") !== null) {
+        chainId = Number(sessionStorage.getItem("chainId"));
+    }
+    const contractAddress = getContractAddress(chainId);//'0xdb19B22665aFB391F45a8C985c47EBB09cfB3c1c'; // MarketManager 合约地址  0xB756137A6fE9acD420fEECD9dE30282b93d35861
     const gater = '0x0f18a2428c934db7b9e040f8fc6e08975cbef07a'; // gater address
 
 
@@ -45,14 +51,14 @@ const useWallet = () => {
     // }, []);
     useMemo(() => {
         // console.log(23794237429873,window.localStorage.getItem("wallet"))
-        if (window.localStorage.getItem("wallet") === null ) {
+        if (window.localStorage.getItem("wallet") === null) {
             setIsActive(false);
         } else {
             setIsActive(true);
             // @ts-ignore
             setAccount(window.localStorage.getItem("wallet"));
         }
-    }, [window.localStorage.getItem("wallet"),account,isActive,address]);
+    }, [window.localStorage.getItem("wallet"), account, isActive, address]);
 
 
     useMemo(() => {
@@ -112,7 +118,7 @@ const useWallet = () => {
             setbalanceMap({ from: from, to: to });
             return { from: from, to: to }
         } else setbalanceMap({ from: 0, to: 0 }) //return { from: 0, to: 0 }
-    }, [swaps, isActive,address]);
+    }, [swaps, isActive, address]);
 
 
     // const balanceMap1 = 
@@ -124,7 +130,7 @@ const useWallet = () => {
             setbalanceMap1({ from: from, to: to });
             return { from: from, to: to }
         } else setbalanceMap1({ from: 0, to: 0 }) // return { from: 0, to: 0 }
-    }, [invest, isActive,address]);
+    }, [invest, isActive, address]);
 
     const disinvest = async (pid: number, qut: any) => {
 
@@ -132,7 +138,7 @@ const useWallet = () => {
         const contract = new ethers.Contract(contractAddress, MarketManager, signer);
 
         console.log(pid, qut);
-        return await contract.disinvestProof(pid, qut,gater,"0x0000000000000000000000000000000000000000").then((transaction) => {
+        return await contract.disinvestProof(pid, qut, gater, "0x0000000000000000000000000000000000000000").then((transaction) => {
             console.log('Transaction sent:', transaction);
             return true;
             // return transaction.wait().then((receipt: any) => {
@@ -872,7 +878,7 @@ const useWallet = () => {
     const swapBuyGood = async (params: any, amount: any, address: string) => {
         try {
 
-            console.log(1110, params,amount,address)
+            console.log(1110, params, amount, address)
             const signer = await provider.getSigner()
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
 

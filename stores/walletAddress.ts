@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useState } from "react";
 
 interface walletAddress {
   address: any
@@ -10,3 +11,9 @@ export const useWalletAddress = create<walletAddress>((set) => ({
     set({ address: newAccount });
   }
   }));
+
+
+  export const useChainId =()=>{
+    const [chainId1, setChainId] = useState(11155111);
+    return {chainId1, setChainId};
+  };

@@ -1,9 +1,7 @@
 import { type Option, None, Some } from "@/utils/option";
 import {
-    type UniswapLikeBalanceItem,
-    prettifyCurrency,
-    calculatePrettyBalance,
-} from "@covalenthq/client-sdk";
+    type UniswapLikeBalanceItem
+} from "@/utils/types/XykServiceTypes";
 import { useEffect, useState } from "react";
 import {
     DropdownMenu,
@@ -48,7 +46,7 @@ export const XYKWalletPositionsListView: React.FC<
 
     const [sorting, setSorting] = useState<SortingState>([
         {
-            id: "total_liquidity_quote",
+            id: "id",
             desc: true,
         },
     ]);
@@ -102,7 +100,7 @@ export const XYKWalletPositionsListView: React.FC<
                 <div className="ml-4">
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Goods"}
+                        header_name={"Name"}
                         column={column}
                     />
                 </div>
@@ -128,12 +126,12 @@ export const XYKWalletPositionsListView: React.FC<
                                 // }}
                                 >
                                     {// @ts-ignore
-                                        row.original.name ? row.original.name : ""}
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
                                 </a>
                             ) : (
                                 <label className="text-base">
                                     {// @ts-ignore
-                                        row.original.name ? row.original.name : ""}
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
                                 </label>
                             )}
                         </div>
@@ -141,32 +139,32 @@ export const XYKWalletPositionsListView: React.FC<
                 );
             },
         },
-        {
-            id: "symbol",
-            accessorKey: "symbol",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Symbol"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                return (
-                    <div className="text-right">
-                        {// @ts-ignore
-                            row.original.symbol}
-                    </div>
-                );
-            },
-        },
+        // {
+        //     id: "symbol",
+        //     accessorKey: "symbol",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Symbol"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         return (
+        //             <div className="text-right">
+        //                 {// @ts-ignore
+        //                     row.original.symbol}
+        //             </div>
+        //         );
+        //     },
+        // },
         {
             id: "totalInvestValue",
             accessorKey: "totalInvestValue",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Proof Value"}
+                    header_name={"Value"}
                     column={column}
                 />
             ),
@@ -239,26 +237,26 @@ export const XYKWalletPositionsListView: React.FC<
             },
         },
         {
-            id: "APY",
-            accessorKey: "APY",
+            id: "earningRate",
+            accessorKey: "earningRate",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"APY"}
+                    header_name={"Earning Rate"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
                 const valueFormatted = calculateFeePercentage(
                     // @ts-ignore
-                    +row.original.APY
+                    row.original.earningRate
                 );
 
                 return (
                     <div
                         className={`text-right ${
                             // @ts-ignore
-                            parseFloat(row.original.APY) > 0 &&
+                            parseFloat(row.original.earningRate) > 0 &&
                             "text-green-600"
                             }`}
                     >
@@ -302,7 +300,7 @@ export const XYKWalletPositionsListView: React.FC<
                                         icon_class_name="swap_horiz"
                                         class_name="mr-2"
                                     />{" "} */}
-                                    disInvest
+                                    Divest
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

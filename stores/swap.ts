@@ -39,7 +39,7 @@ export const useSwapStore = create<SwapStore>((set) => ({
   swaps: initDefaultSwap(),
   setSwap: async (newSwaps: SwapState) => {
     set({ swaps: newSwaps })
-    console.log({ swaps: newSwaps },66666)
+    // console.log({ swaps: newSwaps },66666)
   },
 }));
 
@@ -68,7 +68,7 @@ export const useSwapStoreF = create<SwapStoreF>((set) => ({
   swapsF: initDefaultSwapF(),
   setSwapF: async (newSwaps: SwapStateF) => {
     set({ swapsF: newSwaps })
-    console.log({ swaps: newSwaps },66666)
+    // console.log({ swaps: newSwaps },66666)
   },
 }));
 
@@ -95,8 +95,8 @@ const initDefaultSwapT = (): SwapStateT => ({
 export const useSwapStoreT = create<SwapStoreT>((set) => ({
   
   swapsT: initDefaultSwapT(),
-  setSwapT: async (newSwaps: SwapStateT) => {
+  setSwapT: (newSwaps: SwapStateT) => {
     set({ swapsT: newSwaps })
-    console.log({ swaps: newSwaps },66666)
+    // console.log({ swaps: newSwaps },66666)
   },
 }));

@@ -1,5 +1,5 @@
 import { type Option, None, Some } from "@/utils/option";
-import { type ExchangeTransaction } from "@covalenthq/client-sdk";
+import { type ExchangeTransaction } from "@/utils/types/XykServiceTypes";
 import { POOL_TRANSACTION_MAP } from "@/utils/constants/shared.constants";
 import { Fragment, useEffect, useState } from "react";
 import {
@@ -23,8 +23,6 @@ import { Badge } from "@/components/ui/badge";
 import { TableHeaderSorting } from "@/components/ui/tableHeaderSorting";
 import { type XYKWalletTransactionsListViewProps } from "@/utils/types/organisms.types";
 import { useGoldRush } from "@/utils/store";
-import { handleTokenTransactions } from "@/utils/functions/pretty-exchange-amount";
-import { handleExchangeType } from "@/utils/functions/exchange-type";
 import { SkeletonTable } from "@/components/ui/skeletonTable";
 import { IconWrapper } from "@/components/Shared";
 import {
@@ -35,7 +33,6 @@ import {
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-
 import { myTransactionsDatas } from '@/graphql/account';
 import { prettifyCurrencys } from '@/graphql/util';
 
@@ -53,7 +50,7 @@ export const XYKWalletTransactionsListView: React.FC<
 
         const [sorting, setSorting] = useState<SortingState>([
             {
-                id: "block_signed_at",
+                id: "time",
                 desc: true,
             },
         ]);
@@ -110,7 +107,7 @@ export const XYKWalletTransactionsListView: React.FC<
                 header: ({ column }) => (
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Transaction type"}
+                        header_name={"Type"}
                         column={column}
                     />
                 ),
@@ -189,7 +186,7 @@ export const XYKWalletTransactionsListView: React.FC<
                 header: ({ column }) => (
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Total value"}
+                        header_name={"Value"}
                         column={column}
                     />
                 ),
@@ -204,7 +201,7 @@ export const XYKWalletTransactionsListView: React.FC<
                 header: ({ column }) => (
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Token Amount"}
+                        header_name={"Goods1 Amount"}
                         column={column}
                     />
                 ),
@@ -219,7 +216,7 @@ export const XYKWalletTransactionsListView: React.FC<
                 header: ({ column }) => (
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Token Amount"}
+                        header_name={"Goods2 Amount"}
                         column={column}
                     />
                 ),
@@ -315,58 +312,43 @@ export const XYKWalletTransactionsListView: React.FC<
             //         );
             //     },
             // },
-            // {
-            //     id: "actions",
-            //     cell: ({ row }) => {
-            //         if (!on_native_explorer_click && !on_goldrush_receipt_click)
-            //             return;
-            //         return (
-            //             <div className="text-right">
-            //                 <DropdownMenu>
-            //                     <DropdownMenuTrigger asChild>
-            //                         <Button variant="ghost" className="ml-auto  ">
-            //                             <span className="sr-only">Open menu</span>
-            //                             <IconWrapper icon_class_name="expand_more" />
-            //                         </Button>
-            //                     </DropdownMenuTrigger>
-            //                     <DropdownMenuContent align="end">
-            //                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            //                         {on_native_explorer_click && (
-            //                             <DropdownMenuItem
-            //                                 onClick={() => {
-            //                                     on_native_explorer_click(
-            //                                         row.original
-            //                                     );
-            //                                 }}
-            //                             >
-            //                                 <IconWrapper
-            //                                     icon_class_name="open_in_new"
-            //                                     class_name="mr-2"
-            //                                 />{" "}
-            //                                 View on explorer
-            //                             </DropdownMenuItem>
-            //                         )}
-            //                         {on_goldrush_receipt_click && (
-            //                             <DropdownMenuItem
-            //                                 onClick={() => {
-            //                                     on_goldrush_receipt_click(
-            //                                         row.original
-            //                                     );
-            //                                 }}
-            //                             >
-            //                                 <IconWrapper
-            //                                     icon_class_name="open_in_new"
-            //                                     class_name="mr-2"
-            //                                 />{" "}
-            //                                 View goldrush receipt
-            //                             </DropdownMenuItem>
-            //                         )}
-            //                     </DropdownMenuContent>
-            //                 </DropdownMenu>
-            //             </div>
-            //         );
-            //     },
-            // },
+            {
+                id: "actions",
+                cell: ({ row }) => {
+                    if (!on_native_explorer_click && !on_goldrush_receipt_click)
+                        return;
+                    return (
+                        <div className="text-right">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="ml-auto  ">
+                                        <span className="sr-only">Open menu</span>
+                                        <IconWrapper icon_class_name="expand_more" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                    {on_native_explorer_click && (
+                                        <DropdownMenuItem
+                                            onClick={() => {
+                                                on_native_explorer_click(
+                                                    row.original.hash
+                                                );
+                                            }}
+                                        >
+                                            <IconWrapper
+                                                icon_class_name="open_in_new"
+                                                class_name="mr-2"
+                                            />{" "}
+                                            Hash
+                                        </DropdownMenuItem>
+                                    )}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    );
+                },
+            },
         ];
 
         const table = useReactTable({

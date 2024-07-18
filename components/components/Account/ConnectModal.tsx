@@ -68,7 +68,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({ isModalOpen, setIsModalOpen
     }
   }, []);
 
-  console.log("metamask_Logo:", metamask_Logo);
+  // console.log("metamask_Logo:", metamask_Logo);
 
   return (
     <>

@@ -97,6 +97,7 @@
 .magL,
 .magL span {
   margin-left: 5px;
+  /* justify-content: space-between; */
   /* color: #666666; */
 }
 
@@ -158,4 +159,8 @@
 
 .ant-tree.ant-tree-directory .ant-tree-treenode .ant-tree-node-content-wrapper.ant-tree-node-selected, .ant-tree.ant-tree-directory .ant-tree-treenode-selected .ant-tree-switcher {
  color: #230f0f;
+}
+
+.ant-tree-list-holder-inner {
+  padding: 0 10px;
 }

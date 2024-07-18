@@ -1,6 +1,6 @@
 import { useInvestStore, useInvestAmountStore } from "@/stores/invest";
 import { SwapKeys } from "@/shared/enums/tokens";
-import { useMemo, useState } from "react";
+import { useMemo, useEffect } from "react";
 import { DEFAULT_TOKEN } from "@/shared/constants/common";
 
 const useInvest = () => {
@@ -67,12 +67,14 @@ const useInvest = () => {
 
   const setAmount = (element: string, value: number | '' | null) => {
     let num;
-    if (value === '' || value === null || value < 0) value = 0;
+    // if (value === '' || value === null || value < 0) value = 0;
     if (element === SwapKeys.From) {
+      // @ts-ignore
       num = invest.from.price / invest.to.price * value;
       setInvestAmount({
         from: {
           token: invest.from.symbol,
+          // @ts-ignore
           amount: value,
           id: invest.from.id
         },
@@ -83,6 +85,7 @@ const useInvest = () => {
         },
       });
     } else {
+      // @ts-ignore
       num = invest.to.price / invest.from.price * value;
       setInvestAmount({
         from: {
@@ -92,13 +95,16 @@ const useInvest = () => {
         },
         to: {
           token: invest.to.symbol,
+          // @ts-ignore
           amount: value,
           id: invest.to.id
         },
       });
     }
   };
-
+  useEffect(() => {
+    setAmount("from", "");
+}, [invest]);
   const swapArray = Object.keys(invest) as Array<SwapKeys>;
 
   const fromPrice = useMemo(() => {

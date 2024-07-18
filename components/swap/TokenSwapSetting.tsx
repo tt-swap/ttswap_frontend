@@ -32,7 +32,7 @@ const TokenSwapSetting = ({ value,value1, onChange }: Props)  => {
             setOpen(true);
           }}
           className="cursor-pointer flex justify-between text-xs setting-style">
-        <span>{value}% tolerance</span>
+        <span>{value}% Tolerance</span>
         <img
           className=""
           src={"/setting.svg"}
@@ -45,7 +45,7 @@ const TokenSwapSetting = ({ value,value1, onChange }: Props)  => {
         <Input suffix="%" value={value} onChange={(e:any) => onInput(e.target.value)}/>
           <div className=" flex justify-between gap-4 pt-5">
             <p>
-              only whole confirm.
+            Only Whole Commit.
               {/* <a
                 target="_blank"
                 rel="noopener noreferrer"

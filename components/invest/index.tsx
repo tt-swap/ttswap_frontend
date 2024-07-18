@@ -4,11 +4,11 @@ import { cn } from "@/utils/utils";
 import TokenInvestSelector from "./TokenInvestSelector";
 import useWallet from "@/hooks/useWallet";
 import InputNumber from "rc-input-number";
-import { useMemo, useEffect, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useMemo, useState } from "react";
+// import { useWeb3React } from "@web3-react/core";
 
 import { useValueGood,useGoodId } from "@/stores/valueGood";
-import { Button, Spin, message } from 'antd';
+import { Spin, message } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import "./index.css";
 
@@ -56,7 +56,7 @@ const TokenInvest = () => {
   } = useInvest();
   const { balanceMap1, investGoods } = useWallet();
 
-  const { isActive, account } = useWeb3React();
+  // const { isActive, account } = useWeb3React();
 
   const [balanceF, setBalanceF] = useState<string | number>(0);
   const [balanceT, setBalanceT] = useState<string | number>(0);
@@ -83,7 +83,7 @@ const TokenInvest = () => {
     }
     // return disabled;
   }, [investAmount.from.amount, disabled, balanceMap1]);
-console.log(9999,isDisabled,investAmount.from.amount)
+// console.log(9999,isDisabled,investAmount.from.amount)
 
   useMemo(() => {
     // @ts-ignore
@@ -132,12 +132,12 @@ console.log(9999,isDisabled,investAmount.from.amount)
     if (isSuccess) {
       messageApi.open({
         type: 'success',
-        content: 'Swap data sent sucess',
+        content: 'Invest data sent sucess',
       });
     } else {
       messageApi.open({
         type: 'error',
-        content: 'Swap data sent fail',
+        content: 'Invest data sent fail',
       });
     }
     setSpinning(false);
@@ -150,13 +150,13 @@ console.log(9999,isDisabled,investAmount.from.amount)
         <div className={cn(styles.boxContainer, "box-shadow")}>
           <form className={styles.form}>
             <div className="flex justify-between h-[30px]">
-              <h5 className="text-2xl font-semibold mb-4">Invest Token</h5>
+              <h5 className="text-2xl font-semibold mb-4">Invest</h5>
             </div>
             <div
               className="border z-11 rounded-xl p-2 space-y-4"
             >
               <label className={styles.label}>
-                good
+                Goods
               </label>
               <div className="swToFT">
                 <InputNumber
@@ -220,7 +220,7 @@ console.log(9999,isDisabled,investAmount.from.amount)
                 className="border z-11 rounded-xl p-2"
               >
                 <label className={styles.label}>
-                  valueGood (estimated)
+                  ValueGoods (estimated)
                 </label>
                 <div className="swToFT">
                   <InputNumber
