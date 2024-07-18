@@ -15,14 +15,21 @@ export function ecosystemChartData(params: { id: string; eq7: number; eq30: numb
 				tokensymbol
 				tokendecimals
 			}
-			days7: marketDatas(where: {timetype: "w", modifiedTime_gte: $eq7}) {
+			days7: marketDatas(
+				orderBy: modifiedTime
+    			orderDirection: asc
+				where: {timetype: "w", modifiedTime_gte: $eq7}
+				) {
 				modifiedTime
 				totalInvestValue
 				totalTradeValue
 				timetype
 				id
 			}
-			days30: marketDatas(where: {timetype: "m", modifiedTime_gte: $eq30}) {
+			days30: marketDatas(
+				orderBy: modifiedTime
+    			orderDirection: asc
+				where: {timetype: "m", modifiedTime_gte: $eq30}) {
 				modifiedTime
 				totalInvestValue
 				totalTradeValue

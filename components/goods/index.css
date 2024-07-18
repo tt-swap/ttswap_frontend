@@ -5,6 +5,9 @@
   width: 100%;
   justify-content: space-between;
 }
+/* .spanS .ant-form-item-label{
+  width: 70px;
+} */
 .newgood h2 {
   font-size: 14px;
   font-weight: 700;

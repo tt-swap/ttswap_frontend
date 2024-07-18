@@ -1,8 +1,15 @@
-import { useEffect, useState } from "react";
+import {  getChainName } from '@/data/networks';
 import { InvestTokenD } from "@/shared/types/token";
 import { parGoodDatas } from './graphql';
-import { timestampdToDateSub, powerIterative, iconUrl, splitNumber, timestampSubH } from '@/graphql/util';
+import { timestampdToDateSub, powerIterative, iconUrl } from '@/graphql/util';
 
+
+let chainId = 0;
+if (sessionStorage.getItem("chainId") !== null) {
+    chainId = Number(sessionStorage.getItem("chainId"));
+}
+// const blockExplorerUrls = getExplorer(chainId);
+const chainName = getChainName(chainId);
 
 //物品列表
 export async function GoodsDatas(params: { id: string; sel: string }): Promise<object> {
@@ -10,7 +17,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
         tokenValue: [],
         tokens: []
     };
-    if (params.id) {
+    if (params.id!=="") {
 
         const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel, time: timestampdToDateSub(1) });
 
@@ -40,7 +47,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
             map.symbol = e.tokensymbol;
             map.investQuantity = e.investQuantity / base_decimals;
             map.feeQuantity = e.feeQuantity / base_decimals;
-            map.logo_url = iconUrl("ethereum", e.erc20Address);
+            map.logo_url = iconUrl(chainName, e.erc20Address);
             map.address = e.erc20Address;
             map.isvaluegood = e.isvaluegood;
             map.price = current_price;
@@ -58,7 +65,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
             map.id = e.id;
             map.name = e.tokenname;
             map.symbol = e.tokensymbol;
-            map.logo_url = iconUrl("ethereum", e.erc20Address);
+            map.logo_url = iconUrl(chainName, e.erc20Address);
             map.address = e.erc20Address;
 
             e.Goodlist.forEach((en: any) => {
@@ -76,7 +83,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
                 map1.symbol = en.tokensymbol;
                 map1.investQuantity = en.investQuantity / base_decimals;
                 map1.feeQuantity = en.feeQuantity / base_decimals;
-                map1.logo_url = iconUrl("ethereum", en.erc20Address);
+                map1.logo_url = iconUrl(chainName, en.erc20Address);
                 map1.address = en.erc20Address;
                 map1.isvaluegood = en.isvaluegood;
                 map1.price = current_price;

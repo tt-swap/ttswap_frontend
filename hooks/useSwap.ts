@@ -1,7 +1,7 @@
 import { useSwapStore } from "@/stores/swap";
 import { useSwapAmountStore } from "@/stores/swapAmount";
 import { SwapKeys } from "@/shared/enums/tokens";
-import { useMemo, useState } from "react";
+import { useMemo, useState,useEffect } from "react";
 import { DEFAULT_TOKEN } from "@/shared/constants/common";
 import { toast } from "react-toastify";
 
@@ -9,6 +9,7 @@ const useSwap = () => {
     const { swaps, setSwap } = useSwapStore();
     const { swapsAmount, setSwapAmount } = useSwapAmountStore();
     const [focus, setFocus] = useState("from");
+    const [isHandleFlip, setIsHandleFlip] = useState(false);
 
     const setToken = (element: string, value: any) => {
         // console.log(element,value, 4444)
@@ -87,7 +88,7 @@ const useSwap = () => {
     };
 
     const setAmount = (element: string, value: number | '' | null) => {
-        console.log(element, "******",value,swaps)
+        // console.log(element, "******", value, swaps)
         let num: number | string = "";
         // if (value=== ''|| value ===null || value < 0) value = 0;
         if (element === SwapKeys.From) {
@@ -115,7 +116,7 @@ const useSwap = () => {
             // @ts-ignore
             if (value > 0) {
                 // @ts-ignore
-                num = swaps.to.price / swaps.from.price * value;
+                num = swaps.to.price / swaps.from.price * value / (1 - swaps.to.buyFee);
                 num = Number(num.toFixed(6));
             }
             setSwapAmount({
@@ -135,6 +136,56 @@ const useSwap = () => {
         }
     };
 
+    useEffect(() => {
+        setAmount(focus, "");
+        // console.log(focus, swapsAmount, "****",isHandleFlip)
+        // if (!isHandleFlip) {
+        //     if (focus === SwapKeys.From) {
+        //         setAmount(focus, swapsAmount.from.amount)
+        //     } else {
+        //         setAmount(focus, swapsAmount.to.amount)
+        //     }
+        // } else {
+        //     let value;
+        //     let num;
+        //     if (focus === SwapKeys.From) {
+        //         value = swapsAmount.from.amount;
+        //         if (value)
+        //             num = swaps.from.price / swaps.to.price * value / (1 - swaps.from.buyFee);
+        //         num = 0;
+        //         setSwapAmount({
+        //             from: {
+        //                 token: swaps.to.symbol,
+        //                 amount: Number(num.toFixed(6)),
+        //                 id: swaps.to.id
+        //             },
+        //             to: {
+        //                 token: swaps.from.symbol,
+        //                 amount: value,
+        //                 id: swaps.from.id
+        //             },
+        //         });
+        //     } else {
+        //         value = swapsAmount.to.amount;
+        //         if (value)
+        //             num = swaps.to.price / swaps.from.price * value * (1 - swaps.from.buyFee);
+        //         num = 0;
+        //         setSwapAmount({
+        //             from: {
+        //                 token: swaps.to.symbol,
+        //                 amount: value,
+        //                 id: swaps.to.id
+        //             },
+        //             to: {
+        //                 token: swaps.from.symbol,
+        //                 amount: Number(num.toFixed(6)),
+        //                 id: swaps.from.id
+        //             },
+        //         });
+        //     }
+        // }
+    }, [swaps]);
+    // console.log( focus,"****",isHandleFlip)
     const handleSwap = () => {
         // setSwap({
         //   from: { token: swaps.from.token, amount: 0 },
@@ -171,43 +222,44 @@ const useSwap = () => {
                 decimals: swaps.from.decimals,
             },
         });
-        let value;
-        let num;
-        if (focus === SwapKeys.From) {
-            value = swapsAmount.from.amount;
-            if (value)
-                num = swaps.from.price / swaps.to.price * value;
-            num = 0;
-            setSwapAmount({
-                from: {
-                    token: swaps.to.symbol,
-                    amount: Number(num.toFixed(6)),
-                    id: swaps.to.id
-                },
-                to: {
-                    token: swaps.from.symbol,
-                    amount: value,
-                    id: swaps.from.id
-                },
-            });
-        } else {
-            value = swapsAmount.to.amount;
-            if (value)
-                num = swaps.to.price / swaps.from.price * value * (1 - swaps.from.sellFee);
-            num = 0;
-            setSwapAmount({
-                from: {
-                    token: swaps.to.symbol,
-                    amount: value,
-                    id: swaps.to.id
-                },
-                to: {
-                    token: swaps.from.symbol,
-                    amount: Number(num.toFixed(6)),
-                    id: swaps.from.id
-                },
-            });
-        }
+        setIsHandleFlip(true);
+        // let value;
+        // let num;
+        // if (focus === SwapKeys.From) {
+        //     value = swapsAmount.from.amount;
+        //     if (value)
+        //         num = swaps.from.price / swaps.to.price * value / (1 - swaps.from.buyFee);
+        //     num = 0;
+        //     setSwapAmount({
+        //         from: {
+        //             token: swaps.to.symbol,
+        //             amount: Number(num.toFixed(6)),
+        //             id: swaps.to.id
+        //         },
+        //         to: {
+        //             token: swaps.from.symbol,
+        //             amount: value,
+        //             id: swaps.from.id
+        //         },
+        //     });
+        // } else {
+        //     value = swapsAmount.to.amount;
+        //     if (value)
+        //         num = swaps.to.price / swaps.from.price * value * (1 - swaps.from.buyFee);
+        //     num = 0;
+        //     setSwapAmount({
+        //         from: {
+        //             token: swaps.to.symbol,
+        //             amount: value,
+        //             id: swaps.to.id
+        //         },
+        //         to: {
+        //             token: swaps.from.symbol,
+        //             amount: Number(num.toFixed(6)),
+        //             id: swaps.from.id
+        //         },
+        //     });
+        // }
     };
 
     const swapArray = Object.keys(swaps) as Array<SwapKeys>;
@@ -257,6 +309,7 @@ const useSwap = () => {
             swaps.from.symbol === DEFAULT_TOKEN ||
             swaps.to.symbol === DEFAULT_TOKEN ||
             swapsAmount.from.amount === 0 ||
+            swapsAmount.from.amount === "" ||
             localStorage.getItem("wallet") === null
         );
     }, [swaps, swapsAmount, localStorage.getItem("wallet")]);
@@ -264,7 +317,7 @@ const useSwap = () => {
     return {
         swaps,
         swapsAmount,
-        priceImpact,focus,
+        priceImpact, focus,
         setAmount,
         handleFlip,
         handleSwap,

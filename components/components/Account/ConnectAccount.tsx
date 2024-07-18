@@ -81,11 +81,11 @@ const ConnectAccount: React.FC<WantedChain> = () => {
     } else {
       // setAccount(window.localStorage.getItem("wallet"));
     }
-  }, [account, address]);
-  // console.log(address, 999)
+  }, [account, address,chainId]);
+  // console.log(account, 999)
   return (
     <>
-    {console.log(address,7779999)}
+    {/* {console.log(address,7779999)} */}
       {address === "undefined" || address === null ? (
         <div>
           <Button shape="round" type="primary" style={styles.button} onClick={() => setIsAuthModalOpen(true)}>

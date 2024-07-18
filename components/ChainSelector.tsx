@@ -35,9 +35,9 @@ type MenuItem = Required<MenuProps>["items"][number];
 
 const ChainSelector: FC = () => {
   const switchChain = useSwitchChain();
-  const { chainId, isActive } = useWeb3React();
+  const { chainId, isActive,account } = useWeb3React();
   const { isTablet } = useWindowSize();
-  const [chainId1, setChainId] = useState(1);
+  const [chainId1, setChainId] = useState(11155111);
   const [selected, setSelected] = useState<MenuItem>();
   const [label, setLabel] = useState<JSX.Element>();
   const labelToShow = (logo: StaticImageData, alt: string) => {
@@ -50,27 +50,31 @@ const ChainSelector: FC = () => {
 
   const items: MenuProps["items"] = useMemo(
     () => [
-      { label: "Ethereum", key: chainIds.ethereum, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
+      // { label: "Ethereum", key: chainIds.ethereum, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
       { label: "Sepolia Testnet", key: chainIds.sepolia, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
-      { label: "Optimism", key: chainIds.optimism, icon: labelToShow(optimistim_Logo, "Optimistim_Logo") },
-      { label: "Optimism Goerli", key: chainIds.optimismtest, icon: labelToShow(optimistim_Logo, "Optimistim_Logo") },
-      { label: "Arbitrum", key: chainIds.arbitrum, icon: labelToShow(arbitrum_Logo, "Arbitrum_Logo") },
-      { label: "Arbitrum testnet", key: chainIds.arbitrumtest, icon: labelToShow(arbitrum_Logo, "Arbitrum_Logo") },
-      { label: "zkSync Era", key: chainIds.zkSync, icon: labelToShow(zksync_Logo, "zksync_Logo") },
-      { label: "zkSync testnet", key: chainIds.zksynctest, icon: labelToShow(zksync_Logo, "zksync_Logo") },
-      { label: "Polygon", key: chainIds.polygon, icon: labelToShow(polygon_logo, "Polygon_logo") },
-      { label: "Mumbai", key: chainIds.mumbai, icon: labelToShow(polygon_logo, "Polygon_logo") },
-      { label: "Fantom", key: chainIds.fantom, icon: labelToShow(fantom_Logo, "Fantom_Logo") },
-      { label: "Fantom testnet", key: chainIds.fantomtest, icon: labelToShow(fantom_Logo, "Fantom_Logo") },
-      { label: "BNB Chain", key: chainIds.bsc, icon: labelToShow(bsc_Logo, "BNB_logo") },
-      { label: "BNB Testnet", key: chainIds.bsctest, icon: labelToShow(bsc_Logo, "BNB_logo") }
+      // { label: "Optimism", key: chainIds.optimism, icon: labelToShow(optimistim_Logo, "Optimistim_Logo") },
+      // { label: "Optimism Goerli", key: chainIds.optimismtest, icon: labelToShow(optimistim_Logo, "Optimistim_Logo") },
+      // { label: "Arbitrum", key: chainIds.arbitrum, icon: labelToShow(arbitrum_Logo, "Arbitrum_Logo") },
+      // { label: "Arbitrum testnet", key: chainIds.arbitrumtest, icon: labelToShow(arbitrum_Logo, "Arbitrum_Logo") },
+      // { label: "zkSync Era", key: chainIds.zkSync, icon: labelToShow(zksync_Logo, "zksync_Logo") },
+      // { label: "zkSync testnet", key: chainIds.zksynctest, icon: labelToShow(zksync_Logo, "zksync_Logo") },
+      // { label: "Polygon", key: chainIds.polygon, icon: labelToShow(polygon_logo, "Polygon_logo") },
+      // { label: "Mumbai", key: chainIds.mumbai, icon: labelToShow(polygon_logo, "Polygon_logo") },
+      // { label: "Fantom", key: chainIds.fantom, icon: labelToShow(fantom_Logo, "Fantom_Logo") },
+      // { label: "Fantom testnet", key: chainIds.fantomtest, icon: labelToShow(fantom_Logo, "Fantom_Logo") },
+      // { label: "BNB Chain", key: chainIds.bsc, icon: labelToShow(bsc_Logo, "BNB_logo") },
+      // { label: "BNB Testnet", key: chainIds.bsctest, icon: labelToShow(bsc_Logo, "BNB_logo") }
     ],
     []
   );
   
   // useEffect(() => {setChainId(1);});
   useEffect(() => {
-    if (chainId) setChainId(chainId);
+    console.log(chainId,account);
+    if (chainId) {
+      swithC(chainId1);
+      // setChainId(chainId);
+    }
     
 // if (!chainId1) return;
     let selectedLabel;
@@ -92,19 +96,29 @@ const ChainSelector: FC = () => {
 
     setLabel(selectedLabel);
     setSelected(items.find((item) => item?.key === chainId1.toString()));
-  }, [chainId1,chainId]);
+    sessionStorage.setItem("chainId",chainId1.toString());
+    
+  }, [chainId1,chainId,account]);
 
   const onClick: MenuProps["onClick"] = async ({ key }) => {
-    if (!isActive) {
+    // if (!isActive) {
       // @ts-ignore
       setChainId(key*1);
-    } else {
+      sessionStorage.setItem("chainId",key);
+    // } else {
       // setChainId(key*1);
       await switchChain(Number(key)).catch((error) => {
         console.error(`"Failed to switch chains: " ${error}`);
       });
-    }
+    // }
     console.log(chainId1,key,999)
+  };
+
+  async function swithC(key: any) {
+
+    await switchChain(Number(key)).catch((error) => {
+      console.error(`"Failed to switch chains: " ${error}`);
+    });
   };
 
   // if (!chainId || !isActive) return null;

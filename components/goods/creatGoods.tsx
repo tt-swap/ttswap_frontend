@@ -20,7 +20,7 @@ interface Props {
   setDataNum: (value: number) => void;
 }
 
-export const CreatGood = ({ setDataNum }: Props) => {
+export const CreatGoods = ({ setDataNum }: Props) => {
   const [spinning, setSpinning] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -56,6 +56,25 @@ export const CreatGood = ({ setDataNum }: Props) => {
       setSelectVgood(tokens);
     })();
   }, []);
+
+  useMemo(() => {
+    setBuyF(8);
+    setSellF(8);
+    setInF(8);
+    setDisinF(8);
+    setSwapS(2);
+    setDisinS(10);
+    setGoodType("");
+    setGoodInfo("");
+    setLongitude("");
+    setLatitude("");
+    setGoodQ("");
+    setGoodVQ("");
+    setGoodC("");
+    setGoodV("");
+    setGoodVAddr("");
+    setGoodDec(0);
+  }, [open]);
 
   const isDisabled = useMemo(() => {
     console.log(buyF, sellF, inF, disinF, swapS, disinS, goodQ, goodVQ, goodC, goodV)
@@ -101,25 +120,25 @@ export const CreatGood = ({ setDataNum }: Props) => {
       <Button className='newButton' onClick={() => {
         setOpen(true)
       }}>
-        new good
+        Create Goods
       </Button>
-      <CreatModal open={open} setOpen={setOpen} title={'creat good'}>
+      <CreatModal open={open} setOpen={setOpen} title={"Create Goods"}>
 
         <Spin spinning={spinning} fullscreen indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} size="large" />
 
         <div className='newgood'>
           <Form className='form-new' form={form} colon={false}>
-            <h2>contract address</h2>
+            <h2>Contract Address</h2>
             <Form.Item>
               <Input
-                placeholder="contract address"
+                placeholder="Contract address"
                 onChange={(e) => { setGoodC(e.target.value); }}
                 value={goodC}
               />
             </Form.Item>
-            <h2>rate config(not null)</h2>
+            <h2>Rate Config(Not Null)</h2>
             <Space>
-              <Form.Item label="buy"
+              <Form.Item label="Buy"
                 rules={[{ required: true, message: 'Please input your username!' }]}>
                 <InputNumber
                   addonAfter="‱"
@@ -132,7 +151,7 @@ export const CreatGood = ({ setDataNum }: Props) => {
                   defaultValue={8}
                 />
               </Form.Item>
-              <Form.Item label="sell">
+              <Form.Item label="Sell">
                 <InputNumber
                   addonAfter="‱"
                   min={1}
@@ -146,7 +165,7 @@ export const CreatGood = ({ setDataNum }: Props) => {
               </Form.Item>
             </Space>
             <Space>
-              <Form.Item label="invest">
+              <Form.Item label="Invest">
                 <InputNumber
                   addonAfter="‱"
                   min={1}
@@ -158,7 +177,7 @@ export const CreatGood = ({ setDataNum }: Props) => {
                   defaultValue={8}
                 />
               </Form.Item>
-              <Form.Item label="disinvest">
+              <Form.Item label="Divest">
                 <InputNumber
                   addonAfter="‱"
                   min={1}
@@ -171,10 +190,11 @@ export const CreatGood = ({ setDataNum }: Props) => {
                 />
               </Form.Item>
             </Space>
-            <h2>section config(not null)</h2>
+            <h2>Chips Config(Not Null)</h2>
             <Space className='spanS'>
-              <Form.Item label="swap">
+              <Form.Item label="Swap">
                 <InputNumber
+                  // addonAfter="x64"
                   min={2}
                   step={1}
                   precision={0}
@@ -182,9 +202,9 @@ export const CreatGood = ({ setDataNum }: Props) => {
                   onChange={(e) => { if (e > 1) setSwapS(e); }}
                   value={swapS}
                   defaultValue={2}
-                />
+                />{" x64"}
               </Form.Item>
-              <Form.Item label="disinvest">
+              <Form.Item label="Divest">
                 <InputNumber
                   min={10}
                   step={1}
@@ -229,10 +249,10 @@ export const CreatGood = ({ setDataNum }: Props) => {
                 onChange={(e) => { setLatitude(e.target.value); }}
                 value={latitude} />
             </Form.Item> */}
-            <h2>choice Value good</h2>
+            <h2>Choose Value Goods</h2>
             <Form.Item>
               <Select
-                placeholder="choice Value good"
+                placeholder="Choose Value Goods"
                 optionLabelProp="label"
                 value={goodV}
                 onChange={(e) => {
@@ -262,7 +282,7 @@ export const CreatGood = ({ setDataNum }: Props) => {
                 ))}
               </Select>
             </Form.Item>
-            <h2>invest quantity</h2>
+            <h2>Invest Quantity</h2>
             <Form.Item>
               <Input
                 placeholder="0"
@@ -271,7 +291,7 @@ export const CreatGood = ({ setDataNum }: Props) => {
                 value={goodQ}
               />
             </Form.Item>
-            <h2>invest value</h2>
+            <h2>Invest Value</h2>
             <Form.Item>
               <Input
                 placeholder="0"
@@ -287,7 +307,7 @@ export const CreatGood = ({ setDataNum }: Props) => {
             style={{ width: "100%" }}
             disabled={isDisabled}
             onClick={newGood}
-          >new</Button>
+          >New</Button>
         </div>
       </CreatModal>
     </>

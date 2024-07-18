@@ -1,14 +1,7 @@
 'use client'
-// import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { XYKWalletTransactionsListView, XYKWalletPoolListView, XYKWalletInformation, XYKWalletPositionsListView  } from "@covalenthq/goldrush-kit";
 import { Flex } from "@radix-ui/themes";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-// import { useState } from "react";
 import TokenSwap from "@/components/swap"
-import { cleanupImgCache } from "@/utils/icon";
 import { useEffect,useState } from "react";
 import { useTheme } from "next-themes"
 

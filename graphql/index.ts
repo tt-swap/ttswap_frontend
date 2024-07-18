@@ -1,9 +1,19 @@
+
+import { getChainName } from '@/data/networks';
 import { goodStates, goodState } from '@/graphql/graphql';
 import {  iconUrl } from '@/graphql/util';
+
+
 
 //价值物品列表
 export async function GoodsDatas() {
 
+    let chainId = 0;
+    if (sessionStorage.getItem("chainId") !== null) {
+        chainId = Number(sessionStorage.getItem("chainId"));
+    }
+    const chainName = getChainName(chainId);
+    
     const goodsDatas = await goodStates();
 
     let items: object[] = [];
@@ -16,7 +26,7 @@ export async function GoodsDatas() {
         map.name = e.tokenname;
         map.decimals = e.tokendecimals;
         map.symbol = e.tokensymbol;
-        map.logo_url = iconUrl("ethereum", e.erc20Address);
+        map.logo_url = iconUrl(chainName, e.erc20Address);
         map.address = e.erc20Address;
         items.push(map);
     });

@@ -4,20 +4,20 @@ import { useRouter, usePathname } from "next/navigation";
 import { GoldRushProvider } from "@/utils/store";
 import { XYKWalletPositionsListView, XYKWalletTransactionsListView, XYKWalletPoolListView } from "@/components/Organisms"
 import { XYKWalletInformation } from "@/components/Molecules"
-import { CreatGood } from "@/components/goods/creatGood"
+import { CreatGoods } from "@/components/goods/creatGoods"
 import { Disinvest } from "@/components/goods/disinvest"
 import { Flex } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+// import { Input } from "@/components/ui/input";
 import { handleTabSwitch } from "@/utils/router";
 // import { useState } from "react";
 import { useEffect, useState, useMemo } from "react";
 import { useValueGood,useGoodId } from "@/stores/valueGood";
 
 import { useWeb3React } from "@web3-react/core";
-import { myIndexes } from '@/graphql/account';
-import { prettifyCurrencys } from '@/graphql/util';
+// import { myIndexes } from '@/graphql/account';
+// import { prettifyCurrencys } from '@/graphql/util';
 
 export default function Account({ params }: { params: { chain: string, dex: string } }) {
 
@@ -79,9 +79,9 @@ export default function Account({ params }: { params: { chain: string, dex: stri
         {/* <Button onClick={()=>{
             setDataNum(dataNum+1)
           }}>Load account details</Button>  */}
-        <CreatGood
+        <CreatGoods
           setDataNum={(e) => setDataNum(e + dataNum)}
-        ></CreatGood>
+        ></CreatGoods>
         <Disinvest
           open_zt={open}
           dis_id={proofid}
@@ -125,7 +125,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
       </GoldRushProvider>
 
       <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
-        My goods
+        My Goods
       </h2>
       <GoldRushProvider
         apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
@@ -164,12 +164,12 @@ export default function Account({ params }: { params: { chain: string, dex: stri
         wallet_address={walletAddress}
         data_num={dataNum}
         value_good_id={info.id}
-        on_native_explorer_click={(e: { explorers: { url: string | URL | undefined; }[]; }) => {
-          window.open(e.explorers[0].url, '_blank');
+        on_native_explorer_click={(e:string) => {
+          window.open(e, '_blank');
         }}
-        on_goldrush_receipt_click={(e: { tx_hash: any; }) => {
-          window.open(`https://goldrush-tx-receipt-ui.vercel.app/tx/${params.chain}/${e.tx_hash}/`, '_blank');
-        }}
+        // on_goldrush_receipt_click={(e: { tx_hash: any; }) => {
+        //   window.open(`https://goldrush-tx-receipt-ui.vercel.app/tx/${params.chain}/${e.tx_hash}/`, '_blank');
+        // }}
       />
       <Flex onClick={() => {
         router.back()

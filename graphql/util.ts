@@ -34,7 +34,7 @@ export function timestampdToDateSub(days: number): number {
 }
 
 // 物品图标地址
-export function iconUrl(chainName: string, address: string) {
+export function iconUrl(chainName: string | undefined, address: string) {
     return `https://raw.githubusercontent.com/tt-swap/assets/master/blockchains/${chainName}/assets/${address}/logo.png`;
 }
 

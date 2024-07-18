@@ -1,7 +1,15 @@
-import { useEffect, useState } from "react";
+import { getExplorer, getChainName } from '@/data/networks';
 import { SwapTokens } from "@/shared/types/token";
 import { parGoodDatas } from './graphql';
 import { powerIterative, iconUrl } from '@/graphql/util';
+
+let chainId = 0;
+if (sessionStorage.getItem("chainId") !== null) {
+    chainId = Number(sessionStorage.getItem("chainId"));
+}
+const blockExplorerUrls = getExplorer(chainId);
+const chainName = getChainName(chainId);
+
 
 
 //物品列表
@@ -12,7 +20,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
         tokenValue: [],
         tokens: []
     };
-    if (params.id) {
+    if (params.id!=="") {
 
         const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel });
 
@@ -43,7 +51,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
             map.symbol = e.tokensymbol;
             map.currentQuantity = e.currentQuantity;
             map.currentValue = e.currentValue;
-            map.logo_url = iconUrl("ethereum", e.erc20Address);
+            map.logo_url = iconUrl(chainName, e.erc20Address);
             map.address = e.erc20Address;
             map.price = current_price;
             map.buyFee = Math.floor(e.goodConfig % (2 ** 240) / (2 ** 233)) / 10000;
@@ -60,7 +68,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
             map.id = e.id;
             map.name = e.tokenname;
             map.symbol = e.tokensymbol;
-            map.logo_url = iconUrl("ethereum", e.erc20Address);
+            map.logo_url = iconUrl(chainName, e.erc20Address);
             map.address = e.erc20Address;
 
             e.Goodlist.forEach((en: any) => {
@@ -78,7 +86,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
                 map1.symbol = en.tokensymbol;
                 map1.currentQuantity = en.currentQuantity;
                 map1.currentValue = en.currentValue;
-                map1.logo_url = iconUrl("ethereum", en.erc20Address);
+                map1.logo_url = iconUrl(chainName, en.erc20Address);
                 map1.address = en.erc20Address;
                 map1.price = current_price;
                 map1.buyFee = Math.floor(en.goodConfig % (2 ** 240) / (2 ** 233)) / 10000;

@@ -1,5 +1,5 @@
 import { type Option, None, Some } from "@/utils/option";
-import { type TokenV2Volume, prettifyCurrency } from "@covalenthq/client-sdk";
+import { type TokenV2Volume } from "@/utils/types/XykServiceTypes";
 import { useEffect, useState } from "react";
 import {
     DropdownMenu,
@@ -44,6 +44,7 @@ import {
 
 import { GoodsDatas } from '@/graphql/overview';
 import { prettifyCurrencys } from '@/graphql/util';
+import { calculateFeePercentage } from "@/utils/functions/calculate-fees-percentage";
 
 export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
     chain_name,
@@ -55,7 +56,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
 
     const [sorting, setSorting] = useState<SortingState>([
         {
-            id: "total_volume_24h_quote",
+            id: "totalTradeQuantity",
             desc: true,
         },
     ]);
@@ -126,7 +127,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                 <div className="ml-4">
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Goods"}
+                        header_name={"Name"}
                         column={column}
                     />
                 </div>
@@ -153,13 +154,13 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                                 >
                                     {
                                         // @ts-ignore
-                                        row.original.name ? row.original.name : ""}
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
                                 </a>
                             ) : (
                                 <label className="text-base">
                                     {
                                         // @ts-ignore
-                                        row.original.name ? row.original.name : ""}
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
                                 </label>
                             )}
                         </div>
@@ -167,65 +168,72 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                 );
             },
         },
+        // {
+        //     id: "symbol",
+        //     accessorKey: "symbol",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Symbol"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         return (
+        //             <div className="text-right">
+        //                 {
+        //                     // @ts-ignore
+        //                     row.original.symbol}
+        //             </div>
+        //         );
+        //     },
+        // },
         {
-            id: "symbol",
-            accessorKey: "symbol",
+            id: "price",
+            accessorKey: "price",
             header: ({ column }) => (
                 <TableHeaderSorting
-                    align="right"
-                    header_name={"Symbol"}
+                    align="left"
+                    header_name={"Price"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
+                    row.original.price
+                );
+
+                return <div className="text-left">{valueFormatted}{" "}{// @ts-ignore
+                    row.original.valueSymbol}</div>;
+            },
+        },
+        {
+            id: "price_24h",
+            accessorKey: "price_24h",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"24h"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = calculateFeePercentage(
+                    // @ts-ignore
+                    row.original.priceC_24h
+                );
                 return (
-                    <div className="text-right">
-                        {
+                    <div
+                        className={`text-right ${
                             // @ts-ignore
-                            row.original.symbol}
+                            parseFloat(row.original.priceC_24h) > 0 &&
+                            "text-green-600"
+                            }`}
+                    >
+                        {valueFormatted}
                     </div>
                 );
-            },
-        },
-        {
-            id: "totalTradeQuantity",
-            accessorKey: "totalTradeQuantity",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Total Volume"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-
-                    // @ts-ignore
-                    row.original.totalTradeQuantity
-                );
-
-                return <div className="text-right">{valueFormatted}</div>;
-            },
-        },
-        {
-            id: "totalTradeValue",
-            accessorKey: "totalTradeValue",
-            header: ({ column }) => (
-                // console.log(column,"&&&");
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Total Amount"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    // @ts-ignore
-                    row.original.totalTradeValue
-                );
-
-                return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
-                    row.original.valueSymbol}</div>;
             },
         },
         {
@@ -248,85 +256,86 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             },
         },
         {
-            id: "tradeValue24",
-            accessorKey: "tradeValue24",
+            id: "totalTradeQuantity",
+            accessorKey: "totalTradeQuantity",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Amount(24h)"}
+                    header_name={"Trade Volume"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
-                    // @ts-ignore
-                    row.original.tradeValue24
-                );
 
-                return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
-                    row.original.valueSymbol}</div>;
-            },
-        },
-        {
-            id: "totalFee",
-            accessorKey: "totalFee",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Fee"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
                     // @ts-ignore
-                    row.original.totalFee
+                    row.original.totalTradeQuantity
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
-        {
-            id: "totalFeeValue",
-            accessorKey: "totalFeeValue",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Fee Amount"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    // @ts-ignore
-                    row.original.totalFeeValue
-                );
+        // {
+        //     id: "tradeValue24",
+        //     accessorKey: "tradeValue24",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Amount(24h)"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencys(
+        //             // @ts-ignore
+        //             row.original.tradeValue24
+        //         );
 
-                return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
-                    row.original.valueSymbol}</div>;
-            },
-        },
-        {
-            id: "price_24h",
-            accessorKey: "price_24h",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Price Change (24h)"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                return (
-                    <div className="text-right">
-                        <BalancePriceDelta
-                            // @ts-ignore
-                            numerator={row.original.price_24h} denominator={row.original.price}
-                        />{" "}
-                    </div>
-                );
-            },
-        },
+        //         return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
+        //             row.original.valueSymbol}</div>;
+        //     },
+        // },
+        // {
+        //     id: "totalTradeValue",
+        //     accessorKey: "totalTradeValue",
+        //     header: ({ column }) => (
+        //         // console.log(column,"&&&");
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Total Amount"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencys(
+        //             // @ts-ignore
+        //             row.original.totalTradeValue
+        //         );
+
+        //         return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
+        //             row.original.valueSymbol}</div>;
+        //     },
+        // },
+        // {
+        //     id: "totalFeeValue",
+        //     accessorKey: "totalFeeValue",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"Fee Amount"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencys(
+        //             // @ts-ignore
+        //             row.original.totalFeeValue
+        //         );
+
+        //         return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
+        //             row.original.valueSymbol}</div>;
+        //     },
+        // },
         {
             id: "actions",
             cell: ({ row }) => {
@@ -374,7 +383,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="left"
-                    header_name={"Token"}
+                    header_name={"goods"}
                     column={column}
                 />
             ),

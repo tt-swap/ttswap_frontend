@@ -88,11 +88,11 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
         handlePoolInformation();
     }, [dex_name, wallet_address, chain_name, value_good_id]);
 
-    console.log(7777, maybeResult);
+    // console.log(7777, maybeResult);
     return (
         <>
             <div className="flex items-center rounded border p-4">
-                {!maybeResult.isEmpty && (
+                {!maybeResult.isEmpty ? (
                     <div className="flex flex-grow flex-wrap items-center gap-8">
                         <div className="flex flex-grow flex-wrap items-center gap-8">
                             <div className="flex flex-col gap-1">
@@ -101,7 +101,7 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
                                         // @ts-ignore
                                         prettifyCurrencys(maybeResult.tradeValue)}{" "}{info.symbol}</h2>
                                 </div>
-                                <div className="text-md text-secondary-light">Total Value Swapped</div>
+                                <div className="text-md text-secondary-light">Total Trade Amount</div>
                             </div>
                         </div>
                         <div className="flex flex-grow flex-wrap items-center gap-8">
@@ -111,7 +111,7 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
                                         // @ts-ignore
                                         maybeResult.tradeCount}</h2>
                                 </div>
-                                <div className="text-md text-secondary-light">Total tradeCount</div>
+                                <div className="text-md text-secondary-light">Total Trade Count</div>
                             </div>
                         </div>
                         <div className="flex flex-grow flex-wrap items-center gap-8">
@@ -121,7 +121,7 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
                                         // @ts-ignore
                                         prettifyCurrencys(maybeResult.investValue)}{" "}{info.symbol}</h2>
                                 </div>
-                                <div className="text-md text-secondary-light">Total Value Invest</div>
+                                <div className="text-md text-secondary-light">Total Invest Amount</div>
                             </div>
                         </div>
                         <div className="flex flex-grow flex-wrap items-center gap-8">
@@ -131,7 +131,7 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
                                         // @ts-ignore
                                         maybeResult.investCount}</h2>
                                 </div>
-                                <div className="text-md text-secondary-light">Total investCount</div>
+                                <div className="text-md text-secondary-light">Total Invest Count</div>
                             </div>
                         </div>
                         <div className="flex flex-grow flex-wrap items-center gap-8">
@@ -141,7 +141,7 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
                                         // @ts-ignore
                                         prettifyCurrencys(maybeResult.disinvestValue)}{" "}{info.symbol}</h2>
                                 </div>
-                                <div className="text-md text-secondary-light">Total Value Disinvest</div>
+                                <div className="text-md text-secondary-light">Total Divest Amount</div>
                             </div>
                         </div>
                         <div className="flex flex-grow flex-wrap items-center gap-8">
@@ -151,9 +151,20 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
                                         // @ts-ignore
                                         maybeResult.disinvestCount}</h2>
                                 </div>
-                                <div className="text-md text-secondary-light">Total DisinvestCount</div>
+                                <div className="text-md text-secondary-light">Total Divest Count</div>
                             </div>
                         </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-grow items-center gap-x-8">
+                        {[1, 2].map((i) => {
+                            return (
+                                <Skeleton
+                                    key={i}
+                                    size={GRK_SIZES.LARGE}
+                                />
+                            );
+                        })}
                     </div>
                 )}
             </div>

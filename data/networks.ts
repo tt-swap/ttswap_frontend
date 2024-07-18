@@ -33,6 +33,7 @@ interface BasicChainInformation {
   urls: string[];
   publicUrls: string[];
   name: string;
+  chainName: string;
 }
 
 interface ExtendedChainInformation extends BasicChainInformation {
@@ -51,7 +52,7 @@ export function getAddChainParameters(chainId: number): AddEthereumChainParamete
   if (isExtendedChainInformation(chainInformation)) {
     return {
       chainId,
-      chainName: chainInformation.name,
+      chainName: chainInformation.chainName,
       nativeCurrency: chainInformation.nativeCurrency,
       rpcUrls: chainInformation.publicUrls,
       blockExplorerUrls: chainInformation.blockExplorerUrls
@@ -73,6 +74,12 @@ export const getExplorer = (chainId: number): string[] | undefined => {
   return undefined;
 };
 
+export const getChainName = (chainId: number): string | undefined => {
+  const chainInformation = CHAINS[chainId];
+  if (isExtendedChainInformation(chainInformation)) return chainInformation.chainName;
+  return undefined;
+};
+
 export const CHAINS: {
   [chainId: number]: BasicChainInformation | ExtendedChainInformation;
 } = {
@@ -87,6 +94,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://rpc.ankr.com/eth"].filter(Boolean),
     name: "Mainnet",
+    chainName:"ethereum",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://etherscan.io"]
   },
@@ -99,6 +107,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://sepolia.infura.io/v3/", "https://rpc.sepolia.org"].filter(Boolean),
     name: "Sepolia",
+    chainName:"sepolia",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://sepolia.etherscan.io"]
   },
@@ -112,6 +121,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://mainnet.optimism.io"].filter(Boolean),
     name: "OP Mainnet",
+    chainName:"optimistic",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://optimistic.etherscan.io"]
   },
@@ -124,6 +134,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://goerli.optimism.io"].filter(Boolean),
     name: "Optimism Goerli",
+    chainName:"optimismgoerli",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://goerli-explorer.optimism.io"]
   },
@@ -137,6 +148,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://arb1.arbitrum.io/rpc"].filter(Boolean),
     name: "Arbitrum One",
+    chainName:"arbitrum",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://arbiscan.io"]
   },
@@ -149,6 +161,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://sepolia-rollup.arbitrum.io/rpc"].filter(Boolean),
     name: "Arbitrum Sepolia",
+    chainName:"arbitrumsepolia",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://sepolia.arbiscan.io/"]
   },
@@ -163,6 +176,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://polygon-rpc.com"].filter(Boolean),
     name: "Polygon",
+    chainName:"polygon",
     nativeCurrency: MATIC,
     blockExplorerUrls: ["https://polygonscan.com"]
   },
@@ -175,6 +189,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://rpc-mumbai.maticvigil.com"].filter(Boolean),
     name: "Polygon Mumbai",
+    chainName:"polygonmumbai",
     nativeCurrency: MATIC,
     blockExplorerUrls: ["https://mumbai.polygonscan.com"]
   },
@@ -187,6 +202,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://mainnet.era.zksync.io"].filter(Boolean),
     name: "zkSync Era",
+    chainName:"zksync",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://explorer.zksync.io"]
   },
@@ -198,6 +214,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://testnet.era.zksync.dev"].filter(Boolean),
     name: "zkSync Era Testnet",
+    chainName:"zksyncgoerli",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://goerli.explorer.zksync.io"]
   },
@@ -210,6 +227,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://rpc.ankr.com/fantom"].filter(Boolean),
     name: "Fantom",
+    chainName:"fantom",
     nativeCurrency: FTM,
     blockExplorerUrls: ["https://ftmscan.com/"]
   },
@@ -218,6 +236,7 @@ export const CHAINS: {
     urls: ["https://rpc.testnet.fantom.network"].filter(Boolean),
     publicUrls: ["https://rpc.testnet.fantom.network"].filter(Boolean),
     name: "Fantom Testnet",
+    chainName:"fantomtestnet",
     nativeCurrency: FTM,
     blockExplorerUrls: ["https://testnet.ftmscan.com/"]
   },
@@ -231,6 +250,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://rpc.ankr.com/bsc"].filter(Boolean),
     name: "BNB Smart Chain",
+    chainName:"ethereum",
     nativeCurrency: BSC,
     blockExplorerUrls: ["https://bscscan.com/"]
   },
@@ -241,6 +261,7 @@ export const CHAINS: {
     ),
     publicUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"].filter(Boolean),
     name: "BNB Testnet",
+    chainName:"ethereum",
     nativeCurrency: BSC,
     blockExplorerUrls: ["https://testnet.bscscan.com/"]
   }

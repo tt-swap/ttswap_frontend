@@ -4,35 +4,35 @@ import { siteConfig } from "@/config/site"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 import { MainNav } from "@/components/main-nav"
-import { ThemeToggle } from "@/components/theme-toggle"
+// import { ThemeToggle } from "@/components/theme-toggle"
 import ConnectAccount from "components/components/Account/ConnectAccount";
 import ChainSelector from "@/components/ChainSelector";
-import { useWindowSize } from "hooks";
-import { useMemo, useEffect, useState } from "react";
-import { useValueGood } from "@/stores/valueGood";
+// import { useWindowSize } from "hooks";
+// import { useMemo, useEffect, useState } from "react";
+// import { useValueGood } from "@/stores/valueGood";
 
-import { valueGood } from '@/graphql';
+// import { valueGood } from '@/graphql';
 
 
 export function SiteHeader() {
 
-  const { info, setValueGood } = useValueGood();
+  // const { info, setValueGood } = useValueGood();
 
-  useMemo(async() => {
-    // (async () => {
-      const bal = await valueGood();
-      // console.log(bal,99999999999)
-      setValueGood({
-        id: bal.data.goodStates[0].id,
-        symbol: bal.data.goodStates[0].tokensymbol,
-        name: bal.data.goodStates[0].tokenname,
-        logo_url: "",
-        address: bal.data.goodStates[0].erc20Address,
-        decimals: bal.data.goodStates[0].tokendecimals
-      });
-    // })();
+  // useMemo(async() => {
+  //   // (async () => {
+  //     const bal = await valueGood();
+  //     // console.log(bal,99999999999)
+  //     setValueGood({
+  //       id: bal.data.goodStates[0].id,
+  //       symbol: bal.data.goodStates[0].tokensymbol,
+  //       name: bal.data.goodStates[0].tokenname,
+  //       logo_url: "",
+  //       address: bal.data.goodStates[0].erc20Address,
+  //       decimals: bal.data.goodStates[0].tokendecimals
+  //     });
+  //   // })();
 
-  }, []);
+  // }, []);
 
   // console.log(info,77779999999)
   return (
@@ -41,7 +41,7 @@ export function SiteHeader() {
         <MainNav items={siteConfig.mainNav} />
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
-            {/* <ChainSelector /> */}
+            <ChainSelector />
             <ConnectAccount />
             <Link
               href={siteConfig.links.github}

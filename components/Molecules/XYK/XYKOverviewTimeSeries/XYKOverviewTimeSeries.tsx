@@ -14,9 +14,8 @@ import { useGoldRush } from "@/utils/store";
 import { type XYKOverviewTimeSeriesProps } from "@/utils/types/molecules.types";
 import {
     type LiquidityEcosystemChart,
-    prettifyCurrency,
     type UniswapLikeEcosystemCharts,
-} from "@covalenthq/client-sdk";
+} from "@/utils/types/XykServiceTypes";
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize";
 
 import { ecosystemChartDatas } from '@/graphql/overview';
@@ -50,7 +49,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
                 const chart_key = `${timeSeries}_chart_${period}d`;
                 const value_key =
                     timeSeries === "price"
-                        ? "price_of_token0_in_token1"
+                        ? "price"
                         : `${timeSeries}_quote`;
                 const result = (
                     response[
@@ -84,13 +83,6 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
             
              await ecosystemChartDatas(value_good_id);
 
-                // await covalentClient.XykService.getEcosystemChartData(
-                //     chain_name,
-                //     dex_name
-                // );
-                // console.log(response,0)
-                // console.log(response.data.items[0],1)
-            // setResult(new Some(response.data.items[0]));
     // @ts-ignore
             setResult(new Some(response));
         })();
@@ -119,9 +111,6 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
                         index="date"
                         valueFormatter={prettifyCurrencys}
                         yAxisWidth={100}
-                        // categories={[
-                        //     `${capitalizeFirstLetter(timeSeries === "liquidity" ? "investment":timeSeries)} (USD)`,
-                        // ]}
                         categories={[
                             `${capitalizeFirstLetter(timeSeries)} (${currencys})`,
                         ]}
