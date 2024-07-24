@@ -15,6 +15,7 @@ const meta: Meta<typeof DecodedTransactionComponent> = {
             },
         },
     },
+    // @ts-ignore
     render: ({ chain_name, tx_hash, setTxMetadata }) => (
         <section>
             <div className="mb-8">
