@@ -2,6 +2,7 @@ import { getExplorer, getChainName } from '@/data/networks';
 import { SwapTokens } from "@/shared/types/token";
 import { parGoodDatas } from './graphql';
 import { powerIterative, iconUrl } from '@/graphql/util';
+import BigNumber from 'bignumber.js';
 
 let chainId = 0;
 if (sessionStorage.getItem("chainId") !== null) {
@@ -20,7 +21,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
         tokenValue: [],
         tokens: []
     };
-    if (params.id!=="") {
+    if (params.id !== "") {
 
         const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel });
 
@@ -37,6 +38,10 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
         // @ts-ignore
         item.tokens = items1;
 
+        const m211 = new BigNumber(2).pow(211);
+        const m204 = new BigNumber(2).pow(204);
+        const m197 = new BigNumber(2).pow(197);
+
         goodsDatas.data.goodStates.forEach((e: any) => {
             let base_decimals = powerIterative(10, e.tokendecimals);
             let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
@@ -45,6 +50,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
                 id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0, currentValue: 0,
                 buyFee: 0, sellFee: 0, price: 0, logo_url: "", address: "",
             };
+            const goodConfig = new BigNumber(e.goodConfig);
             map.id = e.id;
             map.name = e.tokenname;
             map.decimals = e.tokendecimals;
@@ -54,9 +60,11 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
             map.logo_url = iconUrl(chainName, e.erc20Address);
             map.address = e.erc20Address;
             map.price = current_price;
-            map.buyFee = Math.floor(e.goodConfig % (2 ** 240) / (2 ** 233)) / 10000;
-            map.sellFee = Math.floor(e.goodConfig % (2 ** 233) / (2 ** 226)) / 10000;
+            map.buyFee = goodConfig.mod(m211).div(m204).integerValue(1).div(10000).toNumber(); //Math.floor(e.goodConfig % (2 ** 211) / (2 ** 204)) / 10000;
+            map.sellFee = goodConfig.mod(m204).div(m197).integerValue(1).div(10000).toNumber(); //Math.floor(e.goodConfig % (2 ** 204) / (2 ** 197)) / 10000;
             items.push(map);
+
+            // console.log(goodConfig.mod(m211).div(m204).integerValue(1).div(10000).toString(),555555555,BigNumber(12.89).integerValue(1).toNumber())
         });
 
         goodsDatas.data.parGoodStates.forEach((e: any) => {
@@ -76,6 +84,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
                     id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0, currentValue: 0,
                     buyFee: 0, sellFee: 0, price: 0, logo_url: "", address: ""
                 };
+                const goodConfig1 = new BigNumber(en.goodConfig);
                 let base_decimals = powerIterative(10, en.tokendecimals);
                 let current_price = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
 
@@ -89,8 +98,9 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
                 map1.logo_url = iconUrl(chainName, en.erc20Address);
                 map1.address = en.erc20Address;
                 map1.price = current_price;
-                map1.buyFee = Math.floor(en.goodConfig % (2 ** 240) / (2 ** 233)) / 10000;
-                map1.sellFee = Math.floor(en.goodConfig % (2 ** 233) / (2 ** 226)) / 10000;
+                map1.buyFee = goodConfig1.mod(m211).div(m204).integerValue(1).div(10000).toNumber(); // Math.floor(en.goodConfig % (2 ** 211) / (2 ** 204)) / 10000;
+                // @ts-ignore
+                map1.sellFee = goodConfig1.mod(m204).div(m197).integerValue(1).div(10000).toNumber(); //Math.floor(en.goodConfig % (2 ** 204) / (2 ** 197)) / 10000;
                 children.push(map1);
             });
             items1.push(map);

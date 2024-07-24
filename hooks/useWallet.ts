@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { ethers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
+// import { useWeb3React } from "@web3-react/core";
 import useSwap from "@/hooks/useSwap";
 import useInvest from "@/hooks/useInvest";
 import erc20 from '@/data/abi/erc20.json';
@@ -10,6 +10,7 @@ import { powerIterative } from '@/graphql/util';
 import { useWalletAddress } from "@/stores/walletAddress";
 
 import { getContractAddress } from '@/data/contractConfig';
+// import { walletLogo } from "@coinbase/wallet-sdk/dist/assets/wallet-logo";
 
 const useWallet = () => {
     // if (typeof window !== 'undefined') {
@@ -18,7 +19,7 @@ const useWallet = () => {
     // }
     const provider = new ethers.BrowserProvider(ethereum);
     // const provider = new ethers.JsonRpcProvider('http://142.171.157.66:8545');
-    let chainId = 0;
+    let chainId = 1;
     if (sessionStorage.getItem("chainId") !== null) {
         chainId = Number(sessionStorage.getItem("chainId"));
     }
@@ -132,22 +133,41 @@ const useWallet = () => {
         } else setbalanceMap1({ from: 0, to: 0 }) // return { from: 0, to: 0 }
     }, [invest, isActive, address]);
 
+
+
+    const faucetTestCion = async (wallet: string, contractA: string) => {
+
+        try {
+            const signer = await provider.getSigner()
+            const contract = new ethers.Contract(contractA, erc20, signer);
+
+            return await contract.mint(wallet).then((transaction) => {
+                console.log('Transaction sent:', transaction);
+                return true;
+            }).catch((error: any) => {
+                console.error('出错:', error);
+                return false;
+            });
+        } catch (e) {
+            return false;
+
+        }
+    }
+
+
     const disinvest = async (pid: number, qut: any) => {
 
         const signer = await provider.getSigner()
         const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-
+        let reference:any = "0x0000000000000000000000000000000000000000";
+        if (localStorage.getItem("reference")!==null) {
+            reference = localStorage.getItem("reference");
+        }
+        
         console.log(pid, qut);
-        return await contract.disinvestProof(pid, qut, gater, "0x0000000000000000000000000000000000000000").then((transaction) => {
+        return await contract.disinvestProof(pid, qut, gater, reference).then((transaction) => {
             console.log('Transaction sent:', transaction);
             return true;
-            // return transaction.wait().then((receipt: any) => {
-            //     console.log('Transaction mined:', receipt);
-            //     return true;
-            // }).catch((error: any) => {
-            //     console.error('Error receipt:', error);
-            //     return false;
-            // });
         }).catch((error: any) => {
             console.error('出错:', error);
             return false;
@@ -971,7 +991,7 @@ const useWallet = () => {
         networkCost,
         swapBuyGood,
         investGoods,
-        newGoods, disinvest
+        newGoods, disinvest, faucetTestCion
     };
 };
 

@@ -334,9 +334,7 @@ export const XYKOverviewTransactionsListView: React.FC<
                                     {on_native_explorer_click && (
                                         <DropdownMenuItem
                                             onClick={() => {
-                                                on_native_explorer_click(
-                                                    "https://sepolia.etherscan.io/tx/"+row.original.hash
-                                                );
+                                                on_native_explorer_click(row.original.hash);
                                             }}
                                         >
                                             <IconWrapper

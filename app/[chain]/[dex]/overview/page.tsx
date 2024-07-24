@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import { Space } from 'antd';
 import { useEffect, useState } from "react";
-import { handleTabSwitch } from "@/utils/router";
+import { handleTabSwitch, getString } from "@/utils/router";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 
 
@@ -23,8 +23,14 @@ export default function Overview({ params }: { params: { chain: string, dex: str
   const [windowWidth, setWindowWidth] = useState<number>(0);
   const { info } = useValueGood();
   const { setGoodId } = useGoodId();
-  // console.log(info.id,666666666)
   useEffect(() => {
+    const params = window.location.search;
+    if (getString(params) !== null) {
+      const a = getString(params);
+      // @ts-ignore
+      localStorage.setItem("reference",a);
+      // console.log(getString(params), 666666666)
+    }
     setWindowWidth(window.innerWidth);
 
     const handleResize = () => {
@@ -102,7 +108,7 @@ export default function Overview({ params }: { params: { chain: string, dex: str
 
       <div className="flex justify-between">
         <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
-        Pools
+          Pools
         </h2>
         {/* <h2 className="md:text-2sl">more</h2> */}
         <a className="cursor-pointer hover:opacity-75"
@@ -148,7 +154,7 @@ export default function Overview({ params }: { params: { chain: string, dex: str
         // @ts-ignore
         chain_name={params.chain}
         dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
-        on_native_explorer_click={(e:string) => {
+        on_native_explorer_click={(e: string) => {
           window.open(e, '_blank');
         }}
         // on_goldrush_receipt_click={(e: { tx_hash: any; }) => {

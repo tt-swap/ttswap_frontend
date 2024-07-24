@@ -7,14 +7,17 @@ import { MainNav } from "@/components/main-nav"
 // import { ThemeToggle } from "@/components/theme-toggle"
 import ConnectAccount from "components/components/Account/ConnectAccount";
 import ChainSelector from "@/components/ChainSelector";
+import { Faucet } from "@/components/faucet"
+import { useWalletAddress } from "@/stores/walletAddress";
 // import { useWindowSize } from "hooks";
 // import { useMemo, useEffect, useState } from "react";
 // import { useValueGood } from "@/stores/valueGood";
 
 // import { valueGood } from '@/graphql';
 
-
 export function SiteHeader() {
+
+  const { address } = useWalletAddress();
 
   // const { info, setValueGood } = useValueGood();
 
@@ -41,9 +44,10 @@ export function SiteHeader() {
         <MainNav items={siteConfig.mainNav} />
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
+            {address!==null&&(<Faucet />)}
             <ChainSelector />
             <ConnectAccount />
-            <Link
+            {/* <Link
               href={siteConfig.links.github}
               target="_blank"
               rel="noreferrer"
@@ -57,7 +61,7 @@ export function SiteHeader() {
                 <Icons.gitHub className="h-5 w-5" />
                 <span className="sr-only">GitHub</span>
               </div>
-            </Link>
+            </Link> */}
             {/* <Link href={siteConfig.links.settings}>
               <div
                 className={buttonVariants({

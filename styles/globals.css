@@ -85,3 +85,26 @@
     flex-direction: row;
   }
 }
+
+
+/* 适用于WebKit浏览器 */
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  /* border-radius: 10px; */
+}
+
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  /* border-radius: 10px; */
+}
+
+/* 鼠标悬停在滚动条滑块上时的样式 */
+::-webkit-scrollbar-thumb:hover {
+  background: #909090;
+}

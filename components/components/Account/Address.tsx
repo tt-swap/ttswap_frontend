@@ -6,6 +6,7 @@ import { Skeleton } from "antd";
 import { getEllipsisTxt } from "utils/formatters";
 
 import Jazzicons from "../Jazzicons";
+import { useWalletAddress } from "@/stores/walletAddress";
 
 const styles = {
   addressBox: {
@@ -33,13 +34,14 @@ export interface AddressProps {
 
 const Address: React.FC<AddressProps> = (props) => {
   const { account } = useWeb3React();
-  const [address, setAddress] = useState<string>();
+  // const [address, setAddress] = useState<string>();
   const [isClicked, setIsClicked] = useState<boolean>(false);
+  const { address } = useWalletAddress();
 
-  useEffect(() => {
-    // @ts-ignore
-    setAddress(localStorage.getItem("wallet"));
-  }, [localStorage.getItem("wallet")]);
+  // useEffect(() => {
+  //   // @ts-ignore
+  //   setAddress(localStorage.getItem("wallet"));
+  // }, [localStorage.getItem("wallet")]);
 
   useEffect(() => {
     if (isClicked === true)
@@ -49,6 +51,29 @@ const Address: React.FC<AddressProps> = (props) => {
   }, [isClicked]);
 
   if (address === undefined) return <Skeleton paragraph={{ rows: 1, width: "100%" }} title={false} active />;
+  // console.log(navigator, 8888)
+  function fallbackCopyTextToClipboard(text: string): void {
+    const textarea = document.createElement('textarea');
+    textarea.style.position = 'fixed'; // 防止滚动条
+    textarea.style.top = '0';
+    textarea.style.left = '0';
+    textarea.style.opacity = '0';
+    textarea.value = text;
+    document.body.appendChild(textarea);
+
+    try {
+        // 尝试复制文本
+        textarea.select();
+        document.execCommand('copy');
+        // alert('文本已复制到剪贴板（回退方案）');
+    } catch (err) {
+        // console.error('复制文本时出错（回退方案）:', err);
+        // alert('复制文本时出错，请尝试手动复制');
+    }
+
+    document.body.removeChild(textarea);
+}
+
 
   const Copy = () => (
     <svg
@@ -63,7 +88,15 @@ const Address: React.FC<AddressProps> = (props) => {
       strokeLinejoin="round"
       style={{ cursor: "pointer" }}
       onClick={() => {
-        navigator.clipboard.writeText(address);
+        if (navigator.clipboard) {
+          // 使用 clipboard API 复制文本
+          navigator.clipboard.writeText(address);
+          // alert('文本已复制到剪贴板');
+        } else {
+          // 如果不支持，可以提供一个回退方案，比如使用 prompt 或者 textarea + document.execCommand('copy')（但请注意，execCommand 已被弃用）
+          fallbackCopyTextToClipboard(address);
+          // alert('浏览器不支持 clipboard API');
+        }
         setIsClicked(true);
       }}
     >

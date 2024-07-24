@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
 import { getExplorer, getChainName } from '@/data/networks';
 import { ecosystemChartData, parGoodDatas, InvestGoodDatas, transactions } from './graphql';
-import { timestampdToDateSub, powerIterative, iconUrl, splitNumber, timestampSubH } from '@/graphql/util';
+import { timestampdToDateSub, powerIterative, iconUrl } from '@/graphql/util';
 
 let chainId = 0;
 if (sessionStorage.getItem("chainId") !== null) {
@@ -120,6 +119,7 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
                 // map.tradeValue24 = (e.totalTradeQuantity - en.totalTradeQuantity) / base_decimals * current_price_24h;
                 // map.feeValue24 = (e.totalProfit - en.totalProfit) / base_decimals * current_price_24h;
                 map.price_24h = current_price_24h;
+                map.priceC_24h = (current_price - map.price_24h) / current_price;
                 //     }
                 // });
             } else {
@@ -127,6 +127,7 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
                 map.fee24 = 0;
                 map.tradeValue24 = 0;
                 map.feeValue24 = 0;
+                map.priceC_24h = 0;
             }
 
             map.id = e.id;
@@ -140,7 +141,6 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
             // map.totalFeeValue = e.totalProfit / base_decimals * current_price;
             map.logo_url = iconUrl(chainName, e.id);
             map.price = current_price;
-            map.priceC_24h = (map.price - map.price_24h) / map.price;
 
 
             items.push(map);

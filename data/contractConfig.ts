@@ -12,6 +12,7 @@ export const getContractAddress = (chainId: number): string => {
 
 export const getTheGraphApi = (chainId: number): string => {
   const chainInformation = contractCon[chainId];
+  console.log(chainInformation)
   return chainInformation.theGraphApi;
 };
 
@@ -25,8 +26,8 @@ export const contractCon: {
   },
   11155111: {
     chainId: "11155111",
-    contractAddress: "0xdb19B22665aFB391F45a8C985c47EBB09cfB3c1c",
-    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap/v0.0.203"
+    contractAddress: "0x2995F744b9406E7CC80714686A9814830B6a9d36",
+    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap/version/latest"
   },
   // Optimism
   10: {
