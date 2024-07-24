@@ -267,14 +267,14 @@ export async function transactionsDatas(id: string): Promise<object> {
         goodsDatas.data.transactions.forEach((e: any) => {
             let from_decimals = powerIterative(10, e.frompargood.tokendecimals);
             let to_decimals = powerIterative(10, e.togood.tokendecimals);
-            let from_price = 0;
-            if (e.frompargood.currentValue > 0 || e.frompargood.currentQuantity > 0 || e.frompargood.tokendecimals > 0) {
-                from_price = ((e.frompargood.currentValue / tokendecimals) / (e.frompargood.currentQuantity / from_decimals)) / jz;
-            }
-            let to_price = 0;
-            if (e.togood.currentValue > 0 || e.togood.currentQuantity > 0 || e.togood.tokendecimals > 0) {
-                to_price = ((e.togood.currentValue / tokendecimals) / (e.togood.currentQuantity / to_decimals)) / jz;
-            }
+            // let from_price = 0;
+            // if (e.frompargood.currentValue > 0 || e.frompargood.currentQuantity > 0 || e.frompargood.tokendecimals > 0) {
+            //     from_price = ((e.frompargood.currentValue / tokendecimals) / (e.frompargood.currentQuantity / from_decimals)) / jz;
+            // }
+            // let to_price = 0;
+            // if (e.togood.currentValue > 0 || e.togood.currentQuantity > 0 || e.togood.tokendecimals > 0) {
+            //     to_price = ((e.togood.currentValue / tokendecimals) / (e.togood.currentQuantity / to_decimals)) / jz;
+            // }
 
             let map = {
                 id: "", blockNumber: "", type: "", symbol1: "", symbol2: "", fromgoodQuanity: 0, togoodQuantity: 0,
@@ -300,11 +300,12 @@ export async function transactionsDatas(id: string): Promise<object> {
             } else {
                 map.togoodQuantity = 0;
             }
-            if (e.transtype === "buy" || e.transtype === "pay") {
-                map.totalValue = map.fromgoodQuanity * from_price;
-            } else {
-                map.totalValue = (map.fromgoodQuanity * from_price) + (map.togoodQuantity * to_price);
-            }
+            map.totalValue = e.transvalue/tokendecimals;
+            // if (e.transtype === "buy" || e.transtype === "pay") {
+            //     map.totalValue = map.fromgoodQuanity * from_price;
+            // } else {
+            //     map.totalValue = (map.fromgoodQuanity * from_price) + (map.togoodQuantity * to_price);
+            // }
             // console.log(map.fromgoodQuanity,"********",from_price,"***",map.togoodQuantity,"**",to_price)
             items.push(map);
         });

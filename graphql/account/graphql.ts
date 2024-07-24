@@ -30,6 +30,7 @@ export function myTransactions(params: { id: string; first: number; skip: number
 				transtype
 				fromgoodQuanity
 				fromgoodfee
+				transvalue
 				frompargood {
 				tokenname
 				tokensymbol
