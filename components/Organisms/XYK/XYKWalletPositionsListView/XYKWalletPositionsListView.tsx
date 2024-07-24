@@ -1,7 +1,5 @@
 import { type Option, None, Some } from "@/utils/option";
-import {
-    type UniswapLikeBalanceItem
-} from "@/utils/types/XykServiceTypes";
+import { type UniswapLikeBalanceItem } from "@/utils/types/XykServiceTypes";
 import { useEffect, useState } from "react";
 import {
     DropdownMenu,
@@ -33,44 +31,89 @@ import { IconWrapper } from "@/components/Shared";
 import { GRK_SIZES } from "@/utils/constants/shared.constants";
 import { useGoldRush } from "@/utils/store";
 import { type XYKWalletPositionsListViewProps } from "@/utils/types/organisms.types";
-import { SkeletonTable } from "@/components/ui/skeletonTable";
 import { calculateFeePercentage } from "@/utils/functions/calculate-fees-percentage";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination";
+import { SkeletonTable } from "@/components/ui/skeletonTable";
 
 import { myInvestGoodsDatas } from '@/graphql/account';
 import { prettifyCurrencys } from '@/graphql/util';
 
-export const XYKWalletPositionsListView: React.FC<
-    XYKWalletPositionsListViewProps
-> = ({ chain_name, dex_name, on_pool_click, wallet_address, value_good_id, data_num }) => {
+export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProps> = ({
+    chain_name,
+    dex_name,
+    on_pool_click,
+    page_size, wallet_address, value_good_id, data_num, is_over
+}) => {
     const { covalentClient } = useGoldRush();
 
     const [sorting, setSorting] = useState<SortingState>([
         {
-            id: "id",
+            id: "totalInvestValue",
             desc: true,
         },
     ]);
     const [rowSelection, setRowSelection] = useState({});
-    const [maybeResult, setResult] =
-        useState<Option<UniswapLikeBalanceItem[]>>(None);
+    const [maybeResult, setResult] = useState<Option<UniswapLikeBalanceItem[]>>(None);
     const [error, setError] = useState({ error: false, error_message: "" });
+    const [windowWidth, setWindowWidth] = useState<number>(0);
+    const [pagination, setPagination] = useState({
+        page_number: 1,
+    });
+    const [hasMore, setHasMore] = useState<boolean>();
+
+    const handlePagination = (page_number: number) => {
+        setPagination((prev) => {
+            return {
+                ...prev,
+                page_number,
+            };
+        });
+    };
 
     useEffect(() => {
         (async () => {
             setResult(None);
-            let response;
+            let response: any;
             try {
-                response = await myInvestGoodsDatas(wallet_address, value_good_id);
+                response =
+                    // @ts-ignore
+                    await myInvestGoodsDatas({ id: value_good_id, address:wallet_address, pageNumber: pagination.page_number - 1, pageSize: page_size });
+                console.log(response)
+                setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
-                // @ts-ignore
                 setResult(new Some(response.items));
             } catch (exception) {
                 setResult(new Some([]));
-                // @ts-ignore
-                setError({ error: response ? response.error : false, error_message: response ? response.error_message : "", });
+                setError({
+                    error: response ? response.error : false,
+                    error_message: response ? response.error_message : "",
+                });
             }
         })();
-    }, [chain_name, dex_name, wallet_address, data_num, value_good_id]);
+    }, [chain_name, dex_name, pagination, value_good_id,wallet_address,data_num]);
+
+    useEffect(() => {
+        setWindowWidth(window.innerWidth);
+
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+
 
     const columns: ColumnDef<UniswapLikeBalanceItem>[] = [
 
@@ -139,25 +182,6 @@ export const XYKWalletPositionsListView: React.FC<
                 );
             },
         },
-        // {
-        //     id: "symbol",
-        //     accessorKey: "symbol",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Symbol"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         return (
-        //             <div className="text-right">
-        //                 {// @ts-ignore
-        //                     row.original.symbol}
-        //             </div>
-        //         );
-        //     },
-        // },
         {
             id: "totalInvestValue",
             accessorKey: "totalInvestValue",
@@ -310,12 +334,154 @@ export const XYKWalletPositionsListView: React.FC<
         },
     ];
 
+    const mobile_columns: ColumnDef<UniswapLikeBalanceItem>[] = [
+        {
+            id: "name",
+            accessorKey: "name",
+            header: ({ column }) => (
+                <div className="ml-4">
+                    <TableHeaderSorting
+                        align="left"
+                        header_name={"Name"}
+                        column={column}
+                    />
+                </div>
+            ),
+            cell: ({ row }) => {
+                return (
+                    <div className="ml-4 flex items-center gap-3">
+                        <TokenAvatar
+                            size={GRK_SIZES.EXTRA_SMALL}
+                            token_url={// @ts-ignore
+                                row.original.logo_url}
+                        />
+                        <div className="flex flex-col">
+                            {on_pool_click ? (
+                                <a
+                                    className="cursor-pointer hover:opacity-75"
+                                // onClick={() => {
+                                //     if (on_pool_click) {
+                                //         on_pool_click(
+                                //             row.original.id
+                                //         );
+                                //     }
+                                // }}
+                                >
+                                    {// @ts-ignore
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                </a>
+                            ) : (
+                                <label className="text-base">
+                                    {// @ts-ignore
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                </label>
+                            )}
+                        </div>
+                    </div>
+                );
+            },
+        },
+        {
+            id: "totalInvestValue",
+            accessorKey: "totalInvestValue",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Value"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+
+                const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
+                    row.original.totalInvestValue
+                );
+
+                return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
+                    row.original.valueSymbol}</div>;
+            },
+        },
+        {
+            id: "earningRate",
+            accessorKey: "earningRate",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Earning Rate"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = calculateFeePercentage(
+                    // @ts-ignore
+                    row.original.earningRate
+                );
+
+                return (
+                    <div
+                        className={`text-right ${
+                            // @ts-ignore
+                            parseFloat(row.original.earningRate) > 0 &&
+                            "text-green-600"
+                            }`}
+                    >
+                        {valueFormatted}
+                    </div>
+                );
+            },
+        },
+        {
+            id: "actions",
+            cell: ({ row }) => {
+                return (
+                    <div className="text-right">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="ml-auto  ">
+                                    <span className="sr-only">Open menu</span>
+                                    <IconWrapper icon_class_name="expand_more" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                {/* <DropdownMenuItem
+                                    onClick={() => {
+                                        if (on_pool_click) {
+                                            on_pool_click("invest");
+                                        }
+                                    }}
+                                >
+                                    Invest
+                                </DropdownMenuItem> */}
+                                <DropdownMenuItem
+                                    onClick={() => {
+                                        if (on_pool_click) {
+                                            // @ts-ignore
+                                            on_pool_click(row.original.id);
+                                        }
+                                    }}
+                                >
+                                    {/* <IconWrapper
+                                        icon_class_name="swap_horiz"
+                                        class_name="mr-2"
+                                    />{" "} */}
+                                    Divest
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                );
+            },
+        },
+    ];
+
     const table = useReactTable({
         data: maybeResult.match({
             None: () => [],
             Some: (result) => result,
         }),
-        columns: columns,
+        columns: windowWidth < 700 ? mobile_columns : columns,
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -327,7 +493,7 @@ export const XYKWalletPositionsListView: React.FC<
     });
 
     const body = maybeResult.match({
-        None: () => <SkeletonTable cols={5} float="right" />,
+        None: () => <SkeletonTable float="right" />,
         Some: () =>
             error.error ? (
                 <TableRow>
@@ -390,6 +556,58 @@ export const XYKWalletPositionsListView: React.FC<
                 </TableHeader>
                 <TableBody>{body}</TableBody>
             </Table>
+            {!is_over && (
+                <Pagination className="select-none">
+                    <PaginationContent>
+                        <PaginationItem
+                            disabled={pagination.page_number === 1}
+                            onClick={() => {
+                                handlePagination(pagination.page_number - 1);
+                            }}
+                        >
+                            <PaginationPrevious />
+                        </PaginationItem>
+                        {pagination.page_number > 1 && (
+                            <PaginationItem
+                                onClick={() => {
+                                    handlePagination(pagination.page_number - 1);
+                                }}
+                            >
+                                <PaginationLink>
+                                    {pagination.page_number - 1}
+                                </PaginationLink>
+                            </PaginationItem>
+                        )}
+                        <PaginationItem>
+                            <PaginationLink isActive>
+                                {pagination.page_number}
+                            </PaginationLink>
+                        </PaginationItem>
+                        {hasMore && (
+                            <PaginationItem
+                                onClick={() => {
+                                    handlePagination(pagination.page_number + 1);
+                                }}
+                            >
+                                <PaginationLink>
+                                    {pagination.page_number + 1}
+                                </PaginationLink>
+                            </PaginationItem>
+                        )}
+                        <PaginationItem>
+                            <PaginationEllipsis />
+                        </PaginationItem>
+                        <PaginationItem
+                            disabled={!hasMore}
+                            onClick={() => {
+                                handlePagination(pagination.page_number + 1);
+                            }}
+                        >
+                            <PaginationNext />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+            )}
         </div>
     );
 };

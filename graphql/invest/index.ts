@@ -1,7 +1,8 @@
-import {  getChainName } from '@/data/networks';
+import { getChainName } from '@/data/networks';
 import { InvestTokenD } from "@/shared/types/token";
 import { parGoodDatas } from './graphql';
 import { timestampdToDateSub, powerIterative, iconUrl } from '@/graphql/util';
+import BigNumber from 'bignumber.js';
 
 
 let chainId = 0;
@@ -17,7 +18,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
         tokenValue: [],
         tokens: []
     };
-    if (params.id!=="") {
+    if (params.id !== "") {
 
         const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel, time: timestampdToDateSub(1) });
 
@@ -33,9 +34,15 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
         // @ts-ignore
         item.tokens = items1;
 
+        const m211 = new BigNumber(2).pow(211);
+        const m217 = new BigNumber(2).pow(217);
+        const m223 = new BigNumber(2).pow(223);
+
         goodsDatas.data.goodStates.forEach((e: any) => {
             let base_decimals = powerIterative(10, e.tokendecimals);
             let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
+
+            const goodConfig = new BigNumber(e.goodConfig);
 
             let map = {
                 id: "", name: "", decimals: 0, symbol: "", investQuantity: 0, feeQuantity: 0,
@@ -51,8 +58,10 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
             map.address = e.erc20Address;
             map.isvaluegood = e.isvaluegood;
             map.price = current_price;
-            map.investFee = Math.floor(e.goodConfig % (2 ** 255) / (2 ** 246)) / 10000;
-            map.disinvestFee = Math.floor(e.goodConfig % (2 ** 246) / (2 ** 240)) / 10000;
+            // @ts-ignore
+            map.investFee = goodConfig.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
+            // @ts-ignore
+            map.disinvestFee = goodConfig.mod(m217).div(m211).integerValue(1).div(10000).toNumber();
             items.push(map);
         });
 
@@ -76,6 +85,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
                 let base_decimals = powerIterative(10, en.tokendecimals);
                 let current_price = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
 
+                const goodConfig1 = new BigNumber(en.goodConfig);
 
                 map1.id = en.id;
                 map1.name = en.tokenname;
@@ -87,8 +97,10 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
                 map1.address = en.erc20Address;
                 map1.isvaluegood = en.isvaluegood;
                 map1.price = current_price;
-                map1.investFee = Math.floor(en.goodConfig % (2 ** 255) / (2 ** 246)) / 10000;
-                map1.disinvestFee = Math.floor(en.goodConfig % (2 ** 246) / (2 ** 240)) / 10000;
+                // @ts-ignore
+                map1.investFee = goodConfig1.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
+                // @ts-ignore
+                map1.disinvestFee = goodConfig1.mod(m217).div(m211).integerValue(1).div(10000).toNumber();
                 if (en.goodData.length > 0) {
                     map1.apy = (en.feeQuantity - en.goodData[0].feeQuantity) / en.feeQuantity * 365;
                 } else {

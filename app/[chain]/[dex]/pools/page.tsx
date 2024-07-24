@@ -20,7 +20,7 @@ export default function Pools({ params }: { params: { chain: string, dex: string
   return (
     <div className="w-full flex flex-col gap-4">
         <h1 className="pt-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-        Invest
+        Pools
         </h1>
         <GoldRushProvider
                 apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"

@@ -18,7 +18,7 @@ export default function Tokens({ params }: { params: { chain: string, dex: strin
   return (
     <div className="w-full flex flex-col gap-4">
         <h1 className="pt-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-          Trade
+          Goods
         </h1>
         <GoldRushProvider
                 apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"

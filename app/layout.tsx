@@ -1,8 +1,9 @@
 'use client'
 // import { Analytics } from '@vercel/analytics/react';
 import "@/styles/globals.css"
-import "@covalenthq/goldrush-kit/styles.css"
+import "@/styles/styles.css"
 // import { Theme } from "@radix-ui/themes"
+// import "@/styles/App.css"
 
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
@@ -13,7 +14,7 @@ import "@radix-ui/themes/styles.css"
 import { DexProvider } from "@/lib/store"
 // import { Toaster } from "@/components/ui/toaster"
 // import { KeyDialog } from "@/components/key-dialog"
-// import { Footer } from '@/components/footer';
+import { Footer } from '@/components/footer';
 import { usePathname } from "next/navigation";
 import { Web3ReactProvider } from "@web3-react/core";
 import connectors from "@/connectors";
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               <div className="relative flex min-h-screen flex-col">
                 <SiteHeader />
                 <div className="flex-1">{children}</div>
+                  <Footer/>
                 {/* <Analytics />
                   <Footer/>
                   <KeyDialog />

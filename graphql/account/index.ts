@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import { getExplorer, getChainName } from '@/data/networks';
 import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex } from './graphql';
-import { timestampdToDateSub, powerIterative, iconUrl, prettifyCurrencys, timestampSubH } from '@/graphql/util';
+import { timestampdToDateSub, powerIterative, iconUrl, timestampSubH } from '@/graphql/util';
+import BigNumber from 'bignumber.js';
 
 // import ApolloClient from '@/graphql/apollo'
 // const apolloClient = ApolloClient();
@@ -13,11 +13,11 @@ const blockExplorerUrls = getExplorer(chainId);
 const chainName = getChainName(chainId);
 
 // 我的投资列表
-export async function myInvestGoodsDatas(wallet_address: string, id: string): Promise<object> {
+export async function myInvestGoodsDatas(params: { id: string; address: string; pageNumber: number; pageSize: number; }): Promise<object> {
 
-    let item = { items: {}, error: false, error_message: "" };
-    if (id !== "") {
-        const goodsDatas = await myInvestGoodDatas({ id: id, address: wallet_address.toLowerCase() });
+    let item = { items: {}, pagination: { has_more: true }, error: false, error_message: "" };
+    if (params.id !== "") {
+        const goodsDatas = await myInvestGoodDatas({ id: params.id, first: params.pageSize, skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() });
 
         // let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -27,7 +27,9 @@ export async function myInvestGoodsDatas(wallet_address: string, id: string): Pr
         let items: object[] = [];
 
         item.items = items;
-
+        if (goodsDatas.data.proofStates.length<params.pageSize) {
+            item.pagination.has_more = false;
+        }
         goodsDatas.data.proofStates.forEach((e: any) => {
             let base_decimals1 = powerIterative(10, e.good1.tokendecimals);
             let base_decimals2 = powerIterative(10, e.good2.tokendecimals);
@@ -84,11 +86,11 @@ export async function myInvestGoodsDatas(wallet_address: string, id: string): Pr
 }
 
 // 我的记录列表
-export async function myTransactionsDatas(wallet_address: string, id: string): Promise<object> {
+export async function myTransactionsDatas(params: { id: string; address: string; pageNumber: number; pageSize: number; }): Promise<object> {
     // console.log(id !== "",id)
-    let item = { items: {}, error: false, error_message: "", tokensymbol: "" };
-    if (id !== "") {
-        const goodsDatas = await myTransactions({ id: id, address: wallet_address.toLowerCase() });
+    let item = { items: {}, pagination: { has_more: true }, error: false, error_message: "", tokensymbol: "" };
+    if (params.id !== "") {
+        const goodsDatas = await myTransactions({ id: params.id, first: params.pageSize, skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() });
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -100,6 +102,11 @@ export async function myTransactionsDatas(wallet_address: string, id: string): P
 
         item.items = items;
         item.tokensymbol = goodsDatas.data.goodState.tokensymbol;
+        
+        item.items = items;
+        if (goodsDatas.data.transactions.length<params.pageSize) {
+            item.pagination.has_more = false;
+        }
 
         goodsDatas.data.transactions.forEach((e: any) => {
             let from_decimals = powerIterative(10, e.frompargood.tokendecimals);
@@ -171,14 +178,20 @@ export async function myDisInvestProofGood(id: number): Promise<object> {
         id: 0, symbol: "", decimals: 0, quantity: 0, unitFee: 0, maxNum: 0, rate: 0, earningRate: 0,
         profit: 0, APY: 0, nowUnitFee: 0, disfee: 0, unitV: 0, logo_url: "", contructFee: 0
     }
+    
+    const m211 = new BigNumber(2).pow(211);
+    const m217 = new BigNumber(2).pow(217);
+    const m187 = new BigNumber(2).pow(187);
+    const m177 = new BigNumber(2).pow(177);
+
     data.good1 = map;
     data.good2 = map1;
     let good = goodsDatas.data.proofState;
     let good1 = good.good1;
     let decimals = powerIterative(10, 6);
     let decimals1 = powerIterative(10, good1.tokendecimals);
-    let disfeeL1 = Math.floor(good1.goodConfig % (2 ** 246) / (2 ** 240)) / 10000;
-    let click1 = Math.floor(good1.goodConfig % (2 ** 216) / (2 ** 206));
+    let disfeeL1 = BigNumber(good1.goodConfig).mod(m217).div(m211).integerValue(1).div(10000).toNumber();// Math.floor(good1.goodConfig % (2 ** 217) / (2 ** 211)) / 10000;
+    let click1 = BigNumber(good1.goodConfig).mod(m187).div(m177).integerValue(1).div(10000).toNumber();
     let unitV1 = (good1.currentValue / decimals) / (good1.currentQuantity / decimals1);
     let good1N1;
     let good1N2;
@@ -211,8 +224,8 @@ export async function myDisInvestProofGood(id: number): Promise<object> {
 
     let good2 = good.good2;
     let decimals2 = powerIterative(10, good2.tokendecimals);
-    let disfeeL2 = Math.floor(good2.goodConfig % (2 ** 246) / (2 ** 240)) / 10000;
-    let click2 = Math.floor(good2.goodConfig % (2 ** 216) / (2 ** 206));
+    let disfeeL2 = BigNumber(good2.goodConfig).mod(m217).div(m211).integerValue(1).div(10000).toNumber();
+    let click2 = BigNumber(good2.goodConfig).mod(m187).div(m177).integerValue(1).div(10000).toNumber();
     let unitV2 = (good2.currentValue / decimals) / (good2.currentQuantity / decimals2);
     let good2N1;
     let good2N2;
@@ -262,10 +275,11 @@ export async function myIndexes(id: string, wallet_address: any): Promise<object
     return items;
 }
 
+// 
 export async function myGoodsDatas(params: { id: string; pageNumber: number; pageSize: number; address: string; }): Promise<object> {
 
     if (params.id !== "") {
-        const goodsDatas = await myGoodDatas({ id: params.id, first: 10, time: timestampdToDateSub(1), skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() });
+        const goodsDatas = await myGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateSub(1), skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() });
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);

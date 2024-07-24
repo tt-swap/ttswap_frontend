@@ -97,6 +97,7 @@ export interface XYKWalletTransactionsListViewProps {
     data_num:number;
     value_good_id:string;
     is_over:boolean;
+    page_size:number;
 }
 
 export interface TokenBalancesListViewProps {
@@ -159,6 +160,7 @@ export interface XYKWalletPositionsListViewProps {
     wallet_address: any;
     on_pool_click?: Function;
     data_num:number;
+    page_size?: number;
     value_good_id:string;
     is_over:boolean;
 

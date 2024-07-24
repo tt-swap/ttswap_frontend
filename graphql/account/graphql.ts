@@ -4,9 +4,9 @@ import apolloClient from '@/graphql/apollo'
 import { gql } from '@apollo/client'
 
 //my记录列表
-export function myTransactions(params: { id: string, address: string }) {
+export function myTransactions(params: { id: string; first: number; skip: number; address: string }) {
 	return apolloClient.query({
-		query: gql`query($id: BigInt,$address: String) {
+		query: gql`query($id: BigInt,$address: String,$first: Int,$skip: Int) {
 			goodState(id: $id) {
 				currentQuantity
 				currentValue
@@ -15,7 +15,13 @@ export function myTransactions(params: { id: string, address: string }) {
 				tokensymbol
 				tokendecimals
 			}
-			transactions(where: {recipent: $address}, orderDirection: desc, orderBy: timestamp) {
+			transactions(
+				where: {recipent: $address}
+				orderDirection: desc
+				orderBy: timestamp
+				first: $first
+				skip: $skip
+				) {
 				blockNumber
 				hash
 				id
@@ -47,9 +53,9 @@ export function myTransactions(params: { id: string, address: string }) {
 }
 
 //我的投资列表
-export function myInvestGoodDatas(params: { id: string; address: string }) {
+export function myInvestGoodDatas(params: { id: string; first: number; skip: number; address: string }) {
 	return apolloClient.query({
-		query: gql`query($id: BigInt,$address: String) {
+		query: gql`query($id: BigInt,$address: String,$first: Int,$skip: Int) {
 			goodState(id: $id) {
 				currentValue
 				currentQuantity
@@ -58,7 +64,13 @@ export function myInvestGoodDatas(params: { id: string; address: string }) {
 				tokenname
 				tokensymbol
 			}
-			proofStates(where: {owner: $address}) {
+			proofStates(
+				where: {owner: $address}
+				orderBy: proofValue
+				orderDirection: desc
+				first: $first
+				skip: $skip
+				) {
 				createTime
 				good1ContructFee
 				good1Quantity
