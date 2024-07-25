@@ -154,14 +154,13 @@ export async function myGoodDatas(params: {
 						totalInvestCount
 						feeQuantity
 						investQuantity
+						currentQuantity
+						currentValue
 						good {
 							id
 							tokenname
 							tokendecimals
 							tokensymbol
-							currentQuantity
-							currentValue
-							investQuantity
 						}
 					}
 			  }

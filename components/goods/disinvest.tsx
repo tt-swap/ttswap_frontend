@@ -12,7 +12,7 @@ import useWallet from "@/hooks/useWallet";
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { myDisInvestProofGood } from '@/graphql/account';
-import { prettifyCurrencys, powerIterative } from '@/graphql/util';
+import { prettifyCurrencys, powerIterative,prettifyCurrencysFee } from '@/graphql/util';
 
 interface Props {
     open_zt: boolean;
@@ -81,14 +81,14 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
         if (isSuccess) {
             messageApi.open({
                 type: 'success',
-                content: 'disinvest data sent sucess',
+                content: 'Divest data sent success',
             });
             setDataNum(1);
             setOpen(false);
         } else {
             messageApi.open({
                 type: 'error',
-                content: 'disinvest data sent fail',
+                content: 'Divest data sent fail',
             });
         }
         setSpinning(false);
@@ -201,7 +201,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                             disgood.good1.symbol}</span></Space></div>
                                     <div><Space><span>Current Unit Fee:</span><span>{
                                         // @ts-ignore
-                                        prettifyCurrencys(disgood.good1.nowUnitFee)}</span></Space></div>
+                                        prettifyCurrencysFee(disgood.good1.nowUnitFee)}</span></Space></div>
                                 </div>
                                 <div className='pt-2 pb-2'>
                                     <div><Space><span>Invest quantity:</span><span>{
@@ -209,10 +209,10 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                         prettifyCurrencys(disgood.good1.quantity)}</span></Space></div>
                                     <div><Space><span>Unit Fee at Invest:</span><span>{
                                         // @ts-ignore
-                                        prettifyCurrencys(disgood.good1.unitFee)}</span></Space></div>
+                                        prettifyCurrencysFee(disgood.good1.unitFee)}</span></Space></div>
                                     <div><Space><span>Estimated Profit:</span><span>{
                                         // @ts-ignore
-                                        prettifyCurrencys(disgood.good1.profit)}</span></Space></div>
+                                        prettifyCurrencysFee(disgood.good1.profit)}</span></Space></div>
                                     <div><Space><span>Earning Rate:</span><span>{
                                         // @ts-ignore
                                         prettifyCurrencys(disgood.good1.earningRate * 100)}%</span></Space></div>
@@ -234,7 +234,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                                     disgood.good2.symbol}</span></Space></div>
                                             <div><Space><span>Current Unit Fee:</span><span>{
                                                 // @ts-ignore
-                                                prettifyCurrencys(disgood.good2.nowUnitFee)}</span></Space></div>
+                                                prettifyCurrencysFee(disgood.good2.nowUnitFee)}</span></Space></div>
                                         </div>
                                         <div className='pt-2 pb-2'>
                                             <div><Space><span>Invest quantity:</span><span>{
@@ -242,10 +242,10 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                                 prettifyCurrencys(disgood.good2.quantity)}</span></Space></div>
                                             <div><Space><span>Unit Fee at Invest:</span><span>{
                                                 // @ts-ignore
-                                                prettifyCurrencys(disgood.good2.unitFee)}</span></Space></div>
+                                                prettifyCurrencysFee(disgood.good2.unitFee)}</span></Space></div>
                                             <div><Space><span>Estimated Profit:</span><span>{
                                                 // @ts-ignore
-                                                prettifyCurrencys(disgood.good2.profit)}</span></Space></div>
+                                                prettifyCurrencysFee(disgood.good2.profit)}</span></Space></div>
                                             <div><Space><span>Earning Rate:</span><span>{
                                                 // @ts-ignore
                                                 prettifyCurrencys(disgood.good2.earningRate * 100)}%</span></Space></div>
@@ -256,7 +256,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
 
                         <Form className='form-new' colon={false}>
 
-                            <h2>Disinvest Quantity</h2>
+                            <h2>Divest Quantity</h2>
                             <Form.Item>
                                 <Input
                                     placeholder="0"
@@ -281,12 +281,12 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                             prettifyCurrencys(disgoodCot.good1.quantity)}</span></Space></div>
                                         <div><Space><span>Profit:</span><span>{
                                             // @ts-ignore
-                                            prettifyCurrencys(disgoodCot.good1.profit)}</span></Space></div>
+                                            prettifyCurrencysFee(disgoodCot.good1.profit)}</span></Space></div>
                                     </div>
-                                    <div className='text-end'><Space><span>Fee:</span><span>{
+                                    <div className='text-end pt-2'><Space><span>Fee:</span><span>{
                                         // @ts-ignore
-                                        prettifyCurrencys(disgoodCot.good1.disfee)}</span></Space></div>
-                                    <div className='text-end'><Space><span>Total:</span><span>{
+                                        prettifyCurrencysFee(disgoodCot.good1.disfee)}</span></Space></div>
+                                    <div className='text-end pt-2'><Space><span>Total:</span><span>{
                                         // @ts-ignore
                                         prettifyCurrencys(disgoodCot.good1.count)}</span></Space></div>
                                 </div>
@@ -320,12 +320,12 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                                         prettifyCurrencys(disgoodCot.good2.quantity)}</span></Space></div>
                                                     <div><Space><span>Profit:</span><span>{
                                                         // @ts-ignore
-                                                        prettifyCurrencys(disgoodCot.good2.profit)}</span></Space></div>
+                                                        prettifyCurrencysFee(disgoodCot.good2.profit)}</span></Space></div>
                                                 </div>
-                                                <div className='text-end'><Space><span>Fee:</span><span>{
+                                                <div className='text-end pt-2'><Space><span>Fee:</span><span>{
                                                     // @ts-ignore
-                                                    prettifyCurrencys(disgoodCot.good2.disfee)}</span></Space></div>
-                                                <div className='text-end'><Space><span>Total:</span><span>{
+                                                    prettifyCurrencysFee(disgoodCot.good2.disfee)}</span></Space></div>
+                                                <div className='text-end pt-2'><Space><span>Total:</span><span>{
                                                     // @ts-ignore
                                                     prettifyCurrencys(disgoodCot.good2.count)}</span></Space></div>
                                             </div>

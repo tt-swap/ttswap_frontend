@@ -91,7 +91,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                         // @ts-ignore
                         pageSize: page_size,
                     });
-                // console.log(response,"***");
+                console.log(response,"***");
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
                 setResult(new Some(response.items));

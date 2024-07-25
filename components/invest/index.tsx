@@ -132,7 +132,7 @@ const TokenInvest = () => {
     if (isSuccess) {
       messageApi.open({
         type: 'success',
-        content: 'Invest data sent sucess',
+        content: 'Invest data sent success',
       });
     } else {
       messageApi.open({

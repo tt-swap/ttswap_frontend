@@ -153,7 +153,7 @@ const TokenSwap = () => {
         if (isSuccess) {
             messageApi.open({
                 type: 'success',
-                content: 'Swap data sent sucess',
+                content: 'Swap data sent success',
             });
         } else {
             messageApi.open({

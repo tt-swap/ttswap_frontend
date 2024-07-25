@@ -102,7 +102,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
     if (isSuccess) {
       messageApi.open({
         type: 'success',
-        content: 'Creat data sent sucess',
+        content: 'Creat data sent success',
       });
       setDataNum(1);
       setOpen(false);

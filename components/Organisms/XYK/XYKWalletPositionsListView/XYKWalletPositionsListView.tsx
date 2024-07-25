@@ -44,7 +44,7 @@ import {
 import { SkeletonTable } from "@/components/ui/skeletonTable";
 
 import { myInvestGoodsDatas } from '@/graphql/account';
-import { prettifyCurrencys } from '@/graphql/util';
+import { prettifyCurrencys,prettifyCurrencysFee } from '@/graphql/util';
 
 export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProps> = ({
     chain_name,
@@ -233,7 +233,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
+                const valueFormatted = prettifyCurrencysFee(
                     // @ts-ignore
                     row.original.unitFee
                 );
@@ -252,7 +252,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
+                const valueFormatted = prettifyCurrencysFee(
                     // @ts-ignore
                     row.original.profit
                 );

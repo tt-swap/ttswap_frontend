@@ -58,6 +58,30 @@ export function prettifyCurrencys(value: number) {
     return toThousands(scaled.toFixed(2)) + suffixes[magnitude];
 };
 
+
+// 数字处理
+export function prettifyCurrencysFee(value: number) {
+    if (value < 1000000) {
+
+        if (value < 0.000001 && value > 0) {
+            return '<0.000001'
+        }
+        if (value === 0) {
+            return '0'
+        }
+
+        return toThousands(value.toFixed(6));
+    }
+
+    const suffixes = ['', '', 'M', 'B', 'T'];
+    let magnitude = Math.floor(Math.log(value) / Math.log(1000));
+    let scaled = value / Math.pow(1000, magnitude);
+    // 将数字保留到适当的小数位
+    // 例如：如果scaled < 10, 保留一位小数；如果 scaled < 100, 则不保留小数
+    // if (scaled < 10) {
+    return toThousands(scaled.toFixed(6)) + suffixes[magnitude];
+};
+
 function toThousands(value: string) {
     let a = value.split('.')[0];
     let b = value.split('.')[1];
