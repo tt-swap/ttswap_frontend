@@ -91,8 +91,8 @@ export const CreatGoods = ({ setDataNum }: Props) => {
     console.log(0)
     // @ts-ignore
     // const qunt = Number(goodQ * 2 ** 128 + goodVQ)
-    // const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
-    const config = inF * 2 ** 246 + disinF * 2 ** 240 + buyF * 2 ** 233 + sellF * 2 ** 226 + swapS * 2 ** 216 + disinS * 2 ** 206
+    const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
+    // const config = inF * 2 ** 246 + disinF * 2 ** 240 + buyF * 2 ** 233 + sellF * 2 ** 226 + swapS * 2 ** 216 + disinS * 2 ** 206
 
     // @ts-ignore
     const isSuccess = await newGoods(goodVAddr, goodV, goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0");
