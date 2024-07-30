@@ -44,7 +44,7 @@ import {
 import { SkeletonTable } from "@/components/ui/skeletonTable";
 
 import { investGoodsDatas } from '@/graphql/overview';
-import { prettifyCurrencys } from '@/graphql/util';
+import { prettifyCurrencys, prettifyCurrencysFee } from '@/graphql/util';
 
 export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
     chain_name,
@@ -157,15 +157,19 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                                 //     }
                                 // }}
                                 >
-                                    {
+                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
+                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                                    {/* {
                                         // @ts-ignore
-                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
                                 </a>
                             ) : (
                                 <label className="text-base">
-                                    {
+                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
+                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                                    {/* {
                                         // @ts-ignore
-                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
                                 </label>
                             )}
                         </div>
@@ -194,19 +198,19 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
         //     },
         // },
         {
-            id: "unitPrice",
-            accessorKey: "unitPrice",
+            id: "unitFee",
+            accessorKey: "unitFee",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Unit Price"}
+                    header_name={"Unit Fee"}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
+                const valueFormatted = prettifyCurrencysFee(
                     // @ts-ignore
-                    row.original.unitPrice
+                    row.original.unitFee
                 );
 
                 return <div className="text-right">{valueFormatted}</div>;
@@ -339,7 +343,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
+                const valueFormatted = prettifyCurrencysFee(
                     // @ts-ignore
 
                     row.original.totalFee
@@ -360,7 +364,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
             ),
 
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
+                const valueFormatted = prettifyCurrencysFee(
                     // @ts-ignore
 
                     row.original.fee24

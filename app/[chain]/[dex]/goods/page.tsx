@@ -14,6 +14,7 @@ export default function Tokens({ params }: { params: { chain: string, dex: strin
   const pathname = usePathname()
   const { info } = useValueGood();
   const { setGoodId } = useGoodId();
+  console.log("goods")
   // console.log(handleTabSwitch("swap",pathname),999)
   return (
     <div className="w-full flex flex-col gap-4">

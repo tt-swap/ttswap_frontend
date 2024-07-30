@@ -91,7 +91,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                         // @ts-ignore
                         pageSize: page_size,
                     });
-                // console.log(response,"***");
+                console.log(response, "***");
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
                 setResult(new Some(response.items));
@@ -152,15 +152,17 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                                 //     }
                                 // }}
                                 >
-                                    {
-                                        // @ts-ignore
-                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
+                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                                    {/* {row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
                                 </a>
                             ) : (
                                 <label className="text-base">
-                                    {
+                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
+                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                                    {/* {
                                         // @ts-ignore
-                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
                                 </label>
                             )}
                         </div>
@@ -316,26 +318,25 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
         //             row.original.valueSymbol}</div>;
         //     },
         // },
-        // {
-        //     id: "totalFeeValue",
-        //     accessorKey: "totalFeeValue",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Fee Amount"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         const valueFormatted = prettifyCurrencys(
-        //             // @ts-ignore
-        //             row.original.totalFeeValue
-        //         );
+        {
+            id: "currentQuantity",
+            accessorKey: "currentQuantity",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Current Quantity"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
+                    row.original.currentQuantity
+                );
 
-        //         return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
-        //             row.original.valueSymbol}</div>;
-        //     },
-        // },
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
         {
             id: "actions",
             cell: ({ row }) => {

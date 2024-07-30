@@ -1,5 +1,5 @@
 import { type Option, None, Some } from "@/utils/option";
-import { type UniswapLikeBalanceItem } from "@/utils/types/XykServiceTypes";
+import { type walletPool } from "@/utils/types/XykServiceTypes";
 import { useEffect, useState } from "react";
 import {
     DropdownMenu,
@@ -44,7 +44,7 @@ import {
 import { SkeletonTable } from "@/components/ui/skeletonTable";
 
 import { myInvestGoodsDatas } from '@/graphql/account';
-import { prettifyCurrencys } from '@/graphql/util';
+import { prettifyCurrencys, prettifyCurrencysFee } from '@/graphql/util';
 
 export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProps> = ({
     chain_name,
@@ -61,7 +61,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
         },
     ]);
     const [rowSelection, setRowSelection] = useState({});
-    const [maybeResult, setResult] = useState<Option<UniswapLikeBalanceItem[]>>(None);
+    const [maybeResult, setResult] = useState<Option<walletPool[]>>(None);
     const [error, setError] = useState({ error: false, error_message: "" });
     const [windowWidth, setWindowWidth] = useState<number>(0);
     const [pagination, setPagination] = useState({
@@ -85,8 +85,8 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
             try {
                 response =
                     // @ts-ignore
-                    await myInvestGoodsDatas({ id: value_good_id, address:wallet_address, pageNumber: pagination.page_number - 1, pageSize: page_size });
-                console.log(response)
+                    await myInvestGoodsDatas({ id: value_good_id, address: wallet_address, pageNumber: pagination.page_number - 1, pageSize: page_size });
+                console.log(response,value_good_id)
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
                 setResult(new Some(response.items));
@@ -98,7 +98,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                 });
             }
         })();
-    }, [chain_name, dex_name, pagination, value_good_id,wallet_address,data_num]);
+    }, [chain_name, dex_name, pagination, value_good_id, wallet_address, data_num]);
 
     useEffect(() => {
         setWindowWidth(window.innerWidth);
@@ -115,7 +115,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
     }, []);
 
 
-    const columns: ColumnDef<UniswapLikeBalanceItem>[] = [
+    const columns: ColumnDef<walletPool>[] = [
 
         {
             id: "id",
@@ -168,13 +168,17 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                                 //     }
                                 // }}
                                 >
-                                    {// @ts-ignore
-                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
+                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                                    {/* {// @ts-ignore
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
                                 </a>
                             ) : (
                                 <label className="text-base">
-                                    {// @ts-ignore
-                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
+                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                                    {/* {// @ts-ignore
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
                                 </label>
                             )}
                         </div>
@@ -233,7 +237,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
+                const valueFormatted = prettifyCurrencysFee(
                     // @ts-ignore
                     row.original.unitFee
                 );
@@ -252,7 +256,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
+                const valueFormatted = prettifyCurrencysFee(
                     // @ts-ignore
                     row.original.profit
                 );
@@ -334,7 +338,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
         },
     ];
 
-    const mobile_columns: ColumnDef<UniswapLikeBalanceItem>[] = [
+    const mobile_columns: ColumnDef<walletPool>[] = [
         {
             id: "name",
             accessorKey: "name",
@@ -368,12 +372,12 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                                 // }}
                                 >
                                     {// @ts-ignore
-                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                        row.original.name ? row.original.name : ""}
                                 </a>
                             ) : (
                                 <label className="text-base">
                                     {// @ts-ignore
-                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                        row.original.name ? row.original.name : ""}
                                 </label>
                             )}
                         </div>

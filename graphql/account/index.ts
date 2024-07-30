@@ -27,7 +27,7 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
         let items: object[] = [];
 
         item.items = items;
-        if (goodsDatas.data.proofStates.length<params.pageSize) {
+        if (goodsDatas.data.proofStates.length < params.pageSize) {
             item.pagination.has_more = false;
         }
         goodsDatas.data.proofStates.forEach((e: any) => {
@@ -102,9 +102,9 @@ export async function myTransactionsDatas(params: { id: string; address: string;
 
         item.items = items;
         item.tokensymbol = goodsDatas.data.goodState.tokensymbol;
-        
+
         item.items = items;
-        if (goodsDatas.data.transactions.length<params.pageSize) {
+        if (goodsDatas.data.transactions.length < params.pageSize) {
             item.pagination.has_more = false;
         }
 
@@ -145,7 +145,7 @@ export async function myTransactionsDatas(params: { id: string; address: string;
                 map.togoodQuantity = 0;
             }
 
-            map.totalValue = e.transvalue/tokendecimals;
+            map.totalValue = e.transvalue / tokendecimals;
             // if (e.transtype === "buy" || e.transtype === "pay") {
             //     map.totalValue = map.fromgoodQuanity * from_price;
             // } else {
@@ -179,7 +179,7 @@ export async function myDisInvestProofGood(id: number): Promise<object> {
         id: 0, symbol: "", decimals: 0, quantity: 0, unitFee: 0, maxNum: 0, rate: 0, earningRate: 0,
         profit: 0, APY: 0, nowUnitFee: 0, disfee: 0, unitV: 0, logo_url: "", contructFee: 0
     }
-    
+
     const m211 = new BigNumber(2).pow(211);
     const m217 = new BigNumber(2).pow(217);
     const m187 = new BigNumber(2).pow(187);
@@ -243,7 +243,9 @@ export async function myDisInvestProofGood(id: number): Promise<object> {
     map1.quantity = good.good2Quantity / decimals2;
     map1.unitFee = good.good2ContructFee / good.good2Quantity;
     map1.unitV = unitV2;
-    map1.logo_url = iconUrl(chainName, good2.erc20Address);
+    if (good2.id!=0) {
+        map1.logo_url = iconUrl(chainName, good2.erc20Address);
+    }
     map1.nowUnitFee = good2.feeQuantity / good2.investQuantity;
     map1.contructFee = good.good2ContructFee / decimals2;
     map1.profit = map1.nowUnitFee * map1.quantity - map1.contructFee;
@@ -279,14 +281,16 @@ export async function myIndexes(id: string, wallet_address: any): Promise<object
 // 
 export async function myGoodsDatas(params: { id: string; pageNumber: number; pageSize: number; address: string; }): Promise<object> {
 
+    // console.log(params,7777)
+    let item = { items: {}, pagination: { page_number: 0, page_size: 0, has_more: true }, error: false, error_message: "" };
+
     if (params.id !== "") {
-        const goodsDatas = await myGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateSub(1), skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() });
+        // console.log(params,99999)
+        const goodsDatas = await myGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateSub(0), skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() });
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
         let jz = goodValue;
-
-        let item = { items: {}, pagination: { page_number: 0, page_size: 0, has_more: true }, error: false, error_message: "" };
 
         let items: object[] = [];
         let pagination = {
@@ -317,7 +321,7 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
             map.id = e.id;
             map.name = e.tokenname;
             map.symbol = e.tokensymbol;
-            map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
+            map.valueSymbol = goodsDatas.data.goodStates.tokensymbol;
             map.decimals = e.tokendecimals;
             map.unitPrice = (e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals);
             map.investQuantity = e.investQuantity / base_decimals;
@@ -326,7 +330,7 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
             map.totalFee = e.feeQuantity / base_decimals;
             map.totalInvestValue = e.totalInvestQuantity / base_decimals * current_price;
             map.totalFeeValue = e.feeQuantity / base_decimals * current_price;
-            map.logo_url = iconUrl(chainName, e.id);
+            map.logo_url = iconUrl(chainName, e.erc20Address);
             map.price = current_price;
             map.unitFee = map.totalFee / map.totalInvestQuantity;
 
@@ -335,7 +339,7 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
                 let en = e.goodData[0];
                 // e.goodData.forEach((en: any) => {
                 //     if (e.id === en.pargood.id) {
-                let current_price_24h = ((en.good.currentValue / tokendecimals) / (en.good.currentQuantity / base_decimals)) / jz;
+                let current_price_24h = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
                 // let s = splitNumber(en.open);
                 map.investQuantity24 = (e.investQuantity - en.investQuantity) / base_decimals;
                 map.fee24 = (e.feeQuantity - en.feeQuantity) / base_decimals;
@@ -346,20 +350,21 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
                 //     }
                 // });
             } else {
-                map.investQuantity24 = 0;
-                map.fee24 = 0;
-                map.investValue24 = 0;
-                map.feeValue24 = 0;
+                map.investQuantity24 = map.investQuantity;
+                map.fee24 = map.totalFee;
+                map.investValue24 = map.investValue;
+                map.feeValue24 = map.totalFeeValue;
                 if (map.totalFee > 0)
-                    map.APY = (uintF - map.fee24) * 365;
-                map.totalFee = 0;
+                    map.APY = (uintF - map.unitFee) * 365;
+                map.APY = 0;
             }
 
             items.push(map);
+            // console.log(items,8686868)
         });
 
 
-        // console.log(item)
-        return item;
-    } return {};
+        // return item;
+    }
+     return item;
 }

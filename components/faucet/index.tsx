@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
     Form,
     Input,
-    Select, Avatar, Spin, message, Button
+    Select, Avatar, Spin, message, Button, Space
 } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import CreatModal from "./faucetModal";
@@ -119,13 +119,13 @@ export const Faucet = ({ }: Props) => {
     const Obtain = async () => {
         setSpinning(true);
         console.log(goodC, goodVAddr)
-        const isSuccess = await faucetTestCion(goodC, goodVAddr,address);
+        const isSuccess = await faucetTestCion(goodC, goodVAddr, address);
 
         // console.log("isSuccess:", isSuccess)
         if (isSuccess) {
             messageApi.open({
                 type: 'success',
-                content: 'Receive sucess',
+                content: 'Receive success',
             });
             setOpen(false);
         } else {
@@ -137,6 +137,46 @@ export const Faucet = ({ }: Props) => {
         setSpinning(false);
         document.body.style.overflow = "";
     };
+
+    function mess() {
+        messageApi.open({
+            type: 'success',
+            content: 'Success Copy',
+        });
+    }
+
+    function CopyC() {
+
+        if (navigator.clipboard) {
+            // 使用 clipboard API 复制文本
+            navigator.clipboard.writeText(goodVAddr);
+            mess();
+            // alert('文本已复制到剪贴板');
+        } else {
+            // 如果不支持，可以提供一个回退方案，比如使用 prompt 或者 textarea + document.execCommand('copy')（但请注意，execCommand 已被弃用）
+            const textarea = document.createElement('textarea');
+            textarea.style.position = 'fixed'; // 防止滚动条
+            textarea.style.top = '0';
+            textarea.style.left = '0';
+            textarea.style.opacity = '0';
+            textarea.value = goodVAddr;
+            document.body.appendChild(textarea);
+
+            try {
+                // 尝试复制文本
+                textarea.select();
+                document.execCommand('copy');
+                // alert('文本已复制到剪贴板（回退方案）');
+            } catch (err) {
+                // console.error('复制文本时出错（回退方案）:', err);
+                // alert('复制文本时出错，请尝试手动复制');
+            }
+
+            document.body.removeChild(textarea);
+            mess();
+            // alert('浏览器不支持 clipboard API');
+        }
+    }
 
     return (
         <>
@@ -162,11 +202,26 @@ export const Faucet = ({ }: Props) => {
                                 addonAfter={selectAfter}
                             />
                         </Form.Item>
+                        <h2>Test Cion Contract</h2>
+                        <Form.Item>
+                            <Space.Compact style={{ width: '100%' }}>
+                                <Input
+                                    onChange={(e) => { setGoodC(e.target.value); }}
+                                    value={goodVAddr}
+                                    disabled
+                                />
+                                <Button
+                                    type="primary"
+                                    style={{ backgroundColor: "#10b981", color: "#fff" }}
+                                    onClick={CopyC}
+                                >Copy</Button>
+                            </Space.Compact>
+                        </Form.Item>
 
                     </Form>
                     <Button
                         type="primary"
-                        style={isDisabled?styles.newButton:styles.newButton1}
+                        style={isDisabled ? styles.newButton : styles.newButton1}
                         disabled={isDisabled}
                         onClick={Obtain}
                     >Obtain Test Coin</Button>

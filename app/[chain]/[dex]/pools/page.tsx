@@ -17,6 +17,7 @@ export default function Pools({ params }: { params: { chain: string, dex: string
   const { setGoodId } = useGoodId();
   // const url = pathname.replace(/pools/g, "tokens");
 
+  console.log("pools")
   return (
     <div className="w-full flex flex-col gap-4">
         <h1 className="pt-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">

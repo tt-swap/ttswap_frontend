@@ -9,6 +9,7 @@ import { CreatGoods } from "@/components/goods/creatGoods"
 import { Disinvest } from "@/components/goods/disinvest"
 import { Flex } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
+import { message } from 'antd';
 // import { Label } from "@/components/ui/label";
 // import { Input } from "@/components/ui/input";
 import { handleTabSwitch } from "@/utils/router";
@@ -32,6 +33,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
   const { info } = useValueGood();
   const [maybeResult, setResult] = useState({});
   const { setGoodId } = useGoodId();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const pathname = usePathname()
 
@@ -61,8 +63,17 @@ export default function Account({ params }: { params: { chain: string, dex: stri
     document.body.removeChild(textarea);
   }
 
+  function mess(){
+    messageApi.open({
+      type: 'success',
+      content: 'Success Copy',
+    });
+  }
+console.log("account")
+
   return (
     <div className="w-full flex flex-col gap-4">
+      {contextHolder}
       <h1 className="pt-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
         Account
       </h1>
@@ -78,10 +89,12 @@ export default function Account({ params }: { params: { chain: string, dex: stri
                 if (navigator.clipboard) {
                   // 使用 clipboard API 复制文本
                   navigator.clipboard.writeText(window.location.host+handleTabSwitch("overview", pathname)+"?"+walletAddress);
+                  mess();
                   // alert('文本已复制到剪贴板');
                 } else {
                   // 如果不支持，可以提供一个回退方案，比如使用 prompt 或者 textarea + document.execCommand('copy')（但请注意，execCommand 已被弃用）
                   fallbackCopyTextToClipboard(window.location.host+handleTabSwitch("overview", pathname)+"?"+walletAddress);
+                  mess();
                   // alert('浏览器不支持 clipboard API');
                 }
                 // setIsClicked(true);

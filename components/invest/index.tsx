@@ -7,12 +7,13 @@ import InputNumber from "rc-input-number";
 import { useMemo, useState } from "react";
 // import { useWeb3React } from "@web3-react/core";
 
-import { useValueGood,useGoodId } from "@/stores/valueGood";
+import { useValueGood, useGoodId } from "@/stores/valueGood";
 import { Spin, message } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import "./index.css";
+import Message from '@/components/MessModal/index';
 
-import { powerIterative } from '@/graphql/util';
+import { powerIterative, prettifyBalance } from '@/graphql/util';
 import { GoodsDatas } from '@/graphql/invest';
 
 
@@ -67,23 +68,27 @@ const TokenInvest = () => {
   const { info } = useValueGood();
   const { goodId } = useGoodId();
 
+  const [open, setOpen] = useState(false);
+  const [mesStatus, setMesStatus] = useState("");
+  const [mesTitle, setMesTitle] = useState("");
+
   const isDisabled = useMemo(() => {
     if (isValueGood) {
       // @ts-ignore
-      if (investAmount.from.amount > balanceMap1.from || balanceMap1.from === 0 || investAmount.from.amount === 0 || investAmount.from.amount < 0 || investAmount.from.amount ==="") {
+      if (investAmount.from.amount > balanceMap1.from || balanceMap1.from === 0 || investAmount.from.amount === 0 || investAmount.from.amount < 0 || investAmount.from.amount === "") {
         return true;
-      } 
+      }
       return disabled;
     } else {
       // @ts-ignore
-      if (investAmount.from.amount > balanceMap1.from || investAmount.to.amount > balanceMap1.to || balanceMap1.from === 0 || balanceMap1.to === 0 || investAmount.from.amount === 0 || investAmount.from.amount < 0 || investAmount.from.amount ==="" || disabled) {
+      if (investAmount.from.amount > balanceMap1.from || investAmount.to.amount > balanceMap1.to || balanceMap1.from === 0 || balanceMap1.to === 0 || investAmount.from.amount === 0 || investAmount.from.amount < 0 || investAmount.from.amount === "" || disabled) {
         return true;
-      }  
+      }
       return disabled;
     }
     // return disabled;
   }, [investAmount.from.amount, disabled, balanceMap1]);
-// console.log(9999,isDisabled,investAmount.from.amount)
+  // console.log(9999,isDisabled,investAmount.from.amount)
 
   useMemo(() => {
     // @ts-ignore
@@ -130,21 +135,33 @@ const TokenInvest = () => {
     // const isSuccess = await investGoods(invests, BigInt(fAmount).toString(), BigInt(tAmount).toString(), isValueGood);
 
     if (isSuccess) {
-      messageApi.open({
-        type: 'success',
-        content: 'Invest data sent sucess',
-      });
+      setOpen(true);
+      setMesStatus("success");
+      setMesTitle("Invest data send success");
+      // messageApi.open({
+      //   type: 'success',
+      //   content: 'Invest data send success',
+      // });
     } else {
-      messageApi.open({
-        type: 'error',
-        content: 'Invest data sent fail',
-      });
+      setOpen(true);
+      setMesStatus("error");
+      setMesTitle("Invest data send fail");
+      // messageApi.open({
+      //   type: 'error',
+      //   content: 'Invest data send fail',
+      // });
     }
     setSpinning(false);
   };
   return (
     <>
-      {contextHolder}
+      {/* {contextHolder} */}
+      <Message
+        open={open}
+        status={mesStatus}
+        title={mesTitle}
+        setOpen={setOpen}
+      />
       <Spin spinning={spinning} fullscreen indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} size="large" />
       <div className={""} >
         <div className={cn(styles.boxContainer, "box-shadow")}>
@@ -184,7 +201,7 @@ const TokenInvest = () => {
               </div>
               <div className={styles.balance}>
                 <span>
-                  {fromPrice > 0 ? fromPrice : 0}{" "+info.symbol}{" "}
+                  {fromPrice > 0 ? fromPrice : 0}{" " + info.symbol}{" "}
                   {fromPrice !== 0 &&
                     invest.from.symbol !== DEFAULT_TOKEN && (
                       <span className="text-[#63ae8e] ml-2">{invest.from.investFee * 100}%</span>
@@ -201,13 +218,13 @@ const TokenInvest = () => {
                   Balance:{" "}
                   <span
                     className="cursor-pointer"
-                  onClick={() =>
-                    // @ts-ignore
-                    setAmount("from", balanceF)
-                  }
+                    onClick={() =>
+                      // @ts-ignore
+                      setAmount("from", balanceF)
+                    }
                   >
                     {invest.from.symbol !== DEFAULT_TOKEN
-                      ? balanceF
+                      ? prettifyBalance(Number(balanceF))
                       : 0}
                   </span>
                 </span>
@@ -245,7 +262,7 @@ const TokenInvest = () => {
                 </div>
                 <div className={styles.balance}>
                   <span>
-                    {toPrice > 0 ? toPrice : 0}{" "+info.symbol}{" "}
+                    {toPrice > 0 ? toPrice : 0}{" " + info.symbol}{" "}
                     {toPrice !== 0 &&
                       invest.to.symbol !== DEFAULT_TOKEN && (
                         <span className="text-[#63ae8e] ml-2">{invest.to.investFee * 100}%</span>
@@ -262,13 +279,13 @@ const TokenInvest = () => {
                     Balance:{" "}
                     <span
                       className="cursor-pointer"
-                    onClick={() =>
-                      // @ts-ignore
-                      setAmount("to", balanceT)
-                    }
+                      onClick={() =>
+                        // @ts-ignore
+                        setAmount("to", balanceT)
+                      }
                     >
                       {invest.to.symbol !== DEFAULT_TOKEN
-                        ? balanceT
+                        ? prettifyBalance(Number(balanceT))
                         : 0}
                     </span>
                   </span>

@@ -114,9 +114,9 @@ export function parGoodDatas(params: { id: string; first: number; time: number; 
 				currentValue
 				parGooddata(
 					orderBy: modifiedTime
-					orderDirection: asc
+					orderDirection: desc
 					first: 1
-					where: {modifiedTime_gte: $time, timetype: "d"}
+					where: {modifiedTime_lte: $time, timetype: "d"}
 				  ) {
 					id
 					decimals
@@ -125,13 +125,13 @@ export function parGoodDatas(params: { id: string; first: number; time: number; 
 					totalTradeQuantity
 					open
 					timetype
+					currentQuantity
+					currentValue
 					pargood {
 					  tokenname
 					  tokendecimals
 					  tokensymbol
 					  id
-					  currentQuantity
-					  currentValue
 					}
 				}
 			  }
@@ -187,14 +187,13 @@ export function InvestGoodDatas(params: {
 						totalInvestCount
 						feeQuantity
 						investQuantity
+						currentQuantity
+						currentValue
 						pargood {
 							id
 							tokenname
 							tokendecimals
 							tokensymbol
-							currentQuantity
-							currentValue
-							investQuantity
 						}
 					}
 			  }

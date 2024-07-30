@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import CreatModal from "./creatModal";
 import "./index.css"
 import useWallet from "@/hooks/useWallet";
+import Message from '@/components/MessModal/index';
 // import BigNumber from 'bignumber.js';
 
 import { GoodsDatas } from '@/graphql';
@@ -44,7 +45,11 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   const [goodDec, setGoodDec] = useState(0);
   const [selectVgood, setSelectVgood] = useState([]);
 
-  const { newGoods } = useWallet();
+  const [openM, setOpenM] = useState(false);
+  const [mesStatus, setMesStatus] = useState("");
+  const [mesTitle, setMesTitle] = useState("");
+
+  const { checkContractExists, newGoods } = useWallet();
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -88,11 +93,40 @@ export const CreatGoods = ({ setDataNum }: Props) => {
 
   const newGood = async () => {
     setSpinning(true);
-    console.log(0)
+    // console.log(goodC.length);
+    if (goodC.length > 5) {
+      const staust = await checkContractExists(goodC).then(exists => {
+        if (exists) {
+          console.log('合约存在');
+          return true;
+        } else {
+          console.log('合约不存在');
+
+          // messageApi.open({
+          //   type: 'error',
+          //   content: 'The contract does not exist',
+          // });
+          return false;
+        }
+      });
+      if (!staust) {
+        // setOpenM(true);
+        // setMesStatus("error");
+        // setMesTitle("The contract does not exist");
+        setSpinning(false);
+        document.body.style.overflow = "";
+        messageApi.open({
+          type: 'error',
+          content: 'Contract Address not exist',
+        });
+        return
+      };
+      console.log(staust)
+    }
     // @ts-ignore
     // const qunt = Number(goodQ * 2 ** 128 + goodVQ)
-    // const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
-    const config = inF * 2 ** 246 + disinF * 2 ** 240 + buyF * 2 ** 233 + sellF * 2 ** 226 + swapS * 2 ** 216 + disinS * 2 ** 206
+    const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
+    // const config = inF * 2 ** 246 + disinF * 2 ** 240 + buyF * 2 ** 233 + sellF * 2 ** 226 + swapS * 2 ** 216 + disinS * 2 ** 206
 
     // @ts-ignore
     const isSuccess = await newGoods(goodVAddr, goodV, goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0");
@@ -100,16 +134,22 @@ export const CreatGoods = ({ setDataNum }: Props) => {
     // form.resetFields();
     console.log("isSuccess:", isSuccess)
     if (isSuccess) {
+      // setOpenM(true);
+      // setMesStatus("success");
+      // setMesTitle("Create data send success");
       messageApi.open({
         type: 'success',
-        content: 'Creat data sent sucess',
+        content: 'Create data send success',
       });
       setDataNum(1);
       setOpen(false);
     } else {
+      // setOpenM(true);
+      // setMesStatus("error");
+      // setMesTitle("Create data send fail");
       messageApi.open({
         type: 'error',
-        content: 'Creat data sent fail',
+        content: 'Create data send fail',
       });
     }
     setSpinning(false);
@@ -119,6 +159,12 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   return (
     <>
       {contextHolder}
+      {/* <Message
+        open={openM}
+        status={mesStatus}
+        title={mesTitle}
+        setOpen={setOpenM}
+      /> */}
       <Button className='newButton' onClick={() => {
         setOpen(true)
       }}>

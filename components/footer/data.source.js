@@ -37,9 +37,9 @@ export const Footer10DataSource = {
           children: [
             { href: 'https://twitter.com/ttswap_exchange', name: 'XOutlined', children: 'Twitter', target: '_bank' },
             { href: 'https://t.me/ttswap01', name: 'TG', children: 'Telegram', target: '_bank' },
-            { href: 'https://discord.com/invite/GZyEPZmk', name: 'DiscordOutlined', children: 'Discord', target: '_bank' },
+            { href: 'https://discord.gg/5PhXn9DR', name: 'DiscordOutlined', children: 'Discord', target: '_bank' },
             { href: 'mailto:ttswap.exchange@gmail.com', name: 'MailOutlined', children: 'Email', target: '_bank' },
-            { href: 'https://github.com/ttswap', name: 'GithubOutlined', children: 'GutHub', target: '_bank' },
+            { href: 'https://github.com/tt-swap', name: 'GithubOutlined', children: 'GutHub', target: '_bank' },
           ],
         },
       },
