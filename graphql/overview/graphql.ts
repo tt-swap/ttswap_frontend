@@ -114,7 +114,7 @@ export function parGoodDatas(params: { id: string; first: number; time: number; 
 				currentValue
 				parGooddata(
 					orderBy: modifiedTime
-					orderDirection: asc
+					orderDirection: desc
 					first: 1
 					where: {modifiedTime_lte: $time, timetype: "d"}
 				  ) {

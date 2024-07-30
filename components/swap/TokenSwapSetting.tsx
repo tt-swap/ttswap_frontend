@@ -2,15 +2,15 @@ import assets from "@/assets";
 import { useState } from "react";
 import TokenSwapModal from "./TokenSwapModal";
 import "./swap.css";
-import { Switch,Input } from 'antd';
+import { Switch, Input, InputNumber } from 'antd';
 
 interface Props {
   value: number;
   value1: boolean;
-  onChange: (val: number,val1:boolean) => void;
+  onChange: (val: number, val1: boolean) => void;
 }
 
-const TokenSwapSetting = ({ value,value1, onChange }: Props)  => {
+const TokenSwapSetting = ({ value, value1, onChange }: Props) => {
   const [open, setOpen] = useState(false);
   const [istotal, setIstotal] = useState(value1);
   const [tolerance, setTolerance] = useState(value);
@@ -18,20 +18,20 @@ const TokenSwapSetting = ({ value,value1, onChange }: Props)  => {
   const isSwitch = (checked: boolean) => {
     // console.log(`switch to ${checked}`);
     setIstotal(checked);
-    onChange(tolerance,checked);
+    onChange(tolerance, checked);
   };
   const onInput = (val: number) => {
     // console.log(`switch to ${checked}`);
     setTolerance(val);
-    onChange(val,istotal);
+    onChange(val, istotal);
   };
   return (
     <>
       <div
-          onClick={() => {
-            setOpen(true);
-          }}
-          className="cursor-pointer flex justify-between text-xs setting-style">
+        onClick={() => {
+          setOpen(true);
+        }}
+        className="cursor-pointer flex justify-between text-xs setting-style">
         <span>{value}% Tolerance</span>
         <img
           className=""
@@ -42,10 +42,16 @@ const TokenSwapSetting = ({ value,value1, onChange }: Props)  => {
         <div>
         </div>
         <div className="p-10">
-        <Input suffix="%" value={value} onChange={(e:any) => onInput(e.target.value)}/>
+          <InputNumber
+            max={5}
+            suffix="%"
+            value={value}
+            onChange={(e: any) => onInput(e)}
+            style={{width:"100%"}}
+          />
           <div className=" flex justify-between gap-4 pt-5">
             <p>
-            Only Whole Commit.
+              Only Whole Commit.
               {/* <a
                 target="_blank"
                 rel="noopener noreferrer"

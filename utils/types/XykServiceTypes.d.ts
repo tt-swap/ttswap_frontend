@@ -64,6 +64,61 @@ export interface Pool {
     unitFee: any;
     APY: any;
 }
+
+export interface walletPool {
+    /** * The pair address. */
+    exchange: string;
+    swap_count_24h: number;
+    /** * The total liquidity converted to fiat in `quote-currency`. */
+    total_liquidity_quote: number;
+    volume_24h_quote: number;
+    fee_24h_quote: number;
+    /** * Total supply of this pool token. */
+    total_supply: bigint | null;
+    /** * The exchange rate for the requested quote currency. */
+    quote_rate: number;
+    /** * A prettier version of the total liquidity quote for rendering purposes. */
+    pretty_total_liquidity_quote: string;
+    /** * A prettier version of the volume 24h quote for rendering purposes. */
+    pretty_volume_24h_quote: string;
+    /** * A prettier version of the fee 24h quote for rendering purposes. */
+    pretty_fee_24h_quote: string;
+    /** * A prettier version of the volume 7d quote for rendering purposes. */
+    pretty_volume_7d_quote: string;
+    /** * The requested chain name eg: `eth-mainnet`. */
+    chain_name: string;
+    /** * The requested chain ID eg: `1`. */
+    chain_id: string;
+    /** * The name of the DEX, eg: `uniswap_v2`. */
+    dex_name: string;
+    volume_7d_quote: number;
+    annualized_fee: number;
+    token_0: Token;
+    token_1: Token;
+
+    id: any;
+    name: any;
+    decimals: any;
+    symbol: any;
+    logo_url: any;
+    investQuantity: any;
+    unitPrice:any;
+    investValue: any;
+    valueSymbol: any;
+    totalInvestQuantity: any;
+    totalInvestValue: any;
+    investQuantity24: any;
+    investValue24: any;
+    totalFee: any;
+    price: any;
+    price_24h: any;
+    totalFeeValue: any;
+    fee24: any;
+    feeValue24: any;
+    unitFee: any;
+    APY: any;
+}
+
 export interface Token {
     /** * Use the relevant `contract_address` to lookup prices, logos, token transfers, etc. */
     contract_address: string;
@@ -411,6 +466,7 @@ export interface TokenV2Volume {
     totalTradeValue: any;
     tradeQuantity24: any;
     tradeValue24: any;
+    currentQuantity: any;
 }
 export interface NetworkExchangeTokenViewResponse {
     /** * The timestamp when the response was generated. Useful to show data staleness to users. */

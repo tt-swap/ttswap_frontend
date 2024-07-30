@@ -68,7 +68,7 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
                                     e.currentTarget.src =
                                         "/token.svg";
                                 }} />
-                            <span>
+                            <span className="whitespace-nowrap">
                                 <span>{el1.name}</span><br />
                                 <span className="text-xs">{el1.symbol}</span>
                             </span>

@@ -19,6 +19,7 @@ export default function Swap({ params }: { params: { chain: string, dex: string 
     }
   },[])
   
+console.log("swap")
   return (
     <div
     style={{margin: "68px auto"}}

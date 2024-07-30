@@ -9,10 +9,10 @@ import { useMemo, useState } from "react";
 
 import { ArrowDownOutlined, DownOutlined, UpOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Spin, message } from 'antd';
-// import { getExplorer } from '@/data/networks';
+import Message from '@/components/MessModal/index';
 
 
-// import { prettifyCurrencys } from '@/graphql/util';
+import { prettifyBalance } from '@/graphql/util';
 import { GoodsDatas } from '@/graphql/swap/index';
 
 import { useValueGood, useGoodId } from "@/stores/valueGood";
@@ -72,6 +72,10 @@ const TokenSwap = () => {
     const [balanceF, setBalanceF] = useState<string | number>(0);
     const [balanceT, setBalanceT] = useState<string | number>(0);
 
+    const [open, setOpen] = useState(false);
+    const [mesStatus, setMesStatus] = useState("");
+    const [mesTitle, setMesTitle] = useState("");
+
     const isDisabled = useMemo(() => {
         // @ts-ignore
         if (swapsAmount.from.amount > balanceMap.from || swapsAmount.from.amount < 0 || window.localStorage.getItem("wallet") === null) {
@@ -125,12 +129,12 @@ const TokenSwap = () => {
         let limitPrice;
         let dec;
         if (Number(swaps.from.decimals) < Number(swaps.to.decimals) || Number(swaps.from.decimals) === Number(swaps.to.decimals)) {
-            
+
             dec = 10 ** (Number(swaps.to.decimals) - Number(swaps.from.decimals));
         } else {
             dec = 10 ** (Number(swaps.from.decimals) - Number(swaps.to.decimals));
         }
-        
+
 
         if (fromV > toV) {
             const toVl = Math.ceil(fromV / toV * (1 - tolerance / 100));
@@ -138,7 +142,7 @@ const TokenSwap = () => {
             console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swaps)
         } else {
             const toVl = Math.ceil(toV / fromV * (1 + tolerance / 100));
-            limitPrice = BigInt(1 * 2 ** 128) + BigInt(toVl * dec);
+            limitPrice = BigInt(1 * dec * 2 ** 128) + BigInt(toVl);
             console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swaps)
         }
 
@@ -148,26 +152,37 @@ const TokenSwap = () => {
         console.log(a, 2222222222)
         const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, a, limitPrice, istotal], a, swaps.from.address);
         // const isSuccess = await swapBuyGood(["51649299683075463979090664991608549190737649190809275440655607745038800234274", "14700013424982216455688397208100595100161518504028027706369398309082945288267", a, b, istotal], a.toString(), "0x0000000000000000000000000000000000000000");
-        // const isSuccess = true;
+        // const isSuccess = false;
         console.log("isSuccess:", isSuccess)
         if (isSuccess) {
-            messageApi.open({
-                type: 'success',
-                content: 'Swap data sent success',
-            });
+            setOpen(true);
+            setMesStatus("success");
+            setMesTitle("Swap data send success");
+            // messageApi.open({
+            //     type: 'success',
+            //     content: 'Swap data send success',
+            // });
         } else {
-            messageApi.open({
-                type: 'error',
-                content: 'Swap data sent fail',
-            });
+            setOpen(true);
+            setMesStatus("error");
+            setMesTitle("Swap data send fail");
+            // messageApi.open({
+            //     type: 'error',
+            //     content: 'Swap data send fail',
+            // });
         }
         setSpinning(false);
     };
     // console.log(balanceMap)
     return (
         <>
-            {contextHolder}
-
+            {/* {contextHolder} */}
+            <Message
+                open={open}
+                status={mesStatus}
+                title={mesTitle}
+                setOpen={setOpen}
+            />
             <Spin spinning={spinning} fullscreen indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} size="large" />
             <div className={""} >
                 {/* <ChainSelector/> */}
@@ -238,7 +253,7 @@ const TokenSwap = () => {
                                         }
                                     >
                                         {swaps.from.symbol !== DEFAULT_TOKEN
-                                            ? balanceF
+                                            ? prettifyBalance(Number(balanceF))
                                             : 0}
                                     </span>
                                 </span>
@@ -299,12 +314,13 @@ const TokenSwap = () => {
                                     Balance:{" "}
                                     <span
                                         className="cursor-pointer"
-                                    // onClick={() =>
-                                    //   setAmount(el, balanceMap[swaps.from.token].balance)
-                                    // }
+                                        onClick={() =>
+                                            // @ts-ignore
+                                            setAmount("to", balanceT)
+                                        }
                                     >
                                         {swaps.to.symbol !== DEFAULT_TOKEN
-                                            ? balanceT
+                                            ? prettifyBalance(Number(balanceT))
                                             : 0}
                                     </span>
                                 </span>

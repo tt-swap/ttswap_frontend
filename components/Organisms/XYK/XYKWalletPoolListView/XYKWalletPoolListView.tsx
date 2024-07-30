@@ -44,7 +44,7 @@ import {
 import { SkeletonTable } from "@/components/ui/skeletonTable";
 
 import { myGoodsDatas } from '@/graphql/account';
-import { prettifyCurrencys,prettifyCurrencysFee } from '@/graphql/util';
+import { prettifyCurrencys, prettifyCurrencysFee } from '@/graphql/util';
 
 export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
     chain_name,
@@ -91,7 +91,7 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
                         pageSize: page_size,
                         address: wallet_address,
                     });
-                // console.log(response)
+                console.log(response,value_good_id,"myGoods")
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
                 setResult(new Some(response.items));
@@ -152,13 +152,17 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
                                 //     }
                                 // }}
                                 >
-                                    {// @ts-ignore
-                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
+                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                                    {/* {// @ts-ignore
+                                    row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
                                 </a>
                             ) : (
                                 <label className="text-base">
-                                    {// @ts-ignore
-                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol}
+                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
+                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                                    {/* {// @ts-ignore
+                                    row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
                                 </label>
                             )}
                         </div>

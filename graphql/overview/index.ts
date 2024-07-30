@@ -103,7 +103,7 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
             let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
 
             let map = {
-                id: "", name: "", decimals: 0, symbol: "", valueSymbol: "", totalTradeQuantity: 0,
+                id: "", name: "", decimals: 0, symbol: "", valueSymbol: "", totalTradeQuantity: 0,currentQuantity:0,
                 totalFee: 0, price: 0, price_24h: 0, totalTradeValue: 0, totalFeeValue: 0,
                 tradeQuantity24: 0, fee24: 0, tradeValue24: 0, feeValue24: 0, logo_url: "", priceC_24h: 0
             };
@@ -119,7 +119,7 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
                 // map.tradeValue24 = (e.totalTradeQuantity - en.totalTradeQuantity) / base_decimals * current_price_24h;
                 // map.feeValue24 = (e.totalProfit - en.totalProfit) / base_decimals * current_price_24h;
                 map.price_24h = current_price_24h;
-                map.priceC_24h = (current_price - map.price_24h) / current_price;
+                map.priceC_24h = (current_price - map.price_24h) / map.price_24h;
                 //     }
                 // });
             } else {
@@ -136,6 +136,7 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
             map.decimals = e.tokendecimals;
             map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
             map.totalTradeQuantity = e.totalTradeQuantity / base_decimals;
+            map.currentQuantity = e.currentQuantity / base_decimals;
             // map.totalFee = e.totalProfit / base_decimals;
             // map.totalTradeValue = e.totalTradeQuantity / base_decimals * current_price;
             // map.totalFeeValue = e.totalProfit / base_decimals * current_price;

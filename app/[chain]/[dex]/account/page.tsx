@@ -69,7 +69,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
       content: 'Success Copy',
     });
   }
-
+console.log("account")
 
   return (
     <div className="w-full flex flex-col gap-4">

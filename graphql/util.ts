@@ -1,3 +1,6 @@
+
+import { ethers } from "ethers";
+
 // x的n次方
 export function powerIterative(x: number, n: number): number {
     let result = 1;
@@ -35,7 +38,8 @@ export function timestampdToDateSub(days: number): number {
 
 // 物品图标地址
 export function iconUrl(chainName: string | undefined, address: string) {
-    return `https://raw.githubusercontent.com/tt-swap/assets/master/blockchains/${chainName}/assets/${address}/logo.png`;
+    
+    return `https://raw.githubusercontent.com/tt-swap/assets/master/blockchains/${chainName}/assets/${ethers.getAddress(address)}/logo.png`;
 }
 
 // 数字处理
@@ -80,6 +84,25 @@ export function prettifyCurrencysFee(value: number) {
     // 例如：如果scaled < 10, 保留一位小数；如果 scaled < 100, 则不保留小数
     // if (scaled < 10) {
     return toThousands(scaled.toFixed(6)) + suffixes[magnitude];
+};
+
+
+// 钱包余额数字处理
+export function prettifyBalance(value: number) {
+
+    if (value < 1) {
+
+        if (value < 0.000001) {
+            return '<0.000001'
+        }
+        if (value === 0) {
+            return '0'
+        }
+
+        return toThousands(value.toFixed(6));
+    }
+
+    return toThousands(value.toFixed(3));
 };
 
 function toThousands(value: string) {

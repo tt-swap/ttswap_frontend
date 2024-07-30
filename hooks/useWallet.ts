@@ -134,6 +134,15 @@ const useWallet = () => {
     }, [invest, isActive, address]);
 
 
+    const checkContractExists = async (contract: any) => {
+        try {
+            const code = await provider.getCode(contract);
+            // console.log(code)
+            return code !== '0x';
+        } catch {
+            return false;
+        }
+    }
 
     const faucetTestCion = async (wallet: string, contractA: string) => {
 
@@ -184,7 +193,7 @@ const useWallet = () => {
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
 
             let decimals = 18;
-            if (addr.length < 5) {
+            if (addr.length < 5 || addr ==="0x0000000000000000000000000000000000000000") {
                 decimals = 18;
             } else if (addr === goodVaddr) {
                 decimals = goodDec;
@@ -991,7 +1000,7 @@ const useWallet = () => {
         networkCost,
         swapBuyGood,
         investGoods,
-        newGoods, disinvest, faucetTestCion
+        newGoods, disinvest, faucetTestCion,checkContractExists
     };
 };
 
