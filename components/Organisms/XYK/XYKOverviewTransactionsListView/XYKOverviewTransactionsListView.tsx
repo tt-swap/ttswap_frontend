@@ -43,7 +43,7 @@ export const XYKOverviewTransactionsListView: React.FC<
     dex_name,
     on_transaction_click,
     on_native_explorer_click,
-    on_goldrush_receipt_click,value_good_id,is_over
+    on_goldrush_receipt_click,value_good_id,is_over,chain_id
 }) => {
         const { covalentClient } = useGoldRush();
 
@@ -69,7 +69,8 @@ export const XYKOverviewTransactionsListView: React.FC<
                         //     chain_name,
                         //     dex_name
                         // );
-                        await transactionsDatas(value_good_id);
+                        await transactionsDatas(value_good_id,chain_id);
+                        console.log(response,"transactions")
                     // @ts-ignore
                     setResult(new Some(response.items));
                     setError({ error: false, error_message: "" });

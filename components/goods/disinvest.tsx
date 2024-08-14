@@ -10,6 +10,9 @@ import CreatModal from "./creatModal";
 import "./index.css"
 import useWallet from "@/hooks/useWallet";
 import { LoadingOutlined } from '@ant-design/icons';
+import { useWeb3React } from "@web3-react/core";
+import { useSwitchChain } from "hooks";
+import {useLocalStorage} from "@/utils/LocalStorageManager";
 
 import { myDisInvestProofGood } from '@/graphql/account';
 import { prettifyCurrencys, powerIterative,prettifyCurrencysFee } from '@/graphql/util';
@@ -24,6 +27,10 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
 
     const [spinning, setSpinning] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
+    const switchChain = useSwitchChain();
+      const { chainId } = useWeb3React();
+      // @ts-ignore
+      const { ssionChian  } = useLocalStorage();
 
     const [goodQ, setGoodQ] = useState("");
     const [goodVQ, setGoodVQ] = useState("");
@@ -46,7 +53,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
         (async () => {
             if (dis_id > 0 && open_zt) {
                 setSpinning(true);
-                let tokens: any = await myDisInvestProofGood(dis_id);
+                let tokens: any = await myDisInvestProofGood(dis_id,ssionChian);
                 console.log(tokens, 99)
                 setDisgood(tokens);
                 count.good1.quantity = tokens.good1.quantity;
@@ -62,7 +69,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                 // setPercent(0);
             }
         })();
-    }, [dis_id,open_zt]);
+    }, [dis_id,open_zt,ssionChian]);
 
     const isDisabled = useMemo(() => {
         // console.log(buyF, sellF, inF, disinF, swapS, disinS, goodQ, goodVQ, goodC, goodV)
@@ -73,6 +80,12 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
     }, [goodQ, goodVQ])
 
     const disinvestgood = async () => {
+        await switchChain(ssionChian).catch((error) => {
+            console.error(`"Failed to switch chains: " ${error}`);
+          });
+        if (chainId !== ssionChian) {
+            return;
+        }
         setSpinning(true);
         console.log(0)
         // @ts-ignore

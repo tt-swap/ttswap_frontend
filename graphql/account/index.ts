@@ -5,19 +5,18 @@ import BigNumber from 'bignumber.js';
 
 // import ApolloClient from '@/graphql/apollo'
 // const apolloClient = ApolloClient();
-let chainId = 0;
-if (sessionStorage.getItem("chainId") !== null) {
-    chainId = Number(sessionStorage.getItem("chainId"));
-}
-const blockExplorerUrls = getExplorer(chainId);
-const chainName = getChainName(chainId);
+// let chainId = 0;
+// if (sessionStorage.getItem("chainId") !== null) {
+//     chainId = Number(sessionStorage.getItem("chainId"));
+// }
 
 // 我的投资列表
-export async function myInvestGoodsDatas(params: { id: string; address: string; pageNumber: number; pageSize: number; }): Promise<object> {
+export async function myInvestGoodsDatas(params: { id: string; address: string; pageNumber: number; pageSize: number; }, ssionChian: number): Promise<object> {
 
+    const chainName = getChainName(ssionChian);
     let item = { items: {}, pagination: { has_more: true }, error: false, error_message: "" };
     if (params.id !== "") {
-        const goodsDatas = await myInvestGoodDatas({ id: params.id, first: params.pageSize, skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() });
+        const goodsDatas = await myInvestGoodDatas({ id: params.id, first: params.pageSize, skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() }, ssionChian);
 
         // let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -86,11 +85,13 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
 }
 
 // 我的记录列表
-export async function myTransactionsDatas(params: { id: string; address: string; pageNumber: number; pageSize: number; }): Promise<object> {
+export async function myTransactionsDatas(params: { id: string; address: string; pageNumber: number; pageSize: number; }, ssionChian: number): Promise<object> {
+
+    const blockExplorerUrls = getExplorer(ssionChian);
     // console.log(id !== "",id)
     let item = { items: {}, pagination: { has_more: true }, error: false, error_message: "", tokensymbol: "" };
     if (params.id !== "") {
-        const goodsDatas = await myTransactions({ id: params.id, first: params.pageSize, skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() });
+        const goodsDatas = await myTransactions({ id: params.id, first: params.pageSize, skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() }, ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -163,8 +164,9 @@ export async function myTransactionsDatas(params: { id: string; address: string;
 }
 
 // 撤资数据
-export async function myDisInvestProofGood(id: number): Promise<object> {
-    const goodsDatas = await myDisInvestProof({ id: id });
+export async function myDisInvestProofGood(id: number, ssionChian: number): Promise<object> {
+    const chainName = getChainName(ssionChian);
+    const goodsDatas = await myDisInvestProof({ id: id }, ssionChian);
 
     let data = {
         id: 0, isvaluegood: false,
@@ -243,7 +245,7 @@ export async function myDisInvestProofGood(id: number): Promise<object> {
     map1.quantity = good.good2Quantity / decimals2;
     map1.unitFee = good.good2ContructFee / good.good2Quantity;
     map1.unitV = unitV2;
-    if (good2.id!=0) {
+    if (good2.id != 0) {
         map1.logo_url = iconUrl(chainName, good2.erc20Address);
     }
     map1.nowUnitFee = good2.feeQuantity / good2.investQuantity;
@@ -259,11 +261,11 @@ export async function myDisInvestProofGood(id: number): Promise<object> {
 
 
 // 
-export async function myIndexes(id: string, wallet_address: any): Promise<object> {
+export async function myIndexes(id: string, wallet_address: any, ssionChian: number): Promise<object> {
 
     let items = { disinvestCount: 0, disinvestValue: 0, investCount: 0, investValue: 0, tradeCount: 0, tradeValue: 0, isEmpty: true };
     if (id && wallet_address !== null) {
-        const goodsDatas = await myIndex({ id: id, address: wallet_address.toLowerCase() });
+        const goodsDatas = await myIndex({ id: id, address: wallet_address.toLowerCase() }, ssionChian);
         let goodQuantity = goodsDatas.data.goodState.currentQuantity / goodsDatas.data.goodState.currentValue;
         let tokendecimals = powerIterative(10, 6);
         let data = goodsDatas.data.customer;
@@ -279,14 +281,15 @@ export async function myIndexes(id: string, wallet_address: any): Promise<object
 }
 
 // 
-export async function myGoodsDatas(params: { id: string; pageNumber: number; pageSize: number; address: string; }): Promise<object> {
+export async function myGoodsDatas(params: { id: string; pageNumber: number; pageSize: number; address: string; }, ssionChian: number): Promise<object> {
 
+    const chainName = getChainName(ssionChian);
     // console.log(params,7777)
     let item = { items: {}, pagination: { page_number: 0, page_size: 0, has_more: true }, error: false, error_message: "" };
 
     if (params.id !== "") {
         // console.log(params,99999)
-        const goodsDatas = await myGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateSub(0), skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() });
+        const goodsDatas = await myGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateSub(0), skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() }, ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -314,7 +317,7 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
 
             let map = {
                 id: "", name: "", decimals: 0, symbol: "", logo_url: "", investQuantity: 0, investValue: 0, valueSymbol: "",
-                totalInvestQuantity: 0, totalInvestValue: 0, investQuantity24: 0, investValue24: 0, unitPrice: 0,
+                totalInvestQuantity: 0, totalInvestValue: 0, investQuantity24: 0, investValue24: 0, unitPrice: 0, currentQuantity: 0,
                 totalFee: 0, price: 0, price_24h: 0, totalFeeValue: 0, fee24: 0, feeValue24: 0, unitFee: 0, APY: 0
             };
 
@@ -325,6 +328,7 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
             map.decimals = e.tokendecimals;
             map.unitPrice = (e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals);
             map.investQuantity = e.investQuantity / base_decimals;
+            map.currentQuantity = e.currentQuantity / base_decimals;
             map.investValue = e.investQuantity / base_decimals * current_price;
             map.totalInvestQuantity = e.totalInvestQuantity / base_decimals;
             map.totalFee = e.feeQuantity / base_decimals;
@@ -332,7 +336,7 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
             map.totalFeeValue = e.feeQuantity / base_decimals * current_price;
             map.logo_url = iconUrl(chainName, e.erc20Address);
             map.price = current_price;
-            map.unitFee = map.totalFee / map.totalInvestQuantity;
+            map.unitFee = map.totalFee / map.investQuantity;
 
             let uintF = e.feeQuantity / e.investQuantity;
             if (e.goodData.length > 0) {
@@ -366,5 +370,5 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
 
         // return item;
     }
-     return item;
+    return item;
 }

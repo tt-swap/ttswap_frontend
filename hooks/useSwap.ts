@@ -87,7 +87,17 @@ const useSwap = () => {
         }
     };
 
-    const setAmount = (element: string, value: number | '' | null) => {
+    const setAmount = (element: string, value: number | '' | null,data:any) => {
+        // console.log(data,898)
+
+        let fromPrice = 0;
+        let toPrice =0;
+        if (data!==0) {
+            fromPrice = data.fromPrice;
+            if (data.toPrice>0) {
+                toPrice = data.toPrice;
+            }
+        }
         // console.log(element, "******", value, swaps)
         let num: number | string = "";
         // if (value=== ''|| value ===null || value < 0) value = 0;
@@ -95,49 +105,69 @@ const useSwap = () => {
             // @ts-ignore
             if (value > 0) {
                 // @ts-ignore
-                num = swaps.from.price / swaps.to.price * value * (1 - swaps.to.buyFee);
+                num = fromPrice / toPrice * value * (1 - swaps.to.buyFee);
                 num = Number(num.toFixed(6));
             }
+            // @ts-ignore
+            const priceF = value * fromPrice * (1 - swaps.from.sellFee);
+            // @ts-ignore
+            const priceT = num * toPrice;
             setSwapAmount({
                 from: {
                     token: swaps.from.symbol,
                     // @ts-ignore
                     amount: value,
-                    id: swaps.from.id
+                    id: swaps.from.id,
+                    currentQuantity: data.fromQuan,
+                    currentValue: data.fromValue,
+                    price:priceF > 0 ? Number(priceF.toFixed(6)) : 0
                 },
                 to: {
                     token: swaps.to.symbol,
                     // @ts-ignore
                     amount: num,
-                    id: swaps.to.id
+                    id: swaps.to.id,
+                    currentQuantity: data.toQuan,
+                    currentValue: data.toValue,
+                    price:priceT > 0 ? Number(priceT.toFixed(6)) : 0
                 },
             });
         } else {
             // @ts-ignore
             if (value > 0) {
                 // @ts-ignore
-                num = swaps.to.price / swaps.from.price * value / (1 - swaps.to.buyFee);
+                num = toPrice / fromPrice * value;
                 num = Number(num.toFixed(6));
             }
+            // @ts-ignore
+            const priceF = num * fromPrice * (1 - swaps.from.sellFee);
+            // @ts-ignore
+            const priceT = value * toPrice*(1 - swaps.to.buyFee);
             setSwapAmount({
                 from: {
                     token: swaps.from.symbol,
                     // @ts-ignore
                     amount: num,
-                    id: swaps.from.id
+                    id: swaps.from.id,
+                    currentQuantity: data.fromQuan,
+                    currentValue: data.fromValue,
+                    price:priceF > 0 ? Number(priceF.toFixed(6)) : 0
                 },
                 to: {
                     token: swaps.to.symbol,
                     // @ts-ignore
                     amount: value,
-                    id: swaps.to.id
+                    id: swaps.to.id,
+                    currentQuantity: data.toQuan,
+                    currentValue: data.toValue,
+                    price:priceT > 0 ? Number(priceT.toFixed(6)) : 0
                 },
             });
         }
     };
 
     useEffect(() => {
-        setAmount(focus, "");
+        // setAmount(focus, "");
         // console.log(focus, swapsAmount, "****",isHandleFlip)
         // if (!isHandleFlip) {
         //     if (focus === SwapKeys.From) {
@@ -264,25 +294,25 @@ const useSwap = () => {
 
     const swapArray = Object.keys(swaps) as Array<SwapKeys>;
 
-    const fromPrice = useMemo(() => {
-        if (swapsAmount.from.amount && swaps.from.symbol !== DEFAULT_TOKEN) {
-            const price =
-                swapsAmount.from.amount * swaps.from.price * (1 - swaps.from.sellFee);
+    // const fromPrice = useMemo(() => {
+    //     if (swapsAmount.from.amount && swaps.from.symbol !== DEFAULT_TOKEN) {
+    //         const price =
+    //             swapsAmount.from.amount * swaps.from.price * (1 - swaps.from.sellFee);
 
-            return price > 0 ? Number(price.toFixed(6)) : 0;
-        }
-        return 0;
-    }, [swaps, swapsAmount]);
+    //         return price > 0 ? Number(price.toFixed(6)) : 0;
+    //     }
+    //     return 0;
+    // }, [swaps, swapsAmount]);
 
-    const toPrice = useMemo(() => {
-        if (swapsAmount.to.amount && swaps.to.symbol !== DEFAULT_TOKEN) {
-            const price =
-                swapsAmount.to.amount * swaps.to.price;
+    // const toPrice = useMemo(() => {
+    //     if (swapsAmount.to.amount && swaps.to.symbol !== DEFAULT_TOKEN) {
+    //         const price =
+    //             swapsAmount.to.amount * swaps.to.price;
 
-            return price > 0 ? Number(price.toFixed(6)) : 0;
-        }
-        return 0;
-    }, [swaps, swapsAmount]);
+    //         return price > 0 ? Number(price.toFixed(6)) : 0;
+    //     }
+    //     return 0;
+    // }, [swaps, swapsAmount]);
 
     const priceImpact = useMemo(() => {
         if (swapsAmount.to.amount !== '' && swapsAmount.from.amount !== '' && swaps.to.symbol !== DEFAULT_TOKEN) {
@@ -324,8 +354,8 @@ const useSwap = () => {
         setToken,
         setFocus,
         swapArray,
-        fromPrice,
-        toPrice,
+        // fromPrice,
+        // toPrice,
         disabled,
     };
 };

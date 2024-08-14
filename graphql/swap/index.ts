@@ -1,21 +1,21 @@
 import { getExplorer, getChainName } from '@/data/networks';
 import { SwapTokens } from "@/shared/types/token";
-import { parGoodDatas } from './graphql';
+import { parGoodDatas,newGoodsPrices } from './graphql';
 import { powerIterative, iconUrl } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
 
-let chainId = 0;
-if (sessionStorage.getItem("chainId") !== null) {
-    chainId = Number(sessionStorage.getItem("chainId"));
-}
-const blockExplorerUrls = getExplorer(chainId);
-const chainName = getChainName(chainId);
+// let chainId = 0;
+// if (sessionStorage.getItem("chainId") !== null) {
+//     chainId = Number(sessionStorage.getItem("chainId"));
+// }
+// const blockExplorerUrls = getExplorer(chainId);
 
 
 
 //物品列表
-export async function GoodsDatas(params: { id: string; sel: string }): Promise<object> {
+export async function GoodsDatas(params: { id: string; sel: string;par:number },ssionChian:number): Promise<object> {
 
+    const chainName = getChainName(ssionChian);
     // console.log(params,7777)
     let item: SwapTokens = {
         tokenValue: [],
@@ -23,7 +23,7 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
     };
     if (params.id !== "") {
 
-        const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel });
+        const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel,par:params.par },ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -111,3 +111,32 @@ export async function GoodsDatas(params: { id: string; sel: string }): Promise<o
     return item;
 }
 
+
+//newGoodsPrice
+export async function newGoodsPrice(params: { id: string; from: string;to:string },ssionChian:number): Promise<object> {
+
+    let item = {};
+    if (params.id !== "") {
+
+        const goodsDatas = await newGoodsPrices({ id: params.id, from: params.from,to:params.to },ssionChian);
+
+        const goodsValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
+        const tokendecimals = powerIterative(10, 6);
+        const from =goodsDatas.data.from[0];
+        const to =goodsDatas.data.to[0];
+        const goodsFValue = (from.currentValue/tokendecimals) / (from.currentQuantity/10**from.tokendecimals);
+        const goodsTValue = (to.currentValue/tokendecimals) / (to.currentQuantity/10**to.tokendecimals);
+
+        let map = {
+            fromPrice:0,toPrice:0,fromValue:0,toValue:0,fromQuan:0,toQuan:0
+        };
+        item = map;
+        map.fromQuan=from.currentQuantity;
+        map.toQuan=to.currentQuantity;
+        map.fromValue=from.currentValue;
+        map.toValue=to.currentValue;
+        map.fromPrice=goodsFValue/goodsValue;
+        map.toPrice=goodsTValue/goodsValue;
+    }
+    return item;
+}

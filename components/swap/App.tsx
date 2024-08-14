@@ -9,7 +9,7 @@ function App() {
       cleanupImgCache()
     }
   }, [])
-  return <TokenSwap />;
+  // return <TokenSwap />;
 }
 
 export default App;

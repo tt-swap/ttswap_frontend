@@ -50,7 +50,7 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
     chain_name,
     dex_name,
     on_pool_click,
-    page_size, value_good_id, is_over, wallet_address, data_num
+    page_size, value_good_id, is_over, wallet_address, data_num,chain_id
 }) => {
     const { covalentClient } = useGoldRush();
 
@@ -90,7 +90,7 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
                         // @ts-ignore
                         pageSize: page_size,
                         address: wallet_address,
-                    });
+                    },chain_id);
                 console.log(response,value_good_id,"myGoods")
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
@@ -170,25 +170,25 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
                 );
             },
         },
-        // {
-        //     id: "symbol",
-        //     accessorKey: "symbol",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Symbol"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         return (
-        //             <div className="text-right">
-        //                 {// @ts-ignore
-        //                     row.original.symbol}
-        //             </div>
-        //         );
-        //     },
-        // },
+        {
+            id: "price",
+            accessorKey: "price",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Price"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
+                    row.original.price
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
         {
             id: "unitFee",
             accessorKey: "unitFee",
@@ -214,7 +214,7 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Invest Volume"}
+                    header_name={"Invest Quantity"}
                     column={column}
                 />
             ),
@@ -226,24 +226,24 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
-        // {
-        //     id: "investQuantity24",
-        //     accessorKey: "investQuantity24",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Invest Quantity(24h)"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         const valueFormatted = prettifyCurrencys(
-        //             row.original.investQuantity24
-        //         );
+        {
+            id: "currentQuantity",
+            accessorKey: "currentQuantity",
+            header: ({ column }) => (
+                <TableHeaderSorting
+                    align="right"
+                    header_name={"Current Quantity"}
+                    column={column}
+                />
+            ),
+            cell: ({ row }) => {
+                const valueFormatted = prettifyCurrencys(
+                    row.original.currentQuantity
+                );
 
-        //         return <div className="text-right">{valueFormatted}</div>;
-        //     },
-        // },
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
         // {
         //     id: "investValue24",
         //     accessorKey: "investValue24",
@@ -268,7 +268,7 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Fee Volume"}
+                    header_name={"Fee Quantity"}
                     column={column}
                 />
             ),
@@ -282,56 +282,56 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
-        {
-            id: "fee24",
-            accessorKey: "fee24",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"24h Fee Volume"}
-                    column={column}
-                />
-            ),
+        // {
+        //     id: "fee24",
+        //     accessorKey: "fee24",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"24h Fee Volume"}
+        //             column={column}
+        //         />
+        //     ),
 
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencysFee(
-                    // @ts-ignore
+        //     cell: ({ row }) => {
+        //         const valueFormatted = prettifyCurrencysFee(
+        //             // @ts-ignore
 
-                    row.original.fee24
-                );
+        //             row.original.fee24
+        //         );
 
-                // @ts-ignore
+        //         // @ts-ignore
 
-                return <div className="text-right">{valueFormatted}</div>;
-            },
-        },
-        {
-            id: "APY",
-            accessorKey: "APY",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"APY"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                // @ts-ignore
-                const valueFormatted = calculateFeePercentage(+row.original.APY);
+        //         return <div className="text-right">{valueFormatted}</div>;
+        //     },
+        // },
+        // {
+        //     id: "APY",
+        //     accessorKey: "APY",
+        //     header: ({ column }) => (
+        //         <TableHeaderSorting
+        //             align="right"
+        //             header_name={"APY"}
+        //             column={column}
+        //         />
+        //     ),
+        //     cell: ({ row }) => {
+        //         // @ts-ignore
+        //         const valueFormatted = calculateFeePercentage(+row.original.APY);
 
-                return (
-                    <div
-                        className={`text-right ${
-                            // @ts-ignore
-                            parseFloat(row.original.APY) > 0 &&
-                            "text-green-600"
-                            }`}
-                    >
-                        {valueFormatted}
-                    </div>
-                );
-            },
-        },
+        //         return (
+        //             <div
+        //                 className={`text-right ${
+        //                     // @ts-ignore
+        //                     parseFloat(row.original.APY) > 0 &&
+        //                     "text-green-600"
+        //                     }`}
+        //             >
+        //                 {valueFormatted}
+        //             </div>
+        //         );
+        //     },
+        // },
         {
             id: "actions",
             cell: ({ row }) => {

@@ -28,7 +28,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
     dex_name,
     overview_data,
     displayMetrics = "both",
-    value_good_id,
+    value_good_id,chain_id
 }) => {
     const [maybeResult, setResult] =
         useState<Option<UniswapLikeEcosystemCharts>>(None);
@@ -81,7 +81,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
             setResult(None);
             const response = 
             
-             await ecosystemChartDatas(value_good_id);
+             await ecosystemChartDatas(value_good_id,chain_id);
 
     // @ts-ignore
             setResult(new Some(response));

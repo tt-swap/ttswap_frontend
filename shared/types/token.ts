@@ -4,6 +4,9 @@ export interface TokenAmount {
   id: string | number | '';
   token: string;
   amount: number | '';
+  price:number;
+  currentQuantity: number;
+  currentValue: number;
 }
 
 export interface AmountState {

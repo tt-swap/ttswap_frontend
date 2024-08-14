@@ -14,6 +14,7 @@ import { Space } from 'antd';
 import { useEffect, useState } from "react";
 import { handleTabSwitch, getString } from "@/utils/router";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
+import {useLocalStorage} from "@/utils/LocalStorageManager";
 
 
 
@@ -23,6 +24,8 @@ export default function Overview({ params }: { params: { chain: string, dex: str
   const [windowWidth, setWindowWidth] = useState<number>(0);
   const { info } = useValueGood();
   const { setGoodId } = useGoodId();
+  // @ts-ignore
+  const { ssionChian  } = useLocalStorage();
   useEffect(() => {
     const params = window.location.search;
     if (getString(params) !== null) {
@@ -63,6 +66,7 @@ export default function Overview({ params }: { params: { chain: string, dex: str
             dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
             displayMetrics={"liquidity"}
             value_good_id={info.id}
+            chain_id={ssionChian}
           />
           <XYKOverviewTimeSeries
             // @ts-ignore
@@ -70,6 +74,7 @@ export default function Overview({ params }: { params: { chain: string, dex: str
             dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
             displayMetrics={"volume"}
             value_good_id={info.id}
+            chain_id={ssionChian}
           />
         </GoldRushProvider>
       </div>
@@ -94,6 +99,7 @@ export default function Overview({ params }: { params: { chain: string, dex: str
           // @ts-ignore
           chain_name={params.chain}
           dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
+          chain_id={ssionChian}
           on_token_click={(e: any, id: string) => {
             setGoodId({ invest: { id: "" }, swap: { id: id } });
             // sessionStorage.setItem("swap",id);
@@ -134,6 +140,7 @@ export default function Overview({ params }: { params: { chain: string, dex: str
         <XYKPoolListView
           // @ts-ignore
           chain_name={params.chain}
+          chain_id={ssionChian}
           dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
           on_pool_click={(e: any, id: string) => {
             setGoodId({ invest: { id: id }, swap: { id: "" } });
@@ -154,6 +161,7 @@ export default function Overview({ params }: { params: { chain: string, dex: str
       <XYKOverviewTransactionsListView
         // @ts-ignore
         chain_name={params.chain}
+        chain_id={ssionChian}
         dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
         on_native_explorer_click={(e: string) => {
           window.open(e, '_blank');

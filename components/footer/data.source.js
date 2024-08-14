@@ -51,6 +51,8 @@ export const Footer10DataSource = {
         title: { children: 'Docs' },
         childWrapper: {
           children: [
+            { href: '/whitepaper_cn.pdf', name: 'whitepaper-cn', children: 'whitepaper-cn', target: '_bank' },
+            { href: '/whitepaper_en.pdf', name: 'whitepaper_en', children: 'whitepaper_en', target: '_bank' },
             // { name: 'link0', href: '#', children: '产品更新记录' },
             // { name: 'link1', href: '#', children: 'API文档' },
             // { name: 'link2', href: '#', children: '快速入门' },

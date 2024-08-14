@@ -70,14 +70,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         Pools
                     </TabsTrigger>
                     <TabsTrigger
-                        value="account"
-                        onClick={() => {
-                            handleTabSwitch("account")
-                        }}
-                    >
-                        Account
-                    </TabsTrigger>
-                    <TabsTrigger
                         value="swap"
                         onClick={() => {
                             handleTabSwitch("swap")
@@ -92,6 +84,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         }}
                     >
                         Invest
+                    </TabsTrigger>
+                    <TabsTrigger
+                        value="account"
+                        onClick={() => {
+                            handleTabSwitch("account")
+                        }}
+                    >
+                        Account
                     </TabsTrigger>
                 </TabsList>
             </Tabs>

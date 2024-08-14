@@ -11,6 +11,9 @@ import CreatModal from "./creatModal";
 import "./index.css"
 import useWallet from "@/hooks/useWallet";
 import Message from '@/components/MessModal/index';
+import { useWeb3React } from "@web3-react/core";
+import { useSwitchChain } from "hooks";
+import {useLocalStorage} from "@/utils/LocalStorageManager";
 // import BigNumber from 'bignumber.js';
 
 import { GoodsDatas } from '@/graphql';
@@ -26,6 +29,10 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   const [spinning, setSpinning] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
+  const switchChain = useSwitchChain();
+    const { chainId } = useWeb3React();
+    // @ts-ignore
+    const { ssionChian  } = useLocalStorage();
   const [open, setOpen] = useState(false);
   const [buyF, setBuyF] = useState(8);
   const [sellF, setSellF] = useState(8);
@@ -54,14 +61,14 @@ export const CreatGoods = ({ setDataNum }: Props) => {
 
   useEffect(() => {
     (async () => {
-      let tokens: any = await GoodsDatas();
+      let tokens: any = await GoodsDatas(ssionChian);
       // console.log(tokens, 99)
       setGoodV(tokens[0].id);
       setGoodVAddr(tokens[0].address);
       setGoodDec(tokens[0].decimals);
       setSelectVgood(tokens);
     })();
-  }, []);
+  }, [ssionChian]);
 
   useMemo(() => {
     setBuyF(8);
@@ -92,6 +99,12 @@ export const CreatGoods = ({ setDataNum }: Props) => {
 
 
   const newGood = async () => {
+    await switchChain(ssionChian).catch((error) => {
+        console.error(`"Failed to switch chains: " ${error}`);
+      });
+    if (chainId !== ssionChian) {
+        return;
+    }
     setSpinning(true);
     // console.log(goodC.length);
     if (goodC.length > 5) {

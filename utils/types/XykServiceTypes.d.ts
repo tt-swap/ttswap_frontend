@@ -51,6 +51,7 @@ export interface Pool {
     unitPrice:any;
     investValue: any;
     valueSymbol: any;
+    currentQuantity:any;
     totalInvestQuantity: any;
     totalInvestValue: any;
     investQuantity24: any;
