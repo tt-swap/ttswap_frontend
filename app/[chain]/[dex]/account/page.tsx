@@ -18,11 +18,14 @@ import { useEffect, useState, useMemo } from "react";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 
 import { useWeb3React } from "@web3-react/core";
+import {useLocalStorage} from "@/utils/LocalStorageManager";
 // import { myIndexes } from '@/graphql/account';
 // import { prettifyCurrencys } from '@/graphql/util';
 
 export default function Account({ params }: { params: { chain: string, dex: string } }) {
 
+  // @ts-ignore
+  const { ssionChian  } = useLocalStorage();
   const { account } = useWeb3React();
   const router = useRouter();
   const [walletAddress, setAddress] = useState<string | null>("")
@@ -117,6 +120,7 @@ console.log("account")
         wallet_address={walletAddress}
         value_good_id={info.id}
         wallet_data={maybeResult}
+        chain_id={ssionChian}
       />
       <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
         Invest Proof
@@ -135,6 +139,7 @@ console.log("account")
           data_num={dataNum}
           page_size={5}
           value_good_id={info.id}
+          chain_id={ssionChian}
           on_pool_click={(e: any) => {
             if (e === "invest") {
               router.push(`${handleTabSwitch(e, pathname)}`);
@@ -163,6 +168,7 @@ console.log("account")
           wallet_address={walletAddress}
           data_num={dataNum}
           value_good_id={info.id}
+          chain_id={ssionChian}
           // is_over={true}
           on_pool_click={(e: any, id: string) => {
             if (e === "invest") {
@@ -187,6 +193,7 @@ console.log("account")
         data_num={dataNum}
         value_good_id={info.id}
         page_size={10}
+        chain_id={ssionChian}
         on_native_explorer_click={(e: string) => {
           window.open(e, '_blank');
         }}

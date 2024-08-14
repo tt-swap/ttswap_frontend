@@ -5,21 +5,20 @@ import TokenSwapSelector from "./TokenSwapSelector";
 import TokenSwapSetting from "./TokenSwapSetting";
 import useWallet from "@/hooks/useWallet";
 import InputNumber from "rc-input-number";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 import { ArrowDownOutlined, DownOutlined, UpOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Spin, message } from 'antd';
 import Message from '@/components/MessModal/index';
+import { useSwitchChain } from "hooks";
+import { useWeb3React } from "@web3-react/core";
 
 
 import { prettifyBalance } from '@/graphql/util';
-import { GoodsDatas } from '@/graphql/swap/index';
+import { GoodsDatas, newGoodsPrice } from '@/graphql/swap/index';
 
 import { useValueGood, useGoodId } from "@/stores/valueGood";
-
-// git提交描述
-// swap module overall change adjustment；
-// ﻿graphql catalog optimization and adjustment.
+import { useLocalStorage } from "@/utils/LocalStorageManager";
 
 const styles = {
     wrapper:
@@ -49,17 +48,20 @@ const TokenSwap = () => {
     const {
         swaps,
         swapsAmount,
-        fromPrice,
-        toPrice,
+        // fromPrice,
+        // toPrice,
         priceImpact,
         setAmount,
         setToken,
-        setFocus,
+        // setFocus,
         handleFlip,
         disabled,
     } = useSwap();
     const { balanceMap, networkCost, swapBuyGood } = useWallet();
-
+    // @ts-ignore
+    const { ssionChian } = useLocalStorage();
+    const switchChain = useSwitchChain();
+    const { chainId } = useWeb3React();
 
     const [spinning, setSpinning] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
@@ -75,6 +77,10 @@ const TokenSwap = () => {
     const [open, setOpen] = useState(false);
     const [mesStatus, setMesStatus] = useState("");
     const [mesTitle, setMesTitle] = useState("");
+    const [amountSp, setAmountSp] = useState(false);
+    const [timerId, setTimerId] = useState(null);
+    const [focus, setFocus] = useState("from");
+    const [handleF, setHandleF] = useState(false);
 
     const isDisabled = useMemo(() => {
         // @ts-ignore
@@ -87,7 +93,7 @@ const TokenSwap = () => {
     useMemo(() => {
         // @ts-ignore
         setBalanceF(balanceMap.from); setBalanceT(balanceMap.to);
-    }, [balanceMap]);
+    }, [balanceMap, ssionChian]);
 
     const handleFees = () => {
         if (isFees) {
@@ -108,8 +114,9 @@ const TokenSwap = () => {
 
                 let tokens: any = await GoodsDatas({
                     id: info.id,
-                    sel: sel
-                });
+                    sel: sel,
+                    par: Math.floor(Number(new Date().getTime) / 1000)
+                }, ssionChian);
                 if (goodId.swap.id !== "") {
                     // 
                     setToken("from", tokens.tokens[0].children[0]);
@@ -118,34 +125,97 @@ const TokenSwap = () => {
                 }
             })();
         }
-    }, [info, goodId]);
+    }, [info, goodId, ssionChian]);
 
+    useEffect(() => {
+        handleFlips();
+        goodsF();
+    }, [swaps]);
+
+    const setAmounts = (type: string, value: any) => {
+        setFocus(type);
+        if (value > 0) {
+            setAmountSp(true)
+            // @ts-ignore
+            clearTimeout(timerId);
+            let timer = setTimeout(async () => {
+                // @ts-ignore
+                const datas = await newGoodsPrice({ id: info.id, from: swaps.from.id, to: swaps.to.id }, ssionChian);
+                setAmount(type, value, datas);
+                clearTimeout(timer);
+                setAmountSp(false)
+            }, 1000);
+            // @ts-ignore
+            setTimerId(timer);
+        } else {
+            setAmount(type, value, 0);
+        }
+    };
+
+    const handleFlips = () => {
+        // handleFlip();
+        if (handleF) {
+            let amount;
+            let type;
+            if (focus === "from") {
+                amount = swapsAmount.from.amount;
+                type = "to";
+            } else {
+                amount = swapsAmount.to.amount;
+                type = "from";
+            }
+            // console.log(swaps,"****")
+            setAmounts(type, amount);
+            setHandleF(false);
+        }
+    };
+
+    const goodsF = () => {
+        let amount;
+        let type;
+        if (focus === "from") {
+            amount = swapsAmount.from.amount;
+            type = "to";
+        } else {
+            amount = swapsAmount.to.amount;
+            type = "from";
+        }
+        setAmounts(focus, amount);
+    };
     // console.log(getExplorer(11155111))
     const handleSwap = async () => {
-        setSpinning(true);
 
-        const fromV = swaps.from.currentValue / swaps.from.currentQuantity * 10 ** swaps.from.decimals;
-        const toV = swaps.to.currentValue / swaps.to.currentQuantity * 10 ** swaps.to.decimals;
-        let limitPrice;
-        let dec;
-        if (Number(swaps.from.decimals) < Number(swaps.to.decimals) || Number(swaps.from.decimals) === Number(swaps.to.decimals)) {
-
-            dec = 10 ** (Number(swaps.to.decimals) - Number(swaps.from.decimals));
-        } else {
-            dec = 10 ** (Number(swaps.from.decimals) - Number(swaps.to.decimals));
+        await switchChain(ssionChian).catch((error) => {
+            console.error(`"Failed to switch chains: " ${error}`);
+        });
+        if (chainId !== ssionChian) {
+            return;
         }
+        setSpinning(true);
+        const dec = 10000;
+        const fromV = swapsAmount.from.currentValue*swapsAmount.to.currentQuantity;///dec;//swaps.from.currentValue / swaps.from.currentQuantity * 10 ** swaps.from.decimals;
+        const toV = swapsAmount.to.currentValue*swapsAmount.from.currentQuantity * (1 + tolerance / 100);//swaps.to.currentValue / swaps.to.currentQuantity * 10 ** swaps.to.decimals;
+        let limitPrice;
+        // let dec=1;
+        // if (Number(swaps.from.decimals) < Number(swaps.to.decimals) || Number(swaps.from.decimals) === Number(swaps.to.decimals)) {
+
+        //     dec = 10 ** (Number(swaps.to.decimals) - Number(swaps.from.decimals));
+        // } else {
+        //     dec = 10 ** (Number(swaps.from.decimals) - Number(swaps.to.decimals));
+        // }
 
 
         if (fromV > toV) {
-            const toVl = Math.ceil(fromV / toV * (1 - tolerance / 100));
-            limitPrice = BigInt(1 * dec) + BigInt(toVl * 2 ** 128);
+            const toVl = Math.ceil(fromV / (toV/dec));
+            limitPrice = BigInt(toVl * 2 ** 128) + BigInt(dec);
             console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swaps)
         } else {
-            const toVl = Math.ceil(toV / fromV * (1 + tolerance / 100));
-            limitPrice = BigInt(1 * dec * 2 ** 128) + BigInt(toVl);
+            const toVl = Math.ceil(toV / (fromV/dec));
+            limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
             console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swaps)
         }
-
+        // const toVl = Math.ceil(toV / fromV);
+        // limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
         const a: BigInt = BigInt(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals);
         // const b: BigInt = BigInt(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals);
         // const b: BigInt = BigInt(1.1 * 2 ** 128 + 3500);
@@ -158,6 +228,7 @@ const TokenSwap = () => {
             setOpen(true);
             setMesStatus("success");
             setMesTitle("Swap data send success");
+            setAmount("from", "", 0);
             // messageApi.open({
             //     type: 'success',
             //     content: 'Swap data send success',
@@ -176,6 +247,7 @@ const TokenSwap = () => {
     // console.log(balanceMap)
     return (
         <>
+            {console.log(swapsAmount)}
             {/* {contextHolder} */}
             <Message
                 open={open}
@@ -217,7 +289,7 @@ const TokenSwap = () => {
                                     pattern="[0-9]*[.]?[0-9]+"
                                     name={"from"}
                                     value={swapsAmount.from.amount}
-                                    onChange={(e) => { setAmount("from", e); console.log("*&*^99") }}
+                                    onChange={(e) => { setAmounts("from", e); }}
                                     className={styles.input}
                                     controls={false}
                                     placeholder="0"
@@ -229,9 +301,15 @@ const TokenSwap = () => {
                                 />
                             </div>
                             <div className={styles.balance}>
-                                <span>
-                                    {fromPrice > 0 ? fromPrice : 0}{" " + info.symbol}{" "}
-                                    {fromPrice !== 0 &&
+                                <span className="flex">
+                                    <Spin
+                                        spinning={amountSp}
+                                        indicator={<LoadingOutlined spin />}
+                                        size="small">
+                                        {swapsAmount.from.price > 0 ? swapsAmount.from.price : 0}{" " + info.symbol}{" "}
+                                    </Spin>
+
+                                    {swapsAmount.from.price !== 0 &&
                                         swaps.from.symbol !== DEFAULT_TOKEN && (
                                             <span className="text-[#63ae8e] ml-2">{(swaps.from.sellFee * 100).toFixed(2)}%</span>
                                         )}
@@ -249,7 +327,7 @@ const TokenSwap = () => {
                                         className="cursor-pointer"
                                         onClick={() =>
                                             // @ts-ignore
-                                            setAmount("from", balanceF)
+                                            setAmounts("from", balanceF)
                                         }
                                     >
                                         {swaps.from.symbol !== DEFAULT_TOKEN
@@ -263,7 +341,10 @@ const TokenSwap = () => {
                             <Button
                                 className="swapButSt"
                                 icon={<ArrowDownOutlined />}
-                                onClick={handleFlip}
+                                onClick={() => {
+                                    handleFlip();
+                                    setHandleF(true);
+                                }}
                             >
                             </Button>
                         </div>
@@ -276,7 +357,7 @@ const TokenSwap = () => {
                             </label>
                             <div className="swToFT">
                                 <InputNumber
-                                    disabled={swaps.from.symbol === DEFAULT_TOKEN || swaps.to.symbol === DEFAULT_TOKEN}
+                                    disabled={swaps.to.symbol === DEFAULT_TOKEN}
                                     width={85}
                                     min={0}
                                     type="number"
@@ -284,7 +365,7 @@ const TokenSwap = () => {
                                     pattern="[0-9]*[.,]?[0-9]+"
                                     name={"to"}
                                     value={swapsAmount.to.amount}
-                                    onChange={(e) => { setAmount("to", e); }}
+                                    onChange={(e) => { setAmounts("to", e); }}
                                     className={styles.input}
                                     controls={false}
                                     placeholder="0"
@@ -296,9 +377,18 @@ const TokenSwap = () => {
                                 />
                             </div>
                             <div className={styles.balance}>
-                                <span>
-                                    {toPrice > 0 ? toPrice : 0}{" " + info.symbol}{" "}
-                                    {toPrice !== 0 &&
+                                <span className="flex">
+                                    {swaps.to.symbol !== DEFAULT_TOKEN ? (
+                                        <Spin
+                                            spinning={amountSp}
+                                            indicator={<LoadingOutlined spin />}
+                                            size="small">
+                                            {swapsAmount.to.price > 0 ? swapsAmount.to.price : 0}{" " + info.symbol}{" "}
+                                        </Spin>
+                                    ) : (
+                                        <span>{swapsAmount.to.price > 0 ? swapsAmount.to.price : 0}{" " + info.symbol}{" "}</span>
+                                    )}
+                                    {swapsAmount.to.price !== 0 &&
                                         swaps.to.symbol !== DEFAULT_TOKEN && (
                                             <span className="text-[#63ae8e] ml-2">{(swaps.to.buyFee * 100).toFixed(2)}%</span>
                                         )}
@@ -316,7 +406,7 @@ const TokenSwap = () => {
                                         className="cursor-pointer"
                                         onClick={() =>
                                             // @ts-ignore
-                                            setAmount("to", balanceT)
+                                            setAmounts("to", balanceT)
                                         }
                                     >
                                         {swaps.to.symbol !== DEFAULT_TOKEN

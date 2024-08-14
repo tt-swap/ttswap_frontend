@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { useState } from "react";
+import { useState,createContext } from "react";
 
 interface walletAddress {
   address: any
@@ -17,3 +17,10 @@ export const useWalletAddress = create<walletAddress>((set) => ({
     const [chainId1, setChainId] = useState(11155111);
     return {chainId1, setChainId};
   };
+
+
+  
+  // export const ssionContext =()=>{
+  //   const [chainId1, setChainId] = useState(11155111);
+  //   return {chainId1, setChainId};
+  // };

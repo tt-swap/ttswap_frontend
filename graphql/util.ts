@@ -28,17 +28,33 @@ export function convertDateTimeToTimestampUsingParse(dateTime: string): number {
     return Date.parse(dateTime);
 }
 
+// 当前时间戳
+export function Timestamp(): number {
+    const date = new Date();
+    return Math.floor(date.getTime() / 1000);
+}
 
 // 时间戳加减
 export function timestampdToDateSub(days: number): number {
     let dateTime = Date.parse(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`) - (days * 86400000);
     // console.log(days * 86400000,"****")
-    return dateTime / 1000;
+    return Math.floor(dateTime / 1000);
+}
+
+// 时间戳加减年
+export function timestampdToDateYear(year: number): number {
+    const timestamp = Date.now(); // 获取当前时间戳
+    let date = new Date(timestamp); // 将时间戳转换为Date对象
+    date.setFullYear(date.getFullYear() - year); // 减一年
+    const newTimestamp = date.getTime();
+    // let dateTime = Date.parse(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`) - (days * 86400000);
+    // console.log(days * 86400000,"****")
+    return Math.floor(newTimestamp / 1000);
 }
 
 // 物品图标地址
 export function iconUrl(chainName: string | undefined, address: string) {
-    
+
     return `https://raw.githubusercontent.com/tt-swap/assets/master/blockchains/${chainName}/assets/${ethers.getAddress(address)}/logo.png`;
 }
 
@@ -130,8 +146,8 @@ export function timestampSubH(values: number) {
 
 // 数据编码处理
 export function splitNumber(values: number) {
-    let value = values / powerIterative(2,128);
-    let quantity = values % powerIterative(2,128);
+    let value = values / powerIterative(2, 128);
+    let quantity = values % powerIterative(2, 128);
 
-    return {value:value,quantity:quantity};
+    return { value: value, quantity: quantity };
 }

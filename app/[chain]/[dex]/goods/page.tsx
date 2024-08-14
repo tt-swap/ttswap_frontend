@@ -8,13 +8,16 @@ import { GoldRushProvider } from "@/utils/store";
 import { useEffect,useState } from "react";
 import {handleTabSwitch} from "@/utils/router";
 import { useValueGood,useGoodId } from "@/stores/valueGood";
+import {useLocalStorage} from "@/utils/LocalStorageManager";
 
 export default function Tokens({ params }: { params: { chain: string, dex: string } }) {
   const router = useRouter();
   const pathname = usePathname()
   const { info } = useValueGood();
   const { setGoodId } = useGoodId();
-  console.log("goods")
+  // @ts-ignore
+  const { ssionChian  } = useLocalStorage();
+  // console.log("goods",params)
   // console.log(handleTabSwitch("swap",pathname),999)
   return (
     <div className="w-full flex flex-col gap-4">
@@ -30,6 +33,7 @@ export default function Tokens({ params }: { params: { chain: string, dex: strin
           <XYKTokenListView
             // @ts-ignore
             chain_name={params.chain}
+            chain_id={ssionChian}
             dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
             page_size={20}
             value_good_id={info.id}

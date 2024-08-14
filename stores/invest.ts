@@ -49,12 +49,18 @@ const initDefaultInvestAmount = (): AmountState => ({
   from:{
     token: "",
     amount: "",
-    id: ""
+    id: "",
+    currentQuantity: 0,
+    currentValue: 0,
+    price:0
   },
   to:{
     token: "",
     amount: "",
-    id: ""
+    id: "",
+    currentQuantity: 0,
+    currentValue: 0,
+    price:0
   }
 });
 

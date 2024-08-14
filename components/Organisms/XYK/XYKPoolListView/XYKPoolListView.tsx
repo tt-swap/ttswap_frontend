@@ -50,13 +50,13 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
     chain_name,
     dex_name,
     on_pool_click,
-    page_size, value_good_id, is_over
+    page_size, value_good_id, is_over,chain_id
 }) => {
     const { covalentClient } = useGoldRush();
 
     const [sorting, setSorting] = useState<SortingState>([
         {
-            id: "unitPrice",
+            id: "investQuantity",
             desc: true,
         },
     ]);
@@ -95,7 +95,7 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                     // );
 
                     // @ts-ignore
-                    await investGoodsDatas({ id: value_good_id, pageNumber: pagination.page_number - 1, pageSize: page_size });
+                    await investGoodsDatas({ id: value_good_id, pageNumber: pagination.page_number - 1, pageSize: page_size },chain_id);
                 console.log(response)
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });

@@ -8,6 +8,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import CreatModal from "./faucetModal";
 import useFaucet from "@/hooks/useFaucet";
 import { useWalletAddress } from "@/stores/walletAddress";
+import { useLocalStorage } from "@/utils/LocalStorageManager";
 
 
 const { Option } = Select;
@@ -48,10 +49,12 @@ export const Faucet = ({ }: Props) => {
     const [goodVAddr, setGoodVAddr] = useState("");
     const [selectVgood, setSelectVgood] = useState([]);
     const { address } = useWalletAddress();
+    // @ts-ignore
+    const { ssionChian } = useLocalStorage();
 
     const { faucetTestCion } = useFaucet();
     const [form] = Form.useForm();
-    const testCion: any = [
+    const testCion1: any = [
         {
             id: "0xA35e43E7a5839b31624dad3f35dA63875E705934", symbol: "USDT", logo_url: "", address: "0xA35e43E7a5839b31624dad3f35dA63875E705934"
         }, {
@@ -60,22 +63,40 @@ export const Faucet = ({ }: Props) => {
             id: "0xE5Dbe53f4e408b9C53472226bC01faC57E40D0B3", symbol: "WETH", logo_url: "", address: "0xE5Dbe53f4e408b9C53472226bC01faC57E40D0B3"
         },
     ];
+    const testCion: any = {
+        11155111: [{
+            id: "0xA35e43E7a5839b31624dad3f35dA63875E705934", symbol: "USDT", logo_url: "", address: "0xA35e43E7a5839b31624dad3f35dA63875E705934"
+        }, {
+            id: "0xCC1f68861f8a63b5aa837A41087C17Bc5f64521d", symbol: "WBTC", logo_url: "", address: "0xCC1f68861f8a63b5aa837A41087C17Bc5f64521d"
+        }, {
+            id: "0xE5Dbe53f4e408b9C53472226bC01faC57E40D0B3", symbol: "WETH", logo_url: "", address: "0xE5Dbe53f4e408b9C53472226bC01faC57E40D0B3"
+        }],
+        97: [{
+            id: "0x11E10725a6Fc7C47833209C6DE31307Fbd389494", symbol: "USDT", logo_url: "", address: "0x11E10725a6Fc7C47833209C6DE31307Fbd389494"
+        }, {
+            id: "0x875A9522d695804e1F1636eE3616E6185F74b563", symbol: "WBTC", logo_url: "", address: "0x875A9522d695804e1F1636eE3616E6185F74b563"
+        }, {
+            id: "0x9588F74Df5BbC1CD3a45720Cb944A4b1048A4450", symbol: "WBNB", logo_url: "", address: "0x9588F74Df5BbC1CD3a45720Cb944A4b1048A4450"
+        }]
+    };
 
     useEffect(() => {
-        // (async () => {
-        // let tokens: any = await GoodsDatas();
-        // console.log(tokens, 99)
-        setGoodV(testCion[0].id);
-        setGoodVAddr(testCion[0].address);
-        setSelectVgood(testCion);
-        // })();
-    }, []);
+        try {
+            console.log(ssionChian, 99)
+            setGoodV(testCion[ssionChian][0].id);
+            setGoodVAddr(testCion[ssionChian][0].address);
+            setSelectVgood(testCion[ssionChian]);
+        } catch { }
+    }, [ssionChian]);
 
     useMemo(() => {
-        setGoodC("");
-        setGoodV(testCion[0].id);
-        setGoodVAddr(testCion[0].address);
-    }, [open]);
+        try {
+            console.log(ssionChian, 991)
+            setGoodC("");
+            setGoodV(testCion[ssionChian][0].id);
+            setGoodVAddr(testCion[ssionChian][0].address);
+        } catch { }
+    }, [open, ssionChian]);
 
     const isDisabled = useMemo(() => {
         // @ts-ignore
@@ -225,6 +246,20 @@ export const Faucet = ({ }: Props) => {
                         disabled={isDisabled}
                         onClick={Obtain}
                     >Obtain Test Coin</Button>
+                </div>
+                <div className='flex justify-between py-8'>
+                    <a href='https://www.alchemy.com/faucets/ethereum-sepolia' className='w-full mr-4' target='_bank'>
+                        <Button
+                            type="primary"
+                            style={styles.newButton1}
+                        >Sepolia Test ETH</Button>
+                    </a>
+                    <a href='https://www.bnbchain.org/en/testnet-faucet' className='w-full' target='_bank'>
+                        <Button
+                            type="primary"
+                            style={styles.newButton1}
+                        >BSC Test BNB</Button>
+                    </a>
                 </div>
             </CreatModal>
         </>

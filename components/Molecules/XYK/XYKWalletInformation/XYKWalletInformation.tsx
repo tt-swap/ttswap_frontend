@@ -17,7 +17,7 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
     wallet_address,
     chain_name,
     dex_name,
-    wallet_data, value_good_id
+    wallet_data, value_good_id,chain_id
 }) => {
     const [maybeResult, setResult] = useState(None);
     const { toast } = useToast();
@@ -31,7 +31,7 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
             response =
                 await myIndexes(
                     value_good_id,
-                    wallet_address
+                    wallet_address,chain_id
                 );
             // @ts-ignore
             setResult(response);

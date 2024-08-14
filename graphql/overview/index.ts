@@ -1,22 +1,23 @@
 import { getExplorer, getChainName } from '@/data/networks';
 import { ecosystemChartData, parGoodDatas, InvestGoodDatas, transactions } from './graphql';
-import { timestampdToDateSub, powerIterative, iconUrl } from '@/graphql/util';
+import { timestampdToDateSub, timestampdToDateYear, powerIterative, iconUrl } from '@/graphql/util';
 
-let chainId = 0;
-if (sessionStorage.getItem("chainId") !== null) {
-    chainId = Number(sessionStorage.getItem("chainId"));
-}
-const blockExplorerUrls = getExplorer(chainId);
-const chainName = getChainName(chainId);
+// let chainId = 0;
+// if (sessionStorage.getItem("chainId") !== null) {
+//     chainId = Number(sessionStorage.getItem("chainId"));
+// }
+// const blockExplorerUrls = getExplorer(chainId);
+// const chainName = getChainName(chainId);
 
 
 // overview charts
-export async function ecosystemChartDatas(id: string): Promise<object> {
+export async function ecosystemChartDatas(id: string, ssionChian: number): Promise<object> {
 
+    // const chainName = getChainName(ssionChian);
     let item = { quote_currency: '', volume_chart_7d: [{}], volume_chart_30d: [{}], liquidity_chart_7d: [{}], liquidity_chart_30d: [{}] };
 
     if (id !== "") {
-        const data = await ecosystemChartData({ id: id, eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) });
+        const data = await ecosystemChartData({ id: id, eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) }, ssionChian);
         let goodValue = data.data.goodState.currentValue / data.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
         item.quote_currency = data.data.goodState.tokensymbol;
@@ -70,12 +71,13 @@ export async function ecosystemChartDatas(id: string): Promise<object> {
 
 
 //物品列表
-export async function GoodsDatas(params: { id: string; pageNumber: number; pageSize: number; }): Promise<object> {
+export async function GoodsDatas(params: { id: string; pageNumber: number; pageSize: number; }, ssionChian: number): Promise<object> {
 
+    const chainName = getChainName(ssionChian);
     let item = { items: {}, pagination: { page_number: 0, page_size: 0, has_more: true }, error: false, error_message: "" };
 
     if (params.id !== "") {
-        const goodsDatas = await parGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateSub(0), skips: params.pageSize * params.pageNumber });
+        const goodsDatas = await parGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateSub(0), skips: params.pageSize * params.pageNumber }, ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -94,22 +96,22 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
         item.pagination.page_number = params.pageNumber;
         item.pagination.page_size = params.pageSize;
 
-        if (goodsDatas.data.parGoodStates.length < params.pageSize) {
+        if (goodsDatas.data.goodStates.length < params.pageSize) {
             item.pagination.has_more = false;
         }
 
-        goodsDatas.data.parGoodStates.forEach((e: any) => {
+        goodsDatas.data.goodStates.forEach((e: any) => {
             let base_decimals = powerIterative(10, e.tokendecimals);
             let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
 
             let map = {
-                id: "", name: "", decimals: 0, symbol: "", valueSymbol: "", totalTradeQuantity: 0,currentQuantity:0,
+                id: "", name: "", decimals: 0, symbol: "", valueSymbol: "", totalTradeQuantity: 0, currentQuantity: 0,
                 totalFee: 0, price: 0, price_24h: 0, totalTradeValue: 0, totalFeeValue: 0,
                 tradeQuantity24: 0, fee24: 0, tradeValue24: 0, feeValue24: 0, logo_url: "", priceC_24h: 0
             };
 
-            if (e.parGooddata.length > 0) {
-                let en = e.parGooddata[0];
+            if (e.goodData.length > 0) {
+                let en = e.goodData[0];
                 // e.parGooddata.forEach((en: any) => {
                 //     if (e.id === en.pargood.id) {
                 let current_price_24h = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
@@ -140,7 +142,7 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
             // map.totalFee = e.totalProfit / base_decimals;
             // map.totalTradeValue = e.totalTradeQuantity / base_decimals * current_price;
             // map.totalFeeValue = e.totalProfit / base_decimals * current_price;
-            map.logo_url = iconUrl(chainName, e.id);
+            map.logo_url = iconUrl(chainName, e.erc20Address);
             map.price = current_price;
 
 
@@ -154,12 +156,13 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
 
 
 //投资列表
-export async function investGoodsDatas(params: { id: string; pageNumber: number; pageSize: number; }): Promise<object> {
+export async function investGoodsDatas(params: { id: string; pageNumber: number; pageSize: number; }, ssionChian: number): Promise<object> {
 
+    const chainName = getChainName(ssionChian);
     let item = { items: {}, pagination: { page_number: 0, page_size: 0, has_more: true }, error: false, error_message: "" };
 
     if (params.id !== "") {
-        const goodsDatas = await InvestGoodDatas({ id: params.id, first: 10, time: timestampdToDateSub(0), skip: params.pageSize * params.pageNumber });
+        const goodsDatas = await InvestGoodDatas({ id: params.id, first: 10, time: timestampdToDateYear(1), time24: timestampdToDateSub(0), skip: params.pageSize * params.pageNumber }, ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -178,10 +181,10 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
         item.pagination.page_number = params.pageNumber;
         item.pagination.page_size = params.pageSize;
 
-        if (goodsDatas.data.parGoodStates.length < params.pageSize) {
+        if (goodsDatas.data.goodStates.length < params.pageSize) {
             item.pagination.has_more = false;
         }
-        goodsDatas.data.parGoodStates.forEach((e: any) => {
+        goodsDatas.data.goodStates.forEach((e: any) => {
             let base_decimals = powerIterative(10, e.tokendecimals);
             let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
 
@@ -203,49 +206,45 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
             map.totalFee = e.feeQuantity / base_decimals;
             map.totalInvestValue = e.totalInvestQuantity / base_decimals * current_price;
             map.totalFeeValue = e.feeQuantity / base_decimals * current_price;
-            map.logo_url = iconUrl(chainName, e.id);
+            map.logo_url = iconUrl(chainName, e.erc20Address);
             map.price = current_price;
             map.unitFee = map.totalFee / map.totalInvestQuantity;
-
-            let uintF = e.feeQuantity / e.investQuantity;
-            if (e.parGooddata.length > 0) {
-                let en = e.parGooddata[0];
-                // e.parGoodData.forEach((en: any) => {
-                //     if (e.id === en.pargood.id) {
-                let current_price_24h = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
-                // let s = splitNumber(en.open);
-                map.investQuantity24 = (e.investQuantity - en.investQuantity) / base_decimals;
-                map.fee24 = (e.feeQuantity - en.feeQuantity) / base_decimals;
-                map.investValue24 = (e.totalInvestQuantity - en.totalInvestQuantity) / base_decimals * current_price_24h;
-                map.feeValue24 = (e.feeQuantity - en.feeQuantity) / base_decimals * current_price_24h;
-                map.price_24h = current_price_24h;
-                map.APY = (uintF - en.feeQuantity / en.investQuantity) * 365;
-                //     }
-                // });
-            } else {
-                map.investQuantity24 = map.investQuantity;
-                map.fee24 = map.totalFee;
-                map.investValue24 = map.investValue;
-                map.feeValue24 = map.totalFeeValue;
-                if (map.totalFee > 0)
-                    map.APY = (uintF - map.fee24) * 365;
-                map.APY = 0;
-            }
+            let a = e.feeQuantity + e.investQuantity;
+            let uintF = (Number(e.feeQuantity) + Number(e.investQuantity)) / e.investQuantity;
+            // console.log(a, "*****")
+            let en = e.goodData[0];
+            let d24 = e.date24[0];
+            let uintFY = (en.feeQuantity + en.investQuantity) / en.investQuantity;
+            console.log(uintF, "*****",uintFY)
+            //year
+            // e.parGoodData.forEach((en: any) => {
+            //     if (e.id === en.pargood.id) {
+            // let current_price_24h = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
+            // // let s = splitNumber(en.open);
+            // map.investQuantity24 = (e.investQuantity - en.investQuantity) / base_decimals;
+            map.fee24 = (e.feeQuantity - d24.feeQuantity) / base_decimals;
+            // map.investValue24 = (e.totalInvestQuantity - en.totalInvestQuantity) / base_decimals * current_price_24h;
+            // map.feeValue24 = (e.feeQuantity - en.feeQuantity) / base_decimals * current_price_24h;
+            // map.price_24h = current_price_24h;
+            map.APY = uintF / uintFY - 1;
+            //     }
+            // });
 
             items.push(map);
         });
 
     }
-    // console.log(item)
+    console.log(item)
     return item;
 }
 
 //记录列表
-export async function transactionsDatas(id: string): Promise<object> {
+export async function transactionsDatas(id: string, ssionChian: number): Promise<object> {
 
+    const blockExplorerUrls = getExplorer(ssionChian);
     let item = { items: {}, pagination: {}, error: false, error_message: "", tokensymbol: "" };
     if (id !== "") {
-        const goodsDatas = await transactions({ id: id, first: 10 });
+        const goodsDatas = await transactions({ id: id, first: 10 }, ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -301,7 +300,7 @@ export async function transactionsDatas(id: string): Promise<object> {
             } else {
                 map.togoodQuantity = 0;
             }
-            map.totalValue = e.transvalue/tokendecimals;
+            map.totalValue = e.transvalue / tokendecimals;
             // if (e.transtype === "buy" || e.transtype === "pay") {
             //     map.totalValue = map.fromgoodQuanity * from_price;
             // } else {

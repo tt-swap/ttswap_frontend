@@ -50,7 +50,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
     chain_name,
     dex_name,
     on_token_click,
-    page_size, value_good_id, is_over
+    page_size, value_good_id, is_over,chain_id
 }) => {
     const { covalentClient } = useGoldRush();
 
@@ -90,7 +90,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                         pageNumber: pagination.page_number - 1,
                         // @ts-ignore
                         pageSize: page_size,
-                    });
+                    },chain_id);
                 console.log(response, "***");
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });

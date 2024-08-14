@@ -98,6 +98,7 @@ export interface XYKWalletTransactionsListViewProps {
     value_good_id:string;
     is_over:boolean;
     page_size:number;
+    chain_id:number;
 }
 
 export interface TokenBalancesListViewProps {
@@ -117,6 +118,7 @@ export interface XYKTokenListViewProps {
     page_size?: number;
     value_good_id:string;
     is_over:boolean;
+    chain_id:number;
 }
 
 export interface CrossChainBalanceItem extends BalanceItem {
@@ -132,6 +134,7 @@ export interface XYKPoolListViewProps {
     is_over:boolean;
     wallet_address: any;
     data_num:number;
+    chain_id:number;
 }
 
 export interface XYKTokenPoolListViewProps {
@@ -163,6 +166,7 @@ export interface XYKWalletPositionsListViewProps {
     page_size?: number;
     value_good_id:string;
     is_over:boolean;
+    chain_id:number;
 
 }
 
@@ -182,6 +186,7 @@ export interface XYKOverviewTransactionsListViewProps {
     on_goldrush_receipt_click?: Function;
     value_good_id:string;
     is_over:boolean;
+    chain_id:number;
 }
 
 export interface TransactionReceiptViewProps {

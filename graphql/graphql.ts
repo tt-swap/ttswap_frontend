@@ -2,8 +2,8 @@ import apolloClient from '@/graphql/apollo'
 import { gql } from '@apollo/client'
 
 //价值物品列表
-export function goodStates() {
-	return apolloClient.query({
+export function goodStates(ssionChian:number) {
+	return apolloClient(ssionChian).query({
 		query: gql`query {
 			goodStates(where: {isvaluegood: true}) {
 				id
@@ -16,8 +16,8 @@ export function goodStates() {
 	})
 }
 //价值物品
-export function goodState() {
-	return apolloClient.query({
+export function goodState(ssionChian:number) {
+	return apolloClient(ssionChian).query({
 		query: gql`query {
 			goodStates(
 				orderBy: goodseq

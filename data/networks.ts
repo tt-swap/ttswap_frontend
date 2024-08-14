@@ -22,7 +22,7 @@ const FTM: AddEthereumChainParameter["nativeCurrency"] = {
   decimals: 18
 };
 
-const BSC: AddEthereumChainParameter["nativeCurrency"] = {
+const BNB: AddEthereumChainParameter["nativeCurrency"] = {
   name: "BNB Chain",
   symbol: "BNB",
   decimals: 18
@@ -121,7 +121,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://mainnet.optimism.io"].filter(Boolean),
     name: "OP Mainnet",
-    chainName:"optimistic",
+    chainName:"optimism",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://optimistic.etherscan.io"]
   },
@@ -236,7 +236,7 @@ export const CHAINS: {
     urls: ["https://rpc.testnet.fantom.network"].filter(Boolean),
     publicUrls: ["https://rpc.testnet.fantom.network"].filter(Boolean),
     name: "Fantom Testnet",
-    chainName:"fantomtestnet",
+    chainName:"fantomtest",
     nativeCurrency: FTM,
     blockExplorerUrls: ["https://testnet.ftmscan.com/"]
   },
@@ -250,8 +250,8 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://rpc.ankr.com/bsc"].filter(Boolean),
     name: "BNB Smart Chain",
-    chainName:"ethereum",
-    nativeCurrency: BSC,
+    chainName:"binance",
+    nativeCurrency: BNB,
     blockExplorerUrls: ["https://bscscan.com/"]
   },
   97: {
@@ -260,9 +260,9 @@ export const CHAINS: {
       Boolean
     ),
     publicUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"].filter(Boolean),
-    name: "BNB Testnet",
-    chainName:"ethereum",
-    nativeCurrency: BSC,
+    name: "BSC Testnet",
+    chainName:"binancetestnet",
+    nativeCurrency: BNB,
     blockExplorerUrls: ["https://testnet.bscscan.com/"]
   }
 };

@@ -9,6 +9,7 @@ import { useValueGood } from "@/stores/valueGood";
 import { SearchOutlined, DownOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Input, Select, Button, Tree, Spin, Flex } from 'antd';
 import type { TreeProps, TreeDataNode } from 'antd';
+import {useLocalStorage} from "@/utils/LocalStorageManager";
 
 import { prettifyCurrencys } from '@/graphql/util';
 import { GoodsDatas } from '@/graphql/invest';
@@ -34,6 +35,8 @@ const TokenInvestSelector = ({ value, onChange, isValue }: Props) => {
     const [treeData, setTokens] = useState<TreeDataNode[]>();
     const { info } = useValueGood();
     const [spinning, setSpinning] = useState(false);
+    // @ts-ignore
+    const { ssionChian  } = useLocalStorage();
 
     useMemo(() => {
         setSpinning(true);
@@ -41,7 +44,7 @@ const TokenInvestSelector = ({ value, onChange, isValue }: Props) => {
             let a: any = await GoodsDatas({
                 id: info.id,
                 sel: keyword
-            });
+            },ssionChian);
             let rest: Array<LocalCurrency> = a.tokenValue;
             // console.log(a, 33332)
             setTokensValue(rest);
@@ -92,7 +95,7 @@ const TokenInvestSelector = ({ value, onChange, isValue }: Props) => {
             setTokens(a.tokens);
             setSpinning(false);
         })()
-    }, [keyword, info]);
+    }, [keyword, info,ssionChian]);
     // console.log(availableTokens,222)
     const isDefault = value.symbol === DEFAULT_TOKEN;
 

@@ -15,12 +15,14 @@ import { DexProvider } from "@/lib/store"
 // import { Toaster } from "@/components/ui/toaster"
 // import { KeyDialog } from "@/components/key-dialog"
 import { Footer } from '@/components/footer';
-import { usePathname } from "next/navigation";
+import { usePathname,useRouter } from "next/navigation";
 import { Web3ReactProvider } from "@web3-react/core";
 import connectors from "@/connectors";
-import { useEffect } from "react";
+import { useEffect, useState,useMemo } from "react";
 import { useValueGood } from "@/stores/valueGood";
 import { useWalletAddress } from "@/stores/walletAddress";
+import LocalStorageManager from "@/utils/LocalStorageManager";
+import { chainIds } from "data/chainIds";
 
 import { valueGood } from '@/graphql';
 
@@ -28,19 +30,36 @@ import { valueGood } from '@/graphql';
 interface RootLayoutProps {
   children: React.ReactNode
 }
+// const SsionContext = createContext(null);
 
 export default function RootLayout({ children }: RootLayoutProps) {
   let pathname = usePathname();
-
+  const router = useRouter();
+  const [ssionChian, setSsionChian] = useState(97);
   const { info, setValueGood } = useValueGood();
 
   const { address, setAccount } = useWalletAddress();
+  // const { chainId1, setChainId } = useChainId();
+
+  useMemo(() => {
+    const routeSegments = pathname.split('/');
+    // console.log(routeSegments, "account");
+    if (routeSegments.length>3) {
+      const chname = routeSegments[1];
+        const chid = chainIds[chname];
+        setSsionChian(Number(chid));
+    }
+      console.log(ssionChian, "account");
+  }, []);
+
 
   useEffect(() => {
+    // console.log(ssionChian, 999665);
     setAccount(window.localStorage.getItem("wallet"));
-
+    // @ts-ignore
+    // setChainId(ssionChian);
     (async () => {
-      const bal = await valueGood();
+      const bal = await valueGood(ssionChian);
       // console.log(bal,99999999999)
       setValueGood({
         id: bal.data.goodStates[0].id,
@@ -51,7 +70,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         decimals: bal.data.goodStates[0].tokendecimals
       });
     })();
-  }, []);
+  }, [ssionChian]);
 
   return (
     <>
@@ -67,17 +86,21 @@ export default function RootLayout({ children }: RootLayoutProps) {
           {/* <Theme>
             <ThemeProvider attribute="class" defaultTheme="system" forcedTheme='dark' enableSystem={false}> */}
           <Web3ReactProvider connectors={connectors}>
-            <DexProvider>
-              <div className="relative flex min-h-screen flex-col">
-                <SiteHeader />
-                <div className="flex-1">{children}</div>
-                  <Footer/>
-                {/* <Analytics />
+            <LocalStorageManager.Provider
+              // @ts-ignore
+              value={{ ssionChian, setSsionChian }}>
+              <DexProvider>
+                <div className="relative flex min-h-screen flex-col">
+                  <SiteHeader />
+                  <div className="flex-1">{children}</div>
+                  <Footer />
+                  {/* <Analytics />
                   <Footer/>
                   <KeyDialog />
                   <Toaster /> */}
-              </div>
-            </DexProvider>
+                </div>
+              </DexProvider>
+            </LocalStorageManager.Provider>
           </Web3ReactProvider>
           {/* </ThemeProvider>
           </Theme> */}

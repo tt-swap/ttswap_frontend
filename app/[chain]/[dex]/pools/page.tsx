@@ -9,12 +9,15 @@ import { Button } from "@/components/ui/button";
 import { useEffect,useState } from "react";
 import {handleTabSwitch} from "@/utils/router";
 import { useValueGood,useGoodId } from "@/stores/valueGood";
+import {useLocalStorage} from "@/utils/LocalStorageManager";
 
 export default function Pools({ params }: { params: { chain: string, dex: string } }) {
   const router = useRouter();
   const pathname = usePathname()
   const { info } = useValueGood();
   const { setGoodId } = useGoodId();
+  // @ts-ignore
+  const { ssionChian  } = useLocalStorage();
   // const url = pathname.replace(/pools/g, "tokens");
 
   console.log("pools")
@@ -32,6 +35,7 @@ export default function Pools({ params }: { params: { chain: string, dex: string
             <XYKPoolListView
             // @ts-ignore
             chain_name={params.chain}
+            chain_id={ssionChian}
             dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
             page_size={20}
             value_good_id={info.id}

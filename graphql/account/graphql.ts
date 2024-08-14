@@ -4,8 +4,8 @@ import apolloClient from '@/graphql/apollo'
 import { gql } from '@apollo/client'
 
 //my记录列表
-export function myTransactions(params: { id: string; first: number; skip: number; address: string }) {
-	return apolloClient.query({
+export function myTransactions(params: { id: string; first: number; skip: number; address: string },ssionChian:number) {
+	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$address: String,$first: Int,$skip: Int) {
 			goodState(id: $id) {
 				currentQuantity
@@ -54,8 +54,8 @@ export function myTransactions(params: { id: string; first: number; skip: number
 }
 
 //我的投资列表
-export function myInvestGoodDatas(params: { id: string; first: number; skip: number; address: string }) {
-	return apolloClient.query({
+export function myInvestGoodDatas(params: { id: string; first: number; skip: number; address: string },ssionChian:number) {
+	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$address: String,$first: Int,$skip: Int) {
 			goodState(id: $id) {
 				currentValue
@@ -112,8 +112,8 @@ export function myInvestGoodDatas(params: { id: string; first: number; skip: num
 // 我的物品
 export async function myGoodDatas(params: {
 	id: string; first: number; time: number; skip: number; address: string
-}) {
-	return apolloClient.query({
+},ssionChian:number) {
+	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$first: Int,$time: BigInt,$skip: Int,$address:String) {
 			goodState(id: $id) {
 				currentValue
@@ -171,8 +171,8 @@ export async function myGoodDatas(params: {
 }
 
 //我的撤资数据
-export function myDisInvestProof(params: { id: number; }) {
-	return apolloClient.query({
+export function myDisInvestProof(params: { id: number; },ssionChian:number) {
+	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt) {
 			proofState(id: $id) {
 				id
@@ -213,8 +213,8 @@ export function myDisInvestProof(params: { id: number; }) {
 
 
 // 我的指标
-export function myIndex(params: { id: string, address: string }) {
-	return apolloClient.query({
+export function myIndex(params: { id: string, address: string },ssionChian:number) {
+	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$address: String) {
 			goodState(id: $id) {
 				currentQuantity

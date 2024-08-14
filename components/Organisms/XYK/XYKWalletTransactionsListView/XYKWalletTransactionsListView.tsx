@@ -52,7 +52,7 @@ export const XYKWalletTransactionsListView: React.FC<XYKWalletTransactionsListVi
     on_transaction_click,
     on_native_explorer_click,
     on_goldrush_receipt_click,
-    page_size, wallet_address, value_good_id, data_num, is_over
+    page_size, wallet_address, value_good_id, data_num, is_over,chain_id
 }) => {
     const { covalentClient } = useGoldRush();
 
@@ -87,7 +87,7 @@ export const XYKWalletTransactionsListView: React.FC<XYKWalletTransactionsListVi
             try {
                 response =
                     // @ts-ignore
-                    await myTransactionsDatas({ id: value_good_id, address:wallet_address, pageNumber: pagination.page_number - 1, pageSize: page_size });
+                    await myTransactionsDatas({ id: value_good_id, address:wallet_address, pageNumber: pagination.page_number - 1, pageSize: page_size },chain_id);
                 console.log(response)
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });

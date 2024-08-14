@@ -4,17 +4,22 @@ import { cn } from "@/utils/utils";
 import TokenInvestSelector from "./TokenInvestSelector";
 import useWallet from "@/hooks/useWallet";
 import InputNumber from "rc-input-number";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 // import { useWeb3React } from "@web3-react/core";
 
+import { useWeb3React } from "@web3-react/core";
+import { useSwitchChain } from "hooks";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 import { Spin, message } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import "./index.css";
 import Message from '@/components/MessModal/index';
 
+import { useLocalStorage } from "@/utils/LocalStorageManager";
+
 import { powerIterative, prettifyBalance } from '@/graphql/util';
 import { GoodsDatas } from '@/graphql/invest';
+import { newGoodsPrice } from '@/graphql/swap/index';
 
 
 // git提交描述
@@ -49,8 +54,8 @@ const TokenInvest = () => {
   const {
     invest,
     investAmount,
-    fromPrice,
-    toPrice,
+    // fromPrice,
+    // toPrice,
     setAmount,
     setToken,
     disabled,
@@ -58,6 +63,9 @@ const TokenInvest = () => {
   const { balanceMap1, investGoods } = useWallet();
 
   // const { isActive, account } = useWeb3React();
+
+  const switchChain = useSwitchChain();
+  const { chainId } = useWeb3React();
 
   const [balanceF, setBalanceF] = useState<string | number>(0);
   const [balanceT, setBalanceT] = useState<string | number>(0);
@@ -71,6 +79,11 @@ const TokenInvest = () => {
   const [open, setOpen] = useState(false);
   const [mesStatus, setMesStatus] = useState("");
   const [mesTitle, setMesTitle] = useState("");
+  // @ts-ignore
+  const { ssionChian } = useLocalStorage();
+  const [amountSp, setAmountSp] = useState(false);
+  const [timerId, setTimerId] = useState(null);
+  const [focus, setFocus] = useState("from");
 
   const isDisabled = useMemo(() => {
     if (isValueGood) {
@@ -93,7 +106,7 @@ const TokenInvest = () => {
   useMemo(() => {
     // @ts-ignore
     setBalanceF(balanceMap1.from); setBalanceT(balanceMap1.to);
-  }, [balanceMap1]);
+  }, [balanceMap1, ssionChian]);
 
   useMemo(() => {
     if (info.id) {
@@ -106,7 +119,7 @@ const TokenInvest = () => {
         let tokens: any = await GoodsDatas({
           id: info.id,
           sel: sel
-        });
+        }, ssionChian);
         if (goodId.invest.id !== "") {
           // 
           setToken("from", tokens.tokens[0].children[0]);
@@ -117,9 +130,53 @@ const TokenInvest = () => {
         }
       })();
     }
-  }, [info]);
+  }, [info, ssionChian]);
+
+  useEffect(() => {
+    goodsF();
+  }, [invest]);
+
+  const setAmounts = (type: string, value: any) => {
+    setFocus(type);
+    if (value > 0) {
+      setAmountSp(true)
+      // @ts-ignore
+      clearTimeout(timerId);
+      let timer = setTimeout(async () => {
+        // @ts-ignore
+        const datas = await newGoodsPrice({ id: info.id, from: invest.from.id, to: invest.to.id }, ssionChian);
+        setAmount(type, value, datas);
+        clearTimeout(timer);
+        setAmountSp(false)
+      }, 1000);
+      // @ts-ignore
+      setTimerId(timer);
+    } else {
+      setAmount(type, value, 0);
+    }
+  };
+
+  const goodsF = () => {
+    let amount;
+    let type;
+    if (focus === "from") {
+      amount = investAmount.from.amount;
+      type = "to";
+    } else {
+      amount = investAmount.to.amount;
+      type = "from";
+    }
+    setAmounts(focus, amount);
+  };
 
   const handleInvest = async () => {
+    await switchChain(ssionChian).catch((error) => {
+      console.error(`"Failed to switch chains: " ${error}`);
+    });
+    if (chainId !== ssionChian) {
+      return;
+    }
+
     setSpinning(true);
     let fAmount = 0;
     let tAmount = 0;
@@ -138,6 +195,7 @@ const TokenInvest = () => {
       setOpen(true);
       setMesStatus("success");
       setMesTitle("Invest data send success");
+      setAmount("from", "", 0);
       // messageApi.open({
       //   type: 'success',
       //   content: 'Invest data send success',
@@ -185,7 +243,7 @@ const TokenInvest = () => {
                   pattern="[0-9]*[.]?[0-9]+"
                   name={"from"}
                   value={investAmount.from.amount}
-                  onChange={(e) => { setAmount("from", e); }}
+                  onChange={(e) => { setAmounts("from", e); }}
                   className={styles.input}
                   controls={false}
                   placeholder="0"
@@ -200,9 +258,15 @@ const TokenInvest = () => {
                 />
               </div>
               <div className={styles.balance}>
-                <span>
-                  {fromPrice > 0 ? fromPrice : 0}{" " + info.symbol}{" "}
-                  {fromPrice !== 0 &&
+                <span className="flex">
+                  <Spin
+                    spinning={amountSp}
+                    indicator={<LoadingOutlined spin />}
+                    size="small">
+                    {investAmount.from.price > 0 ? investAmount.from.price : 0}{" " + info.symbol}{" "}
+                  </Spin>
+                  {/* {investAmount.from.price > 0 ? investAmount.from.price : 0}{" " + info.symbol}{" "} */}
+                  {investAmount.from.price !== 0 &&
                     invest.from.symbol !== DEFAULT_TOKEN && (
                       <span className="text-[#63ae8e] ml-2">{invest.from.investFee * 100}%</span>
                     )}
@@ -249,7 +313,7 @@ const TokenInvest = () => {
                     pattern="[0-9]*[.,]?[0-9]+"
                     name={"to"}
                     value={investAmount.to.amount}
-                    onChange={(e) => { setAmount("to", e); }}
+                    onChange={(e) => { setAmounts("to", e); }}
                     className={styles.input}
                     controls={false}
                     placeholder="0"
@@ -261,9 +325,19 @@ const TokenInvest = () => {
                   />
                 </div>
                 <div className={styles.balance}>
-                  <span>
-                    {toPrice > 0 ? toPrice : 0}{" " + info.symbol}{" "}
-                    {toPrice !== 0 &&
+                  <span className="flex">
+                    {invest.to.symbol !== DEFAULT_TOKEN ? (
+                      <Spin
+                        spinning={amountSp}
+                        indicator={<LoadingOutlined spin />}
+                        size="small">
+                        {investAmount.to.price > 0 ? investAmount.to.price : 0}{" " + info.symbol}{" "}
+                      </Spin>
+                    ) : (
+                      <span>{investAmount.to.price > 0 ? investAmount.to.price : 0}{" " + info.symbol}{" "}</span>
+                    )}
+                    {/* {investAmount.to.price > 0 ? investAmount.to.price : 0}{" " + info.symbol}{" "} */}
+                    {investAmount.to.price !== 0 &&
                       invest.to.symbol !== DEFAULT_TOKEN && (
                         <span className="text-[#63ae8e] ml-2">{invest.to.investFee * 100}%</span>
                       )}

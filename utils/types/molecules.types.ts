@@ -104,6 +104,7 @@ export interface XYKOverviewTimeSeriesProps {
     overview_data?: UniswapLikeEcosystemCharts;
     displayMetrics?: "both" | "liquidity" | "volume";
     value_good_id:string;
+    chain_id:number;
 }
 
 export interface XYKTokenTimeSeriesProps {
@@ -121,6 +122,7 @@ export interface XYKWalletInformationProps {
     dex_name: string;
     wallet_data?: object;
     value_good_id:string;
+    chain_id:number;
 }
 
 export interface DecodedTransactionProps {

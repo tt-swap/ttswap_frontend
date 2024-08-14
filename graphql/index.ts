@@ -6,15 +6,15 @@ import {  iconUrl } from '@/graphql/util';
 
 
 //价值物品列表
-export async function GoodsDatas() {
+export async function GoodsDatas(ssionChian:number) {
 
-    let chainId = 0;
-    if (sessionStorage.getItem("chainId") !== null) {
-        chainId = Number(sessionStorage.getItem("chainId"));
-    }
-    const chainName = getChainName(chainId);
+    // let chainId = 0;
+    // if (sessionStorage.getItem("chainId") !== null) {
+    //     chainId = Number(sessionStorage.getItem("chainId"));
+    // }
+    const chainName = getChainName(ssionChian);
     
-    const goodsDatas = await goodStates();
+    const goodsDatas = await goodStates(ssionChian);
 
     let items: object[] = [];
     goodsDatas.data.goodStates.forEach((e: any) => {
@@ -34,7 +34,7 @@ export async function GoodsDatas() {
 }
 
 //价值物品
-export async function valueGood() {
-    const goodsDatas = await goodState();
+export async function valueGood(ssionChian:number) {
+    const goodsDatas = await goodState(ssionChian);
     return goodsDatas;
 }

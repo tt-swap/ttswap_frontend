@@ -1,142 +1,148 @@
 "use client"
 
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState,useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { ChainItem, CovalentClient, SupportedDex } from "@covalenthq/client-sdk"
-import { Flex } from "@radix-ui/themes"
-import { Check, ChevronsUpDown } from "lucide-react"
+// import { ChainItem, CovalentClient, SupportedDex } from "@covalenthq/client-sdk"
+// import { Flex } from "@radix-ui/themes"
+// import { Check, ChevronsUpDown } from "lucide-react"
 
-import { DexContext } from "@/lib/store"
-import { COVALENT_API_KEY, cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { useToast } from "@/components/ui/use-toast"
+// import { DexContext } from "@/lib/store"
+// import { COVALENT_API_KEY, cn } from "@/lib/utils"
+// import { Button } from "@/components/ui/button"
+// import {
+//   Command,
+//   CommandEmpty,
+//   CommandGroup,
+//   CommandInput,
+//   CommandItem,
+// } from "@/components/ui/command"
+// import { Input } from "@/components/ui/input"
+// import { Label } from "@/components/ui/label"
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger,
+// } from "@/components/ui/popover"
+// import { useToast } from "@/components/ui/use-toast"
+import {useLocalStorage} from "@/utils/LocalStorageManager";
 
 export default function IndexPage() {
-  const { dex_name } = useContext(DexContext)
-  const [allChains, setChains] = useState<ChainItem[]>([])
-  const [allDexs, setDexs] = useState<SupportedDex[]>([])
-  const [address, setAddress] = useState(dex_name ? dex_name : "")
-  const [busy, setBusy] = useState(false)
+  // const { dex_name } = useContext(DexContext)
+  // const [allChains, setChains] = useState<ChainItem[]>([])
+  // const [allDexs, setDexs] = useState<SupportedDex[]>([])
+  // const [address, setAddress] = useState(dex_name ? dex_name : "")
+  // const [busy, setBusy] = useState(false)
+  // const [open, setOpen] = useState(false)
+  // const [openDex, setOpenDex] = useState(false)
+  // const [dexMap, setDexMap] = useState()
+  // const [chainMap, setChainMap] = useState()
   const router = useRouter()
-  const [open, setOpen] = useState(false)
-  const [openDex, setOpenDex] = useState(false)
-  const [dexMap, setDexMap] = useState()
-  const [chainMap, setChainMap] = useState()
+  // @ts-ignore
+  const { ssionChian  } = useLocalStorage();
 
 
-  const [value, setValue] = useState("")
-  const { toast } = useToast()
+  // const [value, setValue] = useState("")
+  // const { toast } = useToast()
 
-  const handleSupported = async (dexs: SupportedDex[], chains: ChainItem[]) => {
-    const chain_map: any = {}
+  // const handleSupported = async (dexs: SupportedDex[], chains: ChainItem[]) => {
+    // console.log("chainMap[value]:", dexs,chains)
+  //   const chain_map: any = {}
 
-    for(const i of dexs){
-      const dex = dexs.find((o: { dex_name: any }) => o.dex_name === i.dex_name)
+  //   for(const i of dexs){
+  //     const dex = dexs.find((o: { dex_name: any }) => o.dex_name === i.dex_name)
       
-      if(!chain_map[i.chain_name]){
-        chain_map[i.chain_name] = [dex]
-      }else{
-        chain_map[i.chain_name] = [...chain_map[i.chain_name], dex]
-      }
-    }
+  //     if(!chain_map[i.chain_name]){
+  //       chain_map[i.chain_name] = [dex]
+  //     }else{
+  //       chain_map[i.chain_name] = [...chain_map[i.chain_name], dex]
+  //     }
+  //   }
 
-    const dex_map: any = {}
+  //   const dex_map: any = {}
 
-    for(const i of dexs){
-      const chain = chains.find((o: { name: any }) => o.name === i.chain_name)
+  //   for(const i of dexs){
+  //     const chain = chains.find((o: { name: any }) => o.name === i.chain_name)
 
-      if(!dex_map[i.dex_name]){
-        dex_map[i.dex_name] = [chain]
-      }else{
-        dex_map[i.dex_name] = [...dex_map[i.dex_name], chain]
-      }
-    }
+  //     if(!dex_map[i.dex_name]){
+  //       dex_map[i.dex_name] = [chain]
+  //     }else{
+  //       dex_map[i.dex_name] = [...dex_map[i.dex_name], chain]
+  //     }
+  //   }
 
-    setChainMap(chain_map)
-    setDexMap(dex_map)
+  //   setChainMap(chain_map)
+  //   setDexMap(dex_map)
 
-  }
+  // }
 
-  const handleAllChains = async () => {
-    setBusy(true)
-    if (!COVALENT_API_KEY) return
+  // const handleAllChains = async () => {
+  //   // console.log(COVALENT_API_KEY,99999)
+  //   setBusy(true)
+  //   if (!COVALENT_API_KEY) return
 
-    const client = new CovalentClient(COVALENT_API_KEY)
-    try {
-      const allChainsResp = await client.BaseService.getAllChains()
-      if (allChainsResp.error) {
-        toast({
-          variant: "destructive",
-          title: "Something went wrong.",
-          description: allChainsResp.error_message,
-        })
-      }
-      setChains(allChainsResp.data.items)
-      return allChainsResp.data.items
-    } catch (exception) {
-      console.log(exception)
-    }
-    setBusy(false)
-  }
+  //   const client = new CovalentClient(COVALENT_API_KEY)
+  //   try {
+  //     const allChainsResp = await client.BaseService.getAllChains()
+  //     if (allChainsResp.error) {
+  //       toast({
+  //         variant: "destructive",
+  //         title: "Something went wrong.",
+  //         description: allChainsResp.error_message,
+  //       })
+  //     }
+  //     setChains(allChainsResp.data.items)
+  //     return allChainsResp.data.items
+  //   } catch (exception) {
+  //     console.log(exception)
+  //   }
+  //   setBusy(false)
+  // }
 
-  const handleAllDex = async () => {
-    setBusy(true)
-    if (!COVALENT_API_KEY) return
+  // const handleAllDex = async () => {
+  //   setBusy(true)
+  //   if (!COVALENT_API_KEY) return
 
-    const client = new CovalentClient(COVALENT_API_KEY)
-    try {
-      const allDexsResp = await client.XykService.getSupportedDEXes()
-      if (allDexsResp.error) {
-        toast({
-          variant: "destructive",
-          title: "Something went wrong.",
-          description: allDexsResp.error_message,
-        })
-      }
-      return allDexsResp.data.items
-    } catch (exception) {
-      console.log(exception)
-    }
+  //   const client = new CovalentClient(COVALENT_API_KEY)
+  //   try {
+  //     const allDexsResp = await client.XykService.getSupportedDEXes()
+  //     if (allDexsResp.error) {
+  //       toast({
+  //         variant: "destructive",
+  //         title: "Something went wrong.",
+  //         description: allDexsResp.error_message,
+  //       })
+  //     }
+  //     return allDexsResp.data.items
+  //   } catch (exception) {
+  //     console.log(exception)
+  //   }
 
-    setBusy(false)
-  }
+  //   setBusy(false)
+  // }
 
 
-  useEffect(() => {
-    (async () => {
-      const chains = await handleAllChains()
-      const dexs = await handleAllDex()
-      if(chains && dexs){
-        handleSupported(dexs, chains)
-      }
-      setBusy(false)
-    })();
-  }, [])
+  // useEffect(() => {
+  //   (async () => {
+  //     const chains = await handleAllChains()
+  //     const dexs = await handleAllDex()
+  //     if(chains && dexs){
+  //       handleSupported(dexs, chains)
+  //     }
+  //     setBusy(false)
+  //   })();
+  // }, [])
 
-  useEffect(() => {
-    if(chainMap){
-      console.log("chainMap[value]:", chainMap[value])
-      setAddress("");
-      setDexs(chainMap[value])
-    }
-  }, [value])
+  // useEffect(() => {
+  //   console.log("chainMap[value]:", ssionChian)
+  //   if(chainMap){
+  //     setAddress("");
+  //     setDexs(chainMap[value])
+  //   }
+  // }, [ssionChian])
 
   useEffect(()=>{
-    const value = "eth-mainnet"
+    // console.log("chainMap[value]:", ssionChian)
+    const value = "binancetestnet"
     const address = "ttswap";//"uniswap_v2";
     router.push(`${value}/${address}/overview/`)
   },[])

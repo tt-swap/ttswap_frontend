@@ -12,7 +12,9 @@ import { Input, Button, Tree, Spin, Flex } from 'antd';
 import type { GetProps, TreeDataNode } from 'antd';
 import { useValueGood } from "@/stores/valueGood";
 
-import { prettifyCurrencys } from '@/graphql/util';
+
+import {useLocalStorage} from "@/utils/LocalStorageManager";
+import { prettifyCurrencys,Timestamp } from '@/graphql/util';
 import { GoodsDatas } from '@/graphql/swap/index';
 
 type DirectoryTreeProps = GetProps<typeof Tree.DirectoryTree>;
@@ -33,14 +35,19 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
     const { swaps } = useSwapStore();
     const { info } = useValueGood();
     const [spinning, setSpinning] = useState(false);
+    const [addS, setAddS] = useState(0);
+    // @ts-ignore
+    const { ssionChian  } = useLocalStorage();
 
     useMemo(() => {
         setSpinning(true);
+        console.log(addS);
         (async () => {
             let a: any = await GoodsDatas({
                 id: info.id,
-                sel: keyword
-            });
+                sel: keyword,
+                par: Timestamp()
+            },ssionChian);
             let rest: Array<LocalCurrency> = a.tokenValue;
             // console.log(a,33332)
             setTokensValue(rest);
@@ -88,7 +95,7 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
             setTokens(a.tokens);
             setSpinning(false);
         })()
-    }, [info, keyword]);
+    }, [info, keyword,addS,ssionChian]);
     // console.log(availableTokens,222)
     const isDefault = value.symbol === DEFAULT_TOKEN;
 
@@ -125,6 +132,7 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
     };
 
     const handleClose = (a: boolean, b: string) => {
+        setAddS(addS+1);
         setOpen(a);
         document.body.style.overflow = b;
     };

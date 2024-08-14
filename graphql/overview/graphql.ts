@@ -4,8 +4,8 @@ import apolloClient from '@/graphql/apollo'
 import { gql } from '@apollo/client'
 
 //Overview 走势图数据
-export function ecosystemChartData(params: { id: string; eq7: number; eq30: number }) {
-	return apolloClient.query({
+export function ecosystemChartData(params: { id: string; eq7: number; eq30: number },ssionChian:number) {
+	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$eq7: BigInt,$eq30: BigInt) {
 			goodState(id: $id) {
 				currentQuantity
@@ -42,8 +42,8 @@ export function ecosystemChartData(params: { id: string; eq7: number; eq30: numb
 }
 
 //记录列表
-export function transactions(params: { id: string; first: number }) {
-	return apolloClient.query({
+export function transactions(params: { id: string; first: number },ssionChian:number) {
+	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$first: Int) {
 			goodState(id: $id) {
 				currentQuantity
@@ -86,8 +86,8 @@ export function transactions(params: { id: string; first: number }) {
 }
 
 //物品列表
-export function parGoodDatas(params: { id: string; first: number; time: number; skips: number }) {
-	return apolloClient.query({
+export function parGoodDatas(params: { id: string; first: number; time: number; skips: number },ssionChian:number) {
+	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$first: Int,$time: BigInt,$skips: Int) {
 			goodState(id: $id) {
 				currentQuantity
@@ -97,13 +97,12 @@ export function parGoodDatas(params: { id: string; first: number; time: number; 
 				tokensymbol
 				tokendecimals
 			}
-			parGoodStates(
+			goodStates(
 				first: $first
 				skip: $skips
 				where: {id_not: "0"}
 				) {
 				id
-				goodCount
 				tokenname
 				tokensymbol
 				tokendecimals
@@ -112,7 +111,7 @@ export function parGoodDatas(params: { id: string; first: number; time: number; 
 				erc20Address
 				currentQuantity
 				currentValue
-				parGooddata(
+				goodData(
 					orderBy: modifiedTime
 					orderDirection: desc
 					first: 1
@@ -127,12 +126,6 @@ export function parGoodDatas(params: { id: string; first: number; time: number; 
 					timetype
 					currentQuantity
 					currentValue
-					pargood {
-					  tokenname
-					  tokendecimals
-					  tokensymbol
-					  id
-					}
 				}
 			  }
 		}`,
@@ -143,10 +136,10 @@ export function parGoodDatas(params: { id: string; first: number; time: number; 
 
 //投资列表
 export function InvestGoodDatas(params: {
-	id: string; first: number; time: number; skip: number
-}) {
-	return apolloClient.query({
-		query: gql`query($id: BigInt,$first: Int,$time: BigInt,$skip: Int) {
+	id: string; first: number; time: number; time24: number; skip: number
+},ssionChian:number) {
+	return apolloClient(ssionChian).query({
+		query: gql`query($id: BigInt,$first: Int,$time: BigInt,$time24: BigInt,$skip: Int) {
 			goodState(id: $id) {
 				currentValue
 				currentQuantity
@@ -155,13 +148,12 @@ export function InvestGoodDatas(params: {
 				tokenname
 				tokensymbol
 			}
-			parGoodStates(
+			goodStates(
 				first: $first
 				skip: $skip
 				where: {id_not: "0"}
 				) {
 					id
-					goodCount
 					tokenname
 					tokensymbol
 					tokendecimals
@@ -172,11 +164,11 @@ export function InvestGoodDatas(params: {
 					totalInvestCount
 					investQuantity
 					feeQuantity
-					parGooddata(
+					goodData(
 						orderBy: modifiedTime
 						orderDirection: desc
 						first: 1
-						where: {modifiedTime_lte: $time, timetype: "d"}
+						where: {modifiedTime_lte: $time, timetype: "y"}
 					  ) {
 						id
 						decimals
@@ -189,15 +181,25 @@ export function InvestGoodDatas(params: {
 						investQuantity
 						currentQuantity
 						currentValue
-						pargood {
-							id
-							tokenname
-							tokendecimals
-							tokensymbol
-						}
+					}
+					date24: goodData(
+						orderBy: modifiedTime
+						orderDirection: desc
+						first: 1
+						where: {modifiedTime_lte: $time24, timetype: "d"}
+					  ) {
+						id
+						decimals
+						modifiedTime
+						timetype
+						totalInvestQuantity
+						totalInvestCount
+						feeQuantity
+						investQuantity
+						currentQuantity
+						currentValue
 					}
 			  }
-			  
 		}`,
 		variables: params
 	})

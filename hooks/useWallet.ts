@@ -7,7 +7,8 @@ import erc20 from '@/data/abi/erc20.json';
 import MarketManager from '@/data/abi/MarketManager.json';
 import { useSwapAmountStore } from "@/stores/swapAmount";
 import { powerIterative } from '@/graphql/util';
-import { useWalletAddress } from "@/stores/walletAddress";
+import { useWalletAddress,useChainId } from "@/stores/walletAddress";
+import {useLocalStorage} from "@/utils/LocalStorageManager";
 
 import { getContractAddress } from '@/data/contractConfig';
 // import { walletLogo } from "@coinbase/wallet-sdk/dist/assets/wallet-logo";
@@ -18,12 +19,16 @@ const useWallet = () => {
     const { ethereum } = window;
     // }
     const provider = new ethers.BrowserProvider(ethereum);
+    
+  // @ts-ignore
+  const { ssionChian  } = useLocalStorage();
+
     // const provider = new ethers.JsonRpcProvider('http://142.171.157.66:8545');
-    let chainId = 1;
-    if (sessionStorage.getItem("chainId") !== null) {
-        chainId = Number(sessionStorage.getItem("chainId"));
-    }
-    const contractAddress = getContractAddress(chainId);//'0xdb19B22665aFB391F45a8C985c47EBB09cfB3c1c'; // MarketManager 合约地址  0xB756137A6fE9acD420fEECD9dE30282b93d35861
+    // let chainId = 1;
+    // if (sessionStorage.getItem("chainId") !== null) {
+    //     chainId = Number(sessionStorage.getItem("chainId"));
+    // }
+    const contractAddress = getContractAddress(ssionChian);//'0xdb19B22665aFB391F45a8C985c47EBB09cfB3c1c'; // MarketManager 合约地址  0xB756137A6fE9acD420fEECD9dE30282b93d35861
     const gater = '0x0f18a2428c934db7b9e040f8fc6e08975cbef07a'; // gater address
 
 
@@ -37,6 +42,7 @@ const useWallet = () => {
     const [account, setAccount] = useState(null);
     const [isActive, setIsActive] = useState(false);
     const { address } = useWalletAddress();
+    // const { ssionChian } = useChainId();
     // useEffect(() => {
     //   (async () => {
     //     const signer = await provider.getSigner()
@@ -119,7 +125,7 @@ const useWallet = () => {
             setbalanceMap({ from: from, to: to });
             return { from: from, to: to }
         } else setbalanceMap({ from: 0, to: 0 }) //return { from: 0, to: 0 }
-    }, [swaps, isActive, address]);
+    }, [swaps, isActive, address,ssionChian]);
 
 
     // const balanceMap1 = 
@@ -131,7 +137,7 @@ const useWallet = () => {
             setbalanceMap1({ from: from, to: to });
             return { from: from, to: to }
         } else setbalanceMap1({ from: 0, to: 0 }) // return { from: 0, to: 0 }
-    }, [invest, isActive, address]);
+    }, [invest, isActive, address,ssionChian]);
 
 
     const checkContractExists = async (contract: any) => {

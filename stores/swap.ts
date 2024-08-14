@@ -10,7 +10,7 @@ interface SwapStore {
 const initDefaultSwap = (): SwapState => ({
   from: {
     symbol: DEFAULT_TOKEN,
-    id: "",
+    id: 0,
     buyFee: 0,
     sellFee: 0,
     price: 0,
@@ -22,7 +22,7 @@ const initDefaultSwap = (): SwapState => ({
   },
   to: {
     symbol: DEFAULT_TOKEN,
-    id: "",
+    id: 0,
     buyFee: 0,
     sellFee: 0,
     price: 0,

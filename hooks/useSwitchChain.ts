@@ -8,13 +8,13 @@ export function useSwitchChain() {
   const { connector,isActive } = useWeb3React();
 
   const switchChain = async (desiredChain: number) => {
-    console.log(desiredChain,11999)
+    console.log(getAddChainParameters(desiredChain),11999)
     // if (!isActive) return;
-    if (connector instanceof WalletConnect || connector instanceof Network) {
-      await connector.activate(desiredChain === -1 ? undefined : desiredChain);
-    } else {
+    // if (connector instanceof WalletConnect || connector instanceof Network) {
+    //   await connector.activate(desiredChain === -1 ? undefined : desiredChain);
+    // } else {
       await connector.activate(desiredChain === -1 ? undefined : getAddChainParameters(desiredChain));
-    }
+    // }
   };
 
   return switchChain;
