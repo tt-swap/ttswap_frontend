@@ -2,14 +2,14 @@
 import { useRouter, usePathname } from "next/navigation";
 // import { XYKWalletInformation } from "@covalenthq/goldrush-kit";
 import { GoldRushProvider } from "@/utils/store";
-import { XYKWalletPositionsListView, XYKWalletTransactionsListView, XYKWalletPoolListView } from "@/components/Organisms"
+import { XYKWalletPositionsListView, XYKWalletTransactionsListView, XYKWalletPoolListView, XYKWalletCommissionListView } from "@/components/Organisms"
 import { XYKWalletInformation } from "@/components/Molecules"
 import { CreatGoods } from "@/components/goods/creatGoods"
 // import { Faucet } from "@/components/faucet"
 import { Disinvest } from "@/components/goods/disinvest"
 import { Flex } from "@radix-ui/themes";
 import { Button } from "@/components/ui/button";
-import { message } from 'antd';
+import { message, Tooltip } from 'antd';
 // import { Label } from "@/components/ui/label";
 // import { Input } from "@/components/ui/input";
 import { handleTabSwitch } from "@/utils/router";
@@ -18,14 +18,14 @@ import { useEffect, useState, useMemo } from "react";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 
 import { useWeb3React } from "@web3-react/core";
-import {useLocalStorage} from "@/utils/LocalStorageManager";
+import { useLocalStorage } from "@/utils/LocalStorageManager";
 // import { myIndexes } from '@/graphql/account';
 // import { prettifyCurrencys } from '@/graphql/util';
 
 export default function Account({ params }: { params: { chain: string, dex: string } }) {
 
   // @ts-ignore
-  const { ssionChian  } = useLocalStorage();
+  const { ssionChian } = useLocalStorage();
   const { account } = useWeb3React();
   const router = useRouter();
   const [walletAddress, setAddress] = useState<string | null>("")
@@ -39,6 +39,9 @@ export default function Account({ params }: { params: { chain: string, dex: stri
   const [messageApi, contextHolder] = message.useMessage();
 
   const pathname = usePathname()
+
+  // const text = <span>Collect current display goods commission.</span>;
+
 
   useMemo(() => {
     setAddress(window.localStorage.getItem("wallet"));
@@ -66,13 +69,13 @@ export default function Account({ params }: { params: { chain: string, dex: stri
     document.body.removeChild(textarea);
   }
 
-  function mess(){
+  function mess() {
     messageApi.open({
       type: 'success',
       content: 'Success Copy',
     });
   }
-console.log("account")
+  console.log("account")
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -91,12 +94,12 @@ console.log("account")
               onClick={() => {
                 if (navigator.clipboard) {
                   // 使用 clipboard API 复制文本
-                  navigator.clipboard.writeText(window.location.host+handleTabSwitch("overview", pathname)+"?"+walletAddress);
+                  navigator.clipboard.writeText(window.location.host + handleTabSwitch("overview", pathname) + "?" + walletAddress);
                   mess();
                   // alert('文本已复制到剪贴板');
                 } else {
                   // 如果不支持，可以提供一个回退方案，比如使用 prompt 或者 textarea + document.execCommand('copy')（但请注意，execCommand 已被弃用）
-                  fallbackCopyTextToClipboard(window.location.host+handleTabSwitch("overview", pathname)+"?"+walletAddress);
+                  fallbackCopyTextToClipboard(window.location.host + handleTabSwitch("overview", pathname) + "?" + walletAddress);
                   mess();
                   // alert('浏览器不支持 clipboard API');
                 }
@@ -123,7 +126,7 @@ console.log("account")
         chain_id={ssionChian}
       />
       <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
-        Invest Proof
+        My Proof
       </h2>
       <GoldRushProvider
         apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
@@ -182,8 +185,47 @@ console.log("account")
           }}
         />
       </GoldRushProvider>
+
       <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
-        Transactions
+        My Commission
+        {/* <Tooltip placement="top" title={text}>
+          <Button
+            className="newButton mx-2"
+            onClick={() => {
+            }}
+          >Collect</Button>
+        </Tooltip> */}
+      </h2>
+      <GoldRushProvider
+        apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
+        newTheme={{
+          borderRadius: 10,
+        }}
+      >
+        <XYKWalletCommissionListView
+          // @ts-ignore
+          chain_name={params.chain}
+          dex_name={params.dex === "ttswap" ? "uniswap_v2" : params.dex}
+          page_size={10}
+          wallet_address={walletAddress}
+          data_num={dataNum}
+          value_good_id={info.id}
+          chain_id={ssionChian}
+        // is_over={true}
+        // on_pool_click={(e: any, id: string) => {
+        //   if (e === "invest") {
+        //     setGoodId({ invest: { id: id }, swap: { id: "" } });
+        //     // sessionStorage.setItem("invest", id);
+        //   } else {
+        //     setGoodId({ invest: { id: "" }, swap: { id: id } });
+        //     // sessionStorage.setItem("swap", id);
+        //   }
+        //   router.push(`${handleTabSwitch(e, pathname)}`);
+        // }}
+        />
+      </GoldRushProvider>
+      <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">
+        My Transactions
       </h2>
       <XYKWalletTransactionsListView
         // @ts-ignore

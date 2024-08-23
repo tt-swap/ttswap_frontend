@@ -13,7 +13,7 @@ import useWallet from "@/hooks/useWallet";
 import Message from '@/components/MessModal/index';
 import { useWeb3React } from "@web3-react/core";
 import { useSwitchChain } from "hooks";
-import {useLocalStorage} from "@/utils/LocalStorageManager";
+import { useLocalStorage } from "@/utils/LocalStorageManager";
 // import BigNumber from 'bignumber.js';
 
 import { GoodsDatas } from '@/graphql';
@@ -30,9 +30,9 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const switchChain = useSwitchChain();
-    const { chainId } = useWeb3React();
-    // @ts-ignore
-    const { ssionChian  } = useLocalStorage();
+  const { chainId } = useWeb3React();
+  // @ts-ignore
+  const { ssionChian } = useLocalStorage();
   const [open, setOpen] = useState(false);
   const [buyF, setBuyF] = useState(8);
   const [sellF, setSellF] = useState(8);
@@ -100,10 +100,10 @@ export const CreatGoods = ({ setDataNum }: Props) => {
 
   const newGood = async () => {
     await switchChain(ssionChian).catch((error) => {
-        console.error(`"Failed to switch chains: " ${error}`);
-      });
+      console.error(`"Failed to switch chains: " ${error}`);
+    });
     if (chainId !== ssionChian) {
-        return;
+      return;
     }
     setSpinning(true);
     // console.log(goodC.length);
@@ -204,6 +204,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                 <InputNumber
                   addonAfter="‱"
                   min={1}
+                  max={127}
                   step={1}
                   precision={0}
                   // @ts-ignore
@@ -216,6 +217,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                 <InputNumber
                   addonAfter="‱"
                   min={1}
+                  max={127}
                   step={1}
                   precision={0}
                   // @ts-ignore
@@ -230,6 +232,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                 <InputNumber
                   addonAfter="‱"
                   min={1}
+                  max={63}
                   step={1}
                   precision={0}
                   // @ts-ignore
@@ -242,6 +245,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                 <InputNumber
                   addonAfter="‱"
                   min={1}
+                  max={63}
                   step={1}
                   precision={0}
                   // @ts-ignore
