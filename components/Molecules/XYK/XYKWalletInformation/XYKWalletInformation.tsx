@@ -104,7 +104,7 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
                                 <div className="text-md text-secondary-light">Total Trade Amount</div>
                             </div>
                         </div>
-                        <div className="flex flex-grow flex-wrap items-center gap-8">
+                        {/* <div className="flex flex-grow flex-wrap items-center gap-8">
                             <div className="flex flex-col gap-1">
                                 <div className="flex gap-2">
                                     <h2 className="text-xl">{
@@ -113,7 +113,7 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
                                 </div>
                                 <div className="text-md text-secondary-light">Total Trade Count</div>
                             </div>
-                        </div>
+                        </div> */}
                         <div className="flex flex-grow flex-wrap items-center gap-8">
                             <div className="flex flex-col gap-1">
                                 <div className="flex gap-2">
@@ -122,16 +122,6 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
                                         prettifyCurrencys(maybeResult.investValue)}{" "}{info.symbol}</h2>
                                 </div>
                                 <div className="text-md text-secondary-light">Total Invest Amount</div>
-                            </div>
-                        </div>
-                        <div className="flex flex-grow flex-wrap items-center gap-8">
-                            <div className="flex flex-col gap-1">
-                                <div className="flex gap-2">
-                                    <h2 className="text-xl">{
-                                        // @ts-ignore
-                                        maybeResult.investCount}</h2>
-                                </div>
-                                <div className="text-md text-secondary-light">Total Invest Count</div>
                             </div>
                         </div>
                         <div className="flex flex-grow flex-wrap items-center gap-8">
@@ -149,9 +139,19 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
                                 <div className="flex gap-2">
                                     <h2 className="text-xl">{
                                         // @ts-ignore
-                                        maybeResult.disinvestCount}</h2>
+                                        prettifyCurrencys(maybeResult.totalprofitvalue)}{" "}{info.symbol}</h2>
                                 </div>
-                                <div className="text-md text-secondary-light">Total Divest Count</div>
+                                <div className="text-md text-secondary-light">Total Profit Amount</div>
+                            </div>
+                        </div>
+                        <div className="flex flex-grow flex-wrap items-center gap-8">
+                            <div className="flex flex-col gap-1">
+                                <div className="flex gap-2">
+                                    <h2 className="text-xl">{
+                                        // @ts-ignore
+                                        prettifyCurrencys(maybeResult.totalcommissionvalue)}{" "}{info.symbol}</h2>
+                                </div>
+                                <div className="text-md text-secondary-light">Total Commission Amount</div>
                             </div>
                         </div>
                     </div>

@@ -19,3 +19,4 @@ export { XYKTokenTransactionsListView } from "./XYK/XYKTokenTransactionsListView
 export { XYKWalletPoolListView } from "./XYK/XYKWalletPoolListView/XYKWalletPoolListView";
 export { XYKWalletPositionsListView } from "./XYK/XYKWalletPositionsListView/XYKWalletPositionsListView";
 export { XYKWalletTransactionsListView } from "./XYK/XYKWalletTransactionsListView/XYKWalletTransactionsListView";
+export { XYKWalletCommissionListView } from "./XYK/XYKWalletCommissionListView/XYKWalletCommissionListView";

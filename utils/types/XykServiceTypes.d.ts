@@ -64,6 +64,8 @@ export interface Pool {
     feeValue24: any;
     unitFee: any;
     APY: any;
+    myFeeAmount:any;
+    totalTradeCount:any;
 }
 
 export interface walletPool {

@@ -7,8 +7,8 @@ import erc20 from '@/data/abi/erc20.json';
 import MarketManager from '@/data/abi/MarketManager.json';
 import { useSwapAmountStore } from "@/stores/swapAmount";
 import { powerIterative } from '@/graphql/util';
-import { useWalletAddress,useChainId } from "@/stores/walletAddress";
-import {useLocalStorage} from "@/utils/LocalStorageManager";
+import { useWalletAddress, useChainId } from "@/stores/walletAddress";
+import { useLocalStorage } from "@/utils/LocalStorageManager";
 
 import { getContractAddress } from '@/data/contractConfig';
 // import { walletLogo } from "@coinbase/wallet-sdk/dist/assets/wallet-logo";
@@ -19,9 +19,9 @@ const useWallet = () => {
     const { ethereum } = window;
     // }
     const provider = new ethers.BrowserProvider(ethereum);
-    
-  // @ts-ignore
-  const { ssionChian  } = useLocalStorage();
+
+    // @ts-ignore
+    const { ssionChian } = useLocalStorage();
 
     // const provider = new ethers.JsonRpcProvider('http://142.171.157.66:8545');
     // let chainId = 1;
@@ -125,7 +125,7 @@ const useWallet = () => {
             setbalanceMap({ from: from, to: to });
             return { from: from, to: to }
         } else setbalanceMap({ from: 0, to: 0 }) //return { from: 0, to: 0 }
-    }, [swaps, isActive, address,ssionChian]);
+    }, [swaps, isActive, address, ssionChian]);
 
 
     // const balanceMap1 = 
@@ -137,8 +137,22 @@ const useWallet = () => {
             setbalanceMap1({ from: from, to: to });
             return { from: from, to: to }
         } else setbalanceMap1({ from: 0, to: 0 }) // return { from: 0, to: 0 }
-    }, [invest, isActive, address,ssionChian]);
+    }, [invest, isActive, address, ssionChian]);
 
+
+    const collect = async (ids: any) => {
+
+        const signer = await provider.getSigner()
+        const contract = new ethers.Contract(contractAddress, MarketManager, signer);
+        console.log(ids);
+        return await contract.collectCommission(ids).then((transaction) => {
+            console.log('Transaction sent:', transaction);
+            return true;
+        }).catch((error: any) => {
+            console.error('出错:', error);
+            return false;
+        });
+    }
 
     const checkContractExists = async (contract: any) => {
         try {
@@ -174,11 +188,11 @@ const useWallet = () => {
 
         const signer = await provider.getSigner()
         const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-        let reference:any = "0x0000000000000000000000000000000000000000";
-        if (localStorage.getItem("reference")!==null) {
+        let reference: any = "0x0000000000000000000000000000000000000000";
+        if (localStorage.getItem("reference") !== null) {
             reference = localStorage.getItem("reference");
         }
-        
+
         console.log(pid, qut);
         return await contract.disinvestProof(pid, qut, gater, reference).then((transaction) => {
             console.log('Transaction sent:', transaction);
@@ -199,7 +213,7 @@ const useWallet = () => {
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
 
             let decimals = 18;
-            if (addr.length < 5 || addr ==="0x0000000000000000000000000000000000000000") {
+            if (addr.length < 5 || addr === "0x0000000000000000000000000000000000000000") {
                 decimals = 18;
             } else if (addr === goodVaddr) {
                 decimals = goodDec;
@@ -365,6 +379,7 @@ const useWallet = () => {
                         return false;
                     });
                 } else {
+                    console.log(3333, vgood, qunt, addr, config)
                     return await contract.initGood(vgood, qunt, addr, config).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
@@ -1006,7 +1021,7 @@ const useWallet = () => {
         networkCost,
         swapBuyGood,
         investGoods,
-        newGoods, disinvest, faucetTestCion,checkContractExists
+        newGoods, disinvest, faucetTestCion, checkContractExists, collect
     };
 };
 

@@ -1,14 +1,10 @@
 import { getExplorer, getChainName } from '@/data/networks';
-import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex } from './graphql';
+import { ethers } from "ethers";
+import MarketManager from '@/data/abi/MarketManager.json';
+import { getContractAddress } from '@/data/contractConfig';
+import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex, myCommission } from './graphql';
 import { timestampdToDateSub, powerIterative, iconUrl, timestampSubH } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
-
-// import ApolloClient from '@/graphql/apollo'
-// const apolloClient = ApolloClient();
-// let chainId = 0;
-// if (sessionStorage.getItem("chainId") !== null) {
-//     chainId = Number(sessionStorage.getItem("chainId"));
-// }
 
 // 我的投资列表
 export async function myInvestGoodsDatas(params: { id: string; address: string; pageNumber: number; pageSize: number; }, ssionChian: number): Promise<object> {
@@ -260,10 +256,11 @@ export async function myDisInvestProofGood(id: number, ssionChian: number): Prom
 }
 
 
-// 
+// myIndexes
 export async function myIndexes(id: string, wallet_address: any, ssionChian: number): Promise<object> {
 
-    let items = { disinvestCount: 0, disinvestValue: 0, investCount: 0, investValue: 0, tradeCount: 0, tradeValue: 0, isEmpty: true };
+    let items = { disinvestCount: 0, disinvestValue: 0, investCount: 0, investValue: 0, 
+        tradeCount: 0, tradeValue: 0, totalcommissionvalue: 0, totalprofitvalue: 0, isEmpty: true };
     if (id && wallet_address !== null) {
         const goodsDatas = await myIndex({ id: id, address: wallet_address.toLowerCase() }, ssionChian);
         let goodQuantity = goodsDatas.data.goodState.currentQuantity / goodsDatas.data.goodState.currentValue;
@@ -276,6 +273,8 @@ export async function myIndexes(id: string, wallet_address: any, ssionChian: num
         items.disinvestValue = data.disinvestValue / tokendecimals * goodQuantity;
         items.investValue = data.investValue / tokendecimals * goodQuantity;
         items.tradeValue = data.tradeValue / tokendecimals * goodQuantity;
+        items.totalcommissionvalue = data.totalcommissionvalue / tokendecimals * goodQuantity;
+        items.totalprofitvalue = data.totalprofitvalue / tokendecimals * goodQuantity;
     }
     return items;
 }
@@ -370,5 +369,75 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
 
         // return item;
     }
+    return item;
+}
+
+
+// My Commission
+export async function myCommissions(params: { id: string; pageNumber: number; pageSize: number; address: string; }, ssionChian: number) {
+    const chainName = getChainName(ssionChian);
+    const goodsDatas = await myCommission({ id: params.id, first: params.pageSize, skip: params.pageSize * params.pageNumber }, ssionChian);
+    let item = { items: {},ids:{}, pagination: { has_more: true }, error: false, error_message: "" };
+
+    let items: object[] = [];
+    let ids: number[] = [];
+    item.items = items;
+    item.ids = ids;
+    if (goodsDatas.data.goodStates.length < params.pageSize) {
+        item.pagination.has_more = false;
+    }
+
+    const goodsValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
+    const base_decimals = powerIterative(10, goodsDatas.data.goodState.tokendecimals);
+    goodsDatas.data.goodStates.forEach((e: any) => {
+        const base_decimals1 = powerIterative(10, e.tokendecimals);
+        const goods = (e.currentValue / base_decimals) / (e.currentQuantity / base_decimals1);
+        const price = goods / goodsValue;
+        // console.log(goodsValue,goods,(e.currentValue / base_decimals),(e.currentQuantity / base_decimals1))
+        let map = {
+            id: "", name: "", symbol: "", logo_url: "", totalFeeQantity: 0, price: 0,valueSymbol:'',tokendecimals:0,
+            totalFeeAmount: 0, myFeeQuanity: 0, myFeeAmount: 0, totalTradeCount: 0
+        };
+
+        map.id = e.id;
+        map.name = e.tokenname;
+        map.symbol = e.tokensymbol;
+        map.tokendecimals = e.tokendecimals;
+        map.logo_url = iconUrl(chainName, e.erc20Address);
+        map.totalFeeQantity = e.feeQuantity / base_decimals1;
+        map.totalFeeAmount = map.totalFeeQantity * price;
+        map.totalTradeCount = e.totalTradeCount;
+        map.price = price;
+        map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
+        
+        ids.push(e.id);
+        items.push(map);
+    });
+
+    const { ethereum } = window;
+    const provider = new ethers.BrowserProvider(ethereum);
+    const contractAddress = getContractAddress(ssionChian);
+    const signer = await provider.getSigner()
+    const contract = new ethers.Contract(contractAddress, MarketManager, signer);
+    console.log(item.ids);
+    
+    let feeQs: number[] = [];
+    await contract.queryCommission(item.ids,params.address).then((transaction) => {
+        transaction.map((num: any)=>{
+            // feeQs.push(Number(num));
+        })
+        console.log('Transaction sent:', feeQs);
+    }).catch((error: any) => {
+        console.error('出错:', error);
+    });
+    items.map((value,index)=>{
+        // console.log('items:', value,index);
+        if (feeQs[index]>0) {
+            // @ts-ignore
+            value.myFeeQuanity = feeQs[index] / 10**value.tokendecimals;
+            // @ts-ignore
+            value.myFeeAmount = value.myFeeQuanity * value.price
+        }
+    })
     return item;
 }

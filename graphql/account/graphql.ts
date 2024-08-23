@@ -232,6 +232,44 @@ export function myIndex(params: { id: string, address: string },ssionChian:numbe
 				investValue
 				tradeCount
 				tradeValue
+				totalcommissionvalue
+				totalprofitvalue
+			  }
+		}`,
+		variables: params
+	})
+}
+
+
+// My Commission
+export function myCommission(params: { id: string,  first: number; skip: number; },ssionChian:number) {
+	return apolloClient(ssionChian).query({
+		query: gql`query($id: BigInt,$first: Int,$skip: Int) {
+			goodState(id: $id) {
+				currentQuantity
+				currentValue
+				id
+				tokenname
+				tokensymbol
+				tokendecimals
+			}
+			goodStates(
+				first: $first
+				skip: $skip
+				orderBy: totalTradeCount
+				orderDirection: desc
+				where: {id_not: "0"}
+				) {
+				id
+				tokensymbol
+				tokenname
+				tokendecimals
+				erc20Address
+				feeQuantity
+				totalTradeCount
+				currentQuantity
+				currentValue
+				goodConfig
 			  }
 		}`,
 		variables: params
