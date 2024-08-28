@@ -532,6 +532,47 @@ export interface TokenV2VolumeWithChartData {
     liquidity_timeseries_30d: LiquidityTokenTimeseries[];
     price_timeseries_7d: PriceTokenTimeseries[];
     price_timeseries_30d: PriceTokenTimeseries[];
+    id: any;
+    name: any;
+    decimals: any;
+    symbol: any;
+    logo_url: any;
+    valueSymbol: any;
+    totalFee: any;
+    price: any;
+    price_24h: any;
+    totalFeeValue: any;
+    fee24: any;
+    feeValue24: any;
+    unitFee: any;
+    totalTradeQuantity: any;
+    totalTradeValue: any;
+    tradeQuantity24: any;
+    tradeValue24: any;
+    currentQuantity: any;
+    address:string;
+    exp_url:string;
+    investQuantity24:any;
+    APY:any;
+    investValue24: any;
+    totalInvestQuantity: any;
+    totalInvestValue: any;
+    totalDisinvestQuantity: any;
+    totalDisinvestValue: any;
+    totalTradeCount: any;
+    totalInvestCount: any;
+    owner: any;
+    buyFee: any;
+    sellFee: any;
+    investFee: any;
+    divestFee: any;
+    swapChips: any;
+    divestChips: any;
+    currentValue: any;
+    investQuantity: any;
+    investValue: any;
+    currentFee: any;
+    currentFeeValue: any;
 }
 export interface VolumeTokenTimeseries {
     /** * The name of the DEX, eg: `uniswap_v2`. */

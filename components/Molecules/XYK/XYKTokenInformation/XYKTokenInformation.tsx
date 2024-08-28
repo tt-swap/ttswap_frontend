@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { type Option, Some, None } from "@/utils/option";
-import { useGoldRush } from "@/utils/store";
+// import { useGoldRush } from "@/utils/store";
 import { copyToClipboard, truncate } from "@/utils/functions";
 // @ts-ignore
-import { type TokenV2VolumeWithChartData } from "@covalenthq/client-sdk";
+import { type TokenV2VolumeWithChartData } from "@/utils/types/XykServiceTypes";
 import { useState } from "react";
 import { useToast } from "../../../../utils/hooks";
 import { IconWrapper } from "@/components/Shared";
@@ -21,23 +21,23 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
     const [maybeResult, setResult] =
         useState<Option<TokenV2VolumeWithChartData>>(None);
     const { toast } = useToast();
-    const { covalentClient } = useGoldRush();
+    // const { covalentClient } = useGoldRush();
 
-    const handlePoolInformation = async () => {
-        setResult(None);
-        let response;
-        try {
-            // @ts-ignore
-            response = await covalentClient.XykService.getLpTokenView(
-                chain_name,
-                dex_name,
-                token_address
-            );
-            setResult(new Some(response.data.items[0]));
-        } catch (error) {
-            console.error(`Error fetching token for ${chain_name}:`, error);
-        }
-    };
+    // const handlePoolInformation = async () => {
+    //     setResult(None);
+    //     let response;
+    //     try {
+    //         // @ts-ignore
+    //         response = await covalentClient.XykService.getLpTokenView(
+    //             chain_name,
+    //             dex_name,
+    //             token_address
+    //         );
+    //         setResult(new Some(response.data.items[0]));
+    //     } catch (error) {
+    //         console.error(`Error fetching token for ${chain_name}:`, error);
+    //     }
+    // };
 
     const InformationContainer: React.FC<{
         label: string;
@@ -85,10 +85,11 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
 
     useEffect(() => {
         if (token_data) {
+                    // @ts-ignore
             setResult(new Some(token_data));
             return;
         }
-        handlePoolInformation();
+        // handlePoolInformation();
     }, [dex_name, token_address, chain_name]);
 
     return (
@@ -114,15 +115,20 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
                             <div className="flex flex-grow flex-wrap items-center gap-8">
                                 <InformationContainer
                                     label="Symbol"
-                                    text={`${result.contract_ticker_symbol}`}
+                                    text={`${result.symbol}`}
                                 />
                                 <InformationContainer
                                     label={"Name"}
-                                    text={`${result.contract_name}`}
+                                    text={`${result.name}`}
                                     copy
                                 />
                                 <InformationContainer
-                                    label="Address"
+                                    label={"Address"}
+                                    text={`${result.address}`}
+                                    copy
+                                />
+                                <InformationContainer
+                                    label="Goodsid"
                                     text={token_address}
                                     copy
                                 />
@@ -134,7 +140,7 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
                 {maybeResult.match({
                     None: () => <Skeleton size={GRK_SIZES.LARGE} />,
                     Some: (result) => (
-                        <a target="_blank" href={result.explorers[0].url}>
+                        <a target="_blank" href={result.exp_url}>
                             <Button>View on Explorer</Button>
                         </a>
                     ),

@@ -49,13 +49,16 @@ export function parGoodDatas(params: { id: string; sel: string; time: number; },
 								tokensymbol
 								tokendecimals
 								investQuantity
+								contructFee
+								modifiedTime
 								goodData(
 								  first: 1
 								  orderBy: modifiedTime
 								  orderDirection: desc
-								  where: {timetype: "d", modifiedTime_lte: $time}
+								  where: {timetype: "y", modifiedTime_lte: $time}
 								) {
 								  feeQuantity
+								  investQuantity
 								  modifiedTime
 								}
 							}
@@ -108,13 +111,16 @@ export function parGoodDatas(params: { id: string; sel: string; time: number; },
 								tokensymbol
 								tokendecimals
 								investQuantity
+								contructFee
+								modifiedTime
 								goodData(
 								  first: 1
 								  orderBy: modifiedTime
 								  orderDirection: desc
-								  where: {timetype: "d", modifiedTime_lte: $time}
+								  where: {timetype: "y", modifiedTime_lte: $time}
 								) {
 								  feeQuantity
+							investQuantity
 								  modifiedTime
 								}
 							}
@@ -167,13 +173,16 @@ export function parGoodDatas(params: { id: string; sel: string; time: number; },
 							tokensymbol
 							tokendecimals
 							investQuantity
+								contructFee
+								modifiedTime
 							goodData(
 							  first: 1
 							  orderBy: modifiedTime
 							  orderDirection: desc
-							  where: {timetype: "d", modifiedTime_lte: $time}
+							  where: {timetype: "y", modifiedTime_lte: $time}
 							) {
 							  feeQuantity
+							investQuantity
 							  modifiedTime
 							}
 						}

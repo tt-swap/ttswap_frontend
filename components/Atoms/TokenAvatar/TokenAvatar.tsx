@@ -94,7 +94,7 @@ export const TokenAvatar: React.FC<TokenAvatarProps> = ({
     ) : (
         <div
             className={`${SIZE_CLASS} relative rounded-[100%]`}
-            style={{ background: chain_color ?? "", padding: "2px" }}
+            style={{ background: chain_color ?? "", padding: "0",border: "solid 2px rgb(0 0 0 / 5%)" }}
         >
             <img
                 src={token_url ?? "/token.svg"}

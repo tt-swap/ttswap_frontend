@@ -347,7 +347,8 @@ const useSwap = () => {
     return {
         swaps,
         swapsAmount,
-        priceImpact, focus,
+        // priceImpact,
+        focus,
         setAmount,
         handleFlip,
         handleSwap,

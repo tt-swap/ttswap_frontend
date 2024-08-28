@@ -187,7 +187,7 @@ export const XYKWalletTransactionsListView: React.FC<XYKWalletTransactionsListVi
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="left"
-                    header_name={"Value"}
+                    header_name={"Market Value"}
                     column={column}
                 />
             ),
@@ -202,7 +202,7 @@ export const XYKWalletTransactionsListView: React.FC<XYKWalletTransactionsListVi
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="left"
-                    header_name={"Goods1 Amount"}
+                    header_name={"Goods1 Quantity"}
                     column={column}
                 />
             ),
@@ -217,7 +217,7 @@ export const XYKWalletTransactionsListView: React.FC<XYKWalletTransactionsListVi
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="left"
-                    header_name={"Goods2 Amount"}
+                    header_name={"Goods2 Quantity"}
                     column={column}
                 />
             ),
