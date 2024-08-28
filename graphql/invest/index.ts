@@ -1,7 +1,7 @@
 import { getChainName } from '@/data/networks';
 import { InvestTokenD } from "@/shared/types/token";
 import { parGoodDatas } from './graphql';
-import { timestampdToDateSub, powerIterative, iconUrl } from '@/graphql/util';
+import { timestampdToDateYear, powerIterative, iconUrl, timestampSubH } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
 
 
@@ -13,7 +13,7 @@ import BigNumber from 'bignumber.js';
 // const chainName = getChainName(chainId);
 
 //物品列表
-export async function GoodsDatas(params: { id: string; sel: string },ssionChian:number): Promise<object> {
+export async function GoodsDatas(params: { id: string; sel: string }, ssionChian: number): Promise<object> {
     const chainName = getChainName(ssionChian);
     let item: InvestTokenD = {
         tokenValue: [],
@@ -21,7 +21,7 @@ export async function GoodsDatas(params: { id: string; sel: string },ssionChian:
     };
     if (params.id !== "") {
 
-        const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel, time: timestampdToDateSub(1) },ssionChian);
+        const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel, time: timestampdToDateYear(1) }, ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -103,7 +103,11 @@ export async function GoodsDatas(params: { id: string; sel: string },ssionChian:
                 // @ts-ignore
                 map1.disinvestFee = goodConfig1.mod(m217).div(m211).integerValue(1).div(10000).toNumber();
                 if (en.goodData.length > 0) {
-                    map1.apy = (en.feeQuantity - en.goodData[0].feeQuantity) / en.feeQuantity * 365;
+                    let enY = en.goodData[0];
+                    let unitFee = (Number(map1.feeQuantity) + Number(map1.investQuantity)) / map1.investQuantity;
+                    let uintFY = (enY.feeQuantity + enY.investQuantity) / enY.investQuantity;
+                    map1.apy = unitFee / uintFY - 1;
+                    // map1.apy = (en.feeQuantity - en.goodData[0].feeQuantity) / en.feeQuantity * 365;
                 } else {
                     map1.apy = 0;
                 }

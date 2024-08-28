@@ -82,11 +82,11 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
                             <Flex className="magL" gap="4px 0" wrap>
                                 <span>
                                     <span>Price:{prettifyCurrencys(el1.price)}{" "+info.symbol}</span>
-                                    <span>Quantity:{prettifyCurrencys(el1.currentQuantity / 10 ** el1.decimals)}</span>
+                                    <span>Volume:{prettifyCurrencys(el1.currentQuantity / 10 ** el1.decimals)}</span>
                                 </span>
                                 <span>
-                                    <span>BuyFee:{(el1.buyFee * 100).toFixed(2)}%</span>
-                                    <span>SellFee:{(el1.sellFee * 100).toFixed(2)}%</span></span>
+                                    <span>Buyfee:{(el1.buyFee * 100).toFixed(2)}%</span>
+                                    <span>Sellfee:{(el1.sellFee * 100).toFixed(2)}%</span></span>
                             </Flex>
                         </>);
 

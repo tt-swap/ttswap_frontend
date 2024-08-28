@@ -13,52 +13,58 @@ import {
 import { useGoldRush } from "@/utils/store";
 import { type XYKTokenTimeSeriesProps } from "@/utils/types/molecules.types";
 import {
-    prettifyCurrency,
-    // @ts-ignore
-    type PriceTokenTimeseries,
-    // @ts-ignore
-    type TokenV2VolumeWithChartData,
-} from "@covalenthq/client-sdk";
+    type VolumeEcosystemChart,
+    type UniswapLikeEcosystemCharts,
+} from "@/utils/types/XykServiceTypes";
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize";
 
+// import { ecosystemChartDatas } from '@/graphql/overview';
+import { prettifyCurrencys } from '@/graphql/util';
+
+
+let currencys: string = '';
 export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
     chain_name,
     dex_name,
     token_address,
     token_data,
     displayMetrics = "both",
+    value_good_id
 }) => {
     const [maybeResult, setResult] =
-        useState<Option<TokenV2VolumeWithChartData>>(None);
+        useState<Option<UniswapLikeEcosystemCharts>>(None);
     const [chartData, setChartData] =
         useState<Option<{ [key: string]: string | number | Date }[]>>(None);
     const [period, setPeriod] = useState<PERIOD>(PERIOD.DAYS_7);
     const [timeSeries, setTimeSeries] = useState<string>(
-        displayMetrics !== "both" ? displayMetrics : "liquidity"
+        displayMetrics !== "both" ? displayMetrics : "volume"
     );
     const { covalentClient } = useGoldRush();
-
     useEffect(() => {
         maybeResult.match({
             None: () => null,
             Some: (response) => {
-                const chart_key = `${timeSeries}_timeseries_${period}d`;
+
+                currencys = response.quote_currency;
+
+                const chart_key = `${timeSeries}_chart_${period}d`;
                 const value_key =
                     timeSeries === "price"
-                        ? "price_of_token0_in_token1"
+                        ? "price"
                         : `${timeSeries}_quote`;
-
                 const result = (
                     response[
-                        chart_key as keyof typeof response
-                    ] as TokenV2VolumeWithChartData["price_timeseries_7d"]
+                    chart_key as keyof typeof response
+                    // @ts-ignore
+                    ] as UniswapLikeEcosystemCharts["volume_chart_7d"]
                     // @ts-ignore
                 ).map((x) => {
                     const dt = timestampParser(x.dt, "DD MMM YY");
                     return {
+                        // currency: x.quote_currency,
                         date: dt,
-                        [`${capitalizeFirstLetter(timeSeries)} (USD)`]:
-                            x[value_key as keyof PriceTokenTimeseries],
+                        [`${capitalizeFirstLetter(timeSeries)}`]:
+                            x[value_key as keyof VolumeEcosystemChart],
                     };
                 });
                 setChartData(new Some(result));
@@ -68,20 +74,20 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
 
     useEffect(() => {
         if (token_data) {
+            // @ts-ignore
             setResult(new Some(token_data));
             return;
         }
-        (async () => {
-            setResult(None);
-            // @ts-ignore
-            const response = await covalentClient.XykService.getLpTokenView(
-                chain_name,
-                dex_name,
-                token_address
-            );
-            setResult(new Some(response.data.items[0]));
-        })();
-    }, [token_data, dex_name, token_address, chain_name, displayMetrics]);
+        // (async () => {
+        //     setResult(None);
+        //     const response =
+
+        //         await ecosystemChartDatas(value_good_id, chain_id);
+
+        //     // @ts-ignore
+        //     setResult(new Some(response));
+        // })();
+    }, [token_data, dex_name, chain_name, displayMetrics, value_good_id]);
 
     useEffect(() => {
         if (displayMetrics === "both") return;
@@ -97,16 +103,17 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
             );
         },
         Some: (result) => {
+            // console.log(result,"###**")
             if (timeSeries === "liquidity") {
                 return (
                     <AreaChart
                         className="mt-2 p-2"
                         data={result}
                         index="date"
-                        valueFormatter={prettifyCurrency}
+                        valueFormatter={prettifyCurrencys}
                         yAxisWidth={100}
                         categories={[
-                            `${capitalizeFirstLetter(timeSeries)} (USD)`,
+                            `${capitalizeFirstLetter(timeSeries)}`,
                         ]}
                         colors={CHART_COLORS}
                     />
@@ -118,10 +125,10 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
                         className="mt-2 p-2"
                         data={result}
                         index="date"
-                        valueFormatter={prettifyCurrency}
+                        valueFormatter={prettifyCurrencys}
                         yAxisWidth={100}
                         categories={[
-                            `${capitalizeFirstLetter(timeSeries)} (USD)`,
+                            `${capitalizeFirstLetter(timeSeries)}`,
                         ]}
                         colors={CHART_COLORS}
                     />
@@ -134,12 +141,12 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
         <div className="min-h-[20rem] w-full rounded border p-4">
             <div className="pb-4">
                 <TypographyH4>{`${capitalizeFirstLetter(
-                    timeSeries === "liquidity" ? "Trade Volume" : timeSeries
-                )} (USD)`}</TypographyH4>
+                    timeSeries === "liquidity" ? "investment" : timeSeries
+                )}`}</TypographyH4>
             </div>
 
             <div className="flex justify-between">
-                {displayMetrics === "both" && (
+                {/* {displayMetrics === "both" && (
                     <div className="flex gap-2">
                         <Button
                             disabled={!maybeResult.isDefined}
@@ -151,7 +158,7 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
                             }
                             onClick={() => setTimeSeries("liquidity")}
                         >
-                            Amount
+                            Liquidity
                         </Button>
                         <Button
                             disabled={!maybeResult.isDefined}
@@ -164,7 +171,7 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
                             Volume
                         </Button>
                     </div>
-                )}
+                )} */}
                 <div className="flex gap-2">
                     <Button
                         disabled={!maybeResult.isDefined}

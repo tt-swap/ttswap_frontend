@@ -144,13 +144,11 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
                             {on_pool_click ? (
                                 <a
                                     className="cursor-pointer hover:opacity-75"
-                                // onClick={() => {
-                                //     if (on_pool_click) {
-                                //         on_pool_click(
-                                //             row.original.id
-                                //         );
-                                //     }
-                                // }}
+                                    onClick={() => {
+                                        if (on_pool_click) {
+                                            on_pool_click("goods/" + row.original.id, row.original.id);
+                                        }
+                                    }}
                                 >
                                     <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
                                     <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
@@ -214,7 +212,7 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Invest Quantity"}
+                    header_name={"Invest Volume"}
                     column={column}
                 />
             ),
@@ -232,7 +230,7 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Current Quantity"}
+                    header_name={"Current Volume"}
                     column={column}
                 />
             ),
@@ -268,7 +266,7 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Fee Quantity"}
+                    header_name={"Fee Volume"}
                     column={column}
                 />
             ),
@@ -437,7 +435,7 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Invest Quantity"}
+                    header_name={"Invest Volume"}
                     column={column}
                 />
             ),

@@ -190,7 +190,7 @@ export const XYKOverviewTransactionsListView: React.FC<
                 header: ({ column }) => (
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Value"}
+                        header_name={"Market Value"}
                         column={column}
                     />
                 ),
@@ -205,7 +205,7 @@ export const XYKOverviewTransactionsListView: React.FC<
                 header: ({ column }) => (
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Goods1 Amount"}
+                        header_name={"Goods1 Quanity"}
                         column={column}
                     />
                 ),
@@ -220,7 +220,7 @@ export const XYKOverviewTransactionsListView: React.FC<
                 header: ({ column }) => (
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Goods2 Amount"}
+                        header_name={"Goods2 Quanity"}
                         column={column}
                     />
                 ),

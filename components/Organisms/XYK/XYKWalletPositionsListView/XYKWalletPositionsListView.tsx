@@ -50,7 +50,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
     chain_name,
     dex_name,
     on_pool_click,
-    page_size, wallet_address, value_good_id, data_num, is_over,chain_id
+    page_size, wallet_address, value_good_id, data_num, is_over, chain_id
 }) => {
     const { covalentClient } = useGoldRush();
 
@@ -85,8 +85,8 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
             try {
                 response =
                     // @ts-ignore
-                    await myInvestGoodsDatas({ id: value_good_id, address: wallet_address, pageNumber: pagination.page_number - 1, pageSize: page_size },chain_id);
-                console.log(response,value_good_id)
+                    await myInvestGoodsDatas({ id: value_good_id, address: wallet_address, pageNumber: pagination.page_number - 1, pageSize: page_size }, chain_id);
+                console.log(response, value_good_id)
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
                 setResult(new Some(response.items));
@@ -159,7 +159,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                         <div className="flex flex-col">
                             {on_pool_click ? (
                                 <a
-                                    className="cursor-pointer hover:opacity-75"
+                                    className=""
                                 // onClick={() => {
                                 //     if (on_pool_click) {
                                 //         on_pool_click(
@@ -192,7 +192,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Value"}
+                    header_name={"Market Value"}
                     column={column}
                 />
             ),
@@ -284,8 +284,8 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                     <div
                         className={`text-right ${
                             // @ts-ignore
-                            parseFloat(row.original.earningRate) > 0 &&
-                            "text-green-600"
+                            parseFloat(row.original.earningRate) > 0 ?
+                                "text-green-600" : "text-red-600"
                             }`}
                     >
                         {valueFormatted}

@@ -1,6 +1,7 @@
 import { DEFAULT_TOKEN } from "@/shared/constants/common";
 import { InvestToken, InvestTokenValue } from "@/shared/types/token";
 import { useMemo, useState } from "react";
+import { calculateFeePercentage } from "@/utils/functions/calculate-fees-percentage";
 // @ts-ignore
 // import Modal from "react-modal";
 import TokenInvestModal from "./TokenInvestModal";
@@ -46,7 +47,7 @@ const TokenInvestSelector = ({ value, onChange, isValue }: Props) => {
                 sel: keyword
             },ssionChian);
             let rest: Array<LocalCurrency> = a.tokenValue;
-            // console.log(a, 33332)
+            console.log(a, 33332)
             setTokensValue(rest);
             a.tokens.map((el: any, index: number) => {
                 a.tokens[index].key = el.id;
@@ -79,13 +80,13 @@ const TokenInvestSelector = ({ value, onChange, isValue }: Props) => {
                             <Flex className="magL" gap="4px 0" wrap>
                                 <span>
                                     <div>Invest:{prettifyCurrencys(el1.investQuantity)}</div>
-                                    <div>InvestFee:{(el1.investFee * 100).toFixed(2)}%</div>
+                                    <div>Invest Fee:{(el1.investFee * 100).toFixed(2)}%</div>
                                 </span>
                                 <span>
-                                    <div>FeeQuantity:{prettifyCurrencys(el1.feeQuantity)}</div>
+                                    <div>Fee Volume:{prettifyCurrencys(el1.feeQuantity)}</div>
                                     <div>Divest Fee:{(el1.disinvestFee * 100).toFixed(2)}%</div>
                                 </span>
-                                <span>APY:{el1.apy}%</span>
+                                <span>APY:{calculateFeePercentage(el1.apy)}</span>
 
                             </Flex>
                         </>);

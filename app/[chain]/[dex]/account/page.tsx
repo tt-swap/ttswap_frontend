@@ -146,7 +146,11 @@ export default function Account({ params }: { params: { chain: string, dex: stri
           on_pool_click={(e: any) => {
             if (e === "invest") {
               router.push(`${handleTabSwitch(e, pathname)}`);
-            } else {
+            }
+            //  else if (e != 0) {
+            //   router.push(`${handleTabSwitch(e, pathname)}`);
+            // }
+             else {
               setProofid(e);
               setOpen(true);
             }
@@ -211,17 +215,17 @@ export default function Account({ params }: { params: { chain: string, dex: stri
           data_num={dataNum}
           value_good_id={info.id}
           chain_id={ssionChian}
-        // is_over={true}
-        // on_pool_click={(e: any, id: string) => {
-        //   if (e === "invest") {
-        //     setGoodId({ invest: { id: id }, swap: { id: "" } });
-        //     // sessionStorage.setItem("invest", id);
-        //   } else {
-        //     setGoodId({ invest: { id: "" }, swap: { id: id } });
-        //     // sessionStorage.setItem("swap", id);
-        //   }
-        //   router.push(`${handleTabSwitch(e, pathname)}`);
-        // }}
+          // is_over={true}
+          on_pool_click={(e: any, id: string) => {
+            // if (e === "invest") {
+            //   setGoodId({ invest: { id: id }, swap: { id: "" } });
+            //   // sessionStorage.setItem("invest", id);
+            // } else {
+            //   setGoodId({ invest: { id: "" }, swap: { id: id } });
+            //   // sessionStorage.setItem("swap", id);
+            // }
+            router.push(`${handleTabSwitch(e, pathname)}`);
+          }}
         />
       </GoldRushProvider>
       <h2 className="text-xl font-extrabold leading-tight tracking-tighter md:text-2xl">

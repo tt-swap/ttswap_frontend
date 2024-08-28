@@ -160,6 +160,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                         align="left"
                         header_name={"Name"}
                         column={column}
+                        // text=""
                     />
                 </div>
             ),
@@ -168,32 +169,32 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                     <div className="ml-4 flex items-center gap-3">
                         <TokenAvatar
                             size={GRK_SIZES.EXTRA_SMALL}
-                            token_url={// @ts-ignore
-                                row.original.logo_url}
+                            // @ts-ignore
+                            token_url={row.original.logo_url}
                         />
                         <div className="flex flex-col">
                             {on_pool_click ? (
                                 <a
                                     className="cursor-pointer hover:opacity-75"
-                                // onClick={() => {
-                                //     if (on_pool_click) {
-                                //         on_pool_click(
-                                //             row.original.id
-                                //         );
-                                //     }
-                                // }}
+                                    onClick={() => {
+                                        if (on_pool_click) {
+                                            on_pool_click("goods/" + row.original.id, row.original.id);
+                                        }
+                                    }}
                                 >
                                     <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
                                     <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
-                                    {/* {// @ts-ignore
-                                    row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
+                                    {/* {
+                                        // @ts-ignore
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
                                 </a>
                             ) : (
                                 <label className="text-base">
                                     <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
                                     <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
-                                    {/* {// @ts-ignore
-                                    row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
+                                    {/* {
+                                        // @ts-ignore
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
                                 </label>
                             )}
                         </div>
@@ -207,7 +208,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Total Fee Qantity"}
+                    header_name={"Total Fee Volume"}
                     column={column}
                 />
             ),
@@ -246,7 +247,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"My Fee Quanity"}
+                    header_name={"My Fee Volume"}
                     column={column}
                 />
             ),
@@ -354,10 +355,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                                         className="cursor-pointer hover:opacity-75"
                                         onClick={() => {
                                             if (on_pool_click) {
-                                                on_pool_click(
-                                                    // @ts-ignore
-                                                    row.original.id
-                                                );
+                                                on_pool_click("goods/" + row.original.id, row.original.id);
                                             }
                                         }}
                                     >

@@ -60,10 +60,14 @@ export function iconUrl(chainName: string | undefined, address: string) {
 
 // 数字处理
 export function prettifyCurrencys(value: number) {
+    // console.log(value,"ylqk")
     if (value < 1000000) {
 
         if (value < 0.01 && value > 0) {
             return '<0.01'
+        }
+        if (value === 0) {
+            return '0'
         }
 
         return toThousands(value.toFixed(2));

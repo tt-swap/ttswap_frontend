@@ -1,11 +1,13 @@
 import { type Column } from "@tanstack/react-table";
 import { IconWrapper } from "../Shared";
+import { Tooltip } from 'antd';
 
 export interface TableHeaderSortingProps {
     header_name: string;
     column: Column<any, unknown>;
     align: "left" | "right" | "center";
     icon?: boolean;
+    // text: string;
 }
 
 export const TableHeaderSorting = ({
@@ -13,6 +15,7 @@ export const TableHeaderSorting = ({
     column,
     align,
     icon = true,
+    // text
 }: TableHeaderSortingProps) => {
     const sortedIcon =
         column.getIsSorted() === "asc"
@@ -21,6 +24,7 @@ export const TableHeaderSorting = ({
               ? "arrow_drop_down"
               : "sort";
     return (
+        // <Tooltip placement="top" title={text}>
         <div
             className={`flex cursor-pointer items-center gap-1 whitespace-nowrap hover:text-slate-900 dark:hover:text-slate-50  ${
                 align === "right"
@@ -40,5 +44,7 @@ export const TableHeaderSorting = ({
                 />
             )}
         </div>
+            
+            // </Tooltip>
     );
 };
