@@ -22,13 +22,13 @@ import { ecosystemChartDatas } from '@/graphql/overview';
 import { prettifyCurrencys } from '@/graphql/util';
 
 
-let  currencys:string ='';
+let currencys: string = '';
 export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
     chain_name,
     dex_name,
     overview_data,
     displayMetrics = "both",
-    value_good_id,chain_id
+    value_good_id, chain_id
 }) => {
     const [maybeResult, setResult] =
         useState<Option<UniswapLikeEcosystemCharts>>(None);
@@ -43,9 +43,9 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
         maybeResult.match({
             None: () => null,
             Some: (response) => {
-                
-                currencys= response.quote_currency;
-                
+
+                currencys = response.quote_currency;
+
                 const chart_key = `${timeSeries}_chart_${period}d`;
                 const value_key =
                     timeSeries === "price"
@@ -53,8 +53,8 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
                         : `${timeSeries}_quote`;
                 const result = (
                     response[
-                        chart_key as keyof typeof response
-                        // @ts-ignore
+                    chart_key as keyof typeof response
+                    // @ts-ignore
                     ] as UniswapLikeEcosystemCharts["liquidity_chart_7d"]
                     // @ts-ignore
                 ).map((x) => {
@@ -79,14 +79,14 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
         }
         (async () => {
             setResult(None);
-            const response = 
-            
-             await ecosystemChartDatas(value_good_id,chain_id);
+            const response =
 
-    // @ts-ignore
+                await ecosystemChartDatas(value_good_id, chain_id);
+
+            // @ts-ignore
             setResult(new Some(response));
         })();
-    }, [overview_data, dex_name, chain_name, displayMetrics,value_good_id]);
+    }, [overview_data, dex_name, chain_name, displayMetrics, value_good_id]);
 
     useEffect(() => {
         if (displayMetrics === "both") return;
@@ -140,7 +140,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
         <div className="min-h-[20rem] w-full rounded border p-4">
             <div className="pb-4">
                 <TypographyH4>{`${capitalizeFirstLetter(
-                    timeSeries === "liquidity" ? "investment":timeSeries
+                    timeSeries === "liquidity" ? "investment" : timeSeries
                 )} (${currencys})`}</TypographyH4>
             </div>
 

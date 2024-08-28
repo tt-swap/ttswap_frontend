@@ -16,6 +16,7 @@ export interface XYKPoolDetailViewProps {
     dex_name: string;
     pool_address: string;
     value_good_id:string;
+    chain_id:number;
 }
 
 export interface NFTWalletCollectionViewProps {
@@ -85,6 +86,8 @@ export interface XYKTokenTransactionsListViewProps {
     on_goldrush_receipt_click?: Function;
     value_good_id:string;
     is_over:boolean;
+    page_size:number;
+    chain_id:number;
 }
 
 export interface XYKWalletTransactionsListViewProps {
@@ -176,6 +179,7 @@ export interface XYKTokenDetailViewProps {
     token_address: string;
     value_good_id:string;
     is_over:boolean;
+    chain_id:number;
 }
 
 export interface XYKOverviewTransactionsListViewProps {

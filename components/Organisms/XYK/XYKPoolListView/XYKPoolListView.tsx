@@ -149,13 +149,11 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                             {on_pool_click ? (
                                 <a
                                     className="cursor-pointer hover:opacity-75"
-                                // onClick={() => {
-                                //     if (on_pool_click) {
-                                //         on_pool_click(
-                                //             row.original.id
-                                //         );
-                                //     }
-                                // }}
+                                    onClick={() => {
+                                        if (on_pool_click) {
+                                            on_pool_click("goods/" + row.original.id, row.original.id);
+                                        }
+                                    }}
                                 >
                                     <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
                                     <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
@@ -396,8 +394,8 @@ export const XYKPoolListView: React.FC<XYKPoolListViewProps> = ({
                     <div
                         className={`text-right ${
                             // @ts-ignore
-                            parseFloat(row.original.APY) > 0 &&
-                            "text-green-600"
+                            parseFloat(row.original.APY) > 0  ?
+                                "text-green-600" : "text-red-600"
                             }`}
                     >
                         {valueFormatted}

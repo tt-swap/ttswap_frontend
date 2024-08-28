@@ -50,7 +50,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
     chain_name,
     dex_name,
     on_token_click,
-    page_size, value_good_id, is_over,chain_id
+    page_size, value_good_id, is_over, chain_id
 }) => {
     const { covalentClient } = useGoldRush();
 
@@ -90,7 +90,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                         pageNumber: pagination.page_number - 1,
                         // @ts-ignore
                         pageSize: page_size,
-                    },chain_id);
+                    }, chain_id);
                 console.log(response, "***");
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
@@ -144,13 +144,11 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                             {on_token_click ? (
                                 <a
                                     className="cursor-pointer hover:opacity-75"
-                                // onClick={() => {
-                                //     if (on_token_click) {
-                                //         on_token_click(
-                                //             row.original.id
-                                //         );
-                                //     }
-                                // }}
+                                    onClick={() => {
+                                        if (on_token_click) {
+                                            on_token_click("goods/" + row.original.id, row.original.id);
+                                        }
+                                    }}
                                 >
                                     <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
                                     <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
@@ -229,8 +227,8 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                     <div
                         className={`text-right ${
                             // @ts-ignore
-                            parseFloat(row.original.priceC_24h) > 0 &&
-                            "text-green-600"
+                            parseFloat(row.original.priceC_24h) > 0 ?
+                                "text-green-600" : "text-red-600"
                             }`}
                     >
                         {valueFormatted}
@@ -324,7 +322,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Current Quantity"}
+                    header_name={"Current Volume"}
                     column={column}
                 />
             ),

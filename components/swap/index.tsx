@@ -50,7 +50,7 @@ const TokenSwap = () => {
         swapsAmount,
         // fromPrice,
         // toPrice,
-        priceImpact,
+        // priceImpact,
         setAmount,
         setToken,
         // setFocus,
@@ -430,14 +430,14 @@ const TokenSwap = () => {
                     </form>
                     {swaps.to.symbol !== DEFAULT_TOKEN && swaps.from.symbol !== DEFAULT_TOKEN && (
                         <>
-                            <div>
+                            {/* <div>
                                 <div>
                                     <div className="flex justify-between pt-4">
                                         <div>Price impact warning</div>
                                         <div>{priceImpact ? priceImpact + '%' : ''}</div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="p-4 text-sm">
                                 {/* <span>Price</span> <span>${computedPrice}</span> */}
                                 <div className="flex cursor-pointer justify-between"
@@ -455,10 +455,10 @@ const TokenSwap = () => {
                                 {isFees && (
                                     <div>
                                         <div className="se pt-4">
-                                            <div className="flex justify-between">
+                                            {/* <div className="flex justify-between">
                                                 <div>Price impact</div>
                                                 <div>{priceImpact ? priceImpact + '%' : ''}</div>
-                                            </div>
+                                            </div> */}
                                             <div className="flex justify-between">
                                                 <div>Tolerance</div>
                                                 <div>{tolerance}%</div>

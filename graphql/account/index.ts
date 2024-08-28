@@ -54,7 +54,7 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
             map.investQuantity = e.good1Quantity / base_decimals1;
             map.unitFee = e.good1.feeQuantity / e.good1.investQuantity;
             map.profit = map.unitFee * map.investQuantity - (e.good1ContructFee / base_decimals1);
-            map.APY = (map.profit / (map.investQuantity * timestampSubH(e.good1.modifiedTime))) * 365 * 100;
+            // map.APY = (map.profit / (map.investQuantity * timestampSubH(e.good1.modifiedTime))) * 365 * 100;
             map.earningRate = map.profit / map.investQuantity;
 
             items.push(map);
@@ -68,7 +68,7 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
                 map1.investQuantity = e.good2Quantity / base_decimals2;
                 map1.unitFee = e.good2.feeQuantity / e.good2.investQuantity;
                 map1.profit = map1.unitFee * map1.investQuantity - (e.good2ContructFee / base_decimals2);
-                map1.APY = (map1.profit / (map1.investQuantity * timestampSubH(e.good2.modifiedTime))) * 365;
+                // map1.APY = (map1.profit / (map1.investQuantity * timestampSubH(e.good2.modifiedTime))) * 365;
                 map1.earningRate = map1.profit / map1.investQuantity;
 
                 items.push(map1);
@@ -190,7 +190,7 @@ export async function myDisInvestProofGood(id: number, ssionChian: number): Prom
     let decimals = powerIterative(10, 6);
     let decimals1 = powerIterative(10, good1.tokendecimals);
     let disfeeL1 = BigNumber(good1.goodConfig).mod(m217).div(m211).integerValue(1).div(10000).toNumber();// Math.floor(good1.goodConfig % (2 ** 217) / (2 ** 211)) / 10000;
-    let click1 = BigNumber(good1.goodConfig).mod(m187).div(m177).integerValue(1).div(10000).toNumber();
+    let click1 = BigNumber(good1.goodConfig).mod(m187).div(m177).toNumber();
     let unitV1 = (good1.currentValue / decimals) / (good1.currentQuantity / decimals1);
     let good1N1;
     let good1N2;
