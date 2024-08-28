@@ -185,7 +185,7 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                     <Tooltip placement="top" title={<span>The Metrics is goods' fee quantity Dividing invest quantity.</span>}>
                         <div className="flex w-full flex-grow flex-col justify-center gap-2 rounded border p-4 cursor-pointer">
                             <h2 className="text-md text-secondary-light">
-                                Uint Fee
+                                Unit Fee
                             </h2>
                             <div className="flex items-end gap-2">
                                 <span className="text-xl">
@@ -252,7 +252,7 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                 </div>
             </div>
             <XYKTokenInformation
-                        // @ts-ignore
+                // @ts-ignore
                 token_data={maybeResult.match({
                     None: () => null,
                     Some: (pool_data) => pool_data,
