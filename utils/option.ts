@@ -30,6 +30,7 @@ export const Option = <T>(value: T): Option<T> => {
 
 // eslint-disable-next-line no-redeclare
 export interface Option<A> {
+    [x: string]: any;
     isDefined: boolean;
     isEmpty: boolean;
 

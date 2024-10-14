@@ -21,24 +21,9 @@ const TokenInvestModal = ({ open, setOpen, title, children }: Props) => {
     open={open}
     onCancel={() => handleClose(false, "")}
     footer={null}
-    width={480}
+    width={520}
       // shouldReturnFocusAfterClose={false}
     >
-      {/* <div className="relative w-full md:w-[450px]">
-        <div
-          style={{ padding: "20px 20px 16px 20px", fontWeight: "500" }}
-          className="flex justify-between"
-        >
-          <div>{title}</div>
-          <button
-            type="button"
-            onClick={() => handleClose(false, "")}
-          >
-            <img className="text-black" src={"/close_1.svg"} alt="close" />
-          </button>
-        </div>
-        {children}
-      </div> */}
         {children}
     </Modal>
   );

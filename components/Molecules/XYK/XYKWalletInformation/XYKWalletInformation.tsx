@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { type Option, Some, None } from "@/utils/option";
 import { useGoldRush } from "@/utils/store";
 import { copyToClipboard } from "@/utils/functions";
 import { useState } from "react";
-import { useToast } from "../../../../utils/hooks";
+import { Col, Row } from 'antd';
+import { useToast } from "@/utils/hooks";
 import { IconWrapper } from "@/components/Shared";
 import { type XYKWalletInformationProps } from "@/utils/types/molecules.types";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,12 +19,13 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
     wallet_address,
     chain_name,
     dex_name,
-    wallet_data, value_good_id,chain_id
+    wallet_data, value_good_id, chain_id
 }) => {
     const [maybeResult, setResult] = useState(None);
     const { toast } = useToast();
     const { info } = useValueGood();
     const { covalentClient } = useGoldRush();
+    const { t } = useTranslation();
 
     const handlePoolInformation = async () => {
         setResult(None);
@@ -31,130 +34,134 @@ export const XYKWalletInformation: React.FC<XYKWalletInformationProps> = ({
             response =
                 await myIndexes(
                     value_good_id,
-                    wallet_address,chain_id
+                    wallet_address, chain_id
                 );
             // @ts-ignore
             setResult(response);
+            console.log("XYKWalletInformation",response)
         } catch (error) {
             console.error(`Error fetching token for ${chain_name}:`, error);
         }
-    };
-
-    const InformationContainer: React.FC<{
-        label: string;
-        text: string;
-        copy?: boolean;
-    }> = ({ label, text, copy = false }) => {
-        const [showCopy, setShowCopy] = useState(false);
-
-        const handleCopyClick = () => {
-            toast({
-                description: "Address copied!",
-            });
-            copyToClipboard(text);
-            setShowCopy(true);
-            setTimeout(() => {
-                setShowCopy(false);
-            }, 3000);
-        };
-
-        return (
-            <div className="flex flex-col gap-1">
-                <div className="flex gap-2">
-                    <h2 className="text-xl">{text}</h2>
-                    {showCopy ? (
-                        <IconWrapper
-                            icon_class_name="done"
-                            icon_size="text-sm"
-                            class_name="text-secondary-light dark:text-secondary-dark"
-                        />
-                    ) : (
-                        copy && (
-                            <IconWrapper
-                                icon_class_name="content_copy"
-                                icon_size="text-sm"
-                                class_name="text-secondary-light dark:text-secondary-light cursor-pointer"
-                                on_click={() => handleCopyClick()}
-                            />
-                        )
-                    )}
-                </div>
-                <div className="text-md text-secondary-light">{label}</div>
-            </div>
-        );
     };
 
     useEffect(() => {
         handlePoolInformation();
     }, [dex_name, wallet_address, chain_name, value_good_id]);
 
-    // console.log(7777, maybeResult);
     return (
         <>
-            <div className="flex items-center rounded border p-4">
+            <div className="flex flex-grow flex-wrap items-center gap-8 rounded border p-4">
                 {!maybeResult.isEmpty ? (
-                    <div className="flex flex-grow flex-wrap items-center gap-8">
-                        <div className="flex flex-grow flex-wrap items-center gap-8">
-                            <div className="flex flex-col gap-1">
-                                <div className="flex gap-2">
-                                    <h2 className="text-xl">{
-                                        // @ts-ignore
-                                        prettifyCurrencys(maybeResult.tradeValue)}{" "}{info.symbol}</h2>
+                    <>
+                        <Row className="items-center w-full">
+                            <Col className="flex flex-grow flex-wrap items-center gap-8"
+                                xs={{ flex: '50%' }}
+                                sm={{ flex: '50%' }}
+                                lg={{ flex: '25%' }}>
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex gap-2">
+                                        <h2 className="text-xl">{
+                                            // @ts-ignore
+                                            prettifyCurrencys(maybeResult.tradeValue)}{" "}{info.symbol}</h2>
+                                    </div>
+                                    <div className="text-md text-[#7D7D7D]">{t('body.account.index.tradeamount')}</div>
                                 </div>
-                                <div className="text-md text-secondary-light">Total Trade Amount</div>
-                            </div>
-                        </div>
-                        {/* <div className="flex flex-grow flex-wrap items-center gap-8">
-                            <div className="flex flex-col gap-1">
-                                <div className="flex gap-2">
-                                    <h2 className="text-xl">{
-                                        // @ts-ignore
-                                        maybeResult.tradeCount}</h2>
+                            </Col>
+                            <Col className="flex flex-grow flex-wrap items-center gap-8"
+                                xs={{ flex: '50%' }}
+                                sm={{ flex: '50%' }}
+                                lg={{ flex: '25%' }}>
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex gap-2">
+                                        <h2 className="text-xl">{
+                                            // @ts-ignore
+                                            prettifyCurrencys(maybeResult.investValue)}{" "}{info.symbol}</h2>
+                                    </div>
+                                    <div className="text-md text-[#7D7D7D]">{t('body.account.index.investamount')}</div>
                                 </div>
-                                <div className="text-md text-secondary-light">Total Trade Count</div>
-                            </div>
-                        </div> */}
-                        <div className="flex flex-grow flex-wrap items-center gap-8">
-                            <div className="flex flex-col gap-1">
-                                <div className="flex gap-2">
-                                    <h2 className="text-xl">{
-                                        // @ts-ignore
-                                        prettifyCurrencys(maybeResult.investValue)}{" "}{info.symbol}</h2>
+                            </Col>
+                            <Col className="flex flex-grow flex-wrap items-center gap-8"
+                                xs={{ flex: '50%' }}
+                                sm={{ flex: '50%' }}
+                                lg={{ flex: '25%' }}>
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex gap-2">
+                                        <h2 className="text-xl">{
+                                            // @ts-ignore
+                                            prettifyCurrencys(maybeResult.disinvestValue)}{" "}{info.symbol}</h2>
+                                    </div>
+                                    <div className="text-md text-[#7D7D7D]">{t('body.account.index.divestamount')}</div>
                                 </div>
-                                <div className="text-md text-secondary-light">Total Invest Amount</div>
-                            </div>
-                        </div>
-                        <div className="flex flex-grow flex-wrap items-center gap-8">
-                            <div className="flex flex-col gap-1">
-                                <div className="flex gap-2">
-                                    <h2 className="text-xl">{
-                                        // @ts-ignore
-                                        prettifyCurrencys(maybeResult.disinvestValue)}{" "}{info.symbol}</h2>
+                            </Col>
+                            <Col className="flex flex-grow flex-wrap items-center gap-8"
+                                xs={{ flex: '50%' }}
+                                sm={{ flex: '50%' }}
+                                lg={{ flex: '25%' }}>
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex gap-2">
+                                        <h2 className="text-xl">{
+                                            // @ts-ignore
+                                            prettifyCurrencys(maybeResult.stakettsvalue)}{" "}{info.symbol}</h2>
+                                    </div>
+                                    <div className="text-md text-[#7D7D7D]">{t('body.account.index.miningvalue')}</div>
                                 </div>
-                                <div className="text-md text-secondary-light">Total Divest Amount</div>
-                            </div>
-                        </div>
-                        <div className="flex flex-grow flex-wrap items-center gap-8">
-                            <div className="flex flex-col gap-1">
-                                <div className="flex gap-2">
-                                    <h2 className="text-xl">{
-                                        // @ts-ignore
-                                        prettifyCurrencys(maybeResult.totalprofitvalue)}{" "}{info.symbol}</h2>
+                            </Col>
+                        </Row>
+                        <Row className="items-center w-full">
+                            <Col className="flex flex-grow flex-wrap items-center gap-8"
+                                xs={{ flex: '50%' }}
+                                sm={{ flex: '50%' }}
+                                lg={{ flex: '25%' }}>
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex gap-2">
+                                        <h2 className="text-xl">{
+                                            // @ts-ignore
+                                            prettifyCurrencys(maybeResult.totalprofitvalue)}{" "}{info.symbol}</h2>
+                                    </div>
+                                    <div className="text-md text-[#7D7D7D]">{t('body.account.index.profitamount')}</div>
                                 </div>
-                                <div className="text-md text-secondary-light">Total Profit Amount</div>
-                            </div>
-                        </div>
-                        <div className="flex flex-grow flex-wrap items-center gap-8">
-                            <div className="flex flex-col gap-1">
-                                <div className="flex gap-2">
-                                    <h2 className="text-xl">{
-                                        // @ts-ignore
-                                        prettifyCurrencys(maybeResult.totalcommissionvalue)}{" "}{info.symbol}</h2>
+                            </Col>
+                            <Col className="flex flex-grow flex-wrap items-center gap-8"
+                                xs={{ flex: '50%' }}
+                                sm={{ flex: '50%' }}
+                                lg={{ flex: '25%' }}>
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex gap-2">
+                                        <h2 className="text-xl">{
+                                            // @ts-ignore
+                                            prettifyCurrencys(maybeResult.totalcommissionvalue)}{" "}{info.symbol}</h2>
+                                    </div>
+                                    <div className="text-md text-[#7D7D7D]">{t('body.account.index.commissionamount')}</div>
                                 </div>
-                                <div className="text-md text-secondary-light">Total Commission Amount</div>
-                            </div>
-                        </div>
-                    </div>
+                            </Col>
+                            <Col className="flex flex-grow flex-wrap items-center gap-8"
+                                xs={{ flex: '50%' }}
+                                sm={{ flex: '50%' }}
+                                lg={{ flex: '25%' }}>
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex gap-2">
+                                        <h2 className="text-xl">{
+                                            // @ts-ignore
+                                            prettifyCurrencys(maybeResult.getfromstake)}</h2>
+                                    </div>
+                                    <div className="text-md text-[#7D7D7D]">{t('body.account.index.mintedtts')}</div>
+                                </div>
+                            </Col>
+                            <Col className="flex flex-grow flex-wrap items-center gap-8"
+                                xs={{ flex: '50%' }}
+                                sm={{ flex: '50%' }}
+                                lg={{ flex: '25%' }}>
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex gap-2">
+                                        <h2 className="text-xl">{
+                                            // @ts-ignore
+                                            prettifyCurrencys(maybeResult.mining)}</h2>
+                                    </div>
+                                    <div className="text-md text-[#7D7D7D]">{t('body.account.index.mining')}</div>
+                                </div>
+                            </Col>
+                        </Row>
+                    </>
                 ) : (
                     <div className="flex flex-grow items-center gap-x-8">
                         {[1, 2].map((i) => {

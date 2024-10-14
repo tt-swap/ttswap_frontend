@@ -1,8 +1,5 @@
 import { getExplorer, getChainName } from '@/data/networks';
-// import { ethers } from "ethers";
-// import MarketManager from '@/data/abi/MarketManager.json';
-// import { getContractAddress } from '@/data/contractConfig';
-import { goodsTransactions, goodDataView } from './graphql';
+import { goodsTransactions, goodDataView, GoodsSearch } from './graphql';
 import { timestampdToDateSub, powerIterative, iconUrl, timestampdToDateYear } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
 
@@ -95,7 +92,7 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
 
     if (id !== "") {
         // console.log(params,99999)
-        const goodsDatas = await goodDataView({ id: id, time: timestampdToDateYear(1), time24: timestampdToDateSub(0), address: address.toLowerCase(),eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) }, ssionChian);
+        const goodsDatas = await goodDataView({ id: id, time: timestampdToDateYear(1), time24: timestampdToDateSub(0), address: address.toLowerCase(), eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) }, ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -116,20 +113,20 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
                 totalInvestQuantity: 0, totalInvestValue: 0, totalTradeQuantity: 0, totalTradeValue: 0, totalDisinvestQuantity: 0, totalDisinvestValue: 0,
                 totalTradeCount: 0, totalInvestCount: 0, owner: "",
                 buyFee: 0, sellFee: 0, investFee: 0, divestFee: 0, swapChips: 0, divestChips: 0,
-                chart_data: {volume_chart_7d:{},volume_chart_30d:{}}
+                chart_data: { volume_chart_7d: {}, volume_chart_30d: {} }
             };
 
             let volume_chart_7d: object[] = [];
             let volume_chart_30d: object[] = [];
-    
+
             map.chart_data.volume_chart_7d = volume_chart_7d;
             map.chart_data.volume_chart_30d = volume_chart_30d;
-    
+
             e.days7.forEach((e: any) => {
                 let map1 = { dt: 0, quote_currency: "", pretty_volume_quote: 0, volume_quote: 0 };
                 // let jz1 = e.currentValue * e.currentQuantity / tokendecimals;
                 map1.dt = e.modifiedTime * 1000;
-                map1.volume_quote = e.currentQuantity/base_decimals;
+                map1.volume_quote = e.currentQuantity / base_decimals;
                 map1.pretty_volume_quote = map1.volume_quote * current_price;
                 map1.quote_currency = goodsDatas.data.goodState.tokensymbol;
                 volume_chart_7d.push(map1);
@@ -137,7 +134,7 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
             e.days30.forEach((e: any) => {
                 let map1 = { dt: 0, quote_currency: "", pretty_volume_quote: 0, volume_quote: 0 };
                 map1.dt = e.modifiedTime * 1000;
-                map1.volume_quote = e.currentQuantity/base_decimals;
+                map1.volume_quote = e.currentQuantity / base_decimals;
                 map1.pretty_volume_quote = map1.volume_quote * current_price;
                 map1.quote_currency = goodsDatas.data.goodState.tokensymbol;
                 volume_chart_30d.push(map1);
@@ -198,7 +195,7 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
                 map.price_24h = (current_price - current_price_24h) / current_price_24h;
                 let uintFY = (enY.feeQuantity + enY.investQuantity) / enY.investQuantity;
                 map.APY = uintF / uintFY - 1;
-                console.log(e.feeQuantity + e.investQuantity,uintF,uintFY, map.APY,"sdfsdfsd")
+                console.log(e.feeQuantity + e.investQuantity, uintF, uintFY, map.APY, "sdfsdfsd")
             } else {
                 map.investQuantity24 = map.investQuantity;
                 map.fee24 = map.currentFee;
@@ -217,3 +214,60 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
     }
     return item;
 }
+
+
+
+
+//物品列表
+export async function GoodsSearchDatas(params: { id: string; sel: string }, ssionChian: number): Promise<object> {
+    const chainName = getChainName(ssionChian);
+    let item: Object[] = [];
+    if (params.id !== "") {
+
+        const goodsDatas = await GoodsSearch({ id: params.id, sel: params.sel.toLowerCase(), time: timestampdToDateSub(0) }, ssionChian);
+
+        let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
+        let goodValue24 = goodsDatas.data.goodState.goodData[0].currentValue / goodsDatas.data.goodState.goodData[0].currentQuantity;
+        let tokendecimals = powerIterative(10, 6);
+
+        goodsDatas.data.parGoodStates.forEach((e: any) => {
+            let map = {
+                id: "", name: "", symbol: "", logo_url: "", address: "", children: {}
+            };
+            let children: object[] = [];
+            map.children = children;
+            map.id = e.id;
+            map.name = e.tokenname;
+            map.symbol = e.tokensymbol;
+            map.logo_url = iconUrl(chainName, e.erc20Address);
+            map.address = e.erc20Address;
+
+            e.Goodlist.forEach((en: any) => {
+                let map1 = {
+                    id: "", name: "", decimals: 0, symbol: "", price: 0, logo_url: "",
+                    address: "", isvaluegood: false, valueSymbol: "", h24: 0
+                };
+                let base_decimals = powerIterative(10, en.tokendecimals);
+                let current_price = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / goodValue;
+                let current_price24 = ((en.goodData[0].currentValue / tokendecimals) / (en.goodData[0].currentQuantity / base_decimals)) / goodValue24;
+
+                // console.log(current_price,"***&&",current_price24)
+                map1.id = en.id;
+                map1.name = en.tokenname;
+                map1.decimals = en.tokendecimals;
+                map1.symbol = en.tokensymbol;
+                map1.valueSymbol = goodsDatas.data.goodState.tokensymbol;
+                map1.logo_url = iconUrl(chainName, en.erc20Address);
+                map1.address = en.erc20Address;
+                map1.isvaluegood = en.isvaluegood;
+                map1.price = current_price;
+                map1.h24 = (current_price - current_price24) / current_price24;;
+                children.push(map1);
+            });
+            item.push(map);
+        });
+    }
+    // console.log(item,"***&&")
+    return item;
+}
+

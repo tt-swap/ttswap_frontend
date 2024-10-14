@@ -1,5 +1,3 @@
-//article.js
-// import { useQuery } from '@vue/apollo-composable';
 import apolloClient from '@/graphql/apollo'
 import { gql } from '@apollo/client'
 
@@ -122,7 +120,6 @@ export function parGoodDatas(params: { id: string; first: number; time: number; 
 					modifiedTime
 					totalProfit
 					totalTradeQuantity
-					open
 					timetype
 					currentQuantity
 					currentValue
@@ -151,6 +148,8 @@ export function InvestGoodDatas(params: {
 			goodStates(
 				first: $first
 				skip: $skip
+				orderBy: currentValue
+				orderDirection: desc
 				where: {id_not: "0"}
 				) {
 					id
@@ -173,7 +172,6 @@ export function InvestGoodDatas(params: {
 						id
 						decimals
 						modifiedTime
-						open
 						timetype
 						totalInvestQuantity
 						totalInvestCount

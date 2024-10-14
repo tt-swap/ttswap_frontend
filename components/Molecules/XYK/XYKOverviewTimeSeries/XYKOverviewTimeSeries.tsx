@@ -28,7 +28,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
     dex_name,
     overview_data,
     displayMetrics = "both",
-    value_good_id, chain_id
+    value_good_id, chain_id, title
 }) => {
     const [maybeResult, setResult] =
         useState<Option<UniswapLikeEcosystemCharts>>(None);
@@ -106,11 +106,11 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
             if (timeSeries === "liquidity") {
                 return (
                     <AreaChart
-                        className="mt-2 p-2"
+                        className="mt-2"
                         data={result}
                         index="date"
-                        valueFormatter={prettifyCurrencys}
                         yAxisWidth={100}
+                        valueFormatter={prettifyCurrencys}
                         categories={[
                             `${capitalizeFirstLetter(timeSeries)} (${currencys})`,
                         ]}
@@ -121,11 +121,11 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
             return (
                 <div>
                     <BarChart
-                        className="mt-2 p-2"
+                        className="mt-2"
                         data={result}
                         index="date"
-                        valueFormatter={prettifyCurrencys}
                         yAxisWidth={100}
+                        valueFormatter={prettifyCurrencys}
                         categories={[
                             `${capitalizeFirstLetter(timeSeries)} (${currencys})`,
                         ]}
@@ -137,11 +137,9 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
     });
 
     return (
-        <div className="min-h-[20rem] w-full rounded border p-4">
+        <div className="min-h-[20rem] w-full">
             <div className="pb-4">
-                <TypographyH4>{`${capitalizeFirstLetter(
-                    timeSeries === "liquidity" ? "investment" : timeSeries
-                )} (${currencys})`}</TypographyH4>
+                <TypographyH4>{`${capitalizeFirstLetter(title)} (${currencys})`}</TypographyH4>
             </div>
 
             <div className="flex justify-between">

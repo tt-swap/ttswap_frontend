@@ -1,0 +1,32 @@
+.account-sign {
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    z-index: 1030;
+    max-height: calc(100% - 88px);
+    right: 12px;
+    top: 72px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(34, 34, 34, 0.07) transparent;
+    /* height: 100%; */
+}
+.account-drawer {
+    margin-right: 0px;
+    overflow: hidden auto;
+    font-size: 16px;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgba(34, 34, 34, 0.07);
+    box-shadow: rgba(51, 53, 72, 0.04) 8px 12px 20px, rgba(51, 53, 72, 0.02) 4px 6px 12px, rgba(51, 53, 72, 0.04) 4px 4px 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(34, 34, 34, 0.07) transparent;
+    height: max-content;
+    max-height: 100%;
+    width: 368px;
+    max-width: 368px;
+    border-radius: 20px;
+    transform: scale(1);
+    transform-origin: right top;
+    opacity: 1;
+    transition: transform 125ms ease-in-out, opacity 125ms ease-in-out;
+    padding: 20px 16px;
+}

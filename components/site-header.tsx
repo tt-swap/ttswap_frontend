@@ -1,83 +1,131 @@
-import Link from "next/link"
-
-import { siteConfig } from "@/config/site"
-import { buttonVariants } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
-import { MainNav } from "@/components/main-nav"
-// import { ThemeToggle } from "@/components/theme-toggle"
-import ConnectAccount from "components/components/Account/ConnectAccount";
+import { usePathname, useRouter } from "next/navigation"
+import ConnectAccount from "@/components/components/Account/ConnectAccount";
 import ChainSelector from "@/components/ChainSelector";
+import { LanguageSwitcher } from "@/components/Language/LanguageSwitcher"
 import { Faucet } from "@/components/faucet"
 import { useWalletAddress } from "@/stores/walletAddress";
-// import { useWindowSize } from "hooks";
-// import { useMemo, useEffect, useState } from "react";
-// import { useValueGood } from "@/stores/valueGood";
+import { Menu, Button, Skeleton } from "antd";
+import type { MenuProps } from "antd";
+import { useState, useEffect, Suspense, useMemo } from "react";
+import { useTranslation } from 'react-i18next';
+import GoodsSearch from "@/components/Search/GoodsSearch";
+import CompanyInfo from "@/components/CompanyInfo/CompanyInfo";
+import Link from 'next/link';
 
-// import { valueGood } from '@/graphql';
 
 export function SiteHeader() {
 
-  const { address } = useWalletAddress();
+    const router = useRouter()
+    const pathname = usePathname()
+    // const pathRegex = pathname.match(/\/([^\/]*)$/)
+    const { address } = useWalletAddress();
+    const [current, setCurrent] = useState('goods');
+    const { t, ready } = useTranslation();
+    const [windowWidth, setWindowWidth] = useState<number>(0);
+    const [skeleton, setSkeleton] = useState(false);
 
-  // const { info, setValueGood } = useValueGood();
+    const handleTabSwitch = (route: string) => {
+        const routeSegments = pathname.split('/');
+        routeSegments[3] = route;
+        if (routeSegments.length > 4) {
+            routeSegments.pop();
+        }
+        const newRoute = routeSegments.join('/');
+        console.log(newRoute)
+        router.push(newRoute);
+    }
 
-  // useMemo(async() => {
-  //   // (async () => {
-  //     const bal = await valueGood();
-  //     // console.log(bal,99999999999)
-  //     setValueGood({
-  //       id: bal.data.goodStates[0].id,
-  //       symbol: bal.data.goodStates[0].tokensymbol,
-  //       name: bal.data.goodStates[0].tokenname,
-  //       logo_url: "",
-  //       address: bal.data.goodStates[0].erc20Address,
-  //       decimals: bal.data.goodStates[0].tokendecimals
-  //     });
-  //   // })();
+    // useMemo(() => {
+    //     if (typeof window !== "undefined") {
+    //         const params = window.location.search;
+    //         // console.log(params)
+    //     }
+    // }, []);
 
-  // }, []);
+    useEffect(() => {
+        const routeSegments = pathname.split('/');
+        // console.log(routeSegments, "account");
+        if (routeSegments.length > 3) {
+            const chname = routeSegments[3];
+            setCurrent(chname);
+            // console.log(chname, "account");
+        }
+        // console.log(treeData)
+    }, []);
 
-  // console.log(info,77779999999)
-  return (
-    <header className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% sticky top-0 z-40 w-full border-b">
-      <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0 text-white">
-        <MainNav items={siteConfig.mainNav} />
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <nav className="flex items-center space-x-1">
-            {address!==null&&(<Faucet />)}
-            <ChainSelector />
-            <ConnectAccount />
-            {/* <Link
-              href={siteConfig.links.github}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <div
-                className={buttonVariants({
-                  size: "icon",
-                  variant: "ghost",
-                })}
-              >
-                <Icons.gitHub className="h-5 w-5" />
-                <span className="sr-only">GitHub</span>
-              </div>
-            </Link> */}
-            {/* <Link href={siteConfig.links.settings}>
-              <div
-                className={buttonVariants({
-                  size: "icon",
-                  variant: "ghost",
-                })}
-              >
-                <Icons.Settings className="h-5 w-5" />
-                <span className="sr-only">Settings</span>
-              </div>
-            </Link>
-            <ThemeToggle /> */}
+    const items: MenuProps['items'] = [
+        {
+            label: t('header.menu.goods') || "Goods",
+            key: 'goods',
+            onClick: () => handleTabSwitch("goods"),
+        },
+        {
+            label: t('header.menu.trade') || "Trade",
+            key: 'trade',
+            children: [
+                {
+                    label: t('header.menu.trade.swap') || "Swap",
+                    key: 'swap',
+                    onClick: () => handleTabSwitch("swap"),
+                },
+                {
+                    label: t('header.menu.trade.invest') || "Invest",
+                    key: 'invest',
+                    onClick: () => handleTabSwitch("invest"),
+                }
+            ]
+        },
+        {
+            label: t('header.menu.myaccount') || "Profile",
+            key: 'profile',
+            onClick: () => handleTabSwitch("profile"),
+        }
+    ];
 
-          </nav>
-        </div>
-      </div>
-    </header>
-  )
+    const onClick: MenuProps['onClick'] = (e) => {
+        console.log('click ', e);
+        setCurrent(e.key);
+    };
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setWindowWidth(window.innerWidth);
+
+            const handleResize = () => {
+                setWindowWidth(window.innerWidth);
+            };
+
+            window.addEventListener("resize", handleResize);
+
+            return () => {
+                window.removeEventListener("resize", handleResize);
+            };
+        }
+    }, []);
+
+    return (
+        <>
+        {skeleton&&(<Skeleton/>)}
+            <header className="bg-gradient-to-r to-90% sticky top-0 z-40 w-full border-b h-16 bg-background">
+                <div className="mr-4 ml-4 flex h-16 items-center justify-center w-full">
+                    <div className="flex items-center justify-start w-full" style={{ height: "42px" }}>
+                        <div className="flex h-full items-center gap-1 cursor-pointer">
+                            <CompanyInfo />
+                        </div>
+                        {windowWidth > 950 && (<Menu className="headerMenu" onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />)}
+                    </div>
+                    <GoodsSearch isValue={""} />
+                    <div className="flex items-center justify-end w-full">
+                        <nav className="flex items-center gap-3">
+                            <GoodsSearch isValue={"button"} />
+                            {address !== null && (<Faucet />)}
+                            {address === null && (<><ChainSelector />
+                                <LanguageSwitcher /></>)}
+                            <ConnectAccount />
+                        </nav>
+                    </div>
+                </div>
+            </header>
+        </>
+    )
 }

@@ -36,8 +36,13 @@ export function Timestamp(): number {
 
 // 时间戳加减
 export function timestampdToDateSub(days: number): number {
-    let dateTime = Date.parse(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`) - (days * 86400000);
-    // console.log(days * 86400000,"****")
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    let dateTime = new Date(year, month, date - days).getTime();
+    // let dateTime = Date.parse(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`) - (days * 86400000);
+    // console.log("timestampdToDateSub", days * 86400000, "****", dateTime)
     return Math.floor(dateTime / 1000);
 }
 
@@ -109,33 +114,27 @@ export function prettifyCurrencysFee(value: number) {
 
 // 钱包余额数字处理
 export function prettifyBalance(value: number) {
-
     if (value < 1) {
-
         if (value < 0.000001) {
-            return '<0.000001'
+            return '<0.000001';
         }
         if (value === 0) {
-            return '0'
+            return '0';
         }
-
         return toThousands(value.toFixed(6));
     }
-
     return toThousands(value.toFixed(3));
-};
+}
 
 function toThousands(value: string) {
-    let a = value.split('.')[0];
-    let b = value.split('.')[1];
-    // console.log(a)
-    var num: any = (a || 0).toString(), result = '';
+    let [a, b] = value.split('.');
+    let num: any = (a || 0).toString(), result = '';
     while (num.length > 3) {
         result = ',' + num.slice(-3) + result;
         num = num.slice(0, num.length - 3);
     }
     if (num) { result = num + result; }
-    return result + '.' + b;
+    return result + (b ? '.' + b : '');
 }
 
 

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { type Option, Some, None } from "@/utils/option";
 // import { useGoldRush } from "@/utils/store";
 import { copyToClipboard, truncate } from "@/utils/functions";
@@ -10,7 +11,7 @@ import { IconWrapper } from "@/components/Shared";
 import { type XYKTokenInformationProps } from "@/utils/types/molecules.types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GRK_SIZES } from "@/utils/constants/shared.constants";
-import { Button } from "@/components/ui/button";
+import { Button, message } from 'antd';
 
 export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
     token_address,
@@ -21,23 +22,8 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
     const [maybeResult, setResult] =
         useState<Option<TokenV2VolumeWithChartData>>(None);
     const { toast } = useToast();
-    // const { covalentClient } = useGoldRush();
-
-    // const handlePoolInformation = async () => {
-    //     setResult(None);
-    //     let response;
-    //     try {
-    //         // @ts-ignore
-    //         response = await covalentClient.XykService.getLpTokenView(
-    //             chain_name,
-    //             dex_name,
-    //             token_address
-    //         );
-    //         setResult(new Some(response.data.items[0]));
-    //     } catch (error) {
-    //         console.error(`Error fetching token for ${chain_name}:`, error);
-    //     }
-    // };
+    const [messageApi, contextHolder] = message.useMessage();
+    const { t } = useTranslation();
 
     const InformationContainer: React.FC<{
         label: string;
@@ -55,12 +41,16 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
             setTimeout(() => {
                 setShowCopy(false);
             }, 3000);
+            messageApi.open({
+                type: 'success',
+                content: t('common.mess.copy'),
+              });
         };
 
         return (
             <div className="flex flex-col gap-1">
-                <h2 className="text-md text-secondary-light">{label}</h2>
-                <div className="flex gap-2">
+                <h2 className="text-md font-color-1">{label}</h2>
+                <div className="flex font-s-8 gap-2">
                     {truncate(text)}
                     {showCopy ? (
                         <IconWrapper
@@ -85,7 +75,7 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
 
     useEffect(() => {
         if (token_data) {
-                    // @ts-ignore
+            // @ts-ignore
             setResult(new Some(token_data));
             return;
         }
@@ -94,6 +84,7 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
 
     return (
         <>
+            {contextHolder}
             <div className="flex items-center rounded border p-4">
                 {maybeResult.match({
                     None: () => {
@@ -114,21 +105,21 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
                         return (
                             <div className="flex flex-grow flex-wrap items-center gap-8">
                                 <InformationContainer
-                                    label="Symbol"
+                                    label={t("body.goods.info.symbol")}
                                     text={`${result.symbol}`}
                                 />
                                 <InformationContainer
-                                    label={"Name"}
+                                    label={t("body.goods.info.name")}
                                     text={`${result.name}`}
                                     copy
                                 />
                                 <InformationContainer
-                                    label={"Address"}
+                                    label={t("body.goods.info.address")}
                                     text={`${result.address}`}
                                     copy
                                 />
                                 <InformationContainer
-                                    label="Goodsid"
+                                    label={t("body.goods.info.goodsid")}
                                     text={token_address}
                                     copy
                                 />
@@ -141,7 +132,10 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
                     None: () => <Skeleton size={GRK_SIZES.LARGE} />,
                     Some: (result) => (
                         <a target="_blank" href={result.exp_url}>
-                            <Button>View on Explorer</Button>
+                            <Button
+                                // shape="round"
+                                size="large"
+                                type="primary">{t("body.goods.info.bnt")}</Button>
                         </a>
                     ),
                 })}

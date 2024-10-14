@@ -234,7 +234,15 @@ export function myIndex(params: { id: string, address: string },ssionChian:numbe
 				tradeValue
 				totalcommissionvalue
 				totalprofitvalue
-			  }
+				stakettsvalue
+				stakettscontruct
+				getfromstake
+			}
+			ttsEnv(id: "1") {
+				id
+				poolasset
+				poolvalue
+			}
 		}`,
 		variables: params
 	})
@@ -271,6 +279,48 @@ export function myCommission(params: { id: string,  first: number; skip: number;
 				currentValue
 				goodConfig
 			  }
+		}`,
+		variables: params
+	})
+}
+
+// 我的推荐人数
+export function referees(params: { address: string },ssionChian:number) {
+	return apolloClient(ssionChian).query({
+		query: gql`query($address: String) {
+			customer(id: $address) {
+				id
+    			referralnum
+			}
+		}`,
+		variables: params
+	})
+}
+
+
+//my推荐人数据
+export function myReferees(params: { id: string; first: number; skip: number; address: string },ssionChian:number) {
+	return apolloClient(ssionChian).query({
+		query: gql`query($id: BigInt,$address: String,$first: Int,$skip: Int) {
+			goodState(id: $id) {
+				currentQuantity
+				currentValue
+				id
+				tokenname
+				tokensymbol
+				tokendecimals
+			}
+			customers(
+				where: {refer: $address}
+				orderDirection: desc
+				orderBy: tradeValue
+				first: $first
+				skip: $skip) {
+				id
+				disinvestValue
+				investValue
+				tradeValue
+			}
 		}`,
 		variables: params
 	})

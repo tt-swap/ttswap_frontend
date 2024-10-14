@@ -1,16 +1,18 @@
-import { TypographyH1 } from "@/components/ui/typography";
+import { TypographyH4 } from "@/components/ui/typography";
 import { type TokenV2VolumeWithChartData } from "@/utils/types/XykServiceTypes";
-// import { useGoldRush } from "@/utils/store";
 import { type Option, Some, None } from "@/utils/option";
 import { type XYKTokenDetailViewProps } from "@/utils/types/organisms.types";
 import { truncate } from "@/utils/functions";
 import { calculateFeePercentage } from "@/utils/functions/calculate-fees-percentage";
 import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useTranslation } from 'react-i18next';
 import { Skeleton } from "@/components/ui/skeleton";
 import { GRK_SIZES } from "@/utils/constants/shared.constants";
 import { TokenAvatar } from "@/components/Atoms";
-import { IconWrapper } from "@/components/Shared";
-import { Tooltip, message } from 'antd';
+import { Tooltip, Space, Button } from 'antd';
+import { handleTabSwitch } from "@/utils/router";
+import { useGoodId } from "@/stores/valueGood";
 import {
     XYKTokenInformation,
     XYKTokenTimeSeries,
@@ -24,10 +26,12 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
     dex_name,
     token_address, value_good_id, chain_id
 }) => {
+    const router = useRouter();
+    const pathname = usePathname()
+    const { setGoodId } = useGoodId();
     const [maybeResult, setResult] = useState<Option<TokenV2VolumeWithChartData>>(None);
-    // const [indexResult, setIndexResult] = useState<Option<TokenV2VolumeWithChartData>>(None);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    // const { covalentClient } = useGoldRush();
+    const { t } = useTranslation();
 
     useEffect(() => {
         (async () => {
@@ -66,7 +70,7 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
             Some: (result) => result,
         })
     ) {
-        return <>No data found.</>;
+        return <>{t("common.nodata")}</>;
     }
 
 
@@ -79,13 +83,13 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
     }> = ({ label, num, value, title, valueSymbol }) => {
         return (
             <Tooltip placement="top" title={<span>{title}</span>}>
-                <div className="flex flex-col gap-1 cursor-pointer">
-                    <h2 className="text-md text-secondary-light">{label}</h2>
-                    <div className="gap-2">
+                <div className="flex flex-col gap-1 cursor-pointer min-w-[149px]">
+                    <h2 className="font-color-1">{label}</h2>
+                    <div className="font-s-8 gap-2">
                         <div>
                             {num}
                         </div>
-                        <div>
+                        <div style={{ height: value === false ? "27px" : "" }}>
                             {value != "" ? value + " " + valueSymbol : ""}
                         </div>
                     </div>
@@ -96,46 +100,72 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
 
     return (
         <div className="flex w-full flex-col gap-4">
-            <div className="flex items-center gap-4 pt-6">
-                {maybeResult.match({
-                    None: () => (
-                        <div className="relative mr-2 flex">
-                            <div className="animate-pulse h-20 w-20 rounded-[100%] bg-slate-600" />
-                            <div className="animate-pulse absolute left-12 h-20 w-20 rounded-[100%] bg-slate-200" />
-                        </div>
-                    ),
-                    Some: (result) => (
-                        <div className="relative mr-2 flex">
-                            <TokenAvatar
-                                size={GRK_SIZES.MEDIUM}
-                                token_url={result.logo_url}
-                            />
-                        </div>
-                    ),
-                })}{" "}
-                {maybeResult.match({
-                    None: () => (
-                        <div className="ml-8 flex items-center gap-4">
-                            <Skeleton size={GRK_SIZES.LARGE} />
-                        </div>
-                    ),
-                    Some: (result) => (
-                        <TypographyH1>
-                            <span>
-                                {result.name}{" "}
-                                {`(${result.symbol})`}
-                            </span>
-                        </TypographyH1>
-                    ),
-                })}{" "}
+            <div className="flex items-center justify-between gap-4 pt-6">
+                <div className="flex items-center gap-4">
+                    {maybeResult.match({
+                        None: () => (
+                            <div className="relative mr-2 flex">
+                                <div className="animate-pulse h-20 w-20 rounded-[100%] bg-slate-600" />
+                                <div className="animate-pulse absolute left-12 h-20 w-20 rounded-[100%] bg-slate-200" />
+                            </div>
+                        ),
+                        Some: (result) => (
+                            <div className="relative mr-2 flex">
+                                <TokenAvatar
+                                    size={GRK_SIZES.SMALL}
+                                    token_url={result.logo_url}
+                                />
+                            </div>
+                        ),
+                    })}{" "}
+                    {maybeResult.match({
+                        None: () => (
+                            <div className="ml-8 flex items-center gap-4">
+                                <Skeleton size={GRK_SIZES.LARGE} />
+                            </div>
+                        ),
+                        Some: (result) => (
+                            <TypographyH4>
+                                <Space>
+                                    <span>{result.name}</span>
+                                    <span className="font-color-1">{result.symbol}</span>
+                                </Space>
+                            </TypographyH4>
+                        ),
+                    })}{" "}
+                </div>
+                <div>
+                    <Space>
+                        <Button
+                            size="large"
+                            type="primary"
+                            onClick={() => {
+                                setGoodId({ invest: { id: token_address }, swap: { id: token_address } });
+                                router.push(`${handleTabSwitch("swap", pathname)}`);
+                            }}>
+                            {t('common.swap')}
+                        </Button>
+                        <Button
+                            size="large"
+                            type="primary"
+                            onClick={() => {
+                                setGoodId({ invest: { id: token_address }, swap: { id: token_address } });
+                                router.push(`${handleTabSwitch("invest", pathname)}`);
+                            }}>
+                            {t('common.invest')}
+                        </Button>
+                    </Space>
+                </div>
             </div>
 
             <div className="mt-4 flex flex-col gap-4 md:flex-row">
                 <div className="flex min-w-[20rem] max-w-[70rem] flex-col gap-2 rounded">
-                    <Tooltip placement="top" title={<span>The Metrics is real-time and dynamic, and the calculation formula is (Va/Qa)/(Vb/Qb),a is this good ,b is value good.</span>}>
+                    <Tooltip placement="top"
+                        title={<span>
+                            {t("body.goods.level1.price.tip")}</span>}>
                         <div className="flex w-full flex-grow flex-col justify-center gap-2 rounded border p-4 cursor-pointer">
-                            <h2 className="text-md text-secondary-light">
-                                Price
+                            <h2 className="font-color-1">
+                                {t("body.goods.level1.price")}
                             </h2>
                             <div className="flex items-end gap-2">
                                 <span className="text-xl">
@@ -151,10 +181,11 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                             </div>
                         </div>
                     </Tooltip>
-                    <Tooltip placement="top" title={<span>The Metrics is (Va/Qa)/(Vb/Qb),a is current state,b is last state before 24 hour.</span>}>
+                    <Tooltip placement="top" title={<span>
+                        {t("body.goods.level1.24h.tip")}</span>}>
                         <div className="flex w-full flex-grow flex-col justify-center gap-2 rounded border p-4 cursor-pointer">
-                            <h2 className="text-md text-secondary-light">
-                                24h
+                            <h2 className="font-color-1">
+                                {t("body.goods.level1.24h")}
                             </h2>
                             <div className="flex items-end gap-2">
                                 <span className="text-xl">
@@ -182,10 +213,11 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                             </div>
                         </div>
                     </Tooltip>
-                    <Tooltip placement="top" title={<span>The Metrics is goods' fee quantity Dividing invest quantity.</span>}>
+                    <Tooltip placement="top" title={<span>
+                        {t("body.goods.level1.unitfee.tip")}</span>}>
                         <div className="flex w-full flex-grow flex-col justify-center gap-2 rounded border p-4 cursor-pointer">
-                            <h2 className="text-md text-secondary-light">
-                                Uint Fee
+                            <h2 className="font-color-1">
+                                {t("body.goods.level1.unitfee")}
                             </h2>
                             <div className="flex items-end gap-2">
                                 <span className="text-xl">
@@ -205,10 +237,11 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                             </div>
                         </div>
                     </Tooltip>
-                    <Tooltip placement="top" title={<span>Changes of unit fee in a year.</span>}>
+                    <Tooltip placement="top" title={<span>
+                        {t("body.goods.level1.apy.tip")}</span>}>
                         <div className="flex w-full flex-grow flex-col justify-center gap-2 rounded border p-4 cursor-pointer">
-                            <h2 className="text-md text-secondary-light">
-                                APY
+                            <h2 className="font-color-1">
+                                {t("body.goods.level1.apy")}
                             </h2>
                             <div className="flex items-end gap-2">
                                 <span className="text-xl">
@@ -247,12 +280,15 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                             })}
                             chain_name={chain_name}
                             dex_name={dex_name}
-                            token_address={token_address} value_good_id={""} />
+                            title={t('body.goods.volume.title')}
+                            token_address={token_address}
+                            value_good_id={""}
+                        />
                     </div>
                 </div>
             </div>
             <XYKTokenInformation
-                        // @ts-ignore
+                // @ts-ignore
                 token_data={maybeResult.match({
                     None: () => null,
                     Some: (pool_data) => pool_data,
@@ -271,98 +307,94 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                             return (
                                 <>
                                     <div className="flex flex-grow flex-wrap items-center justify-between gap-8">
-                                        {/* <div className="flex flex-grow flex-wrap items-center gap-8"> */}
                                         <InformationContainer
-                                            label="Current Volume"
+                                            label={t("body.goods.level2.volume")}
                                             num={`${prettifyCurrencys(result.currentQuantity)}`}
                                             value={`${prettifyCurrencys(result.currentValue)}`}
-                                            title={"The Metric is the goods' current volume."}
+                                            title={t("body.goods.level2.volume.tip")}
                                             valueSymbol={`${result.valueSymbol}`}
                                         />
                                         <InformationContainer
-                                            label="Invest Volume"
+                                            label={t("body.goods.level2.invest")}
                                             num={`${prettifyCurrencys(result.investQuantity)}`}
                                             value={`${prettifyCurrencys(result.investValue)}`}
-                                            title={"The Metric is the goods' invest volume."}
+                                            title={t("body.goods.level2.invest.tip")}
                                             valueSymbol={`${result.valueSymbol}`}
                                         />
                                         <InformationContainer
-                                            label="Fee Volume"
+                                            label={t("body.goods.level2.fee")}
                                             num={`${prettifyCurrencys(result.currentFee)}`}
                                             value={`${prettifyCurrencys(result.currentFeeValue)}`}
-                                            title={"The Metric is the goods' fee volume."}
+                                            title={t("body.goods.level2.fee.tip")}
                                             valueSymbol={`${result.valueSymbol}`}
                                         />
-                                        {/* </div>
-                                        <div className="flex flex-grow flex-wrap items-center gap-8"> */}
                                         <InformationContainer
-                                            label="24h Net Trade"
+                                            label={t("body.goods.level2.24htrade")}
                                             num={`${prettifyCurrencys(result.tradeQuantity24)}`}
                                             value={`${prettifyCurrencys(result.tradeValue24)}`}
-                                            title={"Chanes of Current Volume in 24 hours."}
+                                            title={t("body.goods.level2.24htrade.tip")}
                                             valueSymbol={`${result.valueSymbol}`}
                                         />
                                         <InformationContainer
-                                            label="24h Net Invest"
+                                            label={t("body.goods.level2.24hinvest")}
                                             num={`${prettifyCurrencys(result.investQuantity24)}`}
                                             value={`${prettifyCurrencys(result.investValue24)}`}
-                                            title={"Changes of Invest Volume in 24 hours."}
+                                            title={t("body.goods.level2.24hinvest.tip")}
                                             valueSymbol={`${result.valueSymbol}`}
                                         />
                                         <InformationContainer
-                                            label="24h Net Fee"
+                                            label={t("body.goods.level2.24hfee")}
                                             num={`${prettifyCurrencys(result.fee24)}`}
                                             value={`${prettifyCurrencys(result.feeValue24)}`}
-                                            title={"Changes of Fee Volume in 24 hours."}
+                                            title={t("body.goods.level2.24hfee.tip")}
                                             valueSymbol={`${result.valueSymbol}`}
                                         />
-                                        {/* </div> */}
                                     </div>
                                     <div className="flex flex-grow flex-wrap items-center justify-between gap-8">
                                         {/* <div className="flex flex-grow flex-wrap items-center gap-8"> */}
                                         <InformationContainer
-                                            label="Total Trade"
+                                            label={t("body.goods.level2.totaltrade")}
                                             num={`${prettifyCurrencys(result.totalTradeQuantity)}`}
                                             value={`${prettifyCurrencys(result.totalTradeValue)}`}
-                                            title={"Sum all of  the customers' trade amount."}
+                                            title={t("body.goods.level2.totaltrade.tip")}
                                             valueSymbol={`${result.valueSymbol}`}
                                         />
                                         <InformationContainer
-                                            label="Total Invest"
+                                            label={t("body.goods.level2.totalinvest")}
                                             num={`${prettifyCurrencys(result.totalInvestQuantity)}`}
                                             value={`${prettifyCurrencys(result.totalInvestValue)}`}
-                                            title={"Sum all of the customers' invest amount."}
+                                            title={t("body.goods.level2.totalinvest.tip")}
                                             valueSymbol={`${result.valueSymbol}`}
                                         />
                                         <InformationContainer
-                                            label="Total Divest"
+                                            label={t("body.goods.level2.totaldivest")}
                                             num={`${prettifyCurrencys(result.totalDisinvestQuantity)}`}
                                             value={`${prettifyCurrencys(result.totalDisinvestValue)}`}
-                                            title={"Sum all of the customers' disvest amount."}
-                                            valueSymbol={`${result.valueSymbol}`}
+                                            title={t("body.goods.level2.totaldivest.tip")}
+                                            valueSymbol={""}
                                         />
                                         {/* </div>
                                         <div className="flex flex-grow flex-wrap items-center gap-8"> */}
                                         <InformationContainer
-                                            label="Total Trade Count"
+                                            label={t("body.goods.level2.totaltradecount")}
                                             num={`${result.totalTradeCount}`}
-                                            value={""}
-                                            title={"Count all of  the customers' trade."}
-                                            valueSymbol={`${result.valueSymbol}`}
+                                            value={false}
+                                            title={t("body.goods.level2.totaltradecount.tip")}
+                                            valueSymbol={""}
                                         />
                                         <InformationContainer
-                                            label="Total Invest Count"
+                                            label={t("body.goods.level2.totalinvestcount")}
                                             num={`${result.totalInvestCount}`}
-                                            value={""}
-                                            title={"Count all of the customers' invest."}
-                                            valueSymbol={`${result.valueSymbol}`}
+                                            value={false}
+                                            title={t("body.goods.level2.totalinvestcount.tip")}
+                                            valueSymbol={""}
                                         />
                                         <InformationContainer
-                                            label="Creator"
+                                            label={t("body.goods.level2.creator")}
                                             num={`${truncate(result.owner)}`}
-                                            value={""}
-                                            title={"The goods' creator and owner."}
-                                            valueSymbol={`${result.valueSymbol}`}
+                                            value={false}
+                                            title={t("body.goods.level2.creator.tip")}
+                                            valueSymbol={""}
                                         />
                                         {/* </div> */}
                                     </div>
@@ -383,46 +415,46 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                                 <>
                                     <div className="flex flex-grow flex-wrap items-center justify-between gap-8">
                                         <InformationContainer
-                                            label="Buyfee"
+                                            label={t("body.goods.level3.buyfee")}
                                             num={`${prettifyCurrencys(result.buyFee)}` + '%'}
                                             value={""}
-                                            title={"When customer buy the goods' fee rates."}
-                                            valueSymbol={`${result.valueSymbol}`}
+                                            title={t("body.goods.level3.buyfee.tip")}
+                                            valueSymbol={""}
                                         />
                                         <InformationContainer
-                                            label="Sellfee"
+                                            label={t("body.goods.level3.sellfee")}
                                             num={`${prettifyCurrencys(result.sellFee)}` + '%'}
                                             value={""}
-                                            title={"When customer sell the goods' fee rates."}
-                                            valueSymbol={`${result.valueSymbol}`}
+                                            title={t("body.goods.level3.sellfee.tip")}
+                                            valueSymbol={""}
                                         />
                                         <InformationContainer
-                                            label="Investfee"
+                                            label={t("body.goods.level3.investfee")}
                                             num={`${prettifyCurrencys(result.investFee)}` + '%'}
                                             value={""}
-                                            title={"When customer invest the goods' fee rates."}
-                                            valueSymbol={`${result.valueSymbol}`}
+                                            title={t("body.goods.level3.investfee.tip")}
+                                            valueSymbol={""}
                                         />
                                         <InformationContainer
-                                            label="Divestfee"
+                                            label={t("body.goods.level3.divestfee")}
                                             num={`${prettifyCurrencys(result.divestFee)}` + '%'}
                                             value={""}
-                                            title={"When customer divist the goods' fee rates."}
-                                            valueSymbol={`${result.valueSymbol}`}
+                                            title={t("body.goods.level3.divestfee.tip")}
+                                            valueSymbol={""}
                                         />
                                         <InformationContainer
-                                            label="Swapchips"
+                                            label={t("body.goods.level3.swapchips")}
                                             num={`${result.swapChips}`}
                                             value={""}
-                                            title={"The chips use when swaping and config by goods' owner."}
-                                            valueSymbol={`${result.valueSymbol}`}
+                                            title={t("body.goods.level3.swapchips.tip")}
+                                            valueSymbol={""}
                                         />
                                         <InformationContainer
-                                            label="Divestchips"
+                                            label={t("body.goods.level3.divestchips")}
                                             num={`${result.divestChips}`}
-                                            value={""}
-                                            title={"The chips use  when divist and confing by goods' owner."}
-                                            valueSymbol={`${result.valueSymbol}`}
+                                            value={" "}
+                                            title={t("body.goods.level3.divestchips.tip")}
+                                            valueSymbol={""}
                                         />
                                     </div>
                                 </>);

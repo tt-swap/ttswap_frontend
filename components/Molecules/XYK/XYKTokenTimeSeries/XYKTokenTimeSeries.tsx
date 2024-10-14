@@ -18,7 +18,6 @@ import {
 } from "@/utils/types/XykServiceTypes";
 import { capitalizeFirstLetter } from "@/utils/functions/capitalize";
 
-// import { ecosystemChartDatas } from '@/graphql/overview';
 import { prettifyCurrencys } from '@/graphql/util';
 
 
@@ -26,10 +25,9 @@ let currencys: string = '';
 export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
     chain_name,
     dex_name,
-    token_address,
     token_data,
     displayMetrics = "both",
-    value_good_id
+    value_good_id, title
 }) => {
     const [maybeResult, setResult] =
         useState<Option<UniswapLikeEcosystemCharts>>(None);
@@ -45,7 +43,7 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
             None: () => null,
             Some: (response) => {
 
-                currencys = response.quote_currency;
+                console.log("000000",response)
 
                 const chart_key = `${timeSeries}_chart_${period}d`;
                 const value_key =
@@ -60,14 +58,16 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
                     // @ts-ignore
                 ).map((x) => {
                     const dt = timestampParser(x.dt, "DD MMM YY");
+                    currencys = x.quote_currency;
                     return {
                         // currency: x.quote_currency,
                         date: dt,
-                        [`${capitalizeFirstLetter(timeSeries)}`]:
+                        [`${capitalizeFirstLetter(timeSeries)} (${x.quote_currency})`]:
                             x[value_key as keyof VolumeEcosystemChart],
                     };
                 });
                 setChartData(new Some(result));
+                // console.log(chart_key,value_key,0,`${capitalizeFirstLetter(timeSeries)} (USD)`,"****",currencys)
             },
         });
     }, [maybeResult, period, timeSeries, displayMetrics]);
@@ -107,13 +107,13 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
             if (timeSeries === "liquidity") {
                 return (
                     <AreaChart
-                        className="mt-2 p-2"
+                        className="mt-2"
                         data={result}
                         index="date"
-                        valueFormatter={prettifyCurrencys}
                         yAxisWidth={100}
+                        valueFormatter={prettifyCurrencys}
                         categories={[
-                            `${capitalizeFirstLetter(timeSeries)}`,
+                            `${capitalizeFirstLetter(timeSeries)} (${currencys})`,
                         ]}
                         colors={CHART_COLORS}
                     />
@@ -122,13 +122,13 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
             return (
                 <div>
                     <BarChart
-                        className="mt-2 p-2"
+                        className="mt-2"
                         data={result}
                         index="date"
-                        valueFormatter={prettifyCurrencys}
                         yAxisWidth={100}
+                        valueFormatter={prettifyCurrencys}
                         categories={[
-                            `${capitalizeFirstLetter(timeSeries)}`,
+                            `${capitalizeFirstLetter(timeSeries)} (${currencys})`,
                         ]}
                         colors={CHART_COLORS}
                     />
@@ -138,13 +138,10 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
     });
 
     return (
-        <div className="min-h-[20rem] w-full rounded border p-4">
+        <div className="min-h-[20rem] w-full">
             <div className="pb-4">
-                <TypographyH4>{`${capitalizeFirstLetter(
-                    timeSeries === "liquidity" ? "investment" : timeSeries
-                )}`}</TypographyH4>
+                <TypographyH4>{`${capitalizeFirstLetter(title)} (${currencys})`}</TypographyH4>
             </div>
-
             <div className="flex justify-between">
                 {/* {displayMetrics === "both" && (
                     <div className="flex gap-2">

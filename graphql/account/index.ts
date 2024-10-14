@@ -2,7 +2,7 @@ import { getExplorer, getChainName } from '@/data/networks';
 import { ethers } from "ethers";
 import MarketManager from '@/data/abi/MarketManager.json';
 import { getContractAddress } from '@/data/contractConfig';
-import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex, myCommission } from './graphql';
+import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex, myCommission,referees,myReferees } from './graphql';
 import { timestampdToDateSub, powerIterative, iconUrl, timestampSubH } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
 
@@ -108,15 +108,6 @@ export async function myTransactionsDatas(params: { id: string; address: string;
         goodsDatas.data.transactions.forEach((e: any) => {
             let from_decimals = powerIterative(10, e.frompargood.tokendecimals);
             let to_decimals = powerIterative(10, e.togood.tokendecimals);
-            // let from_price = 0;
-            // if (e.frompargood.currentValue > 0 || e.frompargood.currentQuantity > 0 || e.frompargood.tokendecimals > 0) {
-            //     from_price = ((e.frompargood.currentValue / tokendecimals) / (e.frompargood.currentQuantity / from_decimals)) / jz;
-            // }
-            // let to_price = 0;
-            // if (e.togood.currentValue > 0 || e.togood.currentQuantity > 0 || e.togood.tokendecimals > 0) {
-            //     to_price = ((e.togood.currentValue / tokendecimals) / (e.togood.currentQuantity / to_decimals)) / jz;
-            // }
-
             let map = {
                 id: "", blockNumber: "", type: "", symbol1: "", symbol2: "", fromgoodQuanity: 0, togoodQuantity: 0,
                 hash: "", totalValue: 0, time: 0, valueSymbol: ""
@@ -143,18 +134,8 @@ export async function myTransactionsDatas(params: { id: string; address: string;
             }
 
             map.totalValue = e.transvalue / tokendecimals;
-            // if (e.transtype === "buy" || e.transtype === "pay") {
-            //     map.totalValue = map.fromgoodQuanity * from_price;
-            // } else {
-            //     map.totalValue = (map.fromgoodQuanity * from_price) + (map.togoodQuantity * to_price);
-            // }
-            // console.log(map.fromgoodQuanity,"********",from_price,"***",map.togoodQuantity,"**",to_price)
             items.push(map);
         });
-
-
-        // console.log(item,"********")
-        // return item;
     }
     return item;
 }
@@ -259,7 +240,7 @@ export async function myDisInvestProofGood(id: number, ssionChian: number): Prom
 // myIndexes
 export async function myIndexes(id: string, wallet_address: any, ssionChian: number): Promise<object> {
 
-    let items = { disinvestCount: 0, disinvestValue: 0, investCount: 0, investValue: 0, 
+    let items = { disinvestCount: 0, disinvestValue: 0, investCount: 0, investValue: 0, stakettsvalue:0,getfromstake:0,mining:0,
         tradeCount: 0, tradeValue: 0, totalcommissionvalue: 0, totalprofitvalue: 0, isEmpty: true };
     if (id && wallet_address !== null) {
         const goodsDatas = await myIndex({ id: id, address: wallet_address.toLowerCase() }, ssionChian);
@@ -275,6 +256,9 @@ export async function myIndexes(id: string, wallet_address: any, ssionChian: num
         items.tradeValue = data.tradeValue / tokendecimals * goodQuantity;
         items.totalcommissionvalue = data.totalcommissionvalue / tokendecimals * goodQuantity;
         items.totalprofitvalue = data.totalprofitvalue / tokendecimals * goodQuantity;
+        items.stakettsvalue = data.stakettsvalue / tokendecimals * goodQuantity;
+        items.getfromstake = data.getfromstake / tokendecimals;
+        items.mining = ((goodsDatas.data.ttsEnv.poolasset/goodsDatas.data.ttsEnv.poolvalue) * data.stakettsvalue - data.stakettscontruct) / tokendecimals;
     }
     return items;
 }
@@ -439,5 +423,59 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
             value.myFeeAmount = value.myFeeQuanity * value.price
         }
     })
+    return item;
+}
+
+
+//refereesDatas
+export async function refereesDatas(wallet_address: any, ssionChian: number): Promise<object> {
+
+    let items = { referralnum: 0 };
+    if (wallet_address !== null) {
+        const goodsDatas = await referees({ address: wallet_address.toLowerCase() }, ssionChian);
+        let data = goodsDatas.data.customer;
+        items.referralnum = data.referralnum;
+    }
+    return items;
+}
+
+
+// 我的记录列表
+export async function myRefereesDatas(params: { id: string; address: string; pageNumber: number; pageSize: number; }, ssionChian: number): Promise<object> {
+
+    const blockExplorerUrls = getExplorer(ssionChian);
+    // console.log(id !== "",id)
+    let item = { items: {}, pagination: { has_more: true }, error: false, error_message: "", tokensymbol: "" };
+    if (params.id !== "") {
+        const goodsDatas = await myReferees({ id: params.id, first: params.pageSize, skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase() }, ssionChian);
+
+        let goodQuantity = goodsDatas.data.goodState.currentQuantity / goodsDatas.data.goodState.currentValue;
+        let tokendecimals = powerIterative(10, 6);
+
+        let items: object[] = [];
+        item.items = items;
+        item.tokensymbol = goodsDatas.data.goodState.tokensymbol;
+
+        item.items = items;
+        if (goodsDatas.data.customers.length < params.pageSize) {
+            item.pagination.has_more = false;
+        }
+
+        goodsDatas.data.customers.forEach((e: any) => {
+            let map = {
+                id: "", disinvestValue: 0, investValue: 0,
+                link: "", tradeValue: 0, valueSymbol: ""
+            };
+
+            map.id = e.id;
+            map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
+            // @ts-ignore
+            map.link = blockExplorerUrls[0] + "/address/" + e.id;
+            map.disinvestValue = e.disinvestValue / tokendecimals * goodQuantity;
+            map.investValue = e.investValue / tokendecimals * goodQuantity;
+            map.tradeValue = e.tradeValue / tokendecimals * goodQuantity;
+            items.push(map);
+        });
+    }
     return item;
 }

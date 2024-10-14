@@ -1,4 +1,5 @@
 
+import contractConfig from "@/public/config/contractConfig.json"
 interface BasicChainInformation {
   chainId: string;
   contractAddress: string;
@@ -26,7 +27,7 @@ export const contractCon: {
   },
   11155111: {
     chainId: "11155111",
-    contractAddress: "0x696993125AFDB603D8afC33565AEA75fd27A3F46",
+    contractAddress: "0x1F686ccf99E5FdC3A6d605857b6288F25BdfDc02",
     theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap/version/latest"
   },
   // Optimism

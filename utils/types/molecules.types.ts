@@ -105,6 +105,7 @@ export interface XYKOverviewTimeSeriesProps {
     displayMetrics?: "both" | "liquidity" | "volume";
     value_good_id:string;
     chain_id:number;
+    title:string;
 }
 
 export interface XYKTokenTimeSeriesProps {
@@ -114,6 +115,7 @@ export interface XYKTokenTimeSeriesProps {
     token_data?: TokenV2VolumeWithChartData | null;
     displayMetrics?: "both" | "liquidity" | "volume";
     value_good_id:string;
+    title:string;
 }
 
 export interface XYKWalletInformationProps {

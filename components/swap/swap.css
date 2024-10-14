@@ -106,11 +106,11 @@
   padding: 5px 0 9px 0;
 }
 
-.ant-tree-title {
+/* .ant-tree-title {
   display: flex;
   justify-items: center;
   align-items: center;
-}
+} */
 
 .ant-tree-switcher {
   display: flex;

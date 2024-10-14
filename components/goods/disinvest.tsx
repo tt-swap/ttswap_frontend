@@ -1,21 +1,22 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Form,
     Input,
-    InputNumber, Spin, message,
+    Button, Spin, message,
     Space, Avatar
 } from 'antd';
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import CreatModal from "./creatModal";
 import "./index.css"
 import useWallet from "@/hooks/useWallet";
 import { LoadingOutlined } from '@ant-design/icons';
 import { useWeb3React } from "@web3-react/core";
 import { useSwitchChain } from "hooks";
-import {useLocalStorage} from "@/utils/LocalStorageManager";
+import { useLocalStorage } from "@/utils/LocalStorageManager";
 
 import { myDisInvestProofGood } from '@/graphql/account';
-import { prettifyCurrencys, powerIterative,prettifyCurrencysFee } from '@/graphql/util';
+import { prettifyCurrencys, powerIterative, prettifyCurrencysFee } from '@/graphql/util';
 
 interface Props {
     open_zt: boolean;
@@ -28,14 +29,15 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
     const [spinning, setSpinning] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
     const switchChain = useSwitchChain();
-      const { chainId } = useWeb3React();
-      // @ts-ignore
-      const { ssionChian  } = useLocalStorage();
+    const { chainId } = useWeb3React();
+    // @ts-ignore
+    const { ssionChian } = useLocalStorage();
 
     const [goodQ, setGoodQ] = useState("");
     const [goodVQ, setGoodVQ] = useState("");
     const [disgood, setDisgood] = useState({ id: 0 });
     const [disgoodCot, setDisgoodCot] = useState({});
+    const { t } = useTranslation();
 
     // const [goodVAddr, setGoodVAddr] = useState("");
     // const [goodDec, setGoodDec] = useState(0);
@@ -43,17 +45,17 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
     const { disinvest } = useWallet();
 
     let count = { good1: { quantity: 0, profit: 0, disfee: 0, count: 0 }, good2: { quantity: 0, profit: 0, disfee: 0, count: 0 } };
-    
-    
+
+
     useMemo(() => {
         setGoodVQ("");
         setGoodQ("");
-        console.log(dis_id, 1001,goodQ,goodVQ);
+        console.log(dis_id, 1001, goodQ, goodVQ);
         // setOpen(open_zt);
         (async () => {
             if (dis_id > 0 && open_zt) {
                 setSpinning(true);
-                let tokens: any = await myDisInvestProofGood(dis_id,ssionChian);
+                let tokens: any = await myDisInvestProofGood(dis_id, ssionChian);
                 console.log(tokens, 99)
                 setDisgood(tokens);
                 count.good1.quantity = tokens.good1.quantity;
@@ -69,7 +71,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                 // setPercent(0);
             }
         })();
-    }, [dis_id,open_zt,ssionChian]);
+    }, [dis_id, open_zt, ssionChian]);
 
     const isDisabled = useMemo(() => {
         // console.log(buyF, sellF, inF, disinF, swapS, disinS, goodQ, goodVQ, goodC, goodV)
@@ -80,36 +82,33 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
     }, [goodQ, goodVQ])
 
     const disinvestgood = async () => {
-        await switchChain(ssionChian).catch((error) => {
-            console.error(`"Failed to switch chains: " ${error}`);
-          });
-        if (chainId !== ssionChian) {
-            return;
-        }
         setSpinning(true);
-        console.log(0)
-        // @ts-ignore
-        const qunt = Number(goodQ * powerIterative(10, disgood.good1.decimals));
-        const isSuccess = await disinvest(disgood.id, BigInt(qunt));
-        if (isSuccess) {
-            messageApi.open({
-                type: 'success',
-                content: 'Divest data sent success',
-            });
-            setDataNum(1);
-            setOpen(false);
-        } else {
-            messageApi.open({
-                type: 'error',
-                content: 'Divest data sent fail',
-            });
-        }
+        await switchChain(Number(ssionChian)).then(async () => {
+            // @ts-ignore
+            const qunt = Number(goodQ * powerIterative(10, disgood.good1.decimals));
+            const isSuccess = await disinvest(disgood.id, BigInt(qunt));
+            if (isSuccess) {
+                messageApi.open({
+                    type: 'success',
+                    content: t('common.divest') + t('common.mess.success'),
+                });
+                setDataNum(1);
+                setOpen(false);
+            } else {
+                messageApi.open({
+                    type: 'error',
+                    content: t('common.divest') + t('common.mess.error'),
+                });
+            }
+        }).catch((error) => {
+            console.error(`"Failed to switch chains: " ${error}`);
+        });
         setSpinning(false);
         document.body.style.overflow = "";
     };
 
     const goodQOn = (e: any) => {
-        console.log(e.target,disgood)
+        console.log(e.target, disgood)
         // @ts-ignore
         if (disgood.isvaluegood) {
             let num = 0;
@@ -132,7 +131,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
         } else {
             let num = Number(e.target.value);
             // @ts-ignore
-            let num1 = disgood.good2.quantity * num / disgood.good1.quantity ;
+            let num1 = disgood.good2.quantity * num / disgood.good1.quantity;
             // @ts-ignore
             if (num < disgood.good1.quantity && num < disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum) {
                 setGoodQ(e.target.value);
@@ -166,7 +165,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
 
         let num1 = Number(e.target.value);
         // @ts-ignore
-        let num = disgood.good1.quantity * num1 /disgood.good2.quantity;
+        let num = disgood.good1.quantity * num1 / disgood.good2.quantity;
         // @ts-ignore
         if (num < disgood.good1.quantity && num < disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum) {
 
@@ -196,7 +195,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
     return (
         <>
             {contextHolder}
-            <CreatModal open={open_zt} setOpen={setOpen} title={'Divest'}>
+            <CreatModal open={open_zt} setOpen={setOpen} title={t('common.divest')}>
                 <Spin spinning={spinning} fullscreen indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} size="large" />
                 {disgood.id !== 0 && (
                     <div className='newgood'>
@@ -212,21 +211,21 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                         }} />} /><span>{
                                             // @ts-ignore
                                             disgood.good1.symbol}</span></Space></div>
-                                    <div><Space><span>Current Unit Fee:</span><span>{
+                                    <div><Space><span>{t('body.account.divest.unitfee')}:</span><span>{
                                         // @ts-ignore
                                         prettifyCurrencysFee(disgood.good1.nowUnitFee)}</span></Space></div>
                                 </div>
                                 <div className='pt-2 pb-2'>
-                                    <div><Space><span>Invest quantity:</span><span>{
+                                    <div><Space><span>{t('body.account.divest.investquantity')}:</span><span>{
                                         // @ts-ignore
                                         prettifyCurrencys(disgood.good1.quantity)}</span></Space></div>
-                                    <div><Space><span>Unit Fee at Invest:</span><span>{
+                                    <div><Space><span>{t('body.account.divest.investunitfee')}:</span><span>{
                                         // @ts-ignore
                                         prettifyCurrencysFee(disgood.good1.unitFee)}</span></Space></div>
-                                    <div><Space><span>Estimated Profit:</span><span>{
+                                    <div><Space><span>{t('body.account.divest.estprofit')}:</span><span>{
                                         // @ts-ignore
                                         prettifyCurrencysFee(disgood.good1.profit)}</span></Space></div>
-                                    <div><Space><span>Earning Rate:</span><span>{
+                                    <div><Space><span>{t('body.account.divest.earningrate')}:</span><span>{
                                         // @ts-ignore
                                         prettifyCurrencys(disgood.good1.earningRate * 100)}%</span></Space></div>
                                 </div>
@@ -245,21 +244,21 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                                 }} />} /><span>{
                                                     // @ts-ignore
                                                     disgood.good2.symbol}</span></Space></div>
-                                            <div><Space><span>Current Unit Fee:</span><span>{
+                                            <div><Space><span>{t('body.account.divest.unitfee')}:</span><span>{
                                                 // @ts-ignore
                                                 prettifyCurrencysFee(disgood.good2.nowUnitFee)}</span></Space></div>
                                         </div>
                                         <div className='pt-2 pb-2'>
-                                            <div><Space><span>Invest quantity:</span><span>{
+                                            <div><Space><span>{t('body.account.divest.investquantity')}:</span><span>{
                                                 // @ts-ignore
                                                 prettifyCurrencys(disgood.good2.quantity)}</span></Space></div>
-                                            <div><Space><span>Unit Fee at Invest:</span><span>{
+                                            <div><Space><span>{t('body.account.divest.investunitfee')}:</span><span>{
                                                 // @ts-ignore
                                                 prettifyCurrencysFee(disgood.good2.unitFee)}</span></Space></div>
-                                            <div><Space><span>Estimated Profit:</span><span>{
+                                            <div><Space><span>{t('body.account.divest.estprofit')}:</span><span>{
                                                 // @ts-ignore
                                                 prettifyCurrencysFee(disgood.good2.profit)}</span></Space></div>
-                                            <div><Space><span>Earning Rate:</span><span>{
+                                            <div><Space><span>{t('body.account.divest.earningrate')}:</span><span>{
                                                 // @ts-ignore
                                                 prettifyCurrencys(disgood.good2.earningRate * 100)}%</span></Space></div>
                                         </div>
@@ -269,7 +268,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
 
                         <Form className='form-new' colon={false}>
 
-                            <h2>Divest Quantity</h2>
+                            <h2>{t('body.account.divest.divestquantity')}</h2>
                             <Form.Item>
                                 <Input
                                     placeholder="0"
@@ -289,17 +288,17 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                 />
                                 <div className='pt-2 pb-2'>
                                     <div className='flex justify-between'>
-                                        <div><Space><span>Volume:</span><span>{
+                                        <div><Space><span>{t('body.account.divest.volume')}:</span><span>{
                                             // @ts-ignore
                                             prettifyCurrencys(disgoodCot.good1.quantity)}</span></Space></div>
-                                        <div><Space><span>Profit:</span><span>{
+                                        <div><Space><span>{t('body.account.divest.profit')}:</span><span>{
                                             // @ts-ignore
                                             prettifyCurrencysFee(disgoodCot.good1.profit)}</span></Space></div>
                                     </div>
-                                    <div className='text-end pt-2'><Space><span>Fee:</span><span>{
+                                    <div className='text-end pt-2'><Space><span>{t('body.account.divest.fee')}:</span><span>{
                                         // @ts-ignore
                                         prettifyCurrencysFee(disgoodCot.good1.disfee)}</span></Space></div>
-                                    <div className='text-end pt-2'><Space><span>Total:</span><span>{
+                                    <div className='text-end pt-2'><Space><span>{t('body.account.divest.total')}:</span><span>{
                                         // @ts-ignore
                                         prettifyCurrencys(disgoodCot.good1.count)}</span></Space></div>
                                 </div>
@@ -308,7 +307,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                 // @ts-ignore
                                 !disgood.isvaluegood && (
                                     <>
-                                        <h2>Divest Value</h2>
+                                        <h2>{t('body.account.divest.divestvalue')}</h2>
                                         <Form.Item>
                                             <Input
                                                 placeholder="0"
@@ -328,17 +327,17 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                             />
                                             <div className='pt-2 pb-2'>
                                                 <div className='flex justify-between'>
-                                                    <div><Space><span>Volume:</span><span>{
+                                                    <div><Space><span>{t('body.account.divest.volume')}:</span><span>{
                                                         // @ts-ignore
                                                         prettifyCurrencys(disgoodCot.good2.quantity)}</span></Space></div>
-                                                    <div><Space><span>Profit:</span><span>{
+                                                    <div><Space><span>{t('body.account.divest.profit')}:</span><span>{
                                                         // @ts-ignore
                                                         prettifyCurrencysFee(disgoodCot.good2.profit)}</span></Space></div>
                                                 </div>
-                                                <div className='text-end pt-2'><Space><span>Fee:</span><span>{
+                                                <div className='text-end pt-2'><Space><span>{t('body.account.divest.fee')}:</span><span>{
                                                     // @ts-ignore
                                                     prettifyCurrencysFee(disgoodCot.good2.disfee)}</span></Space></div>
-                                                <div className='text-end pt-2'><Space><span>Total:</span><span>{
+                                                <div className='text-end pt-2'><Space><span>{t('body.account.divest.total')}:</span><span>{
                                                     // @ts-ignore
                                                     prettifyCurrencys(disgoodCot.good2.count)}</span></Space></div>
                                             </div>
@@ -347,11 +346,11 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                 )}
                         </Form>
                         <Button
-                            className='newButton'
+                            type="primary"
                             style={{ width: "100%" }}
                             disabled={isDisabled}
                             onClick={disinvestgood}
-                        >Divest</Button>
+                        >{t('common.divest')}</Button>
                     </div>
                 )}
             </CreatModal>

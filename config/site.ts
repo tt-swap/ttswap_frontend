@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "TTSWAP Dashboard",
+  name: "TTSWAP",
   description:
     "",
   mainNav: [

@@ -13,7 +13,7 @@ import BigNumber from 'bignumber.js';
 // const chainName = getChainName(chainId);
 
 //物品列表
-export async function GoodsDatas(params: { id: string; sel: string }, ssionChian: number): Promise<object> {
+export async function GoodsDatas(params: { id: string; sel: string; gid: number }, ssionChian: number): Promise<object> {
     const chainName = getChainName(ssionChian);
     let item: InvestTokenD = {
         tokenValue: [],
@@ -21,7 +21,7 @@ export async function GoodsDatas(params: { id: string; sel: string }, ssionChian
     };
     if (params.id !== "") {
 
-        const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel, time: timestampdToDateYear(1) }, ssionChian);
+        const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel, gid: params.gid, time: timestampdToDateYear(1) }, ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);

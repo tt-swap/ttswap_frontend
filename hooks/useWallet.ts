@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { ethers } from "ethers";
-// import { useWeb3React } from "@web3-react/core";
+import { useWeb3React } from "@web3-react/core";
 import useSwap from "@/hooks/useSwap";
 import useInvest from "@/hooks/useInvest";
 import erc20 from '@/data/abi/erc20.json';
@@ -9,30 +9,22 @@ import { useSwapAmountStore } from "@/stores/swapAmount";
 import { powerIterative } from '@/graphql/util';
 import { useWalletAddress, useChainId } from "@/stores/walletAddress";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
+import useLocalStorages from "./useLocalStorage";
 
 import { getContractAddress } from '@/data/contractConfig';
 // import { walletLogo } from "@coinbase/wallet-sdk/dist/assets/wallet-logo";
 
 const useWallet = () => {
-    // if (typeof window !== 'undefined') {
-    // 浏览器环境特有的代码
-    const { ethereum } = window;
-    // }
-    const provider = new ethers.BrowserProvider(ethereum);
+
+    const [provider, setProvider] = useState<ethers.BrowserProvider>(window.ethereum);
 
     // @ts-ignore
     const { ssionChian } = useLocalStorage();
+    const [wallet, setWallet] = useLocalStorages("wallet", null);
 
-    // const provider = new ethers.JsonRpcProvider('http://142.171.157.66:8545');
-    // let chainId = 1;
-    // if (sessionStorage.getItem("chainId") !== null) {
-    //     chainId = Number(sessionStorage.getItem("chainId"));
-    // }
     const contractAddress = getContractAddress(ssionChian);//'0xdb19B22665aFB391F45a8C985c47EBB09cfB3c1c'; // MarketManager 合约地址  0xB756137A6fE9acD420fEECD9dE30282b93d35861
     const gater = '0x0f18a2428c934db7b9e040f8fc6e08975cbef07a'; // gater address
 
-
-    // const { isActive, account } = useWeb3React();
     const { swaps } = useSwap();
     const { invest } = useInvest();
     const { swapsAmount } = useSwapAmountStore();
@@ -42,48 +34,33 @@ const useWallet = () => {
     const [account, setAccount] = useState(null);
     const [isActive, setIsActive] = useState(false);
     const { address } = useWalletAddress();
-    // const { ssionChian } = useChainId();
-    // useEffect(() => {
-    //   (async () => {
-    //     const signer = await provider.getSigner()
-    //     const contract = new ethers.Contract("0x9d0108882640990941FbC5677C1D9e3281a4e74C", MarketManager, signer);
-    //     const params = ["1", "2", "10", "50000", false, "0x5e79DEf7F70AB9F975422AadD648f3D9C0fC4B7F"];
-    //     console.log(params)
-    //     await contract.buyGood(...params).then((e)=>{
-    //       console.log(e,"****************")
-    //     }).catch((error: any) => {
-    //         console.error('预估 Gas 时出错:', error);
-    //       });
-    //   })();
-    // }, []);
-    useMemo(() => {
-        // console.log(23794237429873,window.localStorage.getItem("wallet"))
-        if (window.localStorage.getItem("wallet") === null) {
+    const [error, setError] = useState<string | null>(null);
+    // const { activate, library } = useWeb3React();
+
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.ethereum) {
+            const newProvider = new ethers.BrowserProvider(window.ethereum);
+            // const provider = new ethers.providers.Web3Provider(window.ethereum);
+            setProvider(newProvider);
+        } else {
+            setError("请安装以太坊钱包（如 MetaMask）");
+        }
+    }, []);
+
+    useEffect(() => {
+        if (wallet === null) {
             setIsActive(false);
         } else {
             setIsActive(true);
-            // @ts-ignore
-            setAccount(window.localStorage.getItem("wallet"));
+            setAccount(wallet);
         }
-    }, [window.localStorage.getItem("wallet"), account, isActive, address]);
+    }, [wallet, address]);
 
 
     useMemo(() => {
         // @ts-ignore
         if (swapsAmount.from.amount > 0) {
-            // const fromV = swaps.from.currentValue / swaps.from.currentQuantity * 10 ** swaps.from.decimals;
-            // const toV = swaps.to.currentValue / swaps.to.currentQuantity * 10 ** swaps.to.decimals;
-            // let limitPrice;
-            // if (swaps.from.decimals < swaps.to.decimals || swaps.from.decimals === swaps.to.decimals) {
-            //   const toVl = Math.floor(toV / fromV * (1 + 0.5 / 100));
-            //   limitPrice = BigInt(toVl * 2 ** 128) + BigInt(1);
-            //   // console.log(toVl, toV / fromV, 1, 22555522222222, limitPrice)
-            // } else {
-            //   const toVl = Math.floor(fromV / toV * (1 + 0.5 / 100));
-            //   limitPrice = BigInt(1 * 2 ** 128) + BigInt(toVl);
-            //   // console.log(1, toVl, fromV / toV, 22555522222222, limitPrice)
-            // }
-            // const a: BigInt = BigInt(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals);
             (async () => {
                 // const signer = await provider.getSigner()
                 // const contract = new ethers.Contract(contractAddress, MarketManager, signer);
@@ -142,16 +119,20 @@ const useWallet = () => {
 
     const collect = async (ids: any) => {
 
-        const signer = await provider.getSigner()
-        const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-        console.log(ids);
-        return await contract.collectCommission(ids).then((transaction) => {
-            console.log('Transaction sent:', transaction);
-            return true;
-        }).catch((error: any) => {
-            console.error('出错:', error);
+        try {
+            const signer = await provider.getSigner()
+            const contract = new ethers.Contract(contractAddress, MarketManager, signer);
+            console.log(ids);
+            return await contract.collectCommission(ids).then((transaction) => {
+                console.log('Transaction sent:', transaction);
+                return true;
+            }).catch((error: any) => {
+                console.error('出错:', error);
+                return false;
+            });
+        } catch {
             return false;
-        });
+        }
     }
 
     const checkContractExists = async (contract: any) => {
@@ -188,13 +169,9 @@ const useWallet = () => {
 
         const signer = await provider.getSigner()
         const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-        let reference: any = "0x0000000000000000000000000000000000000000";
-        if (localStorage.getItem("reference") !== null) {
-            reference = localStorage.getItem("reference");
-        }
 
         console.log(pid, qut);
-        return await contract.disinvestProof(pid, qut, gater, reference).then((transaction) => {
+        return await contract.disinvestProof(pid, qut, gater).then((transaction) => {
             console.log('Transaction sent:', transaction);
             return true;
         }).catch((error: any) => {
@@ -915,36 +892,27 @@ const useWallet = () => {
 
     };
 
-    // const approve = async (contract: any, account: string, mun: number) => {
-    //   await contract.approve(account, mun).then((res: any) => {
-    //     // console.log('Balances:', res); 
-    //     return true;
-    //   }).catch((error: any) => {
-    //     // console.error('Error000:', error);
-    //     return false;
-    //   });
-    // }
-
     const swapBuyGood = async (params: any, amount: any, address: string) => {
         try {
 
-            console.log(1110, params, amount, address)
+            // console.log(1110, params, amount, address)
             const signer = await provider.getSigner()
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
+            const address0 = "0x0000000000000000000000000000000000000000";
+            // const [references] = useLocalStorages("reference", null);
+            let reference = localStorage.getItem("reference");
+            if (reference === null) {
+                reference = address0;
+            } else {
+                reference = reference;
+            }
 
-
-            if (address === "0x0000000000000000000000000000000000000000") {
+            console.log("000000", reference)
+            if (address === address0) {
                 console.log(0, amount)
-                return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], { value: amount }).then((transaction) => {
+                return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
                     return true;
-                    // return transaction.wait().then((receipt: any) => {
-                    //     console.log('Transaction mined:', receipt);
-                    //     return true;
-                    // }).catch((error: any) => {
-                    //     console.error('Error receipt:', error);
-                    //     return false;
-                    // });
                 }).catch((error: any) => {
                     console.error('Error transaction:', error);
                     return false;
@@ -962,16 +930,9 @@ const useWallet = () => {
                     return false;
                 });
                 if (allowanceF) {
-                    return await contract.buyGood(params[0], params[1], params[2], params[3], params[4]).then((transaction) => {
+                    return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference).then((transaction) => {
                         console.log('buyGood Transaction sent:', transaction);
                         return true;
-                        // return transaction.wait().then((receipt: any) => {
-                        //     console.log('buyGood Transaction mined:', receipt);
-                        //     return true;
-                        // }).catch((error: any) => {
-                        //     console.error('Error buyGood receipt:', error);
-                        //     return false;
-                        // });
                     }).catch((error: any) => {
                         console.error('Error buyGood transaction:', error);
                         return false;
@@ -981,16 +942,9 @@ const useWallet = () => {
                         console.log('approve Transaction sent:', transaction);
                         return transaction.wait().then(async (receipt: any) => {
                             console.log('approve Transaction mined:', receipt);
-                            return await contract.buyGood(params[0], params[1], params[2], params[3], params[4]).then((transaction) => {
+                            return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference).then((transaction) => {
                                 console.log('buyGood Transaction sent:', transaction);
                                 return true;
-                                // return transaction.wait().then((receipt: any) => {
-                                //     console.log('buyGood Transaction mined:', receipt);
-                                //     return true;
-                                // }).catch((error: any) => {
-                                //     console.error('Error buyGood receipt:', error);
-                                //     return false;
-                                // });
                             }).catch((error: any) => {
                                 console.error('Error buyGood transaction:', error);
                                 return false;
