@@ -77,7 +77,7 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
     let item = { items: {}, pagination: { page_number: 0, page_size: 0, has_more: true }, error: false, error_message: "" };
 
     if (params.id !== "") {
-        const goodsDatas = await parGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateSub(0), skips: params.pageSize * params.pageNumber }, ssionChian);
+        const goodsDatas = await InvestGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateYear(1), time24: timestampdToDateSub(0), skip: params.pageSize * params.pageNumber }, ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -106,7 +106,7 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
 
             let map = {
                 id: "", name: "", decimals: 0, symbol: "", valueSymbol: "", totalTradeQuantity: 0, currentQuantity: 0,
-                totalFee: 0, price: 0, price_24h: 0, totalTradeValue: 0, totalFeeValue: 0,
+                totalFee: 0, price: 0, price_24h: 0, totalTradeValue: 0, totalFeeValue: 0,unitFee: 0, apy: 0,
                 tradeQuantity24: 0, fee24: 0, tradeValue24: 0, feeValue24: 0, logo_url: "", priceC_24h: 0
             };
 
@@ -162,7 +162,7 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
     let item = { items: {}, pagination: { page_number: 0, page_size: 0, has_more: true }, error: false, error_message: "" };
 
     if (params.id !== "") {
-        const goodsDatas = await InvestGoodDatas({ id: params.id, first: 10, time: timestampdToDateYear(1), time24: timestampdToDateSub(0), skip: params.pageSize * params.pageNumber }, ssionChian);
+        const goodsDatas = await InvestGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateYear(1), time24: timestampdToDateSub(0), skip: params.pageSize * params.pageNumber }, ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
@@ -189,52 +189,34 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
             let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
 
             let map = {
-                id: "", name: "", decimals: 0, symbol: "", logo_url: "", investQuantity: 0, investValue: 0, valueSymbol: "",
-                totalInvestQuantity: 0, totalInvestValue: 0, investQuantity24: 0, investValue24: 0,
-                totalFee: 0, price: 0, price_24h: 0, totalFeeValue: 0, fee24: 0, feeValue24: 0, unitFee: 0, APY: 0, unitPrice: 0
+                id: "", name: "", decimals: 0, symbol: "", logo_url: "", currentQuantity: 0, currentValue: 0, valueSymbol: "",
+                priceC_24h: 0, price: 0, price_24h: 0, unitFee: 0, apy: 0, unitPrice: 0
             };
 
             map.id = e.id;
             map.name = e.tokenname;
             map.symbol = e.tokensymbol;
-            map.unitPrice = (e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals);
             map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
             map.decimals = e.tokendecimals;
-            map.investQuantity = e.investQuantity / base_decimals;
-            map.investValue = e.investQuantity / base_decimals * current_price;
-            map.totalInvestQuantity = e.totalInvestQuantity / base_decimals;
-            map.totalFee = e.feeQuantity / base_decimals;
-            map.totalInvestValue = e.totalInvestQuantity / base_decimals * current_price;
-            map.totalFeeValue = e.feeQuantity / base_decimals * current_price;
+            map.unitPrice = (e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals);
+            map.currentQuantity = e.currentQuantity / base_decimals;
+            map.currentValue = e.currentQuantity / base_decimals * current_price;
             map.logo_url = iconUrl(chainName, e.erc20Address);
             map.price = current_price;
-            map.unitFee = map.totalFee / map.totalInvestQuantity;
-            let a = e.feeQuantity + e.investQuantity;
+            map.unitFee = e.feeQuantity / e.investQuantity;
             let uintF = (Number(e.feeQuantity) + Number(e.investQuantity)) / e.investQuantity;
-            // console.log(a, "*****")
             let en = e.goodData[0];
             let d24 = e.date24[0];
             let uintFY = (en.feeQuantity + en.investQuantity) / en.investQuantity;
-            console.log(uintF, "*****",uintFY)
-            //year
-            // e.parGoodData.forEach((en: any) => {
-            //     if (e.id === en.pargood.id) {
-            // let current_price_24h = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
-            // // let s = splitNumber(en.open);
-            // map.investQuantity24 = (e.investQuantity - en.investQuantity) / base_decimals;
-            map.fee24 = (e.feeQuantity - d24.feeQuantity) / base_decimals;
-            // map.investValue24 = (e.totalInvestQuantity - en.totalInvestQuantity) / base_decimals * current_price_24h;
-            // map.feeValue24 = (e.feeQuantity - en.feeQuantity) / base_decimals * current_price_24h;
-            // map.price_24h = current_price_24h;
-            map.APY = uintF / uintFY - 1;
-            //     }
-            // });
+            let current_price_24h = ((d24.currentValue / tokendecimals) / (d24.currentQuantity / base_decimals)) / jz;
+            map.priceC_24h = (current_price - current_price_24h) / current_price_24h;
+            map.apy = uintF / uintFY - 1;
 
             items.push(map);
         });
 
     }
-    console.log(item)
+    // console.log(item)
     return item;
 }
 

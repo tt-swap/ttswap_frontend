@@ -1,16 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Form,
   Input,
   InputNumber,
-  Select, Space, Avatar, Spin, message
+  Select, Space, Avatar, Spin, message, Button
 } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import CreatModal from "./creatModal";
 import "./index.css"
 import useWallet from "@/hooks/useWallet";
-import Message from '@/components/MessModal/index';
+// import Message from '@/components/MessModal/index';
 import { useWeb3React } from "@web3-react/core";
 import { useSwitchChain } from "hooks";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
@@ -28,6 +29,7 @@ interface Props {
 export const CreatGoods = ({ setDataNum }: Props) => {
   const [spinning, setSpinning] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const { t } = useTranslation();
 
   const switchChain = useSwitchChain();
   const { chainId } = useWeb3React();
@@ -51,10 +53,6 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   const [goodVAddr, setGoodVAddr] = useState("");
   const [goodDec, setGoodDec] = useState(0);
   const [selectVgood, setSelectVgood] = useState([]);
-
-  const [openM, setOpenM] = useState(false);
-  const [mesStatus, setMesStatus] = useState("");
-  const [mesTitle, setMesTitle] = useState("");
 
   const { checkContractExists, newGoods } = useWallet();
   const [form] = Form.useForm();
@@ -99,72 +97,51 @@ export const CreatGoods = ({ setDataNum }: Props) => {
 
 
   const newGood = async () => {
-    await switchChain(ssionChian).catch((error) => {
-      console.error(`"Failed to switch chains: " ${error}`);
-    });
-    if (chainId !== ssionChian) {
-      return;
-    }
     setSpinning(true);
-    // console.log(goodC.length);
-    if (goodC.length > 5) {
-      const staust = await checkContractExists(goodC).then(exists => {
-        if (exists) {
-          console.log('合约存在');
-          return true;
-        } else {
-          console.log('合约不存在');
+    await switchChain(Number(ssionChian)).then(async () => {
+      if (goodC.length > 5) {
+        const staust = await checkContractExists(goodC).then(exists => {
+          if (exists) {
+            console.log('合约存在');
+            return true;
+          } else {
+            console.log('合约不存在');
+            return false;
+          }
+        });
+        if (!staust) {
+          setSpinning(false);
+          document.body.style.overflow = "";
+          messageApi.open({
+            type: 'error',
+            content: t('common.mess.address.error'),
+          });
+          return
+        };
+        console.log(staust)
+      }
+      // @ts-ignore
+      const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
 
-          // messageApi.open({
-          //   type: 'error',
-          //   content: 'The contract does not exist',
-          // });
-          return false;
-        }
-      });
-      if (!staust) {
-        // setOpenM(true);
-        // setMesStatus("error");
-        // setMesTitle("The contract does not exist");
-        setSpinning(false);
-        document.body.style.overflow = "";
+      // @ts-ignore
+      const isSuccess = await newGoods(goodVAddr, goodV, goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0");
+      console.log("isSuccess:", isSuccess)
+      if (isSuccess) {
+        messageApi.open({
+          type: 'success',
+          content: t('common.mess.create') + t('common.mess.success'),
+        });
+        setDataNum(1);
+        setOpen(false);
+      } else {
         messageApi.open({
           type: 'error',
-          content: 'Contract Address not exist',
+          content: t('common.mess.create') + t('common.mess.error'),
         });
-        return
-      };
-      console.log(staust)
-    }
-    // @ts-ignore
-    // const qunt = Number(goodQ * 2 ** 128 + goodVQ)
-    const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
-    // const config = inF * 2 ** 246 + disinF * 2 ** 240 + buyF * 2 ** 233 + sellF * 2 ** 226 + swapS * 2 ** 216 + disinS * 2 ** 206
-
-    // @ts-ignore
-    const isSuccess = await newGoods(goodVAddr, goodV, goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0");
-    // const isSuccess = await newGoods("0x5FC8d32690cc91D4c39d9d3abcBD16989F875707", "14700013424982216455688397208100595100161518504028027706369398309082945288267", goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0")
-    // form.resetFields();
-    console.log("isSuccess:", isSuccess)
-    if (isSuccess) {
-      // setOpenM(true);
-      // setMesStatus("success");
-      // setMesTitle("Create data send success");
-      messageApi.open({
-        type: 'success',
-        content: 'Create data send success',
-      });
-      setDataNum(1);
-      setOpen(false);
-    } else {
-      // setOpenM(true);
-      // setMesStatus("error");
-      // setMesTitle("Create data send fail");
-      messageApi.open({
-        type: 'error',
-        content: 'Create data send fail',
-      });
-    }
+      }
+    }).catch((error) => {
+      console.error(`"Failed to switch chains: " ${error}`);
+    });
     setSpinning(false);
     document.body.style.overflow = "";
   };
@@ -178,28 +155,31 @@ export const CreatGoods = ({ setDataNum }: Props) => {
         title={mesTitle}
         setOpen={setOpenM}
       /> */}
-      <Button className='newButton' onClick={() => {
-        setOpen(true)
-      }}>
-        Create Goods
+      <Button
+        size="large"
+        type="primary"
+        onClick={() => {
+          setOpen(true)
+        }}>
+        {t('body.account.bnt.create')}
       </Button>
-      <CreatModal open={open} setOpen={setOpen} title={"Create Goods"}>
+      <CreatModal open={open} setOpen={setOpen} title={t('body.account.create.title')}>
 
         <Spin spinning={spinning} fullscreen indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} size="large" />
 
         <div className='newgood'>
           <Form className='form-new' form={form} colon={false}>
-            <h2>Contract Address</h2>
+            <h2>{t('body.account.create.contract')}</h2>
             <Form.Item>
               <Input
-                placeholder="Contract address"
+                placeholder={t('body.account.create.contract')}
                 onChange={(e) => { setGoodC(e.target.value); }}
                 value={goodC}
               />
             </Form.Item>
-            <h2>Rate Config(Not Null)</h2>
+            <h2>{t('body.account.create.rateconfig')}</h2>
             <Space>
-              <Form.Item label="Buy"
+              <Form.Item label={t('body.account.create.buy')}
                 rules={[{ required: true, message: 'Please input your username!' }]}>
                 <InputNumber
                   addonAfter="‱"
@@ -213,7 +193,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                   defaultValue={8}
                 />
               </Form.Item>
-              <Form.Item label="Sell">
+              <Form.Item label={t('body.account.create.sell')}>
                 <InputNumber
                   addonAfter="‱"
                   min={1}
@@ -228,7 +208,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
               </Form.Item>
             </Space>
             <Space>
-              <Form.Item label="Invest">
+              <Form.Item label={t('common.invest')}>
                 <InputNumber
                   addonAfter="‱"
                   min={1}
@@ -241,7 +221,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                   defaultValue={8}
                 />
               </Form.Item>
-              <Form.Item label="Divest">
+              <Form.Item label={t('common.divest')}>
                 <InputNumber
                   addonAfter="‱"
                   min={1}
@@ -255,9 +235,9 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                 />
               </Form.Item>
             </Space>
-            <h2>Chips Config(Not Null)</h2>
+            <h2>{t('body.account.create.chips')}</h2>
             <Space className='spanS'>
-              <Form.Item label="Swap">
+              <Form.Item label={t('common.swap')}>
                 <InputNumber
                   // addonAfter="x64"
                   min={2}
@@ -269,7 +249,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                   defaultValue={2}
                 />{" x64"}
               </Form.Item>
-              <Form.Item label="Divest">
+              <Form.Item label={t('common.divest')}>
                 <InputNumber
                   min={10}
                   step={1}
@@ -281,12 +261,6 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                 />
               </Form.Item>
             </Space>
-            {/* <Form.Item>
-              <Space>
-                <InputNumber addonBefore="swap" defaultValue={3 * 64} />
-                <InputNumber addonBefore="disinvest" defaultValue={100} />
-              </Space>
-            </Form.Item> */}
             {/* <h2>other</h2>
             <Form.Item>
               <Select
@@ -314,10 +288,10 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                 onChange={(e) => { setLatitude(e.target.value); }}
                 value={latitude} />
             </Form.Item> */}
-            <h2>Choose Value Goods</h2>
+            <h2>{t('body.account.create.choose')}</h2>
             <Form.Item>
               <Select
-                placeholder="Choose Value Goods"
+                placeholder={t('body.account.create.choose')}
                 optionLabelProp="label"
                 value={goodV}
                 onChange={(e) => {
@@ -347,7 +321,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                 ))}
               </Select>
             </Form.Item>
-            <h2>Invest Quantity</h2>
+            <h2>{t('body.account.create.quanity')}</h2>
             <Form.Item>
               <Input
                 placeholder="0"
@@ -356,7 +330,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                 value={goodQ}
               />
             </Form.Item>
-            <h2>Invest Value</h2>
+            <h2>{t('body.account.create.value')}</h2>
             <Form.Item>
               <Input
                 placeholder="0"
@@ -368,11 +342,11 @@ export const CreatGoods = ({ setDataNum }: Props) => {
             </Form.Item>
           </Form>
           <Button
-            className='newButton'
+            type="primary"
             style={{ width: "100%" }}
             disabled={isDisabled}
             onClick={newGood}
-          >New</Button>
+          >{t('body.account.create.bnt')}</Button>
         </div>
       </CreatModal>
     </>

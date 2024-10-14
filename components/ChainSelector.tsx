@@ -43,7 +43,7 @@ const ChainSelector: FC = () => {
   const switchChain = useSwitchChain();
   const { chainId, isActive, account } = useWeb3React();
   const { isTablet } = useWindowSize();
-  const [chainId1, setChainId] = useState(97);
+  const [chainId1, setChainId] = useState(11155111);
   const [selected, setSelected] = useState<MenuItem>();
   const [label, setLabel] = useState<JSX.Element>();
   // @ts-ignore
@@ -85,7 +85,7 @@ const ChainSelector: FC = () => {
       // { label: "Fantom", key: chainIds.fantom, icon: labelToShow(fantom_Logo, "Fantom_Logo") },
       // { label: "Fantom testnet", key: chainIds.fantomtest, icon: labelToShow(fantom_Logo, "Fantom_Logo") },
       // { label: "BNB Chain", key: chainIds.binance, icon: labelToShow(bsc_Logo, "BNB_logo") },
-      { label: "BSC Testnet", key: chainIds.binancetestnet, icon: labelToShow(bsc_Logo, "BNB_logo") }
+      // { label: "BSC Testnet", key: chainIds.binancetestnet, icon: labelToShow(bsc_Logo, "BNB_logo") }
     ],
     []
   );
@@ -162,7 +162,7 @@ const ChainSelector: FC = () => {
 
   return (
     <div>
-      <Dropdown menu={{ items, onClick }}>
+      <Dropdown menu={{ items, onClick }} trigger={['click']}>
         <Button style={{ ...styles.button, ...styles.item }}>
           {!selected && <span style={{ marginLeft: "5px" }}>Select Chain</span>}
           {selected ? (

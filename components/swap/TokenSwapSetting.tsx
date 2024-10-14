@@ -1,5 +1,6 @@
 import assets from "@/assets";
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import TokenSwapModal from "./TokenSwapModal";
 import "./swap.css";
 import { Switch, Input, InputNumber } from 'antd';
@@ -14,6 +15,7 @@ const TokenSwapSetting = ({ value, value1, onChange }: Props) => {
   const [open, setOpen] = useState(false);
   const [istotal, setIstotal] = useState(value1);
   const [tolerance, setTolerance] = useState(value);
+  const { t } = useTranslation();
 
   const isSwitch = (checked: boolean) => {
     // console.log(`switch to ${checked}`);
@@ -32,7 +34,7 @@ const TokenSwapSetting = ({ value, value1, onChange }: Props) => {
           setOpen(true);
         }}
         className="cursor-pointer flex justify-between text-xs setting-style">
-        <span>{value}% Tolerance</span>
+        <span>{value}% {t('body.swap.tolerance')}</span>
         <img
           className=""
           src={"/setting.svg"}
@@ -51,7 +53,7 @@ const TokenSwapSetting = ({ value, value1, onChange }: Props) => {
           />
           <div className=" flex justify-between gap-4 pt-5">
             <p>
-              Only Whole Commit.
+            {t('body.swap.tolerance.all')}
               {/* <a
                 target="_blank"
                 rel="noopener noreferrer"

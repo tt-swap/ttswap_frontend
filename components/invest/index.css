@@ -98,19 +98,19 @@
 .magL,
 .magL span {
   margin-left: 5px;
+  /* justify-content: space-between; */
   /* color: #666666; */
-  word-break: break-all;
 }
 
 .ant-tree .ant-tree-treenode {
   padding: 5px 0 9px 0;
 }
 
-.ant-tree-title {
+/* .ant-tree-title {
   display: flex;
   justify-items: center;
   align-items: center;
-}
+} */
 
 .ant-tree-switcher {
   display: flex;

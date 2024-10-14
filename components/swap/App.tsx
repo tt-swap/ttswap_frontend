@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import TokenSwap from "./TokenSwap";
 import { cleanupImgCache } from "@/utils/icon";
 
 function App() {

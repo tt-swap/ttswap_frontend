@@ -6,6 +6,7 @@ import TokenSwapSetting from "./TokenSwapSetting";
 import useWallet from "@/hooks/useWallet";
 import InputNumber from "rc-input-number";
 import { useMemo, useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 
 import { ArrowDownOutlined, DownOutlined, UpOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Spin, message } from 'antd';
@@ -14,7 +15,7 @@ import { useSwitchChain } from "hooks";
 import { useWeb3React } from "@web3-react/core";
 
 
-import { prettifyBalance } from '@/graphql/util';
+import { prettifyBalance, Timestamp } from '@/graphql/util';
 import { GoodsDatas, newGoodsPrice } from '@/graphql/swap/index';
 
 import { useValueGood, useGoodId } from "@/stores/valueGood";
@@ -48,23 +49,19 @@ const TokenSwap = () => {
     const {
         swaps,
         swapsAmount,
-        // fromPrice,
-        // toPrice,
-        // priceImpact,
         setAmount,
         setToken,
-        // setFocus,
         handleFlip,
         disabled,
     } = useSwap();
-    const { balanceMap, networkCost, swapBuyGood } = useWallet();
+    const { balanceMap, swapBuyGood } = useWallet();
     // @ts-ignore
     const { ssionChian } = useLocalStorage();
     const switchChain = useSwitchChain();
     const { chainId } = useWeb3React();
+    const { t } = useTranslation();
 
     const [spinning, setSpinning] = useState(false);
-    const [messageApi, contextHolder] = message.useMessage();
     const { info } = useValueGood();
     const { goodId } = useGoodId();
 
@@ -83,14 +80,20 @@ const TokenSwap = () => {
     const [handleF, setHandleF] = useState(false);
 
     const isDisabled = useMemo(() => {
-        // @ts-ignore
-        if (swapsAmount.from.amount > balanceMap.from || swapsAmount.from.amount < 0 || window.localStorage.getItem("wallet") === null) {
-            return true;
-        }
-        return disabled;
-    }, [swapsAmount.from.amount, disabled, balanceMap, window.localStorage.getItem("wallet")]);
+        if (typeof window !== "undefined") {
+            // @ts-ignore
+            if (swapsAmount.from.amount > balanceMap.from || swapsAmount.from.amount < 0 || swapsAmount.from.amount === "" || swapsAmount.from.amount === null || window.localStorage.getItem("wallet") === null) {
+                return true;
+            }
+        } return disabled;
+    }, [swapsAmount, disabled, balanceMap]);
     // console.log()
-    useMemo(() => {
+
+    useEffect(() => {
+        document.title = t('header.menu.trade.swap');
+    }, [t('header.menu.trade.swap')]);
+
+    useEffect(() => {
         // @ts-ignore
         setBalanceF(balanceMap.from); setBalanceT(balanceMap.to);
     }, [balanceMap, ssionChian]);
@@ -102,20 +105,21 @@ const TokenSwap = () => {
             setFees(true);
         }
     };
-    useMemo(() => {
+    useEffect(() => {
         // console.log(sessionStorage.getItem("swap") !=="undefined",99998888)
         if (info.id) {
             (async () => {
-                let sel = "";
+                let sel = 0;
                 if (goodId.swap.id !== "") {
                     // 
-                    sel = goodId.swap.id;
+                    sel = Number(goodId.swap.id);
                 }
 
                 let tokens: any = await GoodsDatas({
                     id: info.id,
-                    sel: sel,
-                    par: Math.floor(Number(new Date().getTime) / 1000)
+                    sel: "",
+                    gid: sel,
+                    par: Timestamp()
                 }, ssionChian);
                 if (goodId.swap.id !== "") {
                     // 
@@ -185,70 +189,49 @@ const TokenSwap = () => {
     // console.log(getExplorer(11155111))
     const handleSwap = async () => {
 
-        await switchChain(ssionChian).catch((error) => {
+        setSpinning(true);
+        await switchChain(Number(ssionChian)).then(async () => {
+            const dec = 10000;
+            const fromV = swapsAmount.from.currentValue * swapsAmount.to.currentQuantity;///dec;//swaps.from.currentValue / swaps.from.currentQuantity * 10 ** swaps.from.decimals;
+            const toV = swapsAmount.to.currentValue * swapsAmount.from.currentQuantity * (1 + tolerance / 100);//swaps.to.currentValue / swaps.to.currentQuantity * 10 ** swaps.to.decimals;
+            let limitPrice;
+            if (fromV > toV) {
+                const toVl = Math.ceil(fromV / (toV / dec));
+                limitPrice = BigInt(toVl * 2 ** 128) + BigInt(dec);
+                console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swaps)
+            } else {
+                const toVl = Math.ceil(toV / (fromV / dec));
+                limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
+                console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swaps)
+            }
+            // const toVl = Math.ceil(toV / fromV);
+            // limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
+            const a: BigInt = BigInt(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals);
+            // const b: BigInt = BigInt(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals);
+            // const b: BigInt = BigInt(1.1 * 2 ** 128 + 3500);
+            console.log(a, 2222222222)
+            const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, a, limitPrice, istotal], a, swaps.from.address);
+            // const isSuccess = await swapBuyGood(["51649299683075463979090664991608549190737649190809275440655607745038800234274", "14700013424982216455688397208100595100161518504028027706369398309082945288267", a, b, istotal], a.toString(), "0x0000000000000000000000000000000000000000");
+            // const isSuccess = false;
+            console.log("isSuccess:", isSuccess)
+            if (isSuccess) {
+                setOpen(true);
+                setMesStatus("success");
+                setMesTitle(t('common.swap') + t('common.mess.success'));
+                setAmount("from", "", 0);
+            } else {
+                setOpen(true);
+                setMesStatus("error");
+                setMesTitle(t('common.swap') + t('common.mess.error'));
+            }
+        }).catch((error) => {
             console.error(`"Failed to switch chains: " ${error}`);
         });
-        if (chainId !== ssionChian) {
-            return;
-        }
-        setSpinning(true);
-        const dec = 10000;
-        const fromV = swapsAmount.from.currentValue*swapsAmount.to.currentQuantity;///dec;//swaps.from.currentValue / swaps.from.currentQuantity * 10 ** swaps.from.decimals;
-        const toV = swapsAmount.to.currentValue*swapsAmount.from.currentQuantity * (1 + tolerance / 100);//swaps.to.currentValue / swaps.to.currentQuantity * 10 ** swaps.to.decimals;
-        let limitPrice;
-        // let dec=1;
-        // if (Number(swaps.from.decimals) < Number(swaps.to.decimals) || Number(swaps.from.decimals) === Number(swaps.to.decimals)) {
 
-        //     dec = 10 ** (Number(swaps.to.decimals) - Number(swaps.from.decimals));
-        // } else {
-        //     dec = 10 ** (Number(swaps.from.decimals) - Number(swaps.to.decimals));
-        // }
-
-
-        if (fromV > toV) {
-            const toVl = Math.ceil(fromV / (toV/dec));
-            limitPrice = BigInt(toVl * 2 ** 128) + BigInt(dec);
-            console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swaps)
-        } else {
-            const toVl = Math.ceil(toV / (fromV/dec));
-            limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
-            console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swaps)
-        }
-        // const toVl = Math.ceil(toV / fromV);
-        // limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
-        const a: BigInt = BigInt(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals);
-        // const b: BigInt = BigInt(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals);
-        // const b: BigInt = BigInt(1.1 * 2 ** 128 + 3500);
-        console.log(a, 2222222222)
-        const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, a, limitPrice, istotal], a, swaps.from.address);
-        // const isSuccess = await swapBuyGood(["51649299683075463979090664991608549190737649190809275440655607745038800234274", "14700013424982216455688397208100595100161518504028027706369398309082945288267", a, b, istotal], a.toString(), "0x0000000000000000000000000000000000000000");
-        // const isSuccess = false;
-        console.log("isSuccess:", isSuccess)
-        if (isSuccess) {
-            setOpen(true);
-            setMesStatus("success");
-            setMesTitle("Swap data send success");
-            setAmount("from", "", 0);
-            // messageApi.open({
-            //     type: 'success',
-            //     content: 'Swap data send success',
-            // });
-        } else {
-            setOpen(true);
-            setMesStatus("error");
-            setMesTitle("Swap data send fail");
-            // messageApi.open({
-            //     type: 'error',
-            //     content: 'Swap data send fail',
-            // });
-        }
         setSpinning(false);
     };
-    // console.log(balanceMap)
     return (
         <>
-            {console.log(swapsAmount)}
-            {/* {contextHolder} */}
             <Message
                 open={open}
                 status={mesStatus}
@@ -261,7 +244,7 @@ const TokenSwap = () => {
                 <div className={cn(styles.boxContainer, "box-shadow")}>
                     <form className="">
                         <div className="flex justify-between h-[30px]">
-                            <h5 className="text-2xl font-semibold mb-4">Swap</h5>
+                            <h5 className="text-2xl font-semibold mb-4">{t('common.swap')}</h5>
                             <TokenSwapSetting
                                 value={tolerance}
                                 value1={istotal}
@@ -277,7 +260,7 @@ const TokenSwap = () => {
                             style={{ marginTop: "20px" }}
                         >
                             <label className={styles.label}>
-                                From
+                                {t('body.swap.from')}
                             </label>
                             <div className="swToFT">
                                 <InputNumber
@@ -322,7 +305,7 @@ const TokenSwap = () => {
                                         "text-red-500 shake"
                                     )}
                                 >
-                                    Balance:{" "}
+                                    {t('body.swap.balance')}:{" "}
                                     <span
                                         className="cursor-pointer"
                                         onClick={() =>
@@ -353,7 +336,7 @@ const TokenSwap = () => {
                             className="border z-11 rounded-xl p-2"
                         >
                             <label className={styles.label}>
-                                To (estimated)
+                                {t('body.swap.to')}
                             </label>
                             <div className="swToFT">
                                 <InputNumber
@@ -401,7 +384,7 @@ const TokenSwap = () => {
                                 //   "text-red-500 shake"
                                 // )}
                                 >
-                                    Balance:{" "}
+                                    {t('body.swap.balance')}:{" "}
                                     <span
                                         className="cursor-pointer"
                                         onClick={() =>
@@ -425,7 +408,7 @@ const TokenSwap = () => {
                             className={cn(styles.swapButton, disabled && "text-[#c5f0ea]")}
                             style={{ marginTop: "10px" }}
                         >
-                            Swap {!isDisabled && "✨"}
+                            {t('common.swap')}
                         </button>
                     </form>
                     {swaps.to.symbol !== DEFAULT_TOKEN && swaps.from.symbol !== DEFAULT_TOKEN && (
@@ -460,11 +443,11 @@ const TokenSwap = () => {
                                                 <div>{priceImpact ? priceImpact + '%' : ''}</div>
                                             </div> */}
                                             <div className="flex justify-between">
-                                                <div>Tolerance</div>
+                                                <div>{t('body.swap.tolerance')}</div>
                                                 <div>{tolerance}%</div>
                                             </div>
                                             <div className="flex justify-between">
-                                                <div>Fee</div>
+                                                <div>{t('body.swap.fee')}</div>
                                                 <div>{
                                                     // @ts-ignore
                                                     ((swaps.to.buyFee * swaps.to.price * swapsAmount.to.amount + swaps.from.sellFee * swapsAmount.from.amount * swaps.from.price)).toFixed(6)}{" "}{info.symbol}</div>

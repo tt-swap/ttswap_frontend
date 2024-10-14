@@ -1,28 +1,23 @@
 'use client'
-// import { Analytics } from '@vercel/analytics/react';
+
+import { SiteHeader } from "@/components/site-header"
+
 import "@/styles/globals.css"
 import "@/styles/styles.css"
-// import { Theme } from "@radix-ui/themes"
-// import "@/styles/App.css"
-
-import { fontSans } from "@/lib/fonts"
-import { cn } from "@/lib/utils"
-import { SiteHeader } from "@/components/site-header"
-// import { ThemeProvider } from "@/components/theme-provider"
-
+import "@/styles/App.css"
 import "@radix-ui/themes/styles.css"
 import { DexProvider } from "@/lib/store"
-// import { Toaster } from "@/components/ui/toaster"
-// import { KeyDialog } from "@/components/key-dialog"
-import { Footer } from '@/components/footer';
-import { usePathname,useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Web3ReactProvider } from "@web3-react/core";
 import connectors from "@/connectors";
-import { useEffect, useState,useMemo } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
+import { Skeleton } from 'antd';
 import { useValueGood } from "@/stores/valueGood";
 import { useWalletAddress } from "@/stores/walletAddress";
 import LocalStorageManager from "@/utils/LocalStorageManager";
 import { chainIds } from "data/chainIds";
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@/i18n/i18n';
 
 import { valueGood } from '@/graphql';
 
@@ -35,22 +30,26 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   let pathname = usePathname();
   const router = useRouter();
-  const [ssionChian, setSsionChian] = useState(97);
+  const [ssionChian, setSsionChian] = useState(11155111);
   const { info, setValueGood } = useValueGood();
 
   const { address, setAccount } = useWalletAddress();
   // const { chainId1, setChainId } = useChainId();
 
+  useEffect(() => {
+    i18n.loadLanguages(i18n.language);
+  }, []);
+
   useMemo(() => {
-    const routeSegments = pathname.split('/');
-    // console.log(routeSegments, "account");
-    if (routeSegments.length>3) {
-      const chname = routeSegments[1];
+    if (typeof window !== "undefined") {
+      const routeSegments = pathname.split('/');
+      if (routeSegments.length > 3) {
+        const chname = routeSegments[1];
         const chid = chainIds[chname];
         setSsionChian(Number(chid));
+      }
     }
-      console.log(ssionChian, "account");
-  }, []);
+  }, [pathname]);
 
 
   useEffect(() => {
@@ -74,15 +73,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
 
   return (
     <>
-      <html lang="en" suppressHydrationWarning>
+      <html lang={i18n.language} suppressHydrationWarning>
         <head />
         {/* bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% */}
-        <body
-          className={cn(
-            `"min-h-screen bg-background font-sans antialiased " ${pathname === "/eth-mainnet/ttswap/swap" ? "bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%" : ""}`,
-            fontSans.variable
-          )}
-        >
+        <body>
           {/* <Theme>
             <ThemeProvider attribute="class" defaultTheme="system" forcedTheme='dark' enableSystem={false}> */}
           <Web3ReactProvider connectors={connectors}>
@@ -90,15 +84,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
               // @ts-ignore
               value={{ ssionChian, setSsionChian }}>
               <DexProvider>
-                <div className="relative flex min-h-screen flex-col">
-                  <SiteHeader />
-                  <div className="flex-1">{children}</div>
-                  <Footer />
-                  {/* <Analytics />
-                  <Footer/>
-                  <KeyDialog />
-                  <Toaster /> */}
-                </div>
+                <I18nextProvider i18n={i18n}>
+                  {/* <Suspense fallback={<Skeleton active />}> */}
+                    <div className="relative flex min-h-screen flex-col">
+                      <SiteHeader />
+                      <div className="flex-1">{children}</div>
+                    </div>
+                  {/* </Suspense> */}
+                </I18nextProvider>
               </DexProvider>
             </LocalStorageManager.Provider>
           </Web3ReactProvider>

@@ -10,7 +10,7 @@ import { useWalletAddress } from "@/stores/walletAddress";
 
 const styles = {
   addressBox: {
-    height: "36px",
+    height: "24px",
     display: "flex",
     gap: "5px",
     backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -78,8 +78,8 @@ const Address: React.FC<AddressProps> = (props) => {
   const Copy = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="26"
-      height="26"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       strokeWidth="2"
       stroke="#1780FF"

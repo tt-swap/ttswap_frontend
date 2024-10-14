@@ -118,7 +118,7 @@ export interface XYKTokenListViewProps {
     chain_name: Chain;
     dex_name: string;
     on_token_click: Function;
-    page_size?: number;
+    page_size: number;
     value_good_id:string;
     is_over:boolean;
     chain_id:number;
@@ -131,8 +131,8 @@ export interface CrossChainBalanceItem extends BalanceItem {
 export interface XYKPoolListViewProps {
     chain_name: Chain;
     dex_name: string;
-    on_pool_click?: Function;
-    page_size?: number;
+    on_pool_click: Function;
+    page_size: number;
     value_good_id:string;
     is_over:boolean;
     wallet_address: any;

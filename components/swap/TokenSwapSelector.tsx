@@ -1,6 +1,7 @@
 import { DEFAULT_TOKEN } from "@/shared/constants/common";
 import { TokenPayload, SwapTokenValue } from "@/shared/types/token";
-import { useMemo, useState } from "react";
+import { useMemo, useState,useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { useSwapStore } from "@/stores/swap";
 
 import TokenSwapModal from "./TokenSwapModal";
@@ -13,8 +14,8 @@ import type { GetProps, TreeDataNode } from 'antd';
 import { useValueGood } from "@/stores/valueGood";
 
 
-import {useLocalStorage} from "@/utils/LocalStorageManager";
-import { prettifyCurrencys,Timestamp } from '@/graphql/util';
+import { useLocalStorage } from "@/utils/LocalStorageManager";
+import { prettifyCurrencys, Timestamp } from '@/graphql/util';
 import { GoodsDatas } from '@/graphql/swap/index';
 
 type DirectoryTreeProps = GetProps<typeof Tree.DirectoryTree>;
@@ -37,17 +38,19 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
     const [spinning, setSpinning] = useState(false);
     const [addS, setAddS] = useState(0);
     // @ts-ignore
-    const { ssionChian  } = useLocalStorage();
+    const { ssionChian } = useLocalStorage();
+    const { t } = useTranslation();
 
-    useMemo(() => {
+    useEffect(() => {
         setSpinning(true);
         console.log(addS);
         (async () => {
             let a: any = await GoodsDatas({
                 id: info.id,
                 sel: keyword,
+                gid: 0,
                 par: Timestamp()
-            },ssionChian);
+            }, ssionChian);
             let rest: Array<LocalCurrency> = a.tokenValue;
             // console.log(a,33332)
             setTokensValue(rest);
@@ -55,39 +58,45 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
                 a.tokens[index].key = el.id;
                 a.tokens[index].title = (
                     <>
-                        <img src={el.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
-                            onError={(e) => {
-                                e.currentTarget.src =
-                                    "/token.svg";
-                            }} />
-                        <span>
-                            <span>{el.name}</span><br />
-                            <span className="text-xs">{el.symbol}</span>
-                        </span>
+                        <div className="flex items-center">
+                            <img src={el.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
+                                onError={(e) => {
+                                    e.currentTarget.src =
+                                        "/token.svg";
+                                }} />
+                            <span>
+                                <div>{el.name}</div>
+                                <div className="text-xs font-color-1">{el.symbol}</div>
+                            </span>
+                        </div>
                     </>);
                 el.children.map((el1: any, index1: number) => {
                     a.tokens[index].children[index1].key = el1.id;
                     a.tokens[index].children[index1].nodePd = true;
                     a.tokens[index].children[index1].title = (
                         <>
-                            <img src={el1.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
-                                onError={(e) => {
-                                    e.currentTarget.src =
-                                        "/token.svg";
-                                }} />
-                            <span className="whitespace-nowrap">
-                                <span>{el1.name}</span><br />
-                                <span className="text-xs">{el1.symbol}</span>
-                            </span>
-                            <Flex className="magL" gap="4px 0" wrap>
-                                <span>
-                                    <span>Price:{prettifyCurrencys(el1.price)}{" "+info.symbol}</span>
-                                    <span>Volume:{prettifyCurrencys(el1.currentQuantity / 10 ** el1.decimals)}</span>
-                                </span>
-                                <span>
-                                    <span>Buyfee:{(el1.buyFee * 100).toFixed(2)}%</span>
-                                    <span>Sellfee:{(el1.sellFee * 100).toFixed(2)}%</span></span>
-                            </Flex>
+                            <div className="flex justify-between gap-3">
+                                <div className="flex items-center">
+                                    <img src={el1.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
+                                        onError={(e) => {
+                                            e.currentTarget.src =
+                                                "/token.svg";
+                                        }} />
+                                    <span className="whitespace-nowrap">
+                                        <div>{el1.name}</div>
+                                        <div className="text-xs font-color-1">{el1.symbol}</div>
+                                    </span>
+                                </div>
+                                <Flex className="goods-indexs  gap-2 justify-between">
+                                    <div>
+                                        <div>{t('body.swap.goods.price')}:{prettifyCurrencys(el1.price)}{" " + info.symbol}</div>
+                                        <div>{t('body.swap.goods.volume')}:{prettifyCurrencys(el1.currentQuantity / 10 ** el1.decimals)}</div>
+                                    </div>
+                                    <div>
+                                        <div>{t('body.swap.goods.buyfee')}:{(el1.buyFee * 100).toFixed(2)}%</div>
+                                        <div>{t('body.swap.goods.sellfee')}:{(el1.sellFee * 100).toFixed(2)}%</div></div>
+                                </Flex>
+                            </div>
                         </>);
 
                 })
@@ -95,7 +104,7 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
             setTokens(a.tokens);
             setSpinning(false);
         })()
-    }, [info, keyword,addS,ssionChian]);
+    }, [info, keyword, addS, ssionChian]);
     // console.log(availableTokens,222)
     const isDefault = value.symbol === DEFAULT_TOKEN;
 
@@ -105,18 +114,6 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
         document.body.style.overflow = "";
         console.log(222, el)
     };
-
-    // const onSearch = (value: string) => {
-    //     console.log('search:', value);
-    // };
-
-    // useEffect(() => {
-    //   Modal.setAppElement("body");
-    //   const input: HTMLInputElement | null = document.querySelector('input');
-    //   if (input) {
-    //     input.focus();
-    //   }
-    // }, []);
 
     const onSelect: DirectoryTreeProps['onSelect'] = (keys: any, info: any) => {
         // console.log('Trigger Select', keys);
@@ -132,18 +129,18 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
     };
 
     const handleClose = (a: boolean, b: string) => {
-        setAddS(addS+1);
+        setAddS(addS + 1);
         setOpen(a);
         document.body.style.overflow = b;
     };
     return (
         <>
-            <TokenSwapModal open={open} setOpen={setOpen} title={"Select Goods"}>
+            <TokenSwapModal open={open} setOpen={setOpen} title={t('body.swap.goods.title')}>
                 <div className="select-head " >
                     <div className="sel-token">
                         <Input
                             autoFocus
-                            placeholder="Search name or paste address"
+                            placeholder={t('body.swap.goods.input')}
                             prefix={<SearchOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
                             onChange={(e: any) => setKeyword(e.target.value)}
                             value={keyword}
@@ -198,7 +195,7 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
                     icon={<DownOutlined />}
                     iconPosition={"end"}
                 >
-                    <span className="text-lg block">{value.symbol}</span>
+                    <span className="text-lg block">{value.symbol==="Select Goods"?t('body.swap.goods.title'):value.symbol}</span>
                     {!isDefault && (
                         <img
                             alt="icon"

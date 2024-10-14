@@ -1,14 +1,8 @@
 import { type Option, None, Some } from "@/utils/option";
 import { type ExchangeTransaction } from "@/utils/types/XykServiceTypes";
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { POOL_TRANSACTION_MAP } from "@/utils/constants/shared.constants";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
     type ColumnDef,
     type SortingState,
@@ -27,20 +21,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { timestampParser } from "@/utils/functions";
-import { Button } from "@/components/ui/button";
+import { Button, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import { TableHeaderSorting } from "@/components/ui/tableHeaderSorting";
-import { IconWrapper } from "@/components/Shared";
-// import { useGoldRush } from "@/utils/store";
 import { type XYKTokenTransactionsListViewProps } from "@/utils/types/organisms.types";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination";
 import { SkeletonTable } from "@/components/ui/skeletonTable";
 
 import { goodsTransactionsDatas } from '@/graphql/goods';
@@ -70,6 +54,8 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
         page_number: 1,
     });
     const [hasMore, setHasMore] = useState<boolean>();
+    const [spinning, setSpinning] = useState(false);
+    const { t } = useTranslation();
 
     const handlePagination = (page_number: number) => {
         setPagination((prev) => {
@@ -80,9 +66,27 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
         });
     };
 
+    const handleScroll = () => {
+        if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight) {
+            if (hasMore) {
+                handlePagination(pagination.page_number + 1);
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            window.addEventListener("scroll", handleScroll);
+            return () => {
+                window.removeEventListener("scroll", handleScroll);
+            };
+        }
+    }, [hasMore, pagination]);
+
     useEffect(() => {
         (async () => {
-            setResult(None);
+            setSpinning(true);
+            // setResult(None);
             let response: any;
             try {
                 response =
@@ -91,7 +95,17 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
                 console.log("goodsTransactionsDatas",response)
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
-                setResult(new Some(response.items));
+                setResult(prev => {
+                    if (pagination.page_number === 1 || prev.match({ None: () => true, Some: () => false })) {
+                        return new Some(Array.isArray(response.items) ? response.items : []); // 确保是数组
+                    } else {
+                        const existingItems = prev.match({
+                            None: () => [],
+                            Some: (items) => items,
+                        });
+                        return new Some([...existingItems, ...(Array.isArray(response.items) ? response.items : [])]); // 确保是数组
+                    }
+                });
             } catch (exception) {
                 setResult(new Some([]));
                 setError({
@@ -99,6 +113,7 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
                     error_message: response ? response.error_message : "",
                 });
             }
+            setSpinning(false);
         })();
     }, [chain_name, dex_name, pagination, value_good_id, token_address, chain_id]);
 
@@ -116,7 +131,6 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
         };
     }, []);
 
-
     const columns: ColumnDef<ExchangeTransaction>[] = [
         {
             accessorKey: "time",
@@ -124,7 +138,7 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
                 <div className="ml-4">
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Time"}
+                        header_name={t('body.account.tabs.transactions.time')}
                         column={column}
                     />
                 </div>
@@ -140,20 +154,14 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
         },
         {
             accessorKey: "type",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="left"
-                    header_name={"Type"}
-                    column={column}
-                />
+            header: () => (
+                <div className="text-left">
+                    {t('body.account.tabs.transactions.type')}
+                </div>
             ),
             cell: ({ row }) => {
-                // @ts-ignore
                 const token_0 = row.original.symbol1;
-                // @ts-ignore
                 const token_1 = row.original.symbol2;
-
-                // if (row.original.type !== "SWAP") {
                 return (
                     <div
                         className={
@@ -171,7 +179,7 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
                             className="mr-2"
                             variant={POOL_TRANSACTION_MAP["SWAP"].color}
                         >
-                            {// @ts-ignore
+                            {
                                 row.original.type}
                         </Badge>{" "}
                         {token_0}{" "}
@@ -184,45 +192,36 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
         {
             id: "totalValue",
             accessorKey: "totalValue",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="left"
-                    header_name={"Market Value"}
-                    column={column}
-                />
+            header: () => (
+                <div className="">
+                    {t('body.account.tabs.transactions.value')}
+                </div>
             ),
             cell: ({ row }) => {
-                // @ts-ignore
                 return <>{prettifyCurrencys(row.original.totalValue)}{" "}{row.original.valueSymbol}</>;
             },
         },
         {
             id: "fromgoodQuanity",
             accessorKey: "fromgoodQuanity",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="left"
-                    header_name={"Goods1 Quantity"}
-                    column={column}
-                />
+            header: () => (
+                <div className="">
+                    {t('body.account.tabs.transactions.quanity1')}
+                </div>
             ),
             cell: ({ row }) => {
-                // @ts-ignore
                 return (<span>{prettifyCurrencys(row.original.fromgoodQuanity)}{" "}{row.original.symbol1}</span>);
             },
         },
         {
             id: "togoodQuantity",
             accessorKey: "togoodQuantity",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="left"
-                    header_name={"Goods2 Quantity"}
-                    column={column}
-                />
+            header: () => (
+                <div className="">
+                    {t('body.account.tabs.transactions.quanity2')}
+                </div>
             ),
             cell: ({ row }) => {
-                // @ts-ignore
                 const name = prettifyCurrencys(row.original.togoodQuantity) + " " + row.original.symbol2;
                 return (<span>{// @ts-ignore
                     row.original.symbol2 === "#" ? "-" : name}</span>);
@@ -230,37 +229,30 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
         },
         {
             id: "actions",
+            header: () => (
+                <div className="text-right mr-4">
+                    {t('common.actions')}
+                </div>
+            ),
             cell: ({ row }) => {
                 if (!on_native_explorer_click && !on_goldrush_receipt_click)
                     return;
                 return (
-                    <div className="text-right">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="ml-auto  ">
-                                    <span className="sr-only">Open menu</span>
-                                    <IconWrapper icon_class_name="expand_more" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                {on_native_explorer_click && (
-                                    <DropdownMenuItem
-                                        onClick={() => {
-                                            on_native_explorer_click(
-                                                row.original.hash
-                                            );
-                                        }}
-                                    >
-                                        <IconWrapper
-                                            icon_class_name="open_in_new"
-                                            class_name="mr-2"
-                                        />{" "}
-                                        Hash
-                                    </DropdownMenuItem>
-                                )}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                    <div className="text-right mr-4">
+                        {on_native_explorer_click && (
+                            <Button
+                                // shape="round"
+                                type="primary"
+                                // size="large"
+                                onClick={() => {
+                                    on_native_explorer_click(
+                                        row.original.hash
+                                    );
+                                }}
+                            >
+                                {t('body.account.tabs.transactions.hash')}
+                            </Button>
+                        )}
                     </div>
                 );
             },
@@ -274,7 +266,8 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
                 <div className="ml-4">
                     <TableHeaderSorting
                         align="left"
-                        header_name={"Time"}
+                        header_name=
+                        {t('body.account.tabs.transactions.time')}
                         column={column}
                     />
                 </div>
@@ -290,20 +283,14 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
         },
         {
             accessorKey: "type",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="left"
-                    header_name={"Type"}
-                    column={column}
-                />
+            header: () => (
+                <div className="text-left">
+                    {t('body.account.tabs.transactions.type')}
+                </div>
             ),
             cell: ({ row }) => {
-                // @ts-ignore
                 const token_0 = row.original.symbol1;
-                // @ts-ignore
                 const token_1 = row.original.symbol2;
-
-                // if (row.original.type !== "SWAP") {
                 return (
                     <div
                         className={
@@ -321,7 +308,7 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
                             className="mr-2"
                             variant={POOL_TRANSACTION_MAP["SWAP"].color}
                         >
-                            {// @ts-ignore
+                            {
                                 row.original.type}
                         </Badge>{" "}
                         {token_0}{" "}
@@ -332,53 +319,31 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
             },
         },
         {
-            id: "totalValue",
-            accessorKey: "totalValue",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="left"
-                    header_name={"Value"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                // @ts-ignore
-                return <>{prettifyCurrencys(row.original.totalValue)}{" "}{row.original.valueSymbol}</>;
-            },
-        },
-        {
             id: "actions",
+            header: () => (
+                <div className="text-right mr-4">
+                    {t('common.actions')}
+                </div>
+            ),
             cell: ({ row }) => {
                 if (!on_native_explorer_click && !on_goldrush_receipt_click)
                     return;
                 return (
-                    <div className="text-right">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="ml-auto  ">
-                                    <span className="sr-only">Open menu</span>
-                                    <IconWrapper icon_class_name="expand_more" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                {on_native_explorer_click && (
-                                    <DropdownMenuItem
-                                        onClick={() => {
-                                            on_native_explorer_click(
-                                                row.original.hash
-                                            );
-                                        }}
-                                    >
-                                        <IconWrapper
-                                            icon_class_name="open_in_new"
-                                            class_name="mr-2"
-                                        />{" "}
-                                        Hash
-                                    </DropdownMenuItem>
-                                )}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                    <div className="text-right mr-4">
+                        {on_native_explorer_click && (
+                            <Button
+                                // shape="round"
+                                type="primary"
+                                // size="large"
+                                onClick={() => {
+                                    on_native_explorer_click(
+                                        row.original.hash
+                                    );
+                                }}
+                            >
+                                {t('body.account.tabs.transactions.hash')}
+                            </Button>
+                        )}
                     </div>
                 );
             },
@@ -435,7 +400,7 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
                         colSpan={columns.length}
                         className="h-24 text-center"
                     >
-                        No results.
+                        {t('common.nodata')}
                     </TableCell>
                 </TableRow>
             ),
@@ -465,56 +430,16 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
                 </TableHeader>
                 <TableBody>{body}</TableBody>
             </Table>
-            <Pagination className="select-none">
-                <PaginationContent>
-                    <PaginationItem
-                        disabled={pagination.page_number === 1}
-                        onClick={() => {
-                            handlePagination(pagination.page_number - 1);
-                        }}
-                    >
-                        <PaginationPrevious />
-                    </PaginationItem>
-                    {pagination.page_number > 1 && (
-                        <PaginationItem
-                            onClick={() => {
-                                handlePagination(pagination.page_number - 1);
-                            }}
-                        >
-                            <PaginationLink>
-                                {pagination.page_number - 1}
-                            </PaginationLink>
-                        </PaginationItem>
-                    )}
-                    <PaginationItem>
-                        <PaginationLink isActive>
-                            {pagination.page_number}
-                        </PaginationLink>
-                    </PaginationItem>
-                    {hasMore && (
-                        <PaginationItem
-                            onClick={() => {
-                                handlePagination(pagination.page_number + 1);
-                            }}
-                        >
-                            <PaginationLink>
-                                {pagination.page_number + 1}
-                            </PaginationLink>
-                        </PaginationItem>
-                    )}
-                    <PaginationItem>
-                        <PaginationEllipsis />
-                    </PaginationItem>
-                    <PaginationItem
-                        disabled={!hasMore}
-                        onClick={() => {
-                            handlePagination(pagination.page_number + 1);
-                        }}
-                    >
-                        <PaginationNext />
-                    </PaginationItem>
-                </PaginationContent>
-            </Pagination>
+            <div className="flex justify-center">
+                <Spin
+                    spinning={spinning}
+                    indicator={<LoadingOutlined spin />}
+                    tip="Loading"
+                // size="small"
+                >
+                    <div />
+                </Spin>
+            </div>
         </div>
     );
 };

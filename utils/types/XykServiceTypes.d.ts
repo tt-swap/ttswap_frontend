@@ -66,6 +66,9 @@ export interface Pool {
     APY: any;
     myFeeAmount:any;
     totalTradeCount:any;
+    totalFeeQantity:any;
+    totalFeeAmount:any;
+    myFeeQuanity:any;
 }
 
 export interface walletPool {
@@ -460,9 +463,10 @@ export interface TokenV2Volume {
     valueSymbol: any;
     totalFee: any;
     price: any;
-    price_24h: any;
+    priceC_24h: any;
     totalFeeValue: any;
     fee24: any;
+    apy: any;
     feeValue24: any;
     unitFee: any;
     totalTradeQuantity: any;
@@ -470,6 +474,7 @@ export interface TokenV2Volume {
     tradeQuantity24: any;
     tradeValue24: any;
     currentQuantity: any;
+    currentValue:any;
 }
 export interface NetworkExchangeTokenViewResponse {
     /** * The timestamp when the response was generated. Useful to show data staleness to users. */
@@ -698,6 +703,17 @@ export interface ExchangeTransaction {
     token_1: PoolToken;
     token_0_quote_rate: number;
     token_1_quote_rate: number;
+    symbol1:any;
+    symbol2:any;
+    type:any;
+    fromgoodQuanity:any;
+    togoodQuantity:any;
+    valueSymbol:any;
+    totalValue:any;
+    disinvestValue:any;
+    tradeValue:any;
+    investValue:any;
+    link:any;
 }
 export interface PoolToken {
     /** * Use contract decimals to format the token balance for display purposes - divide the balance by `10^{contract_decimals}`. */

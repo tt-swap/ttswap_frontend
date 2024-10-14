@@ -1,13 +1,7 @@
 import { type Option, None, Some } from "@/utils/option";
 import { type Pool } from "@/utils/types/XykServiceTypes";
 import { useEffect, useState } from "react";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useTranslation } from 'react-i18next';
 import {
     type ColumnDef,
     type SortingState,
@@ -25,22 +19,10 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { TokenAvatar } from "../../../Atoms";
-import { Button } from "@/components/ui/button";
+import { Button } from 'antd';
 import { TableHeaderSorting } from "@/components/ui/tableHeaderSorting";
-import { IconWrapper } from "@/components/Shared";
 import { GRK_SIZES } from "@/utils/constants/shared.constants";
-import { useGoldRush } from "@/utils/store";
 import { type XYKPoolListViewProps } from "@/utils/types/organisms.types";
-import { calculateFeePercentage } from "@/utils/functions/calculate-fees-percentage";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination";
 import { SkeletonTable } from "@/components/ui/skeletonTable";
 import { Tooltip, message, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -53,13 +35,11 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
     chain_name,
     dex_name,
     on_pool_click,
-    page_size, value_good_id, is_over, wallet_address, data_num, chain_id
+    page_size, value_good_id, wallet_address, data_num, chain_id
 }) => {
-    const { covalentClient } = useGoldRush();
-
     const [sorting, setSorting] = useState<SortingState>([
         {
-            id: "totalTradeCount",
+            id: "totalFeeQantity",
             desc: true,
         },
     ]);
@@ -74,6 +54,8 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
     const [hasMore, setHasMore] = useState<boolean>();
     const [spinning, setSpinning] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
+    const [tableSpinning, settableSpinning] = useState(false);
+    const { t } = useTranslation();
 
     const handlePagination = (page_number: number) => {
         setPagination((prev) => {
@@ -84,9 +66,26 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
         });
     };
 
+    const handleScroll = () => {
+        if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight) {
+            if (hasMore) {
+                handlePagination(pagination.page_number + 1);
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            window.addEventListener("scroll", handleScroll);
+            return () => {
+                window.removeEventListener("scroll", handleScroll);
+            };
+        }
+    }, [hasMore, pagination]);
+
     const { collect } = useWallet();
 
-    const text = <span>Collect current display goods commission.</span>;
+    const text = <span>{t('body.account.tabs.commission.tip')}</span>;
 
     const collectCommission = async () => {
         setSpinning(true);
@@ -95,12 +94,12 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
         if (isSuccess) {
             messageApi.open({
                 type: 'success',
-                content: 'Collect data send success',
+                content: t('common.mess.collect') + t('common.mess.success'),
             });
         } else {
             messageApi.open({
                 type: 'error',
-                content: 'Collect data send fail',
+                content: t('common.mess.collect') + t('common.mess.error'),
             });
         }
         setSpinning(false);
@@ -110,7 +109,8 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
 
     useEffect(() => {
         (async () => {
-            setResult(None);
+            settableSpinning(true);
+            // setResult(None);
             let response: any;
             try {
                 response =
@@ -124,7 +124,17 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                 console.log(response, value_good_id, "myCommissions")
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
-                setResult(new Some(response.items));
+                setResult(prev => {
+                    if (pagination.page_number === 1 || prev.match({ None: () => true, Some: () => false })) {
+                        return new Some(Array.isArray(response.items) ? response.items : []); // 确保是数组
+                    } else {
+                        const existingItems = prev.match({
+                            None: () => [],
+                            Some: (items) => items,
+                        });
+                        return new Some([...existingItems, ...(Array.isArray(response.items) ? response.items : [])]); // 确保是数组
+                    }
+                });
                 setCollectIds(response.ids);
             } catch (exception) {
                 setResult(new Some([]));
@@ -133,6 +143,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                     error_message: response ? response.error_message : "",
                 });
             }
+            settableSpinning(false);
         })();
     }, [chain_name, dex_name, pagination, value_good_id, wallet_address, data_num]);
 
@@ -154,14 +165,9 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
         {
             id: "name",
             accessorKey: "name",
-            header: ({ column }) => (
+            header: () => (
                 <div className="ml-4">
-                    <TableHeaderSorting
-                        align="left"
-                        header_name={"Name"}
-                        column={column}
-                        // text=""
-                    />
+                    {t('body.account.tabs.commission.name')}
                 </div>
             ),
             cell: ({ row }) => {
@@ -208,318 +214,141 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Total Fee Volume"}
+                    header_name=
+                    {t('body.account.tabs.commission.totalfeevolume')}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
-                    // @ts-ignore
                     row.original.totalFeeQantity
                 );
-
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
             id: "totalFeeAmount",
             accessorKey: "totalFeeAmount",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Total Fee Amount"}
-                    column={column}
-                />
+            header: () => (
+                <div className="text-right">
+                    {t('body.account.tabs.commission.totalfeeamount')}
+                </div>
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencysFee(
-                    // @ts-ignore
                     row.original.totalFeeAmount
                 );
-
-                return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
+                return <div className="text-right">{valueFormatted}{" "}{
                     row.original.valueSymbol}</div>;
             },
         },
         {
             id: "myFeeQuanity",
             accessorKey: "myFeeQuanity",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"My Fee Volume"}
-                    column={column}
-                />
+            header: () => (
+                <div className="text-right">
+                    {t('body.account.tabs.commission.feevolume')}
+                </div>
             ),
             cell: ({ row }) => {
-                // @ts-ignore
-
                 const valueFormatted = prettifyCurrencys(row.original.myFeeQuanity);
-
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
             id: "myFeeAmount",
             accessorKey: "myFeeAmount",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"My Fee Amount"}
-                    column={column}
-                />
+            header: () => (
+                <div className="text-right mr-4">
+                    {t('body.account.tabs.commission.feeamount')}
+                </div>
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
                     row.original.myFeeAmount
                 );
-
-                return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
+                return <div className="text-right mr-4">{valueFormatted}{" "}{// @ts-ignore
                     row.original.valueSymbol}</div>;
             },
         },
-        // {
-        //     id: "actions",
-        //     cell: ({ row }) => {
-        //         return (
-        //             <div className="text-right">
-        //                 <DropdownMenu>
-        //                     <DropdownMenuTrigger asChild>
-        //                         <Button variant="ghost" className="ml-auto  ">
-        //                             <span className="sr-only">Open menu</span>
-        //                             <IconWrapper icon_class_name="expand_more" />
-        //                         </Button>
-        //                     </DropdownMenuTrigger>
-        //                     <DropdownMenuContent align="end">
-        //                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        //                         <DropdownMenuItem
-        //                             onClick={() => {
-        //                                 if (on_pool_click) {
-        //                                     // @ts-ignore
-        //                                     on_pool_click("invest", row.original.id);
-        //                                     // on_pool_click(
-        //                                     //     row.original.exchange
-        //                                     // );
-        //                                 }
-        //                             }}
-        //                         >
-        //                             <IconWrapper
-        //                                 icon_class_name="swap_horiz"
-        //                                 class_name="mr-2"
-        //                             />{" "}
-        //                             Invest
-        //                         </DropdownMenuItem>
-        //                     </DropdownMenuContent>
-        //                 </DropdownMenu>
-        //             </div>
-        //         );
-        //     },
-        // },
     ];
 
     const mobile_columns: ColumnDef<Pool>[] = [
         {
             id: "name",
             accessorKey: "name",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="left"
-                    header_name={"Name"}
-                    column={column}
-                />
+            header: () => (
+                <div className="ml-4">
+                    {t('body.account.tabs.commission.name')}
+                </div>
             ),
             cell: ({ row }) => {
-                // const token_0 = row.original.token_0;
-                // const token_1 = row.original.token_1;
-                // const pool = `${token_0.contract_ticker_symbol}/${token_1.contract_ticker_symbol}`;
-
                 return (
-                    <div className="flex items-center gap-3">
-                        <div className="relative mr-2 flex">
-                            <TokenAvatar
-                                size={GRK_SIZES.EXTRA_SMALL}
-                                // @ts-ignore
-                                token_url={row.original.logo_url}
-                            />
-                            {/* <div className="absolute left-4">
-                                <TokenAvatar
-                                    size={GRK_SIZES.EXTRA_SMALL}
-                                    token_url={token_1.logo_url}
-                                />
-                            </div> */}
-
-
-                            <div className="flex flex-col">
-                                {on_pool_click ? (
-                                    <a
-                                        className="cursor-pointer hover:opacity-75"
-                                        onClick={() => {
-                                            if (on_pool_click) {
-                                                on_pool_click("goods/" + row.original.id, row.original.id);
-                                            }
-                                        }}
-                                    >
-                                        {// @ts-ignore
-                                            row.original.name ? row.original.name : ""}
-                                    </a>
-                                ) : (
-                                    <label className="text-base">
-                                        {// @ts-ignore
-                                            row.original.name ? row.original.name : ""}
-                                    </label>
-                                )}
-                            </div>
+                    <div className="ml-4 flex items-center gap-3">
+                        <TokenAvatar
+                            size={GRK_SIZES.EXTRA_SMALL}
+                            // @ts-ignore
+                            token_url={row.original.logo_url}
+                        />
+                        <div className="flex flex-col">
+                            {on_pool_click ? (
+                                <a
+                                    className="cursor-pointer hover:opacity-75"
+                                    onClick={() => {
+                                        if (on_pool_click) {
+                                            on_pool_click("goods/" + row.original.id, row.original.id);
+                                        }
+                                    }}
+                                >
+                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
+                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                                    {/* {
+                                        // @ts-ignore
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
+                                </a>
+                            ) : (
+                                <label className="text-base">
+                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
+                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                                    {/* {
+                                        // @ts-ignore
+                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
+                                </label>
+                            )}
                         </div>
                     </div>
                 );
             },
         },
         {
-            id: "totalFeeQantity",
-            accessorKey: "totalFeeQantity",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Total Fee Qantity"}
-                    column={column}
-                />
+            id: "myFeeQuanity",
+            accessorKey: "myFeeQuanity",
+            header: () => (
+                <div className="text-right">
+                    {t('body.account.tabs.commission.feevolume')}
+                </div>
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    // @ts-ignore
-                    row.original.totalFeeQantity
-                );
-
+                const valueFormatted = prettifyCurrencys(row.original.myFeeQuanity);
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "myFeeQuanity",
-            accessorKey: "myFeeQuanity",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"My Fee Quanity"}
-                    column={column}
-                />
+            id: "myFeeAmount",
+            accessorKey: "myFeeAmount",
+            header: () => (
+                <div className="text-right">
+                    {t('body.account.tabs.commission.feeamount')}
+                </div>
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencys(
-                    // @ts-ignore
-                    row.original.investValue
+                    row.original.myFeeAmount
                 );
-
-                return <div className="text-right">{valueFormatted}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
+                    row.original.valueSymbol}</div>;
             },
         },
-        // {
-        //     id: "totalInvestQuantity",
-        //     accessorKey: "totalInvestQuantity",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Total Invest Quantity"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         const valueFormatted = prettifyCurrencys(
-        //             row.original.totalInvestQuantity
-        //         );
-
-        //         return <div className="text-right">{valueFormatted}</div>;
-        //     },
-        // },
-        // {
-        //     id: "totalInvestValue",
-        //     accessorKey: "totalInvestValue",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Total Invest Amount"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         const valueFormatted = prettifyCurrencys(
-        //             row.original.totalInvestValue
-        //         );
-
-        //         return <div className="text-right">{valueFormatted}</div>;
-        //     },
-        // },
-        // {
-        //     id: "investQuantity24",
-        //     accessorKey: "investQuantity24",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Invest Quantity(24h)"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         const valueFormatted = prettifyCurrencys(
-        //             row.original.investQuantity24
-        //         );
-
-        //         return <div className="text-right">{valueFormatted}</div>;
-        //     },
-        // },
-        // {
-        //     id: "investValue24",
-        //     accessorKey: "investValue24",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Invest Amount(24h)"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         const valueFormatted = prettifyCurrencys(
-        //             row.original.investValue24
-        //         );
-
-        //         return <div className="text-right">{valueFormatted}</div>;
-        //     },
-        // },
-        // {
-        //     id: "actions",
-        //     cell: ({ row }) => {
-        //         return (
-        //             <div className="text-right">
-        //                 <DropdownMenu>
-        //                     <DropdownMenuTrigger asChild>
-        //                         <Button variant="ghost" className="ml-auto  ">
-        //                             <span className="sr-only">Open menu</span>
-        //                             <IconWrapper icon_class_name="expand_more" />
-        //                         </Button>
-        //                     </DropdownMenuTrigger>
-        //                     <DropdownMenuContent align="end">
-        //                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        //                         <DropdownMenuItem
-        //                             onClick={() => {
-        //                                 if (on_pool_click) {
-        //                                     on_pool_click("invent",
-        //                                         // @ts-ignore
-        //                                         row.original.id
-        //                                     );
-        //                                 }
-        //                             }}
-        //                         >
-        //                             <IconWrapper
-        //                                 icon_class_name="swap_horiz"
-        //                                 class_name="mr-2"
-        //                             />{" "}
-        //                             Invent
-        //                         </DropdownMenuItem>
-        //                     </DropdownMenuContent>
-        //                 </DropdownMenu>
-        //             </div>
-        //         );
-        //     },
-        // },
     ];
 
     const table = useReactTable({
@@ -572,7 +401,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                         colSpan={columns.length}
                         className="h-24 text-center"
                     >
-                        No results.
+                        {t('common.nodata')}
                     </TableCell>
                 </TableRow>
             ),
@@ -582,13 +411,18 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
         <>
             {contextHolder}
             <Spin spinning={spinning} fullscreen indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} size="large" />
-            <div>
+            <div className="mb-4">
                 <Tooltip placement="right" title={text}>
                     <Button
-                        className="newButton mx-2"
+                        size="large"
+                        // shape="round"
+                        type="primary"
+                        className="mx-2"
                         onClick={collectCommission}
-                    >Collect</Button>
-                </Tooltip></div>
+                    >
+                    {t('body.account.tabs.commission.bnt')}</Button>
+                </Tooltip>
+            </div>
             <div className="space-y-4">
                 <Table>
                     <TableHeader>
@@ -612,58 +446,16 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                     </TableHeader>
                     <TableBody>{body}</TableBody>
                 </Table>
-                {!is_over && (
-                    <Pagination className="select-none">
-                        <PaginationContent>
-                            <PaginationItem
-                                disabled={pagination.page_number === 1}
-                                onClick={() => {
-                                    handlePagination(pagination.page_number - 1);
-                                }}
-                            >
-                                <PaginationPrevious />
-                            </PaginationItem>
-                            {pagination.page_number > 1 && (
-                                <PaginationItem
-                                    onClick={() => {
-                                        handlePagination(pagination.page_number - 1);
-                                    }}
-                                >
-                                    <PaginationLink>
-                                        {pagination.page_number - 1}
-                                    </PaginationLink>
-                                </PaginationItem>
-                            )}
-                            <PaginationItem>
-                                <PaginationLink isActive>
-                                    {pagination.page_number}
-                                </PaginationLink>
-                            </PaginationItem>
-                            {hasMore && (
-                                <PaginationItem
-                                    onClick={() => {
-                                        handlePagination(pagination.page_number + 1);
-                                    }}
-                                >
-                                    <PaginationLink>
-                                        {pagination.page_number + 1}
-                                    </PaginationLink>
-                                </PaginationItem>
-                            )}
-                            <PaginationItem>
-                                <PaginationEllipsis />
-                            </PaginationItem>
-                            <PaginationItem
-                                disabled={!hasMore}
-                                onClick={() => {
-                                    handlePagination(pagination.page_number + 1);
-                                }}
-                            >
-                                <PaginationNext />
-                            </PaginationItem>
-                        </PaginationContent>
-                    </Pagination>
-                )}
+                <div className="flex justify-center">
+                    <Spin
+                        spinning={tableSpinning}
+                        indicator={<LoadingOutlined spin />}
+                        tip="Loading"
+                    // size="small"
+                    >
+                        <div />
+                    </Spin>
+                </div>
             </div>
         </>
     );

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Form,
     Input,
@@ -21,7 +22,7 @@ const styles = {
         fontWeight: "600",
         letterSpacing: "0.2px",
         fontSize: "15px",
-        margin: "20px 20px",
+        // margin: "20px 20px",
         border: "none"
     },
     newButton: {
@@ -29,7 +30,7 @@ const styles = {
         width: "100%"
     },
     newButton1: {
-        backgroundColor: "#10b981",
+        // backgroundColor: "#10b981",
         width: "100%",
         color: "#fff"
     }
@@ -51,18 +52,10 @@ export const Faucet = ({ }: Props) => {
     const { address } = useWalletAddress();
     // @ts-ignore
     const { ssionChian } = useLocalStorage();
+    const { t } = useTranslation();
 
     const { faucetTestCion } = useFaucet();
     const [form] = Form.useForm();
-    const testCion1: any = [
-        {
-            id: "0xA35e43E7a5839b31624dad3f35dA63875E705934", symbol: "USDT", logo_url: "", address: "0xA35e43E7a5839b31624dad3f35dA63875E705934"
-        }, {
-            id: "0xCC1f68861f8a63b5aa837A41087C17Bc5f64521d", symbol: "WBTC", logo_url: "", address: "0xCC1f68861f8a63b5aa837A41087C17Bc5f64521d"
-        }, {
-            id: "0xE5Dbe53f4e408b9C53472226bC01faC57E40D0B3", symbol: "WETH", logo_url: "", address: "0xE5Dbe53f4e408b9C53472226bC01faC57E40D0B3"
-        },
-    ];
     const testCion: any = {
         11155111: [{
             id: "0xA35e43E7a5839b31624dad3f35dA63875E705934", symbol: "USDT", logo_url: "", address: "0xA35e43E7a5839b31624dad3f35dA63875E705934"
@@ -70,6 +63,32 @@ export const Faucet = ({ }: Props) => {
             id: "0xCC1f68861f8a63b5aa837A41087C17Bc5f64521d", symbol: "WBTC", logo_url: "", address: "0xCC1f68861f8a63b5aa837A41087C17Bc5f64521d"
         }, {
             id: "0xE5Dbe53f4e408b9C53472226bC01faC57E40D0B3", symbol: "WETH", logo_url: "", address: "0xE5Dbe53f4e408b9C53472226bC01faC57E40D0B3"
+        }, {
+            id: "0x9503071bC3F2a85C0BbaC186172782E7b7FF24F7", symbol: "USDC", logo_url: "", address: "0x9503071bC3F2a85C0BbaC186172782E7b7FF24F7"
+        }, {
+            id: "0xD20F79BF90d72409bb2281524aEeBc3a367F15dD", symbol: "BNB", logo_url: "", address: "0xD20F79BF90d72409bb2281524aEeBc3a367F15dD"
+        }, {
+            id: "0x8800242930D425332dD34856BbE5b3a1674b0adC", symbol: "DAI", logo_url: "", address: "0x8800242930D425332dD34856BbE5b3a1674b0adC"
+        }, {
+            id: "0x91DE907De4a2c586f98E010E433C030288A5436c", symbol: "TON", logo_url: "", address: "0x91DE907De4a2c586f98E010E433C030288A5436c"
+        }, {
+            id: "0x375FdcE5556730730770Efa157C85930768AF4E2", symbol: "SHIB", logo_url: "", address: "0x375FdcE5556730730770Efa157C85930768AF4E2"
+        }, {
+            id: "0x60a65585857F14Ed6DB3cAC3C0b8213a8298d9Fd", symbol: "LINK", logo_url: "", address: "0x60a65585857F14Ed6DB3cAC3C0b8213a8298d9Fd"
+        }, {
+            id: "0xf2f123eB8599E6C27F774c4ab50EfE4Dcb7f6483", symbol: "LEO", logo_url: "", address: "0xf2f123eB8599E6C27F774c4ab50EfE4Dcb7f6483"
+        }, {
+            id: "0xdBcBE09B177AcB83e21255943b4a19341C0B0d16", symbol: "NEAR", logo_url: "", address: "0xdBcBE09B177AcB83e21255943b4a19341C0B0d16"
+        }, {
+            id: "0x6CC0A493FE6b86500D49CBf7e89fCE4d6ee23377", symbol: "OKB", logo_url: "", address: "0x6CC0A493FE6b86500D49CBf7e89fCE4d6ee23377"
+        }, {
+            id: "0xA0912Fc81E0Be43DfC16Af2d3999C503745e3011", symbol: "UNI", logo_url: "", address: "0xA0912Fc81E0Be43DfC16Af2d3999C503745e3011"
+        }, {
+            id: "0x7771FFE143eeD2d0a612A4b37Ab96c0d82c48bf3", symbol: "ARB", logo_url: "", address: "0x7771FFE143eeD2d0a612A4b37Ab96c0d82c48bf3"
+        }, {
+            id: "0x9989dED344CB231C6a3BE58f253122f9303fE7eC", symbol: "GRT", logo_url: "", address: "0x9989dED344CB231C6a3BE58f253122f9303fE7eC"
+        }, {
+            id: "0x7aff8befc7cbe268d90d7248035133881526734b", symbol: "MKR", logo_url: "", address: "0x7aff8befc7cbe268d90d7248035133881526734b"
         }],
         97: [{
             id: "0x11E10725a6Fc7C47833209C6DE31307Fbd389494", symbol: "USDT", logo_url: "", address: "0x11E10725a6Fc7C47833209C6DE31307Fbd389494"
@@ -205,25 +224,25 @@ export const Faucet = ({ }: Props) => {
             <Button shape="round" type="primary" style={styles.button} onClick={() => {
                 setOpen(true)
             }}>
-                TTSWAP FAUCET
+                {t('header.menu.faucet')}
             </Button>
-            <CreatModal open={open} setOpen={setOpen} title={"TTSWAP FAUCET"}>
+            <CreatModal open={open} setOpen={setOpen} title={t('header.menu.faucet.title')}>
 
                 <Spin spinning={spinning} fullscreen indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} size="large" />
 
                 <div >
                     <Form form={form} colon={false}>
-                        <h2>Test Cion Amount</h2>
+                        <h2>{t('header.menu.faucet.amount')}</h2>
                         <Form.Item>
                             <Input
-                                placeholder="Enter Test Cion Amount"
+                                placeholder={t('header.menu.faucet.amounttip')}
                                 type='number'
                                 onChange={(e) => { setGoodC(e.target.value); }}
                                 value={goodC}
                                 addonAfter={selectAfter}
                             />
                         </Form.Item>
-                        <h2>Test Cion Contract</h2>
+                        <h2>{t('header.menu.faucet.contract')}</h2>
                         <Form.Item>
                             <Space.Compact style={{ width: '100%' }}>
                                 <Input
@@ -233,9 +252,9 @@ export const Faucet = ({ }: Props) => {
                                 />
                                 <Button
                                     type="primary"
-                                    style={{ backgroundColor: "#10b981", color: "#fff" }}
+                                    // style={{ backgroundColor: "#10b981", color: "#fff" }}
                                     onClick={CopyC}
-                                >Copy</Button>
+                                >{t('header.menu.faucet.copy')}</Button>
                             </Space.Compact>
                         </Form.Item>
 
@@ -245,21 +264,21 @@ export const Faucet = ({ }: Props) => {
                         style={isDisabled ? styles.newButton : styles.newButton1}
                         disabled={isDisabled}
                         onClick={Obtain}
-                    >Obtain Test Coin</Button>
+                    >{t('header.menu.faucet.obtain')}</Button>
                 </div>
                 <div className='flex justify-between py-8'>
                     <a href='https://www.alchemy.com/faucets/ethereum-sepolia' className='w-full mr-4' target='_bank'>
                         <Button
                             type="primary"
                             style={styles.newButton1}
-                        >Sepolia Test ETH</Button>
+                        >{t('header.menu.faucet.testeth')}</Button>
                     </a>
-                    <a href='https://www.bnbchain.org/en/testnet-faucet' className='w-full' target='_bank'>
+                    {/* <a href='https://www.bnbchain.org/en/testnet-faucet' className='w-full' target='_bank'>
                         <Button
                             type="primary"
                             style={styles.newButton1}
-                        >BSC Test BNB</Button>
-                    </a>
+                        >{t('header.menu.faucet.testbnb')}</Button>
+                    </a> */}
                 </div>
             </CreatModal>
         </>

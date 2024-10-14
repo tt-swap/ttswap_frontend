@@ -19,7 +19,7 @@ const TokenSwapModal = ({ open, setOpen, title, children }: Props) => {
     open={open}
     onCancel={() => handleClose(false, "")}
     footer={null}
-    width={480}
+    width={520}
     >
         {children}
     </Modal>

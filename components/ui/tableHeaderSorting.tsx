@@ -26,7 +26,7 @@ export const TableHeaderSorting = ({
     return (
         // <Tooltip placement="top" title={text}>
         <div
-            className={`flex cursor-pointer items-center gap-1 whitespace-nowrap hover:text-slate-900 dark:hover:text-slate-50  ${
+            className={`flex cursor-pointer items-center gap-1 whitespace-nowrap header-sort hover:text-slate-900 dark:hover:text-slate-50  ${
                 align === "right"
                     ? "justify-end"
                     : align === "center"

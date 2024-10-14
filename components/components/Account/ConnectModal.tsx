@@ -1,4 +1,5 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { useTranslation } from 'react-i18next';
 
 import { Modal, Divider, message } from "antd";
 
@@ -10,6 +11,7 @@ import { getName } from "connectors/getConnectorName";
 import { hooks as metaMaskhooks, metaMask } from "connectors/metaMask";
 import { hooks as walletConnecthooks, walletConnect } from "connectors/walletConnect";
 import { useWeb3React } from "@web3-react/core";
+import "./index.css";
 
 import ConnectButton from "./ConnectButton";
 
@@ -38,19 +40,19 @@ const ConnectModal: React.FC<ConnectModalProps> = ({ isModalOpen, setIsModalOpen
   const isMMActivating = useMMIsActivating();
   const isWCActivating = useWCIsActivating();
   const isCBActivating = useCBIsActivating();
-  const { account } = useWeb3React();
+  const connectOpenRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   const activateConnector = useCallback(async (label: string) => {
     try {
       switch (label) {
         case "MetaMask":
-          console.log("011:", metamask_Logo);
           await metaMask.activate();
-          console.log("02211:", metamask_Logo);
           window.window.localStorage.setItem("connectorId", getName(metaMask));
           break;
 
         case "WalletConnect":
+          // console.log(await walletConnect.activate(11155111), "11110000999");
           await walletConnect.activate();
           window.window.localStorage.setItem("connectorId", getName(walletConnect));
           break;
@@ -63,64 +65,82 @@ const ConnectModal: React.FC<ConnectModalProps> = ({ isModalOpen, setIsModalOpen
         default:
           break;
       }
+      setIsModalOpen(false);
     } catch (error) {
-      messageApi.error("Failed to connect wallet. Please try again.");
+      messageApi.error(t('header.menu.account.error'));
     }
   }, []);
 
   // console.log("metamask_Logo:", metamask_Logo);
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (connectOpenRef.current && !connectOpenRef.current.contains(event.target as Node)) {
+      setIsModalOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isModalOpen]);
+
   return (
     <>
       {contextHolder}
-      <Modal
-        open={isModalOpen}
-        footer={null}
-        width={350}
-        styles={{ body: { padding: "15px", fontSize: "17px", fontWeight: "500" } }}
-        onCancel={() => setIsModalOpen(false)}
-      >
-        <div style={styles.modalTitle}>Connect Your Wallet</div>
+      {isModalOpen && (
+        <div className="account-sign" ref={connectOpenRef}>
+          <div
+            className="account-drawer"
+          >
+            <div style={styles.modalTitle}>{t('header.menu.account.connect.title')}</div>
 
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <ConnectButton
-            label="MetaMask"
-            image="/metamask_Logo.svg"
-            onClick={() => activateConnector("MetaMask")}
-            loading={isMMActivating}
-          />
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <ConnectButton
+                label="MetaMask"
+                image="/metamask_Logo.svg"
+                onClick={() => activateConnector("MetaMask")}
+                loading={isMMActivating}
+              />
 
-          {/* <ConnectButton
-            label="WalletConnect"
-            image={walletconnect_Logo}
-            onClick={() => activateConnector("WalletConnect")}
-            loading={isWCActivating}
-          />
+              <ConnectButton
+                label="WalletConnect"
+                image={walletconnect_Logo.src}
+                onClick={() => activateConnector("WalletConnect")}
+                loading={isWCActivating}
+              />
 
-          <ConnectButton
-            label="Coinbase Wallet"
-            image={coinbase_Logo}
-            onClick={() => activateConnector("Coinbase Wallet")}
-            loading={isCBActivating}
-          /> */}
-          <Divider />
-          <div style={{ margin: "auto", fontSize: "15px", marginBottom: "15px" }}>
-            Need help installing a wallet?{" "}
-            <a
-              href="https://metamask.zendesk.com/hc/en-us/articles/360015489471-How-to-Install-MetaMask-Manually"
-              target="_blank"
-              rel="noopener"
-            >
-              Click here
-            </a>
-          </div>
+              <ConnectButton
+                label="Coinbase Wallet"
+                image={coinbase_Logo.src}
+                onClick={() => activateConnector("Coinbase Wallet")}
+                loading={isCBActivating}
+              />
+              <Divider />
+              <div style={{ margin: "auto", fontSize: "15px", marginBottom: "15px" }}>
+                {t('header.menu.account.connect.tip')}{" "}
+                <a
+                  style={{ color: "red" }}
+                  href="https://metamask.io/"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  {t('header.menu.account.connect.tipclick')}
+                </a>
+              </div>
 
-          <div style={{ margin: "auto", fontSize: "10px" }}>
-            Wallets are provided by External Providers and by selecting you agree to Terms of those Providers. Your
-            access to the wallet might be reliant on the External Provider being operational.
+              <div style={{ margin: "auto", fontSize: "10px" }}>
+                {t('header.menu.account.connect.detail')}
+              </div>
+            </div>
           </div>
         </div>
-      </Modal>
+      )}
     </>
   );
 };

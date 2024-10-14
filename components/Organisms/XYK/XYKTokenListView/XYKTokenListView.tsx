@@ -1,13 +1,7 @@
 import { type Option, None, Some } from "@/utils/option";
 import { type TokenV2Volume } from "@/utils/types/XykServiceTypes";
-import { useEffect, useState } from "react";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useEffect, useState, useMemo } from "react";
+import { useTranslation } from 'react-i18next';
 import {
     type ColumnDef,
     type SortingState,
@@ -25,38 +19,26 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { TokenAvatar } from "../../../Atoms";
-import { Button } from "@/components/ui/button";
+import { Button, Spin, Space } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import { TableHeaderSorting } from "@/components/ui/tableHeaderSorting";
-import { BalancePriceDelta, IconWrapper } from "@/components/Shared";
 import { GRK_SIZES } from "@/utils/constants/shared.constants";
-import { useGoldRush } from "@/utils/store";
 import { type XYKTokenListViewProps } from "@/utils/types/organisms.types";
 import { SkeletonTable } from "@/components/ui/skeletonTable";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination";
-
-import { GoodsDatas } from '@/graphql/overview';
-import { prettifyCurrencys } from '@/graphql/util';
+import { investGoodsDatas } from '@/graphql/overview';
+import { prettifyCurrencys, prettifyCurrencysFee } from '@/graphql/util';
 import { calculateFeePercentage } from "@/utils/functions/calculate-fees-percentage";
 
 export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
     chain_name,
     dex_name,
     on_token_click,
-    page_size, value_good_id, is_over, chain_id
+    page_size, value_good_id, chain_id
 }) => {
-    const { covalentClient } = useGoldRush();
 
     const [sorting, setSorting] = useState<SortingState>([
         {
-            id: "totalTradeQuantity",
+            id: "currentValue",
             desc: true,
         },
     ]);
@@ -68,6 +50,8 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
         page_number: 1,
     });
     const [hasMore, setHasMore] = useState<boolean>();
+    const [spinning, setSpinning] = useState(false);
+    const { t } = useTranslation();
 
     const handlePagination = (page_number: number) => {
         setPagination((prev) => {
@@ -78,23 +62,47 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
         });
     };
 
+    const handleScroll = () => {
+        if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight) {
+            if (hasMore) {
+                handlePagination(pagination.page_number + 1);
+            }
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, [hasMore, pagination]);
+
     useEffect(() => {
         (async () => {
-            setResult(None);
+            setSpinning(true);
+            // setResult(None);
             let response: any;
             try {
-
                 response =
-                    await GoodsDatas({
+                    await investGoodsDatas({
                         id: value_good_id,
                         pageNumber: pagination.page_number - 1,
-                        // @ts-ignore
                         pageSize: page_size,
                     }, chain_id);
                 console.log(response, "***");
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
-                setResult(new Some(response.items));
+                setResult(prev => {
+                    if (pagination.page_number === 1 || prev.match({ None: () => true, Some: () => false })) {
+                        return new Some(Array.isArray(response.items) ? response.items : []); // 确保是数组
+                    } else {
+                        const existingItems = prev.match({
+                            None: () => [],
+                            Some: (items) => items,
+                        });
+                        return new Some([...existingItems, ...(Array.isArray(response.items) ? response.items : [])]); // 确保是数组
+                    }
+                });
             } catch (exception) {
                 setResult(new Some([]));
                 setError({
@@ -102,6 +110,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                     error_message: response ? response.error_message : "",
                 });
             }
+            setSpinning(false);
         })();
     }, [chain_name, dex_name, pagination, value_good_id]);
 
@@ -123,112 +132,66 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
         {
             id: "name",
             accessorKey: "name",
-            header: ({ column }) => (
+            header: () => (
                 <div className="ml-4">
-                    <TableHeaderSorting
-                        align="left"
-                        header_name={"Name"}
-                        column={column}
-                    />
+                    {t('body.home.goods.table.name')}
                 </div>
             ),
             cell: ({ row }) => {
                 // console.log(row,"((((")
                 return (
-                    <div className="ml-4 flex items-center gap-3">
-                        <TokenAvatar
-                            size={GRK_SIZES.EXTRA_SMALL}
-                            token_url={row.original.logo_url}
-                        />
-                        <div className="flex flex-col">
-                            {on_token_click ? (
-                                <a
-                                    className="cursor-pointer hover:opacity-75"
-                                    onClick={() => {
-                                        if (on_token_click) {
-                                            on_token_click("goods/" + row.original.id, row.original.id);
-                                        }
-                                    }}
-                                >
-                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
-                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
-                                    {/* {row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
-                                </a>
-                            ) : (
-                                <label className="text-base">
-                                    <span style={{ fontWeight: "600", paddingRight: "5px" }}>{row.original.name ? row.original.name : ""}</span>
-                                    <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
-                                    {/* {
-                                        // @ts-ignore
-                                        row.original.name ? row.original.name : ""}{" "}{row.original.symbol} */}
-                                </label>
-                            )}
+                    <a
+                        className="cursor-pointer hover:opacity-75"
+                        onClick={() => {
+                            if (on_token_click) {
+                                on_token_click("goods/" + row.original.id, row.original.id);
+                            }
+                        }}
+                    >
+                        <div className="ml-4 flex items-center gap-2">
+                            <TokenAvatar
+                                size={GRK_SIZES.EXTRA_SMALL}
+                                token_url={row.original.logo_url}
+                            />
+                            <div>
+                                <span>{row.original.name ? row.original.name : ""}</span>
+                            </div>
+                            <div>
+                                <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 );
             },
         },
-        // {
-        //     id: "symbol",
-        //     accessorKey: "symbol",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Symbol"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         return (
-        //             <div className="text-right">
-        //                 {
-        //                     // @ts-ignore
-        //                     row.original.symbol}
-        //             </div>
-        //         );
-        //     },
-        // },
         {
             id: "price",
             accessorKey: "price",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="left"
-                    header_name={"Price"}
-                    column={column}
-                />
+            header: () => (
+                <div className="text-right">
+                    {t('body.home.goods.table.price')}
+                </div>
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    // @ts-ignore
-                    row.original.price
-                );
+                const valueFormatted = prettifyCurrencys(row.original.price);
 
-                return <div className="text-left">{valueFormatted}{" "}{// @ts-ignore
-                    row.original.valueSymbol}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
             },
         },
         {
             id: "price_24h",
             accessorKey: "price_24h",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"24h"}
-                    column={column}
-                />
+            header: () => (
+                <div className="text-right">
+                    {t('body.home.goods.table.24h')}
+                </div>
             ),
             cell: ({ row }) => {
-                const valueFormatted = calculateFeePercentage(
-                    // @ts-ignore
-                    row.original.priceC_24h
-                );
+                const valueFormatted = calculateFeePercentage(row.original.priceC_24h);
                 return (
                     <div
-                        className={`text-right ${
-                            // @ts-ignore
-                            parseFloat(row.original.priceC_24h) > 0 ?
-                                "text-green-600" : "text-red-600"
+                        className={`text-right ${parseFloat(row.original.priceC_24h) > 0 ?
+                            "text-green-600" : "text-red-600"
                             }`}
                     >
                         {valueFormatted}
@@ -237,138 +200,88 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             },
         },
         {
-            id: "tradeQuantity24",
-            accessorKey: "tradeQuantity24",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Volume(24h)"}
-                    column={column}
-                />
+            id: "unitFee",
+            accessorKey: "unitFee",
+            header: () => (
+                <div className="text-right">
+                    {t('body.home.goods.table.unitfee')}
+                </div>
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    // @ts-ignore
-                    row.original.tradeQuantity24
-                );
-
+                const valueFormatted = prettifyCurrencysFee(row.original.unitFee);
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
-            id: "totalTradeQuantity",
-            accessorKey: "totalTradeQuantity",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Trade Volume"}
-                    column={column}
-                />
+            id: "apy",
+            accessorKey: "apy",
+            header: () => (
+                <div className="text-right">
+                    {t('body.home.goods.table.apy')}
+                </div>
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-
-                    // @ts-ignore
-                    row.original.totalTradeQuantity
+                const valueFormatted = calculateFeePercentage(row.original.apy);
+                return (
+                    <div
+                        className={`text-right ${parseFloat(row.original.apy) > 0 ?
+                            "text-green-600" : "text-red-600"
+                            }`}
+                    >
+                        {valueFormatted}
+                    </div>
                 );
-
-                return <div className="text-right">{valueFormatted}</div>;
             },
         },
-        // {
-        //     id: "tradeValue24",
-        //     accessorKey: "tradeValue24",
-        //     header: ({ column }) => (
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Amount(24h)"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         const valueFormatted = prettifyCurrencys(
-        //             // @ts-ignore
-        //             row.original.tradeValue24
-        //         );
-
-        //         return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
-        //             row.original.valueSymbol}</div>;
-        //     },
-        // },
-        // {
-        //     id: "totalTradeValue",
-        //     accessorKey: "totalTradeValue",
-        //     header: ({ column }) => (
-        //         // console.log(column,"&&&");
-        //         <TableHeaderSorting
-        //             align="right"
-        //             header_name={"Total Amount"}
-        //             column={column}
-        //         />
-        //     ),
-        //     cell: ({ row }) => {
-        //         const valueFormatted = prettifyCurrencys(
-        //             // @ts-ignore
-        //             row.original.totalTradeValue
-        //         );
-
-        //         return <div className="text-right">{valueFormatted}{" "}{// @ts-ignore
-        //             row.original.valueSymbol}</div>;
-        //     },
-        // },
         {
-            id: "currentQuantity",
-            accessorKey: "currentQuantity",
+            id: "currentValue",
+            accessorKey: "currentValue",
             header: ({ column }) => (
                 <TableHeaderSorting
                     align="right"
-                    header_name={"Current Volume"}
+                    header_name={t('body.home.goods.table.volume')}
                     column={column}
                 />
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    // @ts-ignore
-                    row.original.currentQuantity
+                const valueFormatted = prettifyCurrencys(row.original.currentValue);
+                return (
+                    <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>
                 );
-
-                return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
             id: "actions",
+            header: () => (
+                <div className="text-right mr-4">
+                    {t('body.home.goods.table.actions')}
+                </div>
+            ),
             cell: ({ row }) => {
                 return (
-                    <div className="text-right">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="ml-auto  ">
-                                    <span className="sr-only">Open menu</span>
-                                    <IconWrapper icon_class_name="expand_more" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        // console.log(on_token_click);
-                                        // @ts-ignore
-                                        on_token_click("swap", row.original.id);
-                                        // if (on_token_click) {
-                                        //     on_token_click(
-                                        //         row.original.id
-                                        //     );
-                                        // }
-                                    }}
-                                >
-                                    <IconWrapper
-                                        icon_class_name="swap_horiz"
-                                        class_name="mr-2"
-                                    />{" "}
-                                    Swap
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                    <div className="text-right mr-4">
+                        <Space>
+                            <Button
+                                // shape="round"
+                                type="primary"
+                                // size="small"
+                                onClick={() => {
+                                    on_token_click("swap", row.original.id);
+                                }}
+                            >
+                                {t('body.home.goods.table.bnt')}
+                            </Button>
+                            <Button
+                                // shape="round"
+                                type="primary"
+                                // size="small"
+                                onClick={() => {
+                                    on_token_click("invest", row.original.id);
+                                }}
+                            >
+                                {t('body.home.goods.table.bnt1')}
+                            </Button>
+                        </Space>
                     </div>
                 );
             },
@@ -380,116 +293,69 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             id: "name",
             accessorKey: "name",
             header: ({ column }) => (
-                <TableHeaderSorting
-                    align="left"
-                    header_name={"goods"}
-                    column={column}
-                />
+                <div className="ml-4">
+                    {t('body.home.goods.table.name')}
+                </div>
             ),
             cell: ({ row }) => {
+                // console.log(row,"((((")
                 return (
-                    <div className="flex items-center gap-3">
-                        <TokenAvatar
-                            size={GRK_SIZES.EXTRA_SMALL}
-                            token_url={row.original.logo_url}
-                        />
-                        <div className="flex flex-col">
-                            {on_token_click ? (
-                                <a
-                                    className="cursor-pointer hover:opacity-75"
-                                    onClick={() => {
-                                        if (on_token_click) {
-                                            on_token_click(
-                                                // @ts-ignore
-                                                row.original.id
-                                            );
-                                        }
-                                    }}
-                                >
-                                    {// @ts-ignore
-                                        row.original.name ? row.original.name : ""}
-                                </a>
-                            ) : (
-                                <label className="text-base">
-                                    {// @ts-ignore
-                                        row.original.name ? row.original.name : ""}
-                                </label>
-                            )}
+                    <a
+                        className="cursor-pointer hover:opacity-75"
+                        onClick={() => {
+                            if (on_token_click) {
+                                on_token_click("goods/" + row.original.id, row.original.id);
+                            }
+                        }}
+                    >
+                        <div className="ml-4 flex items-center gap-2">
+                            <TokenAvatar
+                                size={GRK_SIZES.EXTRA_SMALL}
+                                token_url={row.original.logo_url}
+                            />
+                            <div>
+                                <span>{row.original.name ? row.original.name : ""}</span>
+                            </div>
+                            <div>
+                                <span style={{ color: "#999" }}>{row.original.symbol ? row.original.symbol : ""}</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 );
-            },
-        },
-        {
-            id: "totalTradeQuantity",
-            accessorKey: "totalTradeQuantity",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Volume"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    // @ts-ignore
-                    row.original.totalTradeQuantity
-                );
-
-                return <div className="text-right">{valueFormatted}</div>;
-            },
-        },
-        {
-            id: "tradeQuantity24",
-            accessorKey: "tradeQuantity24",
-            header: ({ column }) => (
-                <TableHeaderSorting
-                    align="right"
-                    header_name={"Volume (24h)"}
-                    column={column}
-                />
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
-                    // @ts-ignore
-                    row.original.tradeQuantity24
-                );
-
-                return <div className="text-right">{valueFormatted}</div>;
             },
         },
         {
             id: "actions",
+            header: () => (
+                <div className="text-right mr-4">
+                    {t('body.home.goods.table.actions')}
+                </div>
+            ),
             cell: ({ row }) => {
                 return (
-                    <div className="text-right">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="ml-auto  ">
-                                    <span className="sr-only">Open menu</span>
-                                    <IconWrapper icon_class_name="expand_more" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        if (on_token_click) {
-                                            on_token_click("swap");
-                                            // on_token_click(
-                                            //     row.original.id
-                                            // );
-                                        }
-                                    }}
-                                >
-                                    <IconWrapper
-                                        icon_class_name="swap_horiz"
-                                        class_name="mr-2"
-                                    />{" "}
-                                    Swap
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                    <div className="text-right mr-4">
+                        <Space>
+                            <Button
+                                // shape="round"
+                                type="primary"
+                                // size="small"
+                                onClick={() => {
+                                    on_token_click("swap", row.original.id);
+                                }}
+                            >
+                                {t('body.home.goods.table.bnt')}
+                            </Button>
+                            <Button
+                                // shape="round"
+                                type="primary"
+                                // size="small"
+                                onClick={() => {
+                                    on_token_click("invest", row.original.id);
+                                }}
+                            >
+                                {t('body.home.goods.table.bnt1')}
+                            </Button>
+                        </Space>
                     </div>
                 );
             },
@@ -516,7 +382,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
         None: () => <SkeletonTable cols={5} float="right" />,
         Some: () =>
             error.error ? (
-                <TableRow>
+                <TableRow style={{}}>
                     <TableCell
                         colSpan={columns.length}
                         className="h-24 text-center"
@@ -546,7 +412,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                         colSpan={columns.length}
                         className="h-24 text-center"
                     >
-                        No results.
+                        {t('common.nodata')}
                     </TableCell>
                 </TableRow>
             ),
@@ -555,7 +421,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
     return (
         <div className="space-y-4">
             <Table>
-                <TableHeader>
+                <TableHeader style={{ backgroundColor: "#f9f9f9" }}>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map((header) => {
@@ -576,58 +442,16 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                 </TableHeader>
                 <TableBody>{body}</TableBody>
             </Table>
-            {!is_over && (
-                <Pagination className="select-none">
-                    <PaginationContent>
-                        <PaginationItem
-                            disabled={pagination.page_number === 1}
-                            onClick={() => {
-                                handlePagination(pagination.page_number - 1);
-                            }}
-                        >
-                            <PaginationPrevious />
-                        </PaginationItem>
-                        {pagination.page_number > 1 && (
-                            <PaginationItem
-                                onClick={() => {
-                                    handlePagination(pagination.page_number - 1);
-                                }}
-                            >
-                                <PaginationLink>
-                                    {pagination.page_number - 1}
-                                </PaginationLink>
-                            </PaginationItem>
-                        )}
-                        <PaginationItem>
-                            <PaginationLink isActive>
-                                {pagination.page_number}
-                            </PaginationLink>
-                        </PaginationItem>
-                        {hasMore && (
-                            <PaginationItem
-                                onClick={() => {
-                                    handlePagination(pagination.page_number + 1);
-                                }}
-                            >
-                                <PaginationLink>
-                                    {pagination.page_number + 1}
-                                </PaginationLink>
-                            </PaginationItem>
-                        )}
-                        <PaginationItem>
-                            <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem
-                            disabled={!hasMore}
-                            onClick={() => {
-                                handlePagination(pagination.page_number + 1);
-                            }}
-                        >
-                            <PaginationNext />
-                        </PaginationItem>
-                    </PaginationContent>
-                </Pagination>
-            )}
+            <div className="flex justify-center">
+                <Spin
+                    spinning={spinning}
+                    indicator={<LoadingOutlined spin />}
+                    tip="Loading"
+                // size="small"
+                >
+                    <div />
+                </Spin>
+            </div>
         </div>
     );
 };

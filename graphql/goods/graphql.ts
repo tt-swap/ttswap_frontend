@@ -3,7 +3,7 @@ import apolloClient from '@/graphql/apollo'
 import { gql } from '@apollo/client'
 
 //goodsTransactions记录列表
-export function goodsTransactions(params: { id: string; first: number; skip: number; address: string },ssionChian:number) {
+export function goodsTransactions(params: { id: string; first: number; skip: number; address: string }, ssionChian: number) {
 
 	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$address: String,$first: Int,$skip: Int) {
@@ -54,7 +54,7 @@ export function goodsTransactions(params: { id: string; first: number; skip: num
 }
 
 //goodDataView
-export function goodDataView(params: { id: string; time: number; time24: number; address: string; eq7: number; eq30: number },ssionChian:number) {
+export function goodDataView(params: { id: string; time: number; time24: number; address: string; eq7: number; eq30: number }, ssionChian: number) {
 	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$address: String,$time: BigInt,$time24: BigInt,$eq7: BigInt,$eq30: BigInt) {
 			goodState(id: $id) {
@@ -150,7 +150,7 @@ export function goodDataView(params: { id: string; time: number; time24: number;
 // 我的物品
 export async function myGoodDatas(params: {
 	id: string; first: number; time: number; skip: number; address: string
-},ssionChian:number) {
+}, ssionChian: number) {
 	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$first: Int,$time: BigInt,$skip: Int,$address:String) {
 			goodState(id: $id) {
@@ -208,7 +208,7 @@ export async function myGoodDatas(params: {
 }
 
 //我的撤资数据
-export function myDisInvestProof(params: { id: number; },ssionChian:number) {
+export function myDisInvestProof(params: { id: number; }, ssionChian: number) {
 	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt) {
 			proofState(id: $id) {
@@ -250,7 +250,7 @@ export function myDisInvestProof(params: { id: number; },ssionChian:number) {
 
 
 // 我的指标
-export function myIndex(params: { id: string, address: string },ssionChian:number) {
+export function myIndex(params: { id: string, address: string }, ssionChian: number) {
 	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$address: String) {
 			goodState(id: $id) {
@@ -279,7 +279,7 @@ export function myIndex(params: { id: string, address: string },ssionChian:numbe
 
 
 // My Commission
-export function myCommission(params: { id: string,  first: number; skip: number; },ssionChian:number) {
+export function myCommission(params: { id: string, first: number; skip: number; }, ssionChian: number) {
 	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$first: Int,$skip: Int) {
 			goodState(id: $id) {
@@ -312,3 +312,119 @@ export function myCommission(params: { id: string,  first: number; skip: number;
 		variables: params
 	})
 }
+
+
+
+//物品搜索列表
+export function GoodsSearch(params: { id: string; sel: string; time: number; }, ssionChian: number) {
+	if (params.sel !== "") {
+			return apolloClient(ssionChian).query({
+				query: gql
+                `query ($id: BigInt, $time: BigInt, $sel: String) {
+                    goodState(id: $id) {
+                        currentQuantity
+                        currentValue
+                        id
+                        tokenname
+                        tokensymbol
+                        tokendecimals
+                        goodData(
+                        first: 1
+                        orderBy: modifiedTime
+                        orderDirection: desc
+                        where: {timetype: "d", modifiedTime_lte: $time}
+                        ) {
+                        currentQuantity
+                        currentValue
+                        modifiedTime
+                        }
+                    }
+                    parGoodStates(
+                        where: {or: [{erc20Address_starts_with: $sel}, {symbol_lower_contains: $sel}, {name_lower_contains: $sel}]}
+                        orderBy: currentValue
+                        orderDirection: desc
+                    ) {
+                        id
+                        erc20Address
+                        tokensymbol
+                        tokenname
+                        tokendecimals
+                        Goodlist {
+                            id
+                            isvaluegood
+                            currentQuantity
+                            currentValue
+                            erc20Address
+                            tokenname
+                            tokensymbol
+                            goodData(
+                                first: 1
+                                orderBy: modifiedTime
+                                orderDirection: desc
+                                where: {timetype: "d", modifiedTime_lte: $time}
+                            ) {
+                                currentQuantity
+                                currentValue
+                                modifiedTime
+                            }
+                        }
+                    }
+                }`,
+				variables: params
+			})
+	} else {
+		return apolloClient(ssionChian).query({
+			query: gql
+                `query ($id: BigInt, $time: BigInt) {
+                    goodState(id: $id) {
+                        currentQuantity
+                        currentValue
+                        id
+                        tokenname
+                        tokensymbol
+                        tokendecimals
+                        goodData(
+                        first: 1
+                        orderBy: modifiedTime
+                        orderDirection: desc
+                        where: {timetype: "d", modifiedTime_lte: $time}
+                        ) {
+                        currentQuantity
+                        currentValue
+                        modifiedTime
+                        }
+                    }
+                    parGoodStates(where: {id_not: "0"}, orderBy: currentValue, orderDirection: desc, first: 5) {
+                        id
+                        erc20Address
+                        tokensymbol
+                        tokenname
+                        tokendecimals
+                        Goodlist {
+                            id
+                            isvaluegood
+                            currentQuantity
+                            currentValue
+                            erc20Address
+                            tokenname
+                            tokensymbol
+                            tokendecimals
+                            goodData(
+                                first: 1
+                                orderBy: modifiedTime
+                                orderDirection: desc
+                                where: {timetype: "d", modifiedTime_lte: $time}
+                            ) {
+                                currentQuantity
+                                currentValue
+                                modifiedTime
+                            }
+                        }
+                    }
+                }`,
+			variables: params
+		})
+	}
+}
+
+
