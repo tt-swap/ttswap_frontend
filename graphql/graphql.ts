@@ -23,7 +23,7 @@ export function goodState(ssionChian:number) {
 				orderBy: goodseq
 				orderDirection: asc
 				first: 1
-				where: {id_not: "0", isvaluegood: true}
+				where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true}
 			  ) {
 				id
 				tokenname

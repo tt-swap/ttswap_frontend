@@ -13,7 +13,7 @@ import BigNumber from 'bignumber.js';
 // const chainName = getChainName(chainId);
 
 //物品列表
-export async function GoodsDatas(params: { id: string; sel: string; gid: number }, ssionChian: number): Promise<object> {
+export async function GoodsDatas(params: { id: string; sel: string; gid: string }, ssionChian: number): Promise<object> {
     const chainName = getChainName(ssionChian);
     let item: InvestTokenD = {
         tokenValue: [],
@@ -66,54 +66,41 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: number 
             items.push(map);
         });
 
-        goodsDatas.data.parGoodStates.forEach((e: any) => {
-            let map = {
-                id: "", name: "", symbol: "", logo_url: "", address: "", children: {}
+        goodsDatas.data.parGoodStates.forEach((en: any) => {
+            let map1 = {
+                id: "", name: "", decimals: 0, symbol: "", investQuantity: 0, feeQuantity: 0, apy: 0,
+                investFee: 0, disinvestFee: 0, price: 0, logo_url: "", address: "", isvaluegood: false
             };
-            let children: object[] = [];
-            map.children = children;
-            map.id = e.id;
-            map.name = e.tokenname;
-            map.symbol = e.tokensymbol;
-            map.logo_url = iconUrl(chainName, e.erc20Address);
-            map.address = e.erc20Address;
+            let base_decimals = powerIterative(10, en.tokendecimals);
+            let current_price = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
 
-            e.Goodlist.forEach((en: any) => {
-                let map1 = {
-                    id: "", name: "", decimals: 0, symbol: "", investQuantity: 0, feeQuantity: 0, apy: 0,
-                    investFee: 0, disinvestFee: 0, price: 0, logo_url: "", address: "", isvaluegood: false
-                };
-                let base_decimals = powerIterative(10, en.tokendecimals);
-                let current_price = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
+            const goodConfig1 = new BigNumber(en.goodConfig);
 
-                const goodConfig1 = new BigNumber(en.goodConfig);
+            map1.id = en.id;
+            map1.name = en.tokenname;
+            map1.decimals = en.tokendecimals;
+            map1.symbol = en.tokensymbol;
+            map1.investQuantity = en.investQuantity / base_decimals;
+            map1.feeQuantity = en.feeQuantity / base_decimals;
+            map1.logo_url = iconUrl(chainName, en.erc20Address);
+            map1.address = en.erc20Address;
+            map1.isvaluegood = en.isvaluegood;
+            map1.price = current_price;
+            // @ts-ignore
+            map1.investFee = goodConfig1.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
+            // @ts-ignore
+            map1.disinvestFee = goodConfig1.mod(m217).div(m211).integerValue(1).div(10000).toNumber();
+            if (en.goodData.length > 0) {
+                let enY = en.goodData[0];
+                let unitFee = (Number(map1.feeQuantity) + Number(map1.investQuantity)) / map1.investQuantity;
+                let uintFY = (enY.feeQuantity + enY.investQuantity) / enY.investQuantity;
+                map1.apy = unitFee / uintFY - 1;
+                // map1.apy = (en.feeQuantity - en.goodData[0].feeQuantity) / en.feeQuantity * 365;
+            } else {
+                map1.apy = 0;
+            }
 
-                map1.id = en.id;
-                map1.name = en.tokenname;
-                map1.decimals = en.tokendecimals;
-                map1.symbol = en.tokensymbol;
-                map1.investQuantity = en.investQuantity / base_decimals;
-                map1.feeQuantity = en.feeQuantity / base_decimals;
-                map1.logo_url = iconUrl(chainName, en.erc20Address);
-                map1.address = en.erc20Address;
-                map1.isvaluegood = en.isvaluegood;
-                map1.price = current_price;
-                // @ts-ignore
-                map1.investFee = goodConfig1.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
-                // @ts-ignore
-                map1.disinvestFee = goodConfig1.mod(m217).div(m211).integerValue(1).div(10000).toNumber();
-                if (en.goodData.length > 0) {
-                    let enY = en.goodData[0];
-                    let unitFee = (Number(map1.feeQuantity) + Number(map1.investQuantity)) / map1.investQuantity;
-                    let uintFY = (enY.feeQuantity + enY.investQuantity) / enY.investQuantity;
-                    map1.apy = unitFee / uintFY - 1;
-                    // map1.apy = (en.feeQuantity - en.goodData[0].feeQuantity) / en.feeQuantity * 365;
-                } else {
-                    map1.apy = 0;
-                }
-                children.push(map1);
-            });
-            items1.push(map);
+            items1.push(map1);
         });
     }
     // console.log(item,"***&&")

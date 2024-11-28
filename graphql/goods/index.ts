@@ -28,11 +28,11 @@ export async function goodsTransactionsDatas(params: { id: string; address: stri
         }
 
         goodsDatas.data.transactions.forEach((e: any) => {
-            let from_decimals = powerIterative(10, e.frompargood.tokendecimals);
+            let from_decimals = powerIterative(10, e.fromgood.tokendecimals);
             let to_decimals = powerIterative(10, e.togood.tokendecimals);
             // let from_price = 0;
-            // if (e.frompargood.currentValue > 0 || e.frompargood.currentQuantity > 0 || e.frompargood.tokendecimals > 0) {
-            //     from_price = ((e.frompargood.currentValue / tokendecimals) / (e.frompargood.currentQuantity / from_decimals)) / jz;
+            // if (e.fromgood.currentValue > 0 || e.fromgood.currentQuantity > 0 || e.fromgood.tokendecimals > 0) {
+            //     from_price = ((e.fromgood.currentValue / tokendecimals) / (e.fromgood.currentQuantity / from_decimals)) / jz;
             // }
             // let to_price = 0;
             // if (e.togood.currentValue > 0 || e.togood.currentQuantity > 0 || e.togood.tokendecimals > 0) {
@@ -51,7 +51,7 @@ export async function goodsTransactionsDatas(params: { id: string; address: stri
             map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
             // @ts-ignore
             map.hash = blockExplorerUrls[0] + "/tx/" + e.hash;
-            map.symbol1 = e.frompargood.tokensymbol;
+            map.symbol1 = e.fromgood.tokensymbol;
             map.symbol2 = e.togood.tokensymbol;
             if (from_decimals > 0) {
                 map.fromgoodQuanity = e.fromgoodQuanity / from_decimals;
@@ -226,45 +226,32 @@ export async function GoodsSearchDatas(params: { id: string; sel: string }, ssio
 
         const goodsDatas = await GoodsSearch({ id: params.id, sel: params.sel.toLowerCase(), time: timestampdToDateSub(0) }, ssionChian);
 
-        let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
-        let goodValue24 = goodsDatas.data.goodState.goodData[0].currentValue / goodsDatas.data.goodState.goodData[0].currentQuantity;
-        let tokendecimals = powerIterative(10, 6);
+        const goodState = goodsDatas.data.goodState;
+        // console.log("***&&", goodState.goodData[0].currentValue)
+        const goodValue = goodState.currentValue / goodState.currentQuantity;
+        const goodValue24 = goodState.goodData[0].currentValue / goodState.goodData[0].currentQuantity;
+        const tokendecimals = powerIterative(10, 6);
 
-        goodsDatas.data.parGoodStates.forEach((e: any) => {
-            let map = {
-                id: "", name: "", symbol: "", logo_url: "", address: "", children: {}
+        goodsDatas.data.goodStates.forEach((en: any) => {
+            let map1 = {
+                id: "", name: "", decimals: 0, symbol: "", price: 0, logo_url: "",
+                address: "", isvaluegood: false, valueSymbol: "", h24: 0
             };
-            let children: object[] = [];
-            map.children = children;
-            map.id = e.id;
-            map.name = e.tokenname;
-            map.symbol = e.tokensymbol;
-            map.logo_url = iconUrl(chainName, e.erc20Address);
-            map.address = e.erc20Address;
+            let base_decimals = powerIterative(10, en.tokendecimals);
+            let current_price = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / goodValue;
+            let current_price24 = ((en.goodData[0].currentValue / tokendecimals) / (en.goodData[0].currentQuantity / base_decimals)) / goodValue24;
 
-            e.Goodlist.forEach((en: any) => {
-                let map1 = {
-                    id: "", name: "", decimals: 0, symbol: "", price: 0, logo_url: "",
-                    address: "", isvaluegood: false, valueSymbol: "", h24: 0
-                };
-                let base_decimals = powerIterative(10, en.tokendecimals);
-                let current_price = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / goodValue;
-                let current_price24 = ((en.goodData[0].currentValue / tokendecimals) / (en.goodData[0].currentQuantity / base_decimals)) / goodValue24;
-
-                // console.log(current_price,"***&&",current_price24)
-                map1.id = en.id;
-                map1.name = en.tokenname;
-                map1.decimals = en.tokendecimals;
-                map1.symbol = en.tokensymbol;
-                map1.valueSymbol = goodsDatas.data.goodState.tokensymbol;
-                map1.logo_url = iconUrl(chainName, en.erc20Address);
-                map1.address = en.erc20Address;
-                map1.isvaluegood = en.isvaluegood;
-                map1.price = current_price;
-                map1.h24 = (current_price - current_price24) / current_price24;;
-                children.push(map1);
-            });
-            item.push(map);
+            map1.id = en.id;
+            map1.name = en.tokenname;
+            map1.decimals = en.tokendecimals;
+            map1.symbol = en.tokensymbol;
+            map1.valueSymbol = goodsDatas.data.goodState.tokensymbol;
+            map1.logo_url = iconUrl(chainName, en.erc20Address);
+            map1.address = en.erc20Address;
+            map1.isvaluegood = en.isvaluegood;
+            map1.price = current_price;
+            map1.h24 = (current_price - current_price24) / current_price24;;
+            item.push(map1);
         });
     }
     // console.log(item,"***&&")

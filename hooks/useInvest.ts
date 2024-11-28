@@ -2,8 +2,10 @@ import { useInvestStore, useInvestAmountStore } from "@/stores/invest";
 import { SwapKeys } from "@/shared/enums/tokens";
 import { useMemo, useEffect } from "react";
 import { DEFAULT_TOKEN } from "@/shared/constants/common";
+import { useAccount } from 'wagmi';
 
 const useInvest = () => {
+    const { isConnected } = useAccount();
     const { invest, setInvest } = useInvestStore();
     const { investAmount, setInvestAmount } = useInvestAmountStore();
 
@@ -172,9 +174,10 @@ const useInvest = () => {
             invest.from.symbol === DEFAULT_TOKEN ||
             // invest.to.symbol === DEFAULT_TOKEN ||
             investAmount.from.amount === 0 ||
-            localStorage.getItem("wallet") === null
+            investAmount.from.amount === "" ||
+            !isConnected
         );
-    }, [invest, investAmount, localStorage.getItem("wallet")]);
+    }, [invest, investAmount, isConnected]);
 
     return {
         invest,

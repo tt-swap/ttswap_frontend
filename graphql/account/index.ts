@@ -106,7 +106,7 @@ export async function myTransactionsDatas(params: { id: string; address: string;
         }
 
         goodsDatas.data.transactions.forEach((e: any) => {
-            let from_decimals = powerIterative(10, e.frompargood.tokendecimals);
+            let from_decimals = powerIterative(10, e.fromgood.tokendecimals);
             let to_decimals = powerIterative(10, e.togood.tokendecimals);
             let map = {
                 id: "", blockNumber: "", type: "", symbol1: "", symbol2: "", fromgoodQuanity: 0, togoodQuantity: 0,
@@ -120,7 +120,7 @@ export async function myTransactionsDatas(params: { id: string; address: string;
             map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
             // @ts-ignore
             map.hash = blockExplorerUrls[0] + "/tx/" + e.hash;
-            map.symbol1 = e.frompargood.tokensymbol;
+            map.symbol1 = e.fromgood.tokensymbol;
             map.symbol2 = e.togood.tokensymbol;
             if (from_decimals > 0) {
                 map.fromgoodQuanity = e.fromgoodQuanity / from_decimals;
@@ -431,7 +431,7 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
 export async function refereesDatas(wallet_address: any, ssionChian: number): Promise<object> {
 
     let items = { referralnum: 0 };
-    if (wallet_address !== null) {
+    if (wallet_address !== undefined) {
         const goodsDatas = await referees({ address: wallet_address.toLowerCase() }, ssionChian);
         let data = goodsDatas.data.customer;
         items.referralnum = data.referralnum;

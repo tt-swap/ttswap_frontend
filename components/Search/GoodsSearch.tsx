@@ -44,10 +44,10 @@ const GoodsSearch = ({ isValue }: Props) => {
     }
 
     const onSelect: TreeProps['onSelect'] = (keys: any, info: any) => {
-        if (info.node.nodePd) {
-            setSearchOpen(false);
-            handleTabSwitch("goods/" + info.node.id);
-        }
+        // if (info.node.nodePd) {
+        setSearchOpen(false);
+        handleTabSwitch("goods/" + info.node.id);
+        // }
     };
 
     useEffect(() => {
@@ -57,53 +57,34 @@ const GoodsSearch = ({ isValue }: Props) => {
                 id: info.id,
                 sel: keyword
             }, ssionChian);
-            console.log(a, 33332)
+            // console.log(a, 33332)
             a.map((el: any, index: number) => {
                 a[index].key = el.id;
                 el.title = (
                     <>
-                        <div className="flex items-center">
-                            <img src={el.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
-                                onError={(e) => {
-                                    e.currentTarget.src =
-                                        "/token.svg";
-                                }} />
-                            <span>
-                                <div>{el.name}</div>
-                                <div className="text-xs font-color-1">{el.symbol}</div>
-                            </span>
+                        <div className="flex justify-between gap-3">
+                            <div className="flex items-center">
+                                <img src={el.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
+                                    onError={(e) => {
+                                        e.currentTarget.src =
+                                            "/token.svg";
+                                    }} />
+                                <span className="whitespace-nowrap">
+                                    <div>{el.name}</div>
+                                    <div className="text-xs font-color-1">{el.symbol}</div>
+                                </span>
+                            </div>
+                            <Flex className="goods-indexs  gap-2 justify-between text-end">
+                                <div>
+                                    <div>{prettifyCurrencys(el.price)}{" "}{el.valueSymbol}</div>
+                                    <div
+                                        className={`text-right ${parseFloat(el.h24) > 0 ?
+                                            "text-green-600" : "text-red-600"
+                                            }`}>{calculateFeePercentage(el.h24)}</div>
+                                </div>
+                            </Flex>
                         </div>
                     </>);
-                el.children.map((el1: any, index1: number) => {
-                    a[index].children[index1].key = el1.id;
-                    a[index].children[index1].nodePd = true;
-                    el1.title = (
-                        <>
-                            <div className="flex justify-between gap-3">
-                                <div className="flex items-center">
-                                    <img src={el1.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
-                                        onError={(e) => {
-                                            e.currentTarget.src =
-                                                "/token.svg";
-                                        }} />
-                                    <span className="whitespace-nowrap">
-                                        <div>{el1.name}</div>
-                                        <div className="text-xs font-color-1">{el1.symbol}</div>
-                                    </span>
-                                </div>
-                                <Flex className="goods-indexs  gap-2 justify-between text-end">
-                                    <div>
-                                        <div>{prettifyCurrencys(el1.price)}{" "}{el1.valueSymbol}</div>
-                                        <div
-                                            className={`text-right ${parseFloat(el1.h24) > 0 ?
-                                                "text-green-600" : "text-red-600"
-                                                }`}>{calculateFeePercentage(el1.h24)}</div>
-                                    </div>
-
-                                </Flex>
-                            </div>
-                        </>);
-                })
             })
             setTreeData(a);
             setSpinning(false);

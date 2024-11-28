@@ -12,7 +12,7 @@ import "./index.css"
 import useWallet from "@/hooks/useWallet";
 import { LoadingOutlined } from '@ant-design/icons';
 import { useWeb3React } from "@web3-react/core";
-import { useSwitchChain } from "hooks";
+// import { useSwitchChain } from "hooks";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 
 import { myDisInvestProofGood } from '@/graphql/account';
@@ -28,7 +28,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
 
     const [spinning, setSpinning] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
-    const switchChain = useSwitchChain();
+    // const switchChain = useSwitchChain();
     const { chainId } = useWeb3React();
     // @ts-ignore
     const { ssionChian } = useLocalStorage();
@@ -83,7 +83,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
 
     const disinvestgood = async () => {
         setSpinning(true);
-        await switchChain(Number(ssionChian)).then(async () => {
+        // await switchChain(Number(ssionChian)).then(async () => {
             // @ts-ignore
             const qunt = Number(goodQ * powerIterative(10, disgood.good1.decimals));
             const isSuccess = await disinvest(disgood.id, BigInt(qunt));
@@ -100,9 +100,9 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                     content: t('common.divest') + t('common.mess.error'),
                 });
             }
-        }).catch((error) => {
-            console.error(`"Failed to switch chains: " ${error}`);
-        });
+        // }).catch((error) => {
+        //     console.error(`"Failed to switch chains: " ${error}`);
+        // });
         setSpinning(false);
         document.body.style.overflow = "";
     };

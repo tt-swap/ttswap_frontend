@@ -13,9 +13,10 @@ import { handleTabSwitch } from "@/utils/router";
 import { useEffect, useState, useMemo } from "react";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 
-import { useWeb3React } from "@web3-react/core";
+// import { useWeb3React } from "@web3-react/core";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 import useLocalStorages from "@/hooks/useLocalStorage";
+import { useAccount } from 'wagmi';
 
 import { refereesDatas } from '@/graphql/account';
 
@@ -23,10 +24,11 @@ export default function Account({ params }: { params: { chain: string, dex: stri
 
   // @ts-ignore
   const { ssionChian } = useLocalStorage();
-  const { account } = useWeb3React();
+  const { isConnected,address } = useAccount();
+  // const { account } = useWeb3React();
   const router = useRouter();
   // const [walletAddress, setAddress] = useState<string | null>("")
-  const [walletAddress, setWallet] = useLocalStorages("wallet", null);
+  // const [walletAddress, setWallet] = useLocalStorages("wallet", null);
   const [referees, setReferees] = useState(0);
   const [proofid, setProofid] = useState(0);
   const [dataNum, setDataNum] = useState(0);
@@ -44,7 +46,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
   }, [t('header.menu.myaccount')]);
   useEffect(() => {
     (async () => {
-      const data = await refereesDatas(walletAddress, ssionChian);
+      const data = await refereesDatas(address, ssionChian);
       // @ts-ignore
       setReferees(data.referralnum);
     })();
@@ -99,7 +101,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
             // @ts-ignore
             chain_name={params.chain}
             dex_name={params.dex}
-            wallet_address={walletAddress}
+            wallet_address={address}
             data_num={dataNum}
             page_size={20}
             value_good_id={info.id}
@@ -135,7 +137,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
             chain_name={params.chain}
             dex_name={params.dex}
             page_size={20}
-            wallet_address={walletAddress}
+            wallet_address={address}
             data_num={dataNum}
             value_good_id={info.id}
             chain_id={ssionChian}
@@ -170,7 +172,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
             chain_name={params.chain}
             dex_name={params.dex}
             page_size={20}
-            wallet_address={walletAddress}
+            wallet_address={address}
             data_num={dataNum}
             value_good_id={info.id}
             chain_id={ssionChian}
@@ -195,7 +197,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
             // @ts-ignore
             chain_name={params.chain}
             dex_name={params.dex}
-            wallet_address={walletAddress}
+            wallet_address={address}
             data_num={dataNum}
             value_good_id={info.id}
             page_size={20}
@@ -221,7 +223,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
             // @ts-ignore
             chain_name={params.chain}
             dex_name={params.dex}
-            wallet_address={walletAddress}
+            wallet_address={address}
             data_num={dataNum}
             value_good_id={info.id}
             page_size={20}
@@ -242,7 +244,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
         Account
       </h1> */}
       <Flex align="end" gap="4">
-        {walletAddress !== null && (
+        {isConnected && (
           <>
             <CreatGoods
               setDataNum={(e) => setDataNum(e + dataNum)}
@@ -254,12 +256,12 @@ export default function Account({ params }: { params: { chain: string, dex: stri
               onClick={() => {
                 if (navigator.clipboard) {
                   // 使用 clipboard API 复制文本
-                  navigator.clipboard.writeText(window.location.host + handleTabSwitch("goods", pathname) + "?" + walletAddress);
+                  navigator.clipboard.writeText(window.location.host + handleTabSwitch("goods", pathname) + "?" + address);
                   mess();
                   // alert('文本已复制到剪贴板');
                 } else {
                   // 如果不支持，可以提供一个回退方案，比如使用 prompt 或者 textarea + document.execCommand('copy')（但请注意，execCommand 已被弃用）
-                  fallbackCopyTextToClipboard(window.location.host + handleTabSwitch("goods", pathname) + "?" + walletAddress);
+                  fallbackCopyTextToClipboard(window.location.host + handleTabSwitch("goods", pathname) + "?" + address);
                   mess();
                   // alert('浏览器不支持 clipboard API');
                 }
@@ -280,13 +282,12 @@ export default function Account({ params }: { params: { chain: string, dex: stri
         // @ts-ignore
         chain_name={params.chain}
         dex_name={params.dex}
-        wallet_address={walletAddress}
+        wallet_address={address}
         value_good_id={info.id}
         wallet_data={maybeResult}
         chain_id={ssionChian}
       />
-      <Tabs size="large" defaultActiveKey="myproof" items={items} onChange={onChange} />
-
+      {isConnected && (<Tabs size="large" defaultActiveKey="myproof" items={items} onChange={onChange} />)}
     </div>
   )
 

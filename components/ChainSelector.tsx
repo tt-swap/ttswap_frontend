@@ -1,7 +1,7 @@
 import { FC, useEffect, useMemo, useState, useContext } from "react";
 
 import { DownOutlined } from "@ant-design/icons";
-import { useWeb3React } from "@web3-react/core";
+// import { useWeb3React } from "@web3-react/core";
 import { Dropdown, Button } from "antd";
 import type { MenuProps } from "antd";
 import { usePathname, useRouter } from "next/navigation";
@@ -14,10 +14,11 @@ import zksync_Logo from "assets/images/zksync_Logo.png";
 import bsc_Logo from "assets/svg/bsc_Logo.svg";
 import optimistim_Logo from "assets/svg/optimistim_Logo.svg";
 import { chainIds } from "data/chainIds";
-import { useSwitchChain, useWindowSize } from "hooks";
+// import { useSwitchChain, useWindowSize } from "hooks";
 import { StaticImageData } from "next/image";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { getAddChainParameters } from "data/networks";
+import { useAccount,useChainId } from 'wagmi';
 
 const styles = {
   item: {
@@ -38,11 +39,13 @@ type MenuItem = Required<MenuProps>["items"][number];
 
 const ChainSelector: FC = () => {
 
+  const { isConnected,address } = useAccount();
+  const chainId = useChainId()
   const router = useRouter();
   const pathname = usePathname()
-  const switchChain = useSwitchChain();
-  const { chainId, isActive, account } = useWeb3React();
-  const { isTablet } = useWindowSize();
+  // const switchChain = useSwitchChain();
+  // const { chainId, isActive, account } = useWeb3React();
+  // const { isTablet } = useWindowSize();
   const [chainId1, setChainId] = useState(11155111);
   const [selected, setSelected] = useState<MenuItem>();
   const [label, setLabel] = useState<JSX.Element>();
@@ -134,7 +137,7 @@ const ChainSelector: FC = () => {
     setSsionChian(chainId1);
     routerUp();
 
-  }, [chainId1, chainId, account]);
+  }, [chainId1, chainId, address]);
 
   const onClick: MenuProps["onClick"] = async ({ key }) => {
     // if (!isActive) {
@@ -144,18 +147,18 @@ const ChainSelector: FC = () => {
     setSsionChian(key);
     // } else {
     // setChainId(key*1);
-    await switchChain(Number(key)).catch((error) => {
-      console.error(`"Failed to switch chains: " ${error}`);
-    });
+    // await switchChain(Number(key)).catch((error) => {
+    //   console.error(`"Failed to switch chains: " ${error}`);
+    // });
     // }
     console.log(chainId1, key, 999)
   };
 
   async function swithC(key: any) {
 
-    await switchChain(Number(key)).catch((error) => {
-      console.error(`"Failed to switch chains: " ${error}`);
-    });
+    // await switchChain(Number(key)).catch((error) => {
+    //   console.error(`"Failed to switch chains: " ${error}`);
+    // });
   };
 
   // if (!chainId || !isActive) return null;

@@ -8,8 +8,8 @@ import {
 import { LoadingOutlined } from '@ant-design/icons';
 import CreatModal from "./faucetModal";
 import useFaucet from "@/hooks/useFaucet";
-import { useWalletAddress } from "@/stores/walletAddress";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
+import { useAccount } from 'wagmi';
 
 
 const { Option } = Select;
@@ -41,6 +41,7 @@ interface Props {
 }
 
 export const Faucet = ({ }: Props) => {
+    const { isConnected, address } = useAccount();
     const [spinning, setSpinning] = useState(false);
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -49,7 +50,6 @@ export const Faucet = ({ }: Props) => {
     const [goodV, setGoodV] = useState("");
     const [goodVAddr, setGoodVAddr] = useState("");
     const [selectVgood, setSelectVgood] = useState([]);
-    const { address } = useWalletAddress();
     // @ts-ignore
     const { ssionChian } = useLocalStorage();
     const { t } = useTranslation();
@@ -101,7 +101,7 @@ export const Faucet = ({ }: Props) => {
 
     useEffect(() => {
         try {
-            console.log(ssionChian, 99)
+            // console.log(ssionChian, 99)
             setGoodV(testCion[ssionChian][0].id);
             setGoodVAddr(testCion[ssionChian][0].address);
             setSelectVgood(testCion[ssionChian]);
@@ -110,7 +110,7 @@ export const Faucet = ({ }: Props) => {
 
     useMemo(() => {
         try {
-            console.log(ssionChian, 991)
+            // console.log(ssionChian, 991)
             setGoodC("");
             setGoodV(testCion[ssionChian][0].id);
             setGoodVAddr(testCion[ssionChian][0].address);
@@ -157,25 +157,27 @@ export const Faucet = ({ }: Props) => {
     );
 
     const Obtain = async () => {
-        setSpinning(true);
-        console.log(goodC, goodVAddr)
-        const isSuccess = await faucetTestCion(goodC, goodVAddr, address);
+        if (isConnected) {
+            setSpinning(true);
+            // console.log(goodC, goodVAddr)
+            const isSuccess = await faucetTestCion(goodC, goodVAddr, address);
 
-        // console.log("isSuccess:", isSuccess)
-        if (isSuccess) {
-            messageApi.open({
-                type: 'success',
-                content: 'Receive success',
-            });
-            setOpen(false);
-        } else {
-            messageApi.open({
-                type: 'error',
-                content: 'Receive fail',
-            });
+            // console.log("isSuccess:", isSuccess)
+            if (isSuccess) {
+                messageApi.open({
+                    type: 'success',
+                    content: 'Receive success',
+                });
+                setOpen(false);
+            } else {
+                messageApi.open({
+                    type: 'error',
+                    content: 'Receive fail',
+                });
+            }
+            setSpinning(false);
+            document.body.style.overflow = "";
         }
-        setSpinning(false);
-        document.body.style.overflow = "";
     };
 
     function mess() {

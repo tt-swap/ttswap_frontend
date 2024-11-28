@@ -1,6 +1,6 @@
 {
   "name": "ttswap",
-  "version": "2.2.0",
+  "version": "2.4.12",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -35,7 +35,9 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/themes": "^2.0.1",
+    "@rainbow-me/rainbowkit": "^2.2.0",
     "@storybook/react": "^8.0.6",
+    "@tanstack/react-query": "^5.60.5",
     "@tanstack/react-table": "^8.15.3",
     "@tremor/react": "3.18.3",
     "@vercel/analytics": "^1.1.1",
@@ -52,7 +54,7 @@
     "axios": "^1.6.8",
     "bignumber.js": "^9.1.2",
     "buffer": "^6.0.3",
-    "class-variance-authority": "^0.4.0",
+    "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
     "dayjs": "^1.11.11",
@@ -63,7 +65,6 @@
     "i18next-http-backend": "^2.6.1",
     "lodash": "^4.17.21",
     "lucide-react": "0.105.0-alpha.4",
-    "next": "^14.2.15",
     "next-i18next": "^15.3.1",
     "next-themes": "^0.2.1",
     "qrcode.react": "^3.1.0",
@@ -79,12 +80,13 @@
     "react-jazzicon": "1.0.4",
     "react-modal": "^3.16.1",
     "react-qr-code": "^2.0.14",
-    "react-scripts": "5.0.1",
     "react-toastify": "^10.0.5",
     "sharp": "^0.32.6",
     "swr": "^2.2.4",
     "tailwind-merge": "^1.13.2",
     "tailwindcss-animate": "^1.0.6",
+    "viem": "^2.21.48",
+    "wagmi": "^2.12.33",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
@@ -101,9 +103,10 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-tailwindcss": "^3.13.0",
+    "next": "^14.2.15",
     "postcss": "^8.4.24",
     "prettier": "^2.8.8",
     "tailwindcss": "^3.3.3",
-    "typescript": "^4.9.5"
+    "typescript": "^5.0.4"
   }
 }

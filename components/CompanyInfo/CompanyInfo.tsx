@@ -84,10 +84,10 @@ const CompanyInfo: FC = () => {
                 {
                     key: '2-1',
                     label: (<div className="flex justify-between gap-8 ico-eas">
-                        <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/ttswap_exchange">
+                        <a target="_blank" rel="noopener noreferrer" href="https://x.com/ttswapFinance">
                             <XOutlined />
                         </a>
-                        <a target="_blank" rel="noopener noreferrer" href="https://discord.gg/5PhXn9DR">
+                        <a target="_blank" rel="noopener noreferrer" href="https://discord.gg/XygqnmQgX3">
                             <DiscordOutlined />
                         </a>
                         <a target="_blank" rel="noopener noreferrer" href="mailto:ttswap.exchange@gmail.com">
@@ -189,7 +189,7 @@ const CompanyInfo: FC = () => {
                 onClick={(e) => e.preventDefault()}>
                 <Space>
                     {labelToShow(Logo, "")}
-                    {windowWidth > 1240 ? (<span className="logo-name">TTSWAP</span>) : (<span></span>)}
+                    {windowWidth > 1290 ? (<span className="logo-name">TTSWAP</span>) : (<span></span>)}
                     {windowWidth < width && (<MenuOutlined />)}
                     <CaretDownOutlined
                         style={{ fontSize: "12px" }}

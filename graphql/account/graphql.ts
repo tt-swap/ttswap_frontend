@@ -31,7 +31,7 @@ export function myTransactions(params: { id: string; first: number; skip: number
 				fromgoodQuanity
 				fromgoodfee
 				transvalue
-				frompargood {
+				fromgood {
 				tokenname
 				tokensymbol
 				tokendecimals
@@ -266,7 +266,7 @@ export function myCommission(params: { id: string,  first: number; skip: number;
 				skip: $skip
 				orderBy: totalTradeCount
 				orderDirection: desc
-				where: {id_not: "0"}
+				where: {id_not: "0x0000000000000000000000000000000000000000"}
 				) {
 				id
 				tokensymbol

@@ -68,11 +68,11 @@ export function prettifyCurrencys(value: number) {
     // console.log(value,"ylqk")
     if (value < 1000000) {
 
-        if (value < 0.01 && value > 0) {
-            return '<0.01'
-        }
         if (value === 0) {
             return '0'
+        }
+        if (value < 0.01 && value > 0) {
+            return '<0.01'
         }
 
         return toThousands(value.toFixed(2));
@@ -92,11 +92,11 @@ export function prettifyCurrencys(value: number) {
 export function prettifyCurrencysFee(value: number) {
     if (value < 1000000) {
 
-        if (value < 0.000001 && value > 0) {
-            return '<0.000001'
-        }
         if (value === 0) {
             return '0'
+        }
+        if (value < 0.000001 && value > 0) {
+            return '<0.000001'
         }
 
         return toThousands(value.toFixed(6));
@@ -115,11 +115,11 @@ export function prettifyCurrencysFee(value: number) {
 // 钱包余额数字处理
 export function prettifyBalance(value: number) {
     if (value < 1) {
-        if (value < 0.000001) {
-            return '<0.000001';
-        }
         if (value === 0) {
             return '0';
+        }
+        if (value < 0.000001) {
+            return '<0.000001';
         }
         return toThousands(value.toFixed(6));
     }

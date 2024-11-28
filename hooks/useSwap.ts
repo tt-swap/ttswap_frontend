@@ -4,8 +4,10 @@ import { SwapKeys } from "@/shared/enums/tokens";
 import { useMemo, useState,useEffect } from "react";
 import { DEFAULT_TOKEN } from "@/shared/constants/common";
 import { toast } from "react-toastify";
+import { useAccount } from 'wagmi';
 
 const useSwap = () => {
+    const { isConnected } = useAccount();
     const { swaps, setSwap } = useSwapStore();
     const { swapsAmount, setSwapAmount } = useSwapAmountStore();
     const [focus, setFocus] = useState("from");
@@ -340,9 +342,9 @@ const useSwap = () => {
             swaps.to.symbol === DEFAULT_TOKEN ||
             swapsAmount.from.amount === 0 ||
             swapsAmount.from.amount === "" ||
-            localStorage.getItem("wallet") === null
+            !isConnected
         );
-    }, [swaps, swapsAmount, localStorage.getItem("wallet")]);
+    }, [swaps, swapsAmount, isConnected]);
 
     return {
         swaps,

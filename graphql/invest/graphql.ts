@@ -4,11 +4,11 @@ import apolloClient from '@/graphql/apollo'
 import { gql } from '@apollo/client'
 
 //物品列表
-export function parGoodDatas(params: { id: string; sel: string; gid: number; time: number; }, ssionChian: number) {
-    if (Number(params.gid) > 0) {
+export function parGoodDatas(params: { id: string; sel: string; gid: string; time: number; }, ssionChian: number) {
+    if (params.gid !== "") {
         return apolloClient(ssionChian).query({
             query: gql
-                `query ($id: BigInt, $time: BigInt, $sel: String) {
+                `query ($id: BigInt, $time: BigInt, $gid: String, $sel: String) {
                     goodState(id: $id) {
                         currentQuantity
                         currentValue
@@ -17,7 +17,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; tim
                         tokensymbol
                         tokendecimals
                     }
-                    goodStates(where: {id_not: "0", isvaluegood: true}) {
+                    goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true}) {
                         id
                         isvaluegood
                         tokenname
@@ -30,13 +30,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; tim
                         feeQuantity
                         investQuantity
                     }
-                    parGoodStates(where: {Goodlist_: {id: $sel}}) {
-                        id
-                        erc20Address
-                        tokensymbol
-                        tokenname
-                        tokendecimals
-                        Goodlist {
+                    parGoodStates :goodStates(where: {id: $gid}) {
                             id
                             isvaluegood
                             currentQuantity
@@ -60,7 +54,6 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; tim
                                 investQuantity
                                 modifiedTime
                             }
-                        }
                     }
                 }`,
             variables: params
@@ -78,7 +71,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; tim
                         tokensymbol
                         tokendecimals
                     }
-                    goodStates(where: {id_not: "0", isvaluegood: true}) {
+                    goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true}) {
                         id
                         isvaluegood
                         tokenname
@@ -91,17 +84,11 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; tim
                         feeQuantity
                         investQuantity
                     }
-                    parGoodStates(
+                    parGoodStates :goodStates(
                         where: {or: [{erc20Address_starts_with: $sel}, {symbol_lower_contains: $sel}, {name_lower_contains: $sel}]}
                         orderBy: currentValue
                         orderDirection: desc
                     ) {
-                        id
-                        erc20Address
-                        tokensymbol
-                        tokenname
-                        tokendecimals
-                        Goodlist {
                             id
                             isvaluegood
                             currentQuantity
@@ -125,7 +112,6 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; tim
                                 investQuantity
                                 modifiedTime
                             }
-                        }
                     }
                 }`,
                 variables: params
@@ -142,7 +128,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; tim
                             tokensymbol
                             tokendecimals
                         }
-                        goodStates(where: {id_not: "0", isvaluegood: true}) {
+                        goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true}) {
                             id
                             isvaluegood
                             tokenname
@@ -155,13 +141,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; tim
                             feeQuantity
                             investQuantity
                         }
-                        parGoodStates(where: {id_not: "0"}, orderBy: currentValue, orderDirection: desc) {
-                            id
-                            erc20Address
-                            tokensymbol
-                            tokenname
-                            tokendecimals
-                            Goodlist {
+                        parGoodStates :goodStates(where: {id_not: "0x0000000000000000000000000000000000000000"}, orderBy: currentValue, orderDirection: desc) {
                                 id
                                 isvaluegood
                                 currentQuantity
@@ -185,7 +165,6 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; tim
                                     investQuantity
                                     modifiedTime
                                 }
-                            }
                         }
                     }`,
                 variables: params
@@ -193,4 +172,5 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; tim
         }
     }
 }
+
 

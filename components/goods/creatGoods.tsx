@@ -12,8 +12,8 @@ import CreatModal from "./creatModal";
 import "./index.css"
 import useWallet from "@/hooks/useWallet";
 // import Message from '@/components/MessModal/index';
-import { useWeb3React } from "@web3-react/core";
-import { useSwitchChain } from "hooks";
+// import { useWeb3React } from "@web3-react/core";
+// import { useSwitchChain } from "hooks";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 // import BigNumber from 'bignumber.js';
 
@@ -31,8 +31,8 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const { t } = useTranslation();
 
-  const switchChain = useSwitchChain();
-  const { chainId } = useWeb3React();
+  // const switchChain = useSwitchChain();
+  // const { chainId } = useWeb3React();
   // @ts-ignore
   const { ssionChian } = useLocalStorage();
   const [open, setOpen] = useState(false);
@@ -98,7 +98,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
 
   const newGood = async () => {
     setSpinning(true);
-    await switchChain(Number(ssionChian)).then(async () => {
+    // await switchChain(Number(ssionChian)).then(async () => {
       if (goodC.length > 5) {
         const staust = await checkContractExists(goodC).then(exists => {
           if (exists) {
@@ -139,9 +139,9 @@ export const CreatGoods = ({ setDataNum }: Props) => {
           content: t('common.mess.create') + t('common.mess.error'),
         });
       }
-    }).catch((error) => {
-      console.error(`"Failed to switch chains: " ${error}`);
-    });
+    // }).catch((error) => {
+    //   console.error(`"Failed to switch chains: " ${error}`);
+    // });
     setSpinning(false);
     document.body.style.overflow = "";
   };

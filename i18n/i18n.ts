@@ -9,12 +9,12 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: 'en',
-    debug: true,
-    saveMissing: true,
-    saveMissingTo: 'all',
-    missingKeyHandler: (lng, ns, key, fallbackValue) => {
-      console.log(`Missing translation: ${lng}:${ns}:${key}`);
-    },
+    // debug: true,
+    // saveMissing: true,
+    // saveMissingTo: 'all',
+    // missingKeyHandler: (lng, ns, key, fallbackValue) => {
+    //   console.log(`Missing translation: ${lng}:${ns}:${key}`);
+    // },
     interpolation: {
       escapeValue: false,
     },

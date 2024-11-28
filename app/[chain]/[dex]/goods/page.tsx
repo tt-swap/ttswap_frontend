@@ -23,9 +23,7 @@ export default function Goods({ params }: { params: { chain: string, dex: string
   useEffect(() => {
     document.title = t('header.menu.goods');
   }, [t('header.menu.goods')]);
-  useMemo(() => {
-    const params = window.location.search;
-  }, []);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = window.location.search;

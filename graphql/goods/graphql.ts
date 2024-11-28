@@ -31,7 +31,7 @@ export function goodsTransactions(params: { id: string; first: number; skip: num
 				fromgoodQuanity
 				fromgoodfee
 				transvalue
-				frompargood {
+				fromgood {
 				tokenname
 				tokensymbol
 				tokendecimals
@@ -295,7 +295,7 @@ export function myCommission(params: { id: string, first: number; skip: number; 
 				skip: $skip
 				orderBy: totalTradeCount
 				orderDirection: desc
-				where: {id_not: "0"}
+				where: {id_not: "0x0000000000000000000000000000000000000000"}
 				) {
 				id
 				tokensymbol
@@ -318,9 +318,9 @@ export function myCommission(params: { id: string, first: number; skip: number; 
 //物品搜索列表
 export function GoodsSearch(params: { id: string; sel: string; time: number; }, ssionChian: number) {
 	if (params.sel !== "") {
-			return apolloClient(ssionChian).query({
-				query: gql
-                `query ($id: BigInt, $time: BigInt, $sel: String) {
+		return apolloClient(ssionChian).query({
+			query: gql
+				`query ($id: BigInt, $time: BigInt, $sel: String) {
                     goodState(id: $id) {
                         currentQuantity
                         currentValue
@@ -339,7 +339,7 @@ export function GoodsSearch(params: { id: string; sel: string; time: number; }, 
                         modifiedTime
                         }
                     }
-                    parGoodStates(
+                    goodStates(
                         where: {or: [{erc20Address_starts_with: $sel}, {symbol_lower_contains: $sel}, {name_lower_contains: $sel}]}
                         orderBy: currentValue
                         orderDirection: desc
@@ -349,15 +349,10 @@ export function GoodsSearch(params: { id: string; sel: string; time: number; }, 
                         tokensymbol
                         tokenname
                         tokendecimals
-                        Goodlist {
-                            id
-                            isvaluegood
-                            currentQuantity
-                            currentValue
-                            erc20Address
-                            tokenname
-                            tokensymbol
-                            goodData(
+                        isvaluegood
+                        currentQuantity
+                        currentValue
+                        goodData (
                                 first: 1
                                 orderBy: modifiedTime
                                 orderDirection: desc
@@ -367,15 +362,14 @@ export function GoodsSearch(params: { id: string; sel: string; time: number; }, 
                                 currentValue
                                 modifiedTime
                             }
-                        }
                     }
                 }`,
-				variables: params
-			})
+			variables: params
+		})
 	} else {
 		return apolloClient(ssionChian).query({
 			query: gql
-                `query ($id: BigInt, $time: BigInt) {
+				`query ($id: BigInt, $time: BigInt) {
                     goodState(id: $id) {
                         currentQuantity
                         currentValue
@@ -394,21 +388,15 @@ export function GoodsSearch(params: { id: string; sel: string; time: number; }, 
                         modifiedTime
                         }
                     }
-                    parGoodStates(where: {id_not: "0"}, orderBy: currentValue, orderDirection: desc, first: 5) {
+                    goodStates(where: {id_not: "0x0000000000000000000000000000000000000000"}, orderBy: currentValue, orderDirection: desc, first: 5) {
                         id
                         erc20Address
                         tokensymbol
                         tokenname
                         tokendecimals
-                        Goodlist {
-                            id
-                            isvaluegood
-                            currentQuantity
-                            currentValue
-                            erc20Address
-                            tokenname
-                            tokensymbol
-                            tokendecimals
+                        isvaluegood
+                        currentQuantity
+                        currentValue
                             goodData(
                                 first: 1
                                 orderBy: modifiedTime
@@ -419,7 +407,6 @@ export function GoodsSearch(params: { id: string; sel: string; time: number; }, 
                                 currentValue
                                 modifiedTime
                             }
-                        }
                     }
                 }`,
 			variables: params

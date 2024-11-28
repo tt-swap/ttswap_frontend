@@ -47,59 +47,41 @@ const TokenInvestSelector = ({ value, onChange, isValue }: Props) => {
             let a: any = await GoodsDatas({
                 id: info.id,
                 sel: keyword,
-                gid: 0,
+                gid: "",
             }, ssionChian);
             let rest: Array<LocalCurrency> = a.tokenValue;
-            console.log(a, 33332)
+            // console.log(a, 33332)
             setTokensValue(rest);
-            a.tokens.map((el: any, index: number) => {
-                a.tokens[index].key = el.id;
+            a.tokens.map((el1: any, index: number) => {
+                a.tokens[index].key = el1.id;
                 a.tokens[index].title = (
                     <>
-                        <div className="flex items-center">
-                            <img src={el.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
-                                onError={(e) => {
-                                    e.currentTarget.src =
-                                        "/token.svg";
-                                }} />
-                            <span>
-                                <div>{el.name}</div>
-                                <div className="text-xs font-color-1">{el.symbol}</div>
-                            </span>
+                        <div className="flex justify-between gap-3">
+                            <div className="flex items-center">
+                                <img src={el1.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
+                                    onError={(e) => {
+                                        e.currentTarget.src =
+                                            "/token.svg";
+                                    }} />
+                                <span className="whitespace-nowrap">
+                                    <div>{el1.name}</div>
+                                    <div className="text-xs font-color-1">{el1.symbol}</div>
+                                </span>
+                            </div>
+                            <Flex className="goods-indexs  gap-2 justify-between" wrap>
+                                <div>
+                                    <div>{t('common.invest')}:{prettifyCurrencys(el1.investQuantity)}</div>
+                                    <div>{t('body.invest.goods.investfeeee')}:{(el1.investFee * 100).toFixed(2)}%</div>
+                                    <div>{t('body.invest.goods.apy')}:{calculateFeePercentage(el1.apy)}</div>
+                                </div>
+                                <div>
+                                    <div>{t('body.invest.goods.fee')}:{prettifyCurrencys(el1.feeQuantity)}</div>
+                                    <div>{t('body.invest.goods.divestfee')}:{(el1.disinvestFee * 100).toFixed(2)}%</div>
+                                </div>
+
+                            </Flex>
                         </div>
                     </>);
-                el.children.map((el1: any, index1: number) => {
-                    a.tokens[index].children[index1].key = el1.id;
-                    a.tokens[index].children[index1].nodePd = true;
-                    a.tokens[index].children[index1].title = (
-                        <>
-                            <div className="flex justify-between gap-3">
-                                <div className="flex items-center">
-                                    <img src={el1.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
-                                        onError={(e) => {
-                                            e.currentTarget.src =
-                                                "/token.svg";
-                                        }} />
-                                    <span className="whitespace-nowrap">
-                                        <div>{el1.name}</div>
-                                        <div className="text-xs font-color-1">{el1.symbol}</div>
-                                    </span>
-                                </div>
-                                <Flex className="goods-indexs  gap-2 justify-between" wrap>
-                                    <div>
-                                        <div>{t('common.invest')}:{prettifyCurrencys(el1.investQuantity)}</div>
-                                        <div>{t('body.invest.goods.investfeeee')}:{(el1.investFee * 100).toFixed(2)}%</div>
-                                        <div>{t('body.invest.goods.apy')}:{calculateFeePercentage(el1.apy)}</div>
-                                    </div>
-                                    <div>
-                                        <div>{t('body.invest.goods.fee')}:{prettifyCurrencys(el1.feeQuantity)}</div>
-                                        <div>{t('body.invest.goods.divestfee')}:{(el1.disinvestFee * 100).toFixed(2)}%</div>
-                                    </div>
-
-                                </Flex>
-                            </div>
-                        </>);
-                })
             })
             setTokens(a.tokens);
             setSpinning(false);
@@ -118,12 +100,12 @@ const TokenInvestSelector = ({ value, onChange, isValue }: Props) => {
 
     const onSelect: TreeProps['onSelect'] = (keys: any, info: any) => {
         // console.log('Trigger Select', info);
-        if (info.node.nodePd) {
+        // if (info.node.nodePd) {
             setOpen(false);
             onChange(info.node);
             document.body.style.overflow = "";
             console.log('Trigger Select', keys, info);
-        }
+        // }
     };
     const handleClose = (a: boolean, b: string) => {
         setOpen(a);

@@ -3,14 +3,16 @@ import ConnectAccount from "@/components/components/Account/ConnectAccount";
 import ChainSelector from "@/components/ChainSelector";
 import { LanguageSwitcher } from "@/components/Language/LanguageSwitcher"
 import { Faucet } from "@/components/faucet"
-import { useWalletAddress } from "@/stores/walletAddress";
 import { Menu, Button, Skeleton } from "antd";
 import type { MenuProps } from "antd";
 import { useState, useEffect, Suspense, useMemo } from "react";
 import { useTranslation } from 'react-i18next';
 import GoodsSearch from "@/components/Search/GoodsSearch";
 import CompanyInfo from "@/components/CompanyInfo/CompanyInfo";
-import Link from 'next/link';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useChainId } from 'wagmi';
+import { useLocalStorage } from "@/utils/LocalStorageManager";
+import { getAddChainParameters } from "@/data/networks";
 
 
 export function SiteHeader() {
@@ -18,11 +20,14 @@ export function SiteHeader() {
     const router = useRouter()
     const pathname = usePathname()
     // const pathRegex = pathname.match(/\/([^\/]*)$/)
-    const { address } = useWalletAddress();
     const [current, setCurrent] = useState('goods');
     const { t, ready } = useTranslation();
     const [windowWidth, setWindowWidth] = useState<number>(0);
     const [skeleton, setSkeleton] = useState(false);
+    const { isConnected, address } = useAccount();
+    // @ts-ignore
+    const { ssionChian, setSsionChian } = useLocalStorage();
+    const chainId = useChainId();
 
     const handleTabSwitch = (route: string) => {
         const routeSegments = pathname.split('/');
@@ -35,12 +40,23 @@ export function SiteHeader() {
         router.push(newRoute);
     }
 
-    // useMemo(() => {
-    //     if (typeof window !== "undefined") {
-    //         const params = window.location.search;
-    //         // console.log(params)
-    //     }
-    // }, []);
+    const routerUp = () => {
+
+        const routeSegments = pathname.split('/');
+        // @ts-ignore
+        const chainName = getAddChainParameters(chainId).chainName;
+        routeSegments[1] = chainName;
+        const newRoute = routeSegments.join('/');
+        console.log(routeSegments, chainName, newRoute);
+        router.push(newRoute)
+    };
+
+    useEffect(() => {
+        if (isConnected) {
+            setSsionChian(chainId);
+            routerUp();
+        }
+    }, [isConnected, chainId]);
 
     useEffect(() => {
         const routeSegments = pathname.split('/');
@@ -51,7 +67,7 @@ export function SiteHeader() {
             // console.log(chname, "account");
         }
         // console.log(treeData)
-    }, []);
+    }, [pathname]);
 
     const items: MenuProps['items'] = [
         {
@@ -107,7 +123,7 @@ export function SiteHeader() {
         <>
         {skeleton&&(<Skeleton/>)}
             <header className="bg-gradient-to-r to-90% sticky top-0 z-40 w-full border-b h-16 bg-background">
-                <div className="mr-4 ml-4 flex h-16 items-center justify-center w-full">
+                <div className="pr-4 pl-4 flex h-16 items-center justify-center w-full">
                     <div className="flex items-center justify-start w-full" style={{ height: "42px" }}>
                         <div className="flex h-full items-center gap-1 cursor-pointer">
                             <CompanyInfo />
@@ -118,10 +134,16 @@ export function SiteHeader() {
                     <div className="flex items-center justify-end w-full">
                         <nav className="flex items-center gap-3">
                             <GoodsSearch isValue={"button"} />
-                            {address !== null && (<Faucet />)}
-                            {address === null && (<><ChainSelector />
-                                <LanguageSwitcher /></>)}
-                            <ConnectAccount />
+                            {isConnected && (<Faucet />)}
+                            {!isConnected && (<><ChainSelector />
+                            </>)}
+                            <LanguageSwitcher />
+                            <ConnectButton
+                                label={t('header.menu.account.connect')}
+                                chainStatus="icon"
+                                // accountStatus="address"
+                                showBalance={false}
+                            />
                         </nav>
                     </div>
                 </div>

@@ -21,10 +21,6 @@ export default function Token({ params }: { params: { chain: string, dex: string
     document.title = t('header.menu.goods');
   }, [t('header.menu.goods')]);
   
-  useMemo(() => {
-    const params = window.location.search;
-    // console.log(params)
-  }, []);
 
   return (
     <div className="w-full flex flex-col gap-4">

@@ -27,8 +27,8 @@ export const contractCon: {
   },
   11155111: {
     chainId: "11155111",
-    contractAddress: "0x1F686ccf99E5FdC3A6d605857b6288F25BdfDc02",
-    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap/version/latest"
+    contractAddress: "0x91E8A9df7B41d25f8F68085dfBB1a4BBC478C1eD",
+    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap-v1/version/latest"
   },
   // Optimism
   10: {

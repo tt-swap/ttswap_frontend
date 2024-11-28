@@ -9,11 +9,14 @@ export default function NotFound() {
     const routeSegments = pathname.split('/');
 
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const value = "sepolia";
-            const address = "ttswap";
-            const name = "goods";
+        const value = "sepolia";
+        const address = "ttswap";
+        const name = "goods";
 
+        if (pathname === '/') {
+            const redirectTo = `/${value}/${address}/${name}`;
+            router.replace(redirectTo);
+        } else {
             // 检查当前路由是否已经符合预期格式
             if (routeSegments[1] === value && routeSegments[2] === address && routeSegments[3] === name && routeSegments.length <= 5) {
                 return; // 如果已经符合预期格式，不进行重定向
@@ -28,7 +31,6 @@ export default function NotFound() {
                 ...routeSegments.slice(4, 5) // 保留第5个段（如果存在）
             ];
             const newRoute = newRouteSegments.join('/');
-
             // 只有在新路由与当前路由不同时才进行重定向
             if (newRoute !== pathname) {
                 router.replace(newRoute);

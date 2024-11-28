@@ -7,8 +7,8 @@ import InputNumber from "rc-input-number";
 import { useMemo, useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 
-import { useWeb3React } from "@web3-react/core";
-import { useSwitchChain } from "hooks";
+// import { useWeb3React } from "@web3-react/core";
+// import { useSwitchChain } from "hooks";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 import { Spin, message } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -57,8 +57,8 @@ const TokenInvest = () => {
     const { t } = useTranslation();
 
 
-    const switchChain = useSwitchChain();
-    const { chainId } = useWeb3React();
+    // const switchChain = useSwitchChain();
+    // const { chainId } = useWeb3React();
 
     const [balanceF, setBalanceF] = useState<string | number>(0);
     const [balanceT, setBalanceT] = useState<string | number>(0);
@@ -76,21 +76,20 @@ const TokenInvest = () => {
     const [amountSp, setAmountSp] = useState(false);
     const [timerId, setTimerId] = useState(null);
     const [focus, setFocus] = useState("from");
+    const [isDisabled, setisDisabled] = useState(disabled);
 
-    const isDisabled = useMemo(() => {
-        console.log(investAmount, "0000")
+    useEffect(() => {
         if (isValueGood) {
             // @ts-ignore
             if (investAmount.from.amount > balanceMap1.from || balanceMap1.from === 0 || investAmount.from.amount === 0 || investAmount.from.amount < 0 || investAmount.from.amount === "" || investAmount.from.amount === null) {
-                return true;
-            }
-            return disabled;
+                setisDisabled(true);
+            } else { setisDisabled(disabled); }
+
         } else {
             // @ts-ignore
-            if (investAmount.from.amount > balanceMap1.from || investAmount.to.amount > balanceMap1.to || balanceMap1.from === 0 || balanceMap1.to === 0 || investAmount.from.amount === 0 || investAmount.from.amount < 0 || investAmount.from.amount === "" || investAmount.from.amount === null || disabled) {
-                return true;
-            }
-            return disabled;
+            if (investAmount.from.amount > balanceMap1.from || investAmount.to.amount > balanceMap1.to || balanceMap1.from === 0 || balanceMap1.to === 0 || investAmount.from.amount === 0 || investAmount.from.amount < 0 || investAmount.from.amount === "" || investAmount.from.amount === null) {
+                setisDisabled(true);
+            } else { setisDisabled(disabled); }
         }
         // return disabled;
     }, [investAmount, disabled, balanceMap1]);
@@ -98,7 +97,7 @@ const TokenInvest = () => {
 
     useEffect(() => {
         document.title = t('header.menu.trade.invest');
-      }, [t('header.menu.trade.invest')]);
+    }, [t('header.menu.trade.invest')]);
     useMemo(() => {
         // @ts-ignore
         setBalanceF(balanceMap1.from); setBalanceT(balanceMap1.to);
@@ -107,10 +106,9 @@ const TokenInvest = () => {
     useMemo(() => {
         if (info.id) {
             (async () => {
-                let sel = 0;
+                let sel = "";
                 if (goodId.invest.id !== "") {
-                    // 
-                    sel = Number(goodId.invest.id);
+                    sel = goodId.invest.id;
                 }
                 let tokens: any = await GoodsDatas({
                     id: info.id,
@@ -118,9 +116,8 @@ const TokenInvest = () => {
                     gid: sel
                 }, ssionChian);
                 if (goodId.invest.id !== "") {
-                    // 
-                    setToken("from", tokens.tokens[0].children[0]);
-                    setIsValueGood(tokens.tokens[0].children[0].isvaluegood);
+                    setToken("from", tokens.tokens[0]);
+                    setIsValueGood(tokens.tokenValue[0].isvaluegood);
                 } else {
                     setToken("from", tokens.tokenValue[0]);
                     setIsValueGood(tokens.tokenValue[0].isvaluegood);
@@ -168,29 +165,29 @@ const TokenInvest = () => {
 
     const handleInvest = async () => {
         setSpinning(true);
-        await switchChain(Number(ssionChian)).then(async () => {
-            let fAmount = 0;
-            let tAmount = 0;
-            if (investAmount.from.amount !== "" && investAmount.from.amount > 0) {
-                fAmount = investAmount.from.amount * powerIterative(10, invest.from.decimals);
-            }
-            if (investAmount.to.amount !== "" && investAmount.to.amount > 0 && !isValueGood) {
-                tAmount = investAmount.to.amount * powerIterative(10, invest.to.decimals);
-            }
-            const isSuccess = await investGoods(invest, BigInt(fAmount), BigInt(tAmount), isValueGood);
-            if (isSuccess) {
-                setOpen(true);
-                setMesStatus("success");
-                setMesTitle(t('common.invest') + t('common.mess.success'));
-                setAmount("from", "", 0);
-            } else {
-                setOpen(true);
-                setMesStatus("error");
-                setMesTitle(t('common.invest') + t('common.mess.error'));
-            }
-        }).catch((error) => {
-            console.error(`"Failed to switch chains: " ${error}`);
-        });
+        // await switchChain(Number(ssionChian)).then(async () => {
+        let fAmount = 0;
+        let tAmount = 0;
+        if (investAmount.from.amount !== "" && investAmount.from.amount > 0) {
+            fAmount = investAmount.from.amount * powerIterative(10, invest.from.decimals);
+        }
+        if (investAmount.to.amount !== "" && investAmount.to.amount > 0 && !isValueGood) {
+            tAmount = investAmount.to.amount * powerIterative(10, invest.to.decimals);
+        }
+        const isSuccess = await investGoods(invest, BigInt(Math.round(fAmount)), BigInt(Math.round(tAmount)), isValueGood);
+        if (isSuccess) {
+            setOpen(true);
+            setMesStatus("success");
+            setMesTitle(t('common.invest') + t('common.mess.success'));
+            setAmount("from", "", 0);
+        } else {
+            setOpen(true);
+            setMesStatus("error");
+            setMesTitle(t('common.invest') + t('common.mess.error'));
+        }
+        // }).catch((error) => {
+        //     console.error(`"Failed to switch chains: " ${error}`);
+        // });
         // if (chainId !== ssionChian) {
         //     return;
         // }
@@ -273,7 +270,7 @@ const TokenInvest = () => {
                                         className="cursor-pointer"
                                         onClick={() =>
                                             // @ts-ignore
-                                            setAmount("from", balanceF)
+                                            setAmounts("from", balanceF)
                                         }
                                     >
                                         {invest.from.symbol !== DEFAULT_TOKEN
@@ -344,7 +341,7 @@ const TokenInvest = () => {
                                             className="cursor-pointer"
                                             onClick={() =>
                                                 // @ts-ignore
-                                                setAmount("to", balanceT)
+                                                setAmounts("to", balanceT)
                                             }
                                         >
                                             {invest.to.symbol !== DEFAULT_TOKEN

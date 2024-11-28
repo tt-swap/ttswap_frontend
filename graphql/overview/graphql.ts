@@ -98,7 +98,7 @@ export function parGoodDatas(params: { id: string; first: number; time: number; 
 			goodStates(
 				first: $first
 				skip: $skips
-				where: {id_not: "0"}
+				where: {id_not: "0x0000000000000000000000000000000000000000"}
 				) {
 				id
 				tokenname
@@ -150,7 +150,7 @@ export function InvestGoodDatas(params: {
 				skip: $skip
 				orderBy: currentValue
 				orderDirection: desc
-				where: {id_not: "0"}
+				where: {id_not: "0x0000000000000000000000000000000000000000"}
 				) {
 					id
 					tokenname

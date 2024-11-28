@@ -3,14 +3,14 @@ import { gql } from '@apollo/client'
 
 
 //物品列表
-export function parGoodDatas(params: { id: string; sel: string; gid: number; par: number }, ssionChian: number) {
+export function parGoodDatas(params: { id: string; sel: string; gid: string; par: number }, ssionChian: number) {
     // console.log(params,3333333322222)
     // 	let where;
-    if (Number(params.gid) > 0) {
+    if (params.gid !== "") {
         // console.log(params.sel, 3333333322222)
         return apolloClient(ssionChian).query({
             query: gql
-                `query($id: BigInt,$sel:String,$par: BigInt) {
+                `query($id: BigInt, $gid: String, $sel:String) {
                     goodState(id: $id) {
                         id
                         currentQuantity
@@ -19,7 +19,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; par
                         tokensymbol
                         tokendecimals
                     }
-                    goodStates(where: {id_not: "0", isvaluegood: true}) {
+                    goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true}) {
                         id
                         isvaluegood
                         tokenname
@@ -31,13 +31,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; par
                         currentValue
                         feeQuantity
                     }
-                    parGoodStates(where: {Goodlist_: {id: $sel}}) {
-                        id
-                        erc20Address
-                        tokensymbol
-                        tokenname
-                        tokendecimals
-                        Goodlist {
+                    parGoodStates: goodStates(where: {id: $gid}) {
                         id
                         currentQuantity
                         currentValue
@@ -47,7 +41,6 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; par
                         tokenname
                         tokensymbol
                         tokendecimals
-                        }
                     }
                 }`,
             variables: params
@@ -57,7 +50,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; par
             // console.log(params.sel, "000000000000")
             return apolloClient(ssionChian).query({
                 query: gql
-                    `query($id: BigInt,$sel:String,$par: BigInt) {
+                    `query($id: BigInt,$sel:String) {
                         goodState(id: $id) {
                             id
                             currentQuantity
@@ -66,7 +59,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; par
                             tokensymbol
                             tokendecimals
                         }
-                        goodStates(where: {id_not: "0", isvaluegood: true}) {
+                        goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true}) {
                             id
                             isvaluegood
                             tokenname
@@ -78,17 +71,11 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; par
                             currentValue
                             feeQuantity
                         }
-                        parGoodStates(
+                        parGoodStates: goodStates(
                             where: {or: [{erc20Address_starts_with: $sel}, {symbol_lower_contains: $sel}, {name_lower_contains: $sel}]}
                             orderBy: currentValue
                             orderDirection: desc
                         ) {
-                            id
-                            erc20Address
-                            tokensymbol
-                            tokenname
-                            tokendecimals
-                            Goodlist {
                             id
                             currentQuantity
                             currentValue
@@ -98,7 +85,6 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; par
                             tokenname
                             tokensymbol
                             tokendecimals
-                            }
                         }
                     }`,
                 variables: params
@@ -115,7 +101,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; par
                             tokensymbol
                             tokendecimals
                         }
-                        goodStates(where: {id_not: "0", isvaluegood: true, tokensymbol_not: $par}) {
+                        goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true, tokensymbol_not: $par}) {
                             id
                             isvaluegood
                             tokenname
@@ -127,13 +113,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; par
                             currentValue
                             feeQuantity
                         }
-                        parGoodStates(where: {id_not: "0"}, orderBy: currentValue, orderDirection: desc) {
-                            id
-                            erc20Address
-                            tokensymbol
-                            tokenname
-                            tokendecimals
-                            Goodlist {
+                        parGoodStates: goodStates(where: {id_not: "0x0000000000000000000000000000000000000000"}, orderBy: currentValue, orderDirection: desc) {
                             id
                             currentQuantity
                             currentValue
@@ -143,7 +123,6 @@ export function parGoodDatas(params: { id: string; sel: string; gid: number; par
                             tokenname
                             tokensymbol
                             tokendecimals
-                            }
                         }
                     }`,
                 variables: params

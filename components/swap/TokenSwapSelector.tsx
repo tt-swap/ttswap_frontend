@@ -48,7 +48,7 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
             let a: any = await GoodsDatas({
                 id: info.id,
                 sel: keyword,
-                gid: 0,
+                gid: "",
                 par: Timestamp()
             }, ssionChian);
             let rest: Array<LocalCurrency> = a.tokenValue;
@@ -58,48 +58,29 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
                 a.tokens[index].key = el.id;
                 a.tokens[index].title = (
                     <>
-                        <div className="flex items-center">
-                            <img src={el.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
-                                onError={(e) => {
-                                    e.currentTarget.src =
-                                        "/token.svg";
-                                }} />
-                            <span>
-                                <div>{el.name}</div>
-                                <div className="text-xs font-color-1">{el.symbol}</div>
-                            </span>
+                        <div className="flex justify-between gap-3">
+                            <div className="flex items-center">
+                                <img src={el.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
+                                    onError={(e) => {
+                                        e.currentTarget.src =
+                                            "/token.svg";
+                                    }} />
+                                <span className="whitespace-nowrap">
+                                    <div>{el.name}</div>
+                                    <div className="text-xs font-color-1">{el.symbol}</div>
+                                </span>
+                            </div>
+                            <Flex className="goods-indexs  gap-2 justify-between">
+                                <div>
+                                    <div>{t('body.swap.goods.price')}:{prettifyCurrencys(el.price)}{" " + info.symbol}</div>
+                                    <div>{t('body.swap.goods.volume')}:{prettifyCurrencys(el.currentQuantity / 10 ** el.decimals)}</div>
+                                </div>
+                                <div>
+                                    <div>{t('body.swap.goods.buyfee')}:{(el.buyFee * 100).toFixed(2)}%</div>
+                                    <div>{t('body.swap.goods.sellfee')}:{(el.sellFee * 100).toFixed(2)}%</div></div>
+                            </Flex>
                         </div>
                     </>);
-                el.children.map((el1: any, index1: number) => {
-                    a.tokens[index].children[index1].key = el1.id;
-                    a.tokens[index].children[index1].nodePd = true;
-                    a.tokens[index].children[index1].title = (
-                        <>
-                            <div className="flex justify-between gap-3">
-                                <div className="flex items-center">
-                                    <img src={el1.logo_url ?? "/token.svg"} alt="folder" className="treeImg"
-                                        onError={(e) => {
-                                            e.currentTarget.src =
-                                                "/token.svg";
-                                        }} />
-                                    <span className="whitespace-nowrap">
-                                        <div>{el1.name}</div>
-                                        <div className="text-xs font-color-1">{el1.symbol}</div>
-                                    </span>
-                                </div>
-                                <Flex className="goods-indexs  gap-2 justify-between">
-                                    <div>
-                                        <div>{t('body.swap.goods.price')}:{prettifyCurrencys(el1.price)}{" " + info.symbol}</div>
-                                        <div>{t('body.swap.goods.volume')}:{prettifyCurrencys(el1.currentQuantity / 10 ** el1.decimals)}</div>
-                                    </div>
-                                    <div>
-                                        <div>{t('body.swap.goods.buyfee')}:{(el1.buyFee * 100).toFixed(2)}%</div>
-                                        <div>{t('body.swap.goods.sellfee')}:{(el1.sellFee * 100).toFixed(2)}%</div></div>
-                                </Flex>
-                            </div>
-                        </>);
-
-                })
             })
             setTokens(a.tokens);
             setSpinning(false);
@@ -117,12 +98,12 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
 
     const onSelect: DirectoryTreeProps['onSelect'] = (keys: any, info: any) => {
         // console.log('Trigger Select', keys);
-        if (info.node.nodePd) {
+        // if (info.node.nodePd) {
             setOpen(false);
             onChange(info.node);
             document.body.style.overflow = "";
             console.log('Trigger Select', swaps, keys, info);
-        }
+        // }
     };
     const onExpand: DirectoryTreeProps['onExpand'] = (keys, info) => {
         console.log('Trigger Expand', keys, info);
