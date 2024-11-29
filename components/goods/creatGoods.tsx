@@ -247,7 +247,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                   onChange={(e) => { if (e > 1) setSwapS(e); }}
                   value={swapS}
                   defaultValue={2}
-                />{" x64"}
+                />{" x10"}
               </Form.Item>
               <Form.Item label={t('common.divest')}>
                 <InputNumber
