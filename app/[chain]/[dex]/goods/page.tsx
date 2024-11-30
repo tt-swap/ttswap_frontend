@@ -9,6 +9,7 @@ import { XYKOverviewTimeSeries } from "@/components/Molecules"
 import { handleTabSwitch, getString } from "@/utils/router";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
+import { ethers } from "ethers";
 
 export default function Goods({ params }: { params: { chain: string, dex: string } }) {
   const router = useRouter();
@@ -27,8 +28,9 @@ export default function Goods({ params }: { params: { chain: string, dex: string
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = window.location.search;
-      if (getString(params) !== null && localStorage.getItem("reference") === null) {
-        const a = getString(params);
+      const a:any = getString(params);
+      // console.log(ethers.isAddress(null),"reference---")
+      if (getString(params) !== null && ethers.isAddress(a) && !ethers.isAddress(localStorage.getItem("reference"))) {
         // @ts-ignore
         localStorage.setItem("reference", a);
       }

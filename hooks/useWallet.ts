@@ -822,7 +822,7 @@ const useWallet = () => {
             const address0 = ConAddress0;
             // const [references] = useLocalStorages("reference", null);
             let reference = localStorage.getItem("reference");
-            if (reference === null) {
+            if (reference === null || !ethers.isAddress(reference)) {
                 reference = address0;
             } else {
                 reference = reference;
