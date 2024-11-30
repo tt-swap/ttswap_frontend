@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { ethers } from "ethers";
 import useSwap from "@/hooks/useSwap";
 import useInvest from "@/hooks/useInvest";
@@ -13,6 +13,10 @@ import { useEthersSigner, useEthersProvider } from '@/connectors/wagmiEthersV6';
 
 import { useAccount, useReadContracts, useReadContract, useBalance, useWriteContract, useSimulateContract, useEstimateGas } from 'wagmi';
 
+interface BalanceResult {
+    amount: any;
+    decimals: any;
+}
 const useWallet = () => {
 
     const defaultData = "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000";
@@ -47,75 +51,305 @@ const useWallet = () => {
         }
     }, [isConnected, address]);
 
-
-    useEffect(() => {
-        // console.log(ethers.getAddress("1"), 88888)
-        // @ts-ignore
-        if (swapsAmount.from.amount > 0) {
-            (async () => {
-                // //const signer = await provider.getSigner()
-                // const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-                // await contract.methods.buyGood("", "", a, limitPrice.toString(), false).estimateGas();
-                // const gasPrice = await contract.estimateGas['buyGood']("51649299683075463979090664991608549190737649190809275440655607745038800234274", "14700013424982216455688397208100595100161518504028027706369398309082945288267", a, limitPrice.toString(), false)
-                const gasPrice = await provider?.getFeeData().then((a) => {
-                    return a.gasPrice?.toString();
-                }).catch((e) => {
-                    return 0;
-                }); // 获取 gas 价格
-                // console.log(gasPrice, 88888)
-                if (gasPrice)
-                    setNetworkCost(ethers.formatEther(gasPrice));
-            })();
-        }
-    }, [swaps, swapsAmount]);
-
-    const balanceSel = async (ConAddress: string) => {
-        if (isConnected){
-            try {
-                if (ConAddress === ConAddress1) {
-                    // @ts-ignore
-                    const senderBalanceBefore = await provider.getBalance(address); //账户1余额
-                    return ethers.formatEther(senderBalanceBefore);
-                } else {
-                    const contract = new ethers.Contract(ConAddress, erc20, provider);
-                    let decimals = await contract.decimals();
-                    const balance = await contract.balanceOf(address);
-                    return ethers.formatUnits(balance, decimals);
-                }
-            } catch (e) {
-                return 0;
+    // 在组件顶层使用 useReadContracts
+    const { data: sawpFromTokenData } = useReadContracts({
+        contracts: swaps?.from?.address ? [
+            {
+                address: swaps.from.address as `0x${string}`,
+                abi: erc20,
+                functionName: 'balanceOf',
+                args: [address],
+            },
+            {
+                address: swaps.from.address as `0x${string}`,
+                abi: erc20,
+                functionName: 'decimals'
             }
-        } else {
-            return 0;
+        ] : []
+    });
+
+    const { data: sawpToTokenData } = useReadContracts({
+        contracts: swaps?.to?.address ? [
+            {
+                address: swaps.to.address as `0x${string}`,
+                abi: erc20,
+                functionName: 'balanceOf',
+                args: [address],
+            },
+            {
+                address: swaps.to.address as `0x${string}`,
+                abi: erc20,
+                functionName: 'decimals'
+            }
+        ] : []
+    });
+
+    const { data: investFromTokenData } = useReadContracts({
+        contracts: invest?.from?.address ? [
+            {
+                address: invest.from.address as `0x${string}`,
+                abi: erc20,
+                functionName: 'balanceOf',
+                args: [address],
+            },
+            {
+                address: invest.from.address as `0x${string}`,
+                abi: erc20,
+                functionName: 'decimals'
+            }
+        ] : []
+    });
+
+    const { data: investToTokenData } = useReadContracts({
+        contracts: invest?.to?.address ? [
+            {
+                address: invest.to.address as `0x${string}`,
+                abi: erc20,
+                functionName: 'balanceOf',
+                args: [address],
+            },
+            {
+                address: invest.to.address as `0x${string}`,
+                abi: erc20,
+                functionName: 'decimals'
+            }
+        ] : []
+    });
+
+    useEffect(() => {
+        // console.log(simulateData, "-----------", MarketManagerContract, ssionChian)
+        let from: any = 0;
+        let to: any = 0;
+        if (isConnected) {
+            const fromBalance = balanceSel(swaps?.from?.address);
+            const toBalance = balanceSel(swaps?.to?.address);
+            // console.log(fromBalance.amount, 88888)
+            if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
+                from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
+            }
+            if (toBalance.amount !== undefined && toBalance.amount !== null) {
+                to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
+            }
         }
-    };
-
-    // const balanceMap =
-    useEffect(() => {
-        (async () => {
-            // console.log("balanceMap",account,isActive,address)
-            if (isConnected) {
-                const from = await balanceSel(swaps.from.address);
-                const to = await balanceSel(swaps.to.address);
-                // console.log("swapsbalanceMap", from, to);
-                setbalanceMap({ from: from, to: to });
-                // return { from: from, to: to }
-            } else setbalanceMap({ from: 0, to: 0 }) //return { from: 0, to: 0 }
-        })();
-    }, [swaps, isConnected, address, ssionChian]);
-
+        setbalanceMap({ from: from, to: to });
+    }, [isConnected, swaps, sawpFromTokenData, sawpToTokenData]);
 
     useEffect(() => {
-        (async () => {
-            if (isConnected) {
-                const from = await balanceSel(invest.from.address);
-                const to = await balanceSel(invest.to.address);
-                // console.log("investbalanceMap", from, to)
-                setbalanceMap1({ from: from, to: to });
-                // return { from: from, to: to }
-            } else setbalanceMap1({ from: 0, to: 0 }) // return { from: 0, to: 0 }
-        })();
-    }, [invest, isConnected, address, ssionChian]);
+        let from: any = 0;
+        let to: any = 0;
+        if (isConnected) {
+            const fromBalance = balanceSelI(invest?.from?.address);
+            const toBalance = balanceSelI(invest?.to?.address);
+            // console.log(fromBalance, 88888)
+            if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
+                from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
+            }
+            if (toBalance.amount !== undefined && toBalance.amount !== null) {
+                to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
+            }
+        }
+        setbalanceMap1({ from: from, to: to });
+        // console.log("investFromTokenData---------", investFromTokenData)
+    }, [investFromTokenData, investToTokenData, invest, isConnected]);
+    // 使用 useSimulateContract 预估 gas
+    // 添加一个状态来跟踪是否可以进行模拟
+    // const [canSimulate, setCanSimulate] = useState(false);
+
+    // // 准备模拟参数
+    // const simulateParams = useMemo(() => {
+    //     if (!swaps?.from?.address || !address || !swapsAmount) {
+    //         return null;
+    //     }
+
+    //     try {
+    //         return {
+    //             address: contractAddress as `0x${string}`,
+    //             abi: MarketManager,
+    //             functionName: 'buyGood',
+    //             args: [
+    //                 BigInt(swaps.from.id || 0),
+    //                 BigInt(swaps.to.id || 0),
+    //                 BigInt(10000000 || 0),
+    //                 BigInt('5729140015357963850670427240162249000993640255858448'),
+    //                 false,
+    //                 "0x0000000000000000000000000000000000000000"
+    //             ],
+    //             value: swaps.from.address === "0x0000000000000000000000000000000000000000"
+    //                 ? BigInt(10000000)
+    //                 : undefined,
+    //             account: address as `0x${string}`,
+    //         };
+    //     } catch (error) {
+    //         console.error('Error preparing simulate params:', error);
+    //         return null;
+    //     }
+    // }, [swaps, address, swapsAmount, contractAddress]);
+
+    // // 使用 useEffect 来控制模拟时机
+    // useEffect(() => {
+    //     setCanSimulate(Boolean(simulateParams));
+    // }, [simulateParams]);
+
+    // 模拟合约调用
+    // const {
+    //     data: simulateData,
+    //     isError: isSimulateError,
+    //     error: simulateError,
+    //     isSuccess: isSimulateSuccess,
+    //     status: simulateStatus
+    // } = useSimulateContract(simulateParams || {
+    //     address: contractAddress as `0x${string}`,
+    //     abi: MarketManager,
+    //     functionName: 'buyGood',
+    //     args: undefined
+    // });
+
+    // 调试日志
+    // useEffect(() => {
+    //     console.log('Simulation Status:', {
+    //         canSimulate,
+    //         params: simulateParams,
+    //         status: simulateStatus,
+    //         isSuccess: isSimulateSuccess,
+    //         data: simulateData,
+    //         error: simulateError
+    //     });
+    // }, [canSimulate, simulateParams, simulateStatus, isSimulateSuccess, simulateData, simulateError]);
+
+
+    // // 获取 gas 估算
+    // const { data: gasEstimate } = useEstimateGas({
+    //     ...simulateData?.request,
+    //     // enabled: Boolean(simulateData?.request),
+    // });
+
+    // 监听 gas 估算结果
+    // useEffect(() => {
+    //     if (gasEstimate) {
+    //         try {
+    //             // 将 gas 估算结果转换为更易读的格式
+    //             // const gasInEth = formatEther(gasEstimate);
+    //             console.log('Estimated gas in ETH:', gasEstimate);
+    //             // setNetworkCost(gasInEth);
+    //         } catch (err) {
+    //             console.error('Error processing gas estimate:', err);
+    //             // setWalletError('Error calculating gas fees');
+    //         }
+    //     }
+    // }, [gasEstimate]);
+
+
+    const balanceSel = useCallback((ConAddress: string): BalanceResult => {
+        if (!ConAddress || !isConnected) return { amount: 0, decimals: 18 };
+
+        if (ConAddress === swaps?.from?.address) {
+            return {
+                amount: sawpFromTokenData?.[0]?.result,
+                decimals: sawpFromTokenData?.[1]?.result
+            };
+        } else if (ConAddress === swaps?.to?.address) {
+            return {
+                amount: sawpToTokenData?.[0]?.result,
+                decimals: sawpToTokenData?.[1]?.result
+            };
+        }
+
+        return { amount: 0, decimals: 18 };
+    }, [sawpFromTokenData, sawpToTokenData, swaps, isConnected]);
+
+
+    const balanceSelI = useCallback((ConAddress: string): BalanceResult => {
+        if (!ConAddress || !isConnected) return { amount: 0, decimals: 18 };
+
+        if (ConAddress === invest?.from?.address) {
+            return {
+                amount: investFromTokenData?.[0]?.result,
+                decimals: investFromTokenData?.[1]?.result
+            };
+        } else if (ConAddress === invest?.to?.address) {
+            return {
+                amount: investToTokenData?.[0]?.result,
+                decimals: investToTokenData?.[1]?.result
+            };
+        }
+
+        return { amount: 0, decimals: 18 };
+    }, [investFromTokenData, investToTokenData, invest, isConnected]);
+
+
+    // useEffect(() => {
+    //     // console.log(ethers.getAddress("1"), 88888)
+    //     // @ts-ignore
+    //     if (swapsAmount.from.amount > 0) {
+    //         (async () => {
+    //             // //const signer = await provider.getSigner()
+    //             // const contract = new ethers.Contract(contractAddress, MarketManager, signer);
+    //             // await contract.methods.buyGood("", "", a, limitPrice.toString(), false).estimateGas();
+    //             // const gasPrice = await contract.estimateGas['buyGood']("51649299683075463979090664991608549190737649190809275440655607745038800234274", "14700013424982216455688397208100595100161518504028027706369398309082945288267", a, limitPrice.toString(), false)
+    //             const gasPrice = await provider?.getFeeData().then((a) => {
+    //                 return a.gasPrice?.toString();
+    //             }).catch((e) => {
+    //                 return 0;
+    //             }); // 获取 gas 价格
+    //             // console.log(gasPrice, 88888)
+    //             if (gasPrice)
+    //                 setNetworkCost(ethers.formatEther(gasPrice));
+    //         })();
+    //     }
+    // }, [swaps, swapsAmount]);
+
+    // const balanceSel = async (ConAddress: string) => {
+    //     if (isConnected) {
+    //         console.log("ConAddress======", ConAddress);
+    //         try {
+    //             if (ConAddress === ConAddress1) {
+    //                 // @ts-ignore
+    //                 const senderBalanceBefore = await provider.getBalance(address); //账户1余额
+    //                 console.log("senderBalanceBefore======", senderBalanceBefore);
+    //                 return ethers.formatEther(senderBalanceBefore);
+    //             } else {
+    //                 const contract = new ethers.Contract(ConAddress, erc20, provider);
+    //                 let decimals = await contract.decimals();
+    //                 const balance = await contract.balanceOf(address);
+    //                 console.log("balance======", balance);
+    //                 return ethers.formatUnits(balance, decimals);
+    //             }
+    //         } catch (e) {
+    //             console.log("swapsbalanceMap======", e);
+    //             return 0;
+    //         }
+    //     } else {
+    //         return 0;
+    //     }
+    // };
+
+    // // const balanceMap =
+    // useEffect(() => {
+    //     (async () => {
+    //         // console.log("balanceMap",account,isActive,address)
+    //         if (isConnected) {
+    //             // const from = await balanceSel(swaps.from.address);
+    //             // const to = await balanceSel(swaps.to.address);
+    //             const [from,to] = await Promise.all([balanceSel(swaps.from.address),balanceSel(swaps.to.address)]);
+    //             console.log("swapsbalanceMap======", isConnected);
+    //             setbalanceMap({ from: from, to: to });
+    //             // return { from: from, to: to }
+    //         } else setbalanceMap({ from: 0, to: 0 }) //return { from: 0, to: 0 }
+    //     })();
+    // }, [swaps.from.address,swaps.to.address, isConnected, address, ssionChian]);
+
+
+    // useEffect(() => {
+    //     (async () => {
+    //         if (isConnected) {
+    //             const from = await balanceSel(invest.from.address);
+    //             const to = await balanceSel(invest.to.address);
+    //             // console.log("investbalanceMap", from, to)
+    //             setbalanceMap1({ from: from, to: to });
+    //             // return { from: from, to: to }
+    //         } else setbalanceMap1({ from: 0, to: 0 }) // return { from: 0, to: 0 }
+    //     })();
+    // }, [invest, isConnected, address, ssionChian]);
 
 
     const collect = async (ids: any) => {
@@ -342,7 +576,7 @@ const useWallet = () => {
 
                 console.log(2222, vgood, qunt, addr, config, initGoodV)
                 if (initGoodVA) {
-                    return await contract.initGood(vgood, qunt, addr, config,defaultData,defaultData, { value: initGoodV }).then((transaction) => {
+                    return await contract.initGood(vgood, qunt, addr, config, defaultData, defaultData, { value: initGoodV }).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
@@ -351,7 +585,7 @@ const useWallet = () => {
                     });
                 } else {
                     console.log(3333, vgood, qunt, addr, config)
-                    return await contract.initGood(vgood, qunt, addr, config,defaultData,defaultData).then((transaction) => {
+                    return await contract.initGood(vgood, qunt, addr, config, defaultData, defaultData).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
@@ -535,7 +769,7 @@ const useWallet = () => {
             if (approveF && approveT) {
                 if (isValueGood) {
                     if (investGoodVA) {
-                        return await contract.investGood(invest.from.id, ConAddress0, famount,defaultData,defaultData, { value: investGoodV }).then((transaction) => {
+                        return await contract.investGood(invest.from.id, ConAddress0, famount, defaultData, defaultData, { value: investGoodV }).then((transaction) => {
                             console.log('Transaction sent1:', transaction);
                             return true;
                         }).catch((error: any) => {
@@ -543,7 +777,7 @@ const useWallet = () => {
                             return false;
                         });
                     } else {
-                        return await contract.investGood(invest.from.id, ConAddress0, famount,defaultData,defaultData).then((transaction) => {
+                        return await contract.investGood(invest.from.id, ConAddress0, famount, defaultData, defaultData).then((transaction) => {
                             console.log('Transaction sent2:', transaction);
                             return true;
                         }).catch((error: any) => {
@@ -553,7 +787,7 @@ const useWallet = () => {
                     }
                 } else {
                     if (investGoodVA) {
-                        return await contract.investGood(invest.from.id, invest.to.id, famount,defaultData,defaultData, { value: investGoodV }).then((transaction) => {
+                        return await contract.investGood(invest.from.id, invest.to.id, famount, defaultData, defaultData, { value: investGoodV }).then((transaction) => {
                             console.log('Transaction sent1:', transaction);
                             return true;
                         }).catch((error: any) => {
@@ -561,7 +795,7 @@ const useWallet = () => {
                             return false;
                         });
                     } else {
-                        return await contract.investGood(invest.from.id, invest.to.id, famount,defaultData,defaultData).then((transaction) => {
+                        return await contract.investGood(invest.from.id, invest.to.id, famount, defaultData, defaultData).then((transaction) => {
                             console.log('Transaction sent2:', transaction);
                             return true;
                         }).catch((error: any) => {
@@ -597,7 +831,7 @@ const useWallet = () => {
             console.log("000000", reference)
             if (address === address0) {
                 console.log(0, amount)
-                return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference,defaultData, { value: amount }).then((transaction) => {
+                return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference, defaultData, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
                     return true;
                 }).catch((error: any) => {
@@ -617,7 +851,7 @@ const useWallet = () => {
                     return false;
                 });
                 if (allowanceF) {
-                    return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference,defaultData).then((transaction) => {
+                    return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference, defaultData).then((transaction) => {
                         console.log('buyGood Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
@@ -629,7 +863,7 @@ const useWallet = () => {
                         console.log('approve Transaction sent:', transaction);
                         return transaction.wait().then(async (receipt: any) => {
                             console.log('approve Transaction mined:', receipt);
-                            return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference,defaultData).then((transaction) => {
+                            return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference, defaultData).then((transaction) => {
                                 console.log('buyGood Transaction sent:', transaction);
                                 return true;
                             }).catch((error: any) => {
