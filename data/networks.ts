@@ -27,7 +27,16 @@ const BNB: AddEthereumChainParameter["nativeCurrency"] = {
   symbol: "BNB",
   decimals: 18
 };
-
+const FLOW: AddEthereumChainParameter["nativeCurrency"] = {
+  name: "Flow",
+  symbol: "FLOW",
+  decimals: 18
+};
+const MNT: AddEthereumChainParameter["nativeCurrency"] = {
+  name: "MNT",
+  symbol: "MNT",
+  decimals: 18
+};
 interface BasicChainInformation {
   chainId: string;
   urls: string[];
@@ -94,7 +103,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://rpc.ankr.com/eth"].filter(Boolean),
     name: "Mainnet",
-    chainName:"ethereum",
+    chainName: "ethereum",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://etherscan.io"]
   },
@@ -107,7 +116,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://sepolia.infura.io/v3/", "https://rpc.sepolia.org"].filter(Boolean),
     name: "Sepolia",
-    chainName:"sepolia",
+    chainName: "sepolia",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://sepolia.etherscan.io"]
   },
@@ -121,7 +130,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://mainnet.optimism.io"].filter(Boolean),
     name: "OP Mainnet",
-    chainName:"optimism",
+    chainName: "optimism",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://optimistic.etherscan.io"]
   },
@@ -134,7 +143,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://goerli.optimism.io"].filter(Boolean),
     name: "Optimism Goerli",
-    chainName:"optimismgoerli",
+    chainName: "optimismgoerli",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://goerli-explorer.optimism.io"]
   },
@@ -148,7 +157,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://arb1.arbitrum.io/rpc"].filter(Boolean),
     name: "Arbitrum One",
-    chainName:"arbitrum",
+    chainName: "arbitrum",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://arbiscan.io"]
   },
@@ -161,7 +170,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://sepolia-rollup.arbitrum.io/rpc"].filter(Boolean),
     name: "Arbitrum Sepolia",
-    chainName:"arbitrumsepolia",
+    chainName: "arbitrumsepolia",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://sepolia.arbiscan.io/"]
   },
@@ -176,7 +185,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://polygon-rpc.com"].filter(Boolean),
     name: "Polygon",
-    chainName:"polygon",
+    chainName: "polygon",
     nativeCurrency: MATIC,
     blockExplorerUrls: ["https://polygonscan.com"]
   },
@@ -189,7 +198,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://rpc-mumbai.maticvigil.com"].filter(Boolean),
     name: "Polygon Mumbai",
-    chainName:"polygonmumbai",
+    chainName: "polygonmumbai",
     nativeCurrency: MATIC,
     blockExplorerUrls: ["https://mumbai.polygonscan.com"]
   },
@@ -202,7 +211,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://mainnet.era.zksync.io"].filter(Boolean),
     name: "zkSync Era",
-    chainName:"zksync",
+    chainName: "zksync",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://explorer.zksync.io"]
   },
@@ -214,7 +223,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://testnet.era.zksync.dev"].filter(Boolean),
     name: "zkSync Era Testnet",
-    chainName:"zksyncgoerli",
+    chainName: "zksyncgoerli",
     nativeCurrency: ETH,
     blockExplorerUrls: ["https://goerli.explorer.zksync.io"]
   },
@@ -227,7 +236,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://rpc.ankr.com/fantom"].filter(Boolean),
     name: "Fantom",
-    chainName:"fantom",
+    chainName: "fantom",
     nativeCurrency: FTM,
     blockExplorerUrls: ["https://ftmscan.com/"]
   },
@@ -236,7 +245,7 @@ export const CHAINS: {
     urls: ["https://rpc.testnet.fantom.network"].filter(Boolean),
     publicUrls: ["https://rpc.testnet.fantom.network"].filter(Boolean),
     name: "Fantom Testnet",
-    chainName:"fantomtest",
+    chainName: "fantomtest",
     nativeCurrency: FTM,
     blockExplorerUrls: ["https://testnet.ftmscan.com/"]
   },
@@ -250,7 +259,7 @@ export const CHAINS: {
     ].filter(Boolean),
     publicUrls: ["https://rpc.ankr.com/bsc"].filter(Boolean),
     name: "BNB Smart Chain",
-    chainName:"binance",
+    chainName: "binance",
     nativeCurrency: BNB,
     blockExplorerUrls: ["https://bscscan.com/"]
   },
@@ -261,10 +270,78 @@ export const CHAINS: {
     ),
     publicUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"].filter(Boolean),
     name: "BSC Testnet",
-    chainName:"binancetestnet",
+    chainName: "binancetestnet",
     nativeCurrency: BNB,
     blockExplorerUrls: ["https://testnet.bscscan.com/"]
-  }
+  },
+  // FLOW
+  747: {
+    chainId: "747",
+    urls: ["https://mainnet.evm.nodes.onflow.org"].filter(
+      Boolean
+    ),
+    publicUrls: ["https://mainnet.evm.nodes.onflow.org"].filter(Boolean),
+    name: "FlowEVM Mainnet",
+    chainName: "flowMainnet",
+    nativeCurrency: FLOW,
+    blockExplorerUrls: ["https://flowdiver.io"]
+  },
+  646: {
+    chainId: "646",
+    urls: ["https://previewnet.evm.nodes.onflow.org"].filter(
+      Boolean
+    ),
+    publicUrls: ["https://previewnet.evm.nodes.onflow.org"].filter(Boolean),
+    name: "FlowEVM Previewnet",
+    chainName: "flowPreviewnet",
+    nativeCurrency: FLOW,
+    blockExplorerUrls: ["https://previewnet.flowdiver.io"]
+  },
+  545: {
+    chainId: "545",
+    urls: ["https://testnet.evm.nodes.onflow.org"].filter(
+      Boolean
+    ),
+    publicUrls: ["https://testnet.evm.nodes.onflow.org"].filter(Boolean),
+    name: "FlowEVM Testnet",
+    chainName: "flowTestnet",
+    nativeCurrency: FLOW,
+    blockExplorerUrls: ["https://testnet.flowdiver.io"]
+  },
+  // MNT
+  5000: {
+    chainId: "5000",
+    urls: ["https://rpc.mantle.xyz"].filter(
+      Boolean
+    ),
+    publicUrls: ["https://rpc.mantle.xyz"].filter(Boolean),
+    name: "Mantle",
+    chainName: "mantle",
+    nativeCurrency: MNT,
+    blockExplorerUrls: ["https://mantlescan.xyz/"]
+  },
+  5001: {
+    chainId: "5001",
+    urls: ["https://rpc.testnet.mantle.xyz"].filter(
+      Boolean
+    ),
+    publicUrls: ["https://rpc.testnet.mantle.xyz"].filter(Boolean),
+    name: "Mantle Testnet",
+    chainName: "mantleTestnet",
+    nativeCurrency: MNT,
+    blockExplorerUrls: ["https://explorer.testnet.mantle.xyz"]
+  },
+  5003: {
+    chainId: "5003",
+    urls: ["https://rpc.sepolia.mantle.xyz"].filter(
+      Boolean
+    ),
+    publicUrls: ["https://rpc.sepolia.mantle.xyz"].filter(Boolean),
+    name: "Mantle Sepolia",
+    chainName: "mantleSepolia",
+    nativeCurrency: MNT,
+    blockExplorerUrls: ["https://explorer.sepolia.mantle.xyz/"]
+  },
 };
 
 export const URLS: { [chainId: number]: string[] } = Object.keys(CHAINS).reduce<{ [chainId: number]: string[] }>(

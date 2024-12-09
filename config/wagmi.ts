@@ -72,11 +72,15 @@ import {
   bsc,
   celo,
   celoAlfajores,
+  flowMainnet,
+  flowPreviewnet,
+  flowTestnet,
   holesky,
   klaytn,
   klaytnBaobab,
   mainnet,
   mantle,
+  mantleSepoliaTestnet,
   mantleTestnet,
   optimism,
   optimismSepolia,
@@ -86,13 +90,13 @@ import {
   sepolia,
   zetachain,
   zetachainAthensTestnet,
-  zkSync,
+  zksync,
   zora,
   zoraSepolia,
 } from 'wagmi/chains';
 import { http, createConfig } from 'wagmi';
 
-const projectId ='fba1325852fabad486bab619f8300d1c';
+const projectId = 'fba1325852fabad486bab619f8300d1c';
 
 const avalanche = {
   id: 43_114,
@@ -148,13 +152,19 @@ export const config = getDefaultConfig({
     // avalanche,
     // zora,
     // blast,
-    // zkSync,
+    // zksync,
     // zetachain,
     // ronin,
     // klaytn,
     // sei,
     // mantle,
-    // celo
+    // celo,
+    // flowMainnet,
+    // flowPreviewnet,
+    // flowTestnet,
+    // mantle,
+    // mantleSepoliaTestnet,
+    mantleTestnet,
   ],
   wallets: [
     {

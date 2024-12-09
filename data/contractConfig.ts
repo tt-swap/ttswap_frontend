@@ -95,5 +95,35 @@ export const contractCon: {
     chainId: "97",
     contractAddress: "0xa50eb0d081E986c280efF32dae089939Ea07bd22",
     theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_bnb/version/latest"
+  },
+  747: {
+    chainId: "747",
+    contractAddress: "0xa50eb0d081E986c280efF32dae089939Ea07bd22",
+    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_bnb/version/latest"
+  },
+  646: {
+    chainId: "646",
+    contractAddress: "0xa50eb0d081E986c280efF32dae089939Ea07bd22",
+    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_bnb/version/latest"
+  },
+  545: {
+    chainId: "545",
+    contractAddress: "0xa50eb0d081E986c280efF32dae089939Ea07bd22",
+    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_bnb/version/latest"
+  },
+  5000: {
+    chainId: "5000",
+    contractAddress: "0xa50eb0d081E986c280efF32dae089939Ea07bd22",
+    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_bnb/version/latest"
+  },
+  5003: {
+    chainId: "5003",
+    contractAddress: "0xa50eb0d081E986c280efF32dae089939Ea07bd22",
+    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_bnb/version/latest"
+  },
+  5001: {
+    chainId: "5001",
+    contractAddress: "0xa50eb0d081E986c280efF32dae089939Ea07bd22",
+    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_bnb/version/latest"
   }
 };

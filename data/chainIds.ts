@@ -1,4 +1,4 @@
-export const chainIds:{[chname:string]:any} = {
+export const chainIds: { [chname: string]: any } = {
   ethereum: "1",
   sepolia: "11155111",
   optimism: "10",
@@ -12,5 +12,7 @@ export const chainIds:{[chname:string]:any} = {
   arbitrum: "42161",
   polygonmumbai: "80001",
   fantom: "250",
-  arbitrumsepolia: "421614"
+  arbitrumsepolia: "421614", flowMainnet: "747", flowPreviewnet: "646", flowTestnet: "545", mantle: "5000",
+  mantleSepolia: "5003",
+  mantleTestnet: "5001",
 };

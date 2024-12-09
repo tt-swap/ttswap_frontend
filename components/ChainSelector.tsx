@@ -11,6 +11,7 @@ import ethereum_Logo from "assets/images/ethereum_Logo.png";
 import fantom_Logo from "assets/images/fantom_Logo.png";
 import polygon_logo from "assets/images/polygon_logo.png";
 import zksync_Logo from "assets/images/zksync_Logo.png";
+import mantle_Logo from "assets/images/mantle_Logo.png";
 import bsc_Logo from "assets/svg/bsc_Logo.svg";
 import optimistim_Logo from "assets/svg/optimistim_Logo.svg";
 import { chainIds } from "data/chainIds";
@@ -88,7 +89,9 @@ const ChainSelector: FC = () => {
       // { label: "Fantom", key: chainIds.fantom, icon: labelToShow(fantom_Logo, "Fantom_Logo") },
       // { label: "Fantom testnet", key: chainIds.fantomtest, icon: labelToShow(fantom_Logo, "Fantom_Logo") },
       // { label: "BNB Chain", key: chainIds.binance, icon: labelToShow(bsc_Logo, "BNB_logo") },
-      // { label: "BSC Testnet", key: chainIds.binancetestnet, icon: labelToShow(bsc_Logo, "BNB_logo") }
+      // { label: "BSC Testnet", key: chainIds.binancetestnet, icon: labelToShow(bsc_Logo, "BNB_logo") },
+      { label: "Mantle Testnet", key: chainIds.mantleTestnet, icon: labelToShow(mantle_Logo, "MNT_logo") },
+      // { label: "FlowEVM Testnet", key: chainIds.flowTestnet, icon: labelToShow(flow_Logo, "FLOW_logo") },
     ],
     []
   );
@@ -127,6 +130,10 @@ const ChainSelector: FC = () => {
       selectedLabel = labelToShow(arbitrum_Logo, "Arbitrum_Logo");
     } else if (chainId1 === 56 || chainId1 === 97) {
       selectedLabel = labelToShow(bsc_Logo, "BNB_logo");
+    } else if (chainId1 === 5000 || chainId1 === 5001) {
+      selectedLabel = labelToShow(mantle_Logo, "MNT_logo");
+    } else if (chainId1 === 747 || chainId1 === 545) {
+      // selectedLabel = labelToShow(flow_Logo, "FLOW_logo");
     } else {
       selectedLabel = undefined;
     }
