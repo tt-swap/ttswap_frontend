@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 // import type { TabsProps } from 'antd';
 // import { handleTabSwitch } from "@/utils/router";
 import banner1 from "static/christmas-banner.png";
-// import banner2 from "static/christmas-banner-1.png";
+import banner2 from "static/christmas-banner-1.png";
 
 export default function Home({ params }: { params: { chain: string, dex: string } }) {
 
@@ -25,11 +25,11 @@ export default function Home({ params }: { params: { chain: string, dex: string 
 
   return (
     <div className="w-full flex flex-col gap-20"
-      // style={{ margin: "-3rem 0rem" }}
+    // style={{ margin: "-3rem 0rem" }}
     >
       {/* <Flex align="end" gap="4"> */}
       <img src={banner1.src}></img>
-      {/* <img src={banner2.src}></img> */}
+      <img src={banner2.src}></img>
       {/* </Flex> */}
     </div>
   )

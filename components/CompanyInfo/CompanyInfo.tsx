@@ -47,6 +47,26 @@ const CompanyInfo: FC = () => {
         router.push(newRoute);
     }
 
+    const tzlb = (
+            <div className="flex justify-between gap-8 ico-eas">
+                <a target="_blank" rel="noopener noreferrer" href="https://x.com/ttswapFinance">
+                    <XOutlined />
+                </a>
+                <a target="_blank" rel="noopener noreferrer" href="https://discord.gg/XygqnmQgX3">
+                    <DiscordOutlined />
+                </a>
+                <a target="_blank" rel="noopener noreferrer" href="mailto:ttswap.exchange@gmail.com">
+                    <MailOutlined />
+                </a>
+                <a target="_blank" rel="noopener noreferrer" href="https://github.com/tt-swap">
+                    <GithubOutlined />
+                </a>
+                <a target="_blank" rel="noopener noreferrer" href="https://t.me/ttswap01">
+                    <Icons.Telegram className="h-5 w-5" />
+                </a>
+            </div>
+        );
+
     const labelToShow = (logo: StaticImageData, alt: string) => {
         return (
             <div className="flex items-center">
@@ -83,23 +103,7 @@ const CompanyInfo: FC = () => {
             children: [
                 {
                     key: '2-1',
-                    label: (<div className="flex justify-between gap-8 ico-eas">
-                        <a target="_blank" rel="noopener noreferrer" href="https://x.com/ttswapFinance">
-                            <XOutlined />
-                        </a>
-                        <a target="_blank" rel="noopener noreferrer" href="https://discord.gg/XygqnmQgX3">
-                            <DiscordOutlined />
-                        </a>
-                        <a target="_blank" rel="noopener noreferrer" href="mailto:ttswap.exchange@gmail.com">
-                            <MailOutlined />
-                        </a>
-                        <a target="_blank" rel="noopener noreferrer" href="https://github.com/tt-swap">
-                            <GithubOutlined />
-                        </a>
-                        <a target="_blank" rel="noopener noreferrer" href="https://t.me/ttswap01">
-                            <Icons.Telegram className="h-5 w-5" />
-                        </a>
-                    </div>),
+                    label: (tzlb),
                 },
             ],
         },
@@ -158,23 +162,7 @@ const CompanyInfo: FC = () => {
             children: [
                 {
                     key: '2-1',
-                    label: (<div className="flex justify-between gap-8 ico-eas">
-                        <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/ttswap_exchange">
-                            <XOutlined />
-                        </a>
-                        <a target="_blank" rel="noopener noreferrer" href="https://discord.gg/5PhXn9DR">
-                            <DiscordOutlined />
-                        </a>
-                        <a target="_blank" rel="noopener noreferrer" href="mailto:ttswap.exchange@gmail.com">
-                            <MailOutlined />
-                        </a>
-                        <a target="_blank" rel="noopener noreferrer" href="https://github.com/tt-swap">
-                            <GithubOutlined />
-                        </a>
-                        <a target="_blank" rel="noopener noreferrer" href="https://t.me/ttswap01">
-                            <Icons.Telegram className="h-5 w-5" />
-                        </a>
-                    </div>),
+                    label: (tzlb),
                 },
             ],
         }
