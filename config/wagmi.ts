@@ -164,7 +164,7 @@ export const config = getDefaultConfig({
     // flowTestnet,
     // mantle,
     // mantleSepoliaTestnet,
-    mantleTestnet,
+    // mantleTestnet,
   ],
   wallets: [
     {

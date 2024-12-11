@@ -186,7 +186,7 @@ const CompanyInfo: FC = () => {
         <Dropdown menu={menuProps} overlayClassName="custom-dropdown">
             <a
                 className="flex items-center logo"
-                onClick={(e) => e.preventDefault()}>
+                onClick={(e) => handleTabSwitch("home")}>
                 <Space>
                     {labelToShow(Logo, "")}
                     {windowWidth > 1290 ? (<span className="logo-name">TTSWAP</span>) : (<span></span>)}

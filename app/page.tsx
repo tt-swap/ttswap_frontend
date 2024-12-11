@@ -11,7 +11,7 @@ export default function IndexPage() {
     if (pathname === '/') {
       const value = "sepolia";
       const address = "ttswap";
-      const redirectTo = `/${value}/${address}/goods/`;
+      const redirectTo = `/${value}/${address}/home/`;
       router.push(redirectTo);
     }
   }, [router]);

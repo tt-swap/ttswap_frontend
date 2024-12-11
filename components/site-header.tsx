@@ -70,6 +70,11 @@ export function SiteHeader() {
     }, [pathname]);
 
     const items: MenuProps['items'] = [
+        // {
+        //     label: t('header.menu.home') || "Home",
+        //     key: 'home',
+        //     onClick: () => handleTabSwitch("home"),
+        // },
         {
             label: t('header.menu.goods') || "Goods",
             key: 'goods',
