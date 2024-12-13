@@ -10,6 +10,11 @@ import { handleTabSwitch, getString } from "@/utils/router";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { ethers } from "ethers";
+import i18n from '@/i18n/i18n';
+import banner1 from "static/christmas-banner.png";
+import banner2 from "static/christmas-banner-1.png";
+import banneren1 from "static/christmas-banner-en.png";
+import banneren2 from "static/christmas-banner-1-en.png";
 
 export default function Goods({ params }: { params: { chain: string, dex: string } }) {
   const router = useRouter();
@@ -20,15 +25,21 @@ export default function Goods({ params }: { params: { chain: string, dex: string
   // @ts-ignore
   const { ssionChian } = useLocalStorage();
   const { t, ready } = useTranslation();
+  const [lang, setLang] = useState('en');
+  const [open, setopen] = useState(false);
 
   useEffect(() => {
     document.title = t('header.menu.goods');
   }, [t('header.menu.goods')]);
 
   useEffect(() => {
+    setLang(i18n.language);
+  }, [i18n.language]);
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
       const params = window.location.search;
-      const a:any = getString(params);
+      const a: any = getString(params);
       // console.log(ethers.isAddress(null),"reference---")
       if (getString(params) !== null && ethers.isAddress(a) && !ethers.isAddress(localStorage.getItem("reference"))) {
         // @ts-ignore
@@ -48,10 +59,42 @@ export default function Goods({ params }: { params: { chain: string, dex: string
     }
   }, []);
 
+  const bannerOP = () => {
+    if (open) {
+      setopen(false)
+    } else {
+      setopen(true)
+    }
+
+  };
+
+  useEffect(() => {
+    if (open) {
+      document.addEventListener('mousedown', bannerOP);
+    } else {
+      document.removeEventListener('mousedown', bannerOP);
+    }
+    return () => {
+      document.removeEventListener('mousedown', bannerOP);
+    };
+  }, [open]);
   // if (!ready) return <div><Skeleton active /></div>;
   return (
     // <Suspense fallback={<Skeleton active />}>
     <div className="w-full flex flex-col gap-4">
+
+      <div className="cursor-pointer"
+        style={{ marginBottom: "3rem" }}
+      >
+        <img src={lang === 'zh' ? banner1.src : banneren1.src}
+          onClick={bannerOP}
+        />
+      </div>
+      {open && (
+        <div className="banner-open cursor-pointer">
+          <img src={lang === 'zh' ? banner2.src : banneren2.src}></img>
+        </div>
+      )}
       {/* <h1 className="pt-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
         Overview
       </h1> */}

@@ -83,6 +83,7 @@ export function SiteHeader() {
         {
             label: t('header.menu.trade') || "Trade",
             key: 'trade',
+            // onClick: () => handleTabSwitch("swap"),
             children: [
                 {
                     label: t('header.menu.trade.swap') || "Swap",
@@ -104,7 +105,7 @@ export function SiteHeader() {
     ];
 
     const onClick: MenuProps['onClick'] = (e) => {
-        console.log('click ', e);
+        // console.log('click ', e);
         setCurrent(e.key);
     };
 

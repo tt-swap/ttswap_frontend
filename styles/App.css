@@ -505,3 +505,13 @@ tbody tr:hover {
 .ant-tree-switcher {
   display: none !important;
 }
+
+.banner-open{
+  position: absolute;
+  width: 1120px;
+  /* top: 20%; */
+  background: #2f2f2fad;
+  /* padding: 80px 40px; */
+  z-index: 9999;
+  /* border-radius: 8px; */
+}

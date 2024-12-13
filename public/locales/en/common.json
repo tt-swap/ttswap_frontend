@@ -35,6 +35,7 @@
         "header.menu.faucet.obtain": "Obtain Test Coin",
         "header.menu.faucet.testeth": "Sepolia Test ETH",
         "header.menu.faucet.testbnb": "BSC Test BNB",
+        "header.menu.faucet.testmnt": "Test MNT",
         "footer.title1": "Contact Us",
         "footer.title2": "Docs",
         "footer.menu": "App",

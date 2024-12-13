@@ -55,7 +55,7 @@ const CompanyInfo: FC = () => {
                 <a target="_blank" rel="noopener noreferrer" href="https://discord.gg/XygqnmQgX3">
                     <DiscordOutlined />
                 </a>
-                <a target="_blank" rel="noopener noreferrer" href="mailto:ttswap.exchange@gmail.com">
+                <a target="_blank" rel="noopener noreferrer" href="mailto:ttswapfinance@gmail.com">
                     <MailOutlined />
                 </a>
                 <a target="_blank" rel="noopener noreferrer" href="https://github.com/tt-swap">
@@ -174,7 +174,7 @@ const CompanyInfo: FC = () => {
         <Dropdown menu={menuProps} overlayClassName="custom-dropdown">
             <a
                 className="flex items-center logo"
-                onClick={(e) => handleTabSwitch("home")}>
+                onClick={(e) => handleTabSwitch("goods")}>
                 <Space>
                     {labelToShow(Logo, "")}
                     {windowWidth > 1290 ? (<span className="logo-name">TTSWAP</span>) : (<span></span>)}

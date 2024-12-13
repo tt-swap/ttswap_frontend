@@ -96,7 +96,14 @@ export const Faucet = ({ }: Props) => {
             id: "0x875A9522d695804e1F1636eE3616E6185F74b563", symbol: "WBTC", logo_url: "", address: "0x875A9522d695804e1F1636eE3616E6185F74b563"
         }, {
             id: "0x9588F74Df5BbC1CD3a45720Cb944A4b1048A4450", symbol: "WBNB", logo_url: "", address: "0x9588F74Df5BbC1CD3a45720Cb944A4b1048A4450"
-        }]
+        }],
+        5003: [{
+            id: "0x875A9522d695804e1F1636eE3616E6185F74b563", symbol: "USDT", logo_url: "", address: "0x875A9522d695804e1F1636eE3616E6185F74b563"
+        }, {
+            id: "0xa50eb0d081E986c280efF32dae089939Ea07bd22", symbol: "WBTC", logo_url: "", address: "0xa50eb0d081E986c280efF32dae089939Ea07bd22"
+        }, {
+            id: "0xCaFBbAd55eb09efe7bec8408Cff9932Be7D9A7fA", symbol: "WETH", logo_url: "", address: "0xCaFBbAd55eb09efe7bec8408Cff9932Be7D9A7fA"
+        }],
     };
 
     useEffect(() => {
@@ -275,12 +282,12 @@ export const Faucet = ({ }: Props) => {
                             style={styles.newButton1}
                         >{t('header.menu.faucet.testeth')}</Button>
                     </a>
-                    {/* <a href='https://www.bnbchain.org/en/testnet-faucet' className='w-full' target='_bank'>
+                    <a href='https://docs.mantle.xyz/network/for-uers/how-to-guides/fetching-test-tokens#faucets' className='w-full' target='_bank'>
                         <Button
                             type="primary"
                             style={styles.newButton1}
-                        >{t('header.menu.faucet.testbnb')}</Button>
-                    </a> */}
+                        >{t('header.menu.faucet.testmnt')}</Button>
+                    </a>
                 </div>
             </CreatModal>
         </>

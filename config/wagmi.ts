@@ -95,6 +95,7 @@ import {
   zoraSepolia,
 } from 'wagmi/chains';
 import { http, createConfig } from 'wagmi';
+import mantle_Logo from "assets/images/mantle_Logo.png";
 
 const projectId = 'fba1325852fabad486bab619f8300d1c';
 
@@ -134,6 +135,34 @@ const sei = {
   contracts: {},
 } as const satisfies Chain;
 
+const mantleSepolia = {
+  id: 5003,
+  name: 'Mantle Sepolia',
+  iconUrl: mantle_Logo.src,
+  nativeCurrency: {
+    decimals: 18,
+    name: 'MNT',
+    symbol: 'MNT',
+  },
+  rpcUrls: {
+    default: { http: ['https://rpc.sepolia.mantle.xyz'] },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Mantle Testnet Explorer',
+      url: 'https://explorer.sepolia.mantle.xyz/',
+      apiUrl: 'https://explorer.sepolia.mantle.xyz/api',
+    },
+  },
+  contracts: {
+    multicall3: {
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 4584012,
+    },
+  },
+  testnet: true,
+} as const satisfies Chain;
+
 // Enable Smart Wallet and EOA
 // Testing `preference` type
 coinbaseWallet.preference = 'all';
@@ -163,7 +192,7 @@ export const config = getDefaultConfig({
     // flowPreviewnet,
     // flowTestnet,
     // mantle,
-    // mantleSepoliaTestnet,
+    mantleSepolia,
     // mantleTestnet,
   ],
   wallets: [
@@ -238,6 +267,8 @@ export const config = getDefaultConfig({
   ],
   transports: {
     [sepolia.id]: http(),
+    [mantleSepoliaTestnet.id]: http(),
+    // [mantleTestnet.id]: http(),
     // [mainnet.id]: http(),
     // [arbitrum.id]: http(),
     // [polygon.id]: http(),

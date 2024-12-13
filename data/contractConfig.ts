@@ -27,8 +27,8 @@ export const contractCon: {
   },
   11155111: {
     chainId: "11155111",
-    contractAddress: "0x91E8A9df7B41d25f8F68085dfBB1a4BBC478C1eD",
-    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap-v1/version/latest"
+    contractAddress: "0x5A834d9973E6E916374b83e6dac4Def5fD66695d",
+    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap/version/latest"
   },
   // Optimism
   10: {
@@ -118,12 +118,12 @@ export const contractCon: {
   },
   5003: {
     chainId: "5003",
-    contractAddress: "0xa50eb0d081E986c280efF32dae089939Ea07bd22",
-    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_bnb/version/latest"
+    contractAddress: "0x4A639A276910ECD78370B32BDC92278e032Dbb21",
+    theGraphApi: "https://subgraph-api.mantle.xyz/api/public/200e5831-7db0-4aa7-9c64-aceb9ac35caa/subgraphs/ttswap/v0.0.17/gn"
   },
   5001: {
     chainId: "5001",
-    contractAddress: "0xa50eb0d081E986c280efF32dae089939Ea07bd22",
-    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_bnb/version/latest"
+    contractAddress: "0x4A639A276910ECD78370B32BDC92278e032Dbb21",
+    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap-v1/version/latest"
   }
 };
