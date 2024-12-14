@@ -47,7 +47,7 @@ const ChainSelector: FC = () => {
   // const switchChain = useSwitchChain();
   // const { chainId, isActive, account } = useWeb3React();
   // const { isTablet } = useWindowSize();
-  const [chainId1, setChainId] = useState(11155111);
+  const [chainId1, setChainId] = useState(0);
   const [selected, setSelected] = useState<MenuItem>();
   const [label, setLabel] = useState<JSX.Element>();
   // @ts-ignore

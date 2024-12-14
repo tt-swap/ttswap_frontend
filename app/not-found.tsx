@@ -2,14 +2,20 @@
 
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useLocalStorage } from "@/utils/LocalStorageManager";
+import { getAddChainParameters } from "@/data/networks";
 
 export default function NotFound() {
     const router = useRouter();
     const pathname = usePathname();
     const routeSegments = pathname.split('/');
+    // @ts-ignore
+    const { ssionChian } = useLocalStorage();
+    // @ts-ignore
+    const chainName = getAddChainParameters(ssionChian).chainName;
 
     useEffect(() => {
-        const value = "sepolia";
+        const value = chainName;
         const address = "ttswap";
         const name = "goods";
 

@@ -44,7 +44,7 @@ const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   let pathname = usePathname();
-  const [ssionChian, setSsionChian] = useState(11155111);
+  const [ssionChian, setSsionChian] = useState(5003);
   const { info, setValueGood } = useValueGood();
 
   const [language, setLanguage] = useState('en');
@@ -107,7 +107,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   useEffect(() => {
     (async () => {
       const bal = await valueGood(ssionChian);
-      // console.log(bal,99999999999)
+      // console.log(bal,99999999999,ssionChian)
       setValueGood({
         id: bal.data.goodStates[0].id,
         symbol: bal.data.goodStates[0].tokensymbol,
