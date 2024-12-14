@@ -119,7 +119,7 @@ export const contractCon: {
   5003: {
     chainId: "5003",
     contractAddress: "0x4A639A276910ECD78370B32BDC92278e032Dbb21",
-    theGraphApi: "https://subgraph-api.mantle.xyz/api/public/200e5831-7db0-4aa7-9c64-aceb9ac35caa/subgraphs/ttswap/v0.0.17/gn"
+    theGraphApi: "https://subgraph-api.mantle.xyz/api/public/200e5831-7db0-4aa7-9c64-aceb9ac35caa/subgraphs/ttswap/v0.0.26/gn"
   },
   5001: {
     chainId: "5001",
