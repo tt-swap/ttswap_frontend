@@ -42,6 +42,58 @@ const useWallet = () => {
     const [account, setAccount] = useState<string>();
     const [isActive, setIsActive] = useState(false);
 
+    async function checkContractSupport(contractToken: string | ethers.Addressable, type: string) {
+        const tokenContract = new ethers.Contract(contractToken, erc20, signer);
+
+        if (type === 'permit') {
+            try {
+                const userAddress = await signer?.getAddress();
+                const nonce = await tokenContract.nonces(userAddress);
+                console.log("该代币支持 Permit，nonce:", nonce.toString());
+                return true;
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    console.log("该代币不支持 Permit:", error.message);
+                } else {
+                    console.log("该代币不支持 Permit: 未知错误");
+                }
+                return false;
+            }
+        } else {
+            try {
+                // 尝试调用 permit 函数
+                await tokenContract.permit("0x0000000000000000000000000000000000000000", "0x0000000000000000000000000000000000000000", 0, 0, 0, "0x0", "0x0");
+                console.log("该代币支持 Permit2");
+                return true;
+            } catch (error: unknown) { // 指定 error 的类型为 unknown
+                if (error instanceof Error) {
+                    console.log("该代币不支持 Permit2:", error.message);
+                } else {
+                    console.log("该代币不支持 Permit2: 未知错误");
+                }
+                return false;
+            }
+        }
+        // // 检查 ERC20-PERMIT 支持
+        // const supportsERC20Permit = await checkInterface(contract, ERC20_PERMIT_INTERFACE);
+        // console.log("Supports ERC20-PERMIT:", supportsERC20Permit);
+
+        // // 检查 PERMIT2 支持
+        // const supportsPermit2 = await checkInterface(contract, PERMIT2_INTERFACE);
+        // console.log("Supports PERMIT2:", supportsPermit2);
+    }
+
+    // async function checkInterface(contract: ethers.Contract, interfaceMethods: string[]) {
+    //     for (const method of interfaceMethods) {
+    //         try {
+    //             await contract[method.split(" ")[0]](); // 调用方法以检查支持
+    //         } catch (error) {
+    //             return false; // 如果调用失败，表示不支持
+    //         }
+    //     }
+    //     return true; // 所有方法都支持
+    // }
+
     useEffect(() => {
         if (!isConnected) {
             setIsActive(false);
@@ -815,7 +867,8 @@ const useWallet = () => {
 
     const swapBuyGood = async (params: any, amount: any, address: string) => {
         try {
-
+            // checkContractSupport(address, 'permit')
+            // checkContractSupport(address, 'permit2')
             // console.log(1110, params, amount, address)
             //const signer = await provider.getSigner()
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);

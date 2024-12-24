@@ -7,6 +7,7 @@ interface BasicChainInformation {
 }
 
 export const getContractAddress = (chainId: number): string => {
+  // alert(chainId)
   const chainInformation = contractCon[chainId];
   return chainInformation.contractAddress;
 };

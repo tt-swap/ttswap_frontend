@@ -2,7 +2,7 @@
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useTranslation } from 'react-i18next';
-import { Skeleton } from 'antd';
+import { Skeleton, Carousel } from 'antd';
 import { GoldRushProvider } from "@/utils/store";
 import { XYKTokenListView } from "@/components/Organisms"
 import { XYKOverviewTimeSeries } from "@/components/Molecules"
@@ -82,14 +82,15 @@ export default function Goods({ params }: { params: { chain: string, dex: string
   return (
     // <Suspense fallback={<Skeleton active />}>
     <div className="w-full flex flex-col gap-4">
-
-      <div className="cursor-pointer"
-        style={{ marginBottom: "3rem" }}
-      >
-        <img src={lang === 'zh' ? banner1.src : banneren1.src}
-          onClick={bannerOP}
-        />
-      </div>
+      <Carousel autoplay arrows>
+        <div className="cursor-pointer"
+          style={{ marginBottom: "3rem" }}
+        >
+          <img src={lang === 'zh' ? banner1.src : banneren1.src}
+            onClick={bannerOP}
+          />
+        </div>
+      </Carousel>
       {open && (
         <div className="banner-open cursor-pointer">
           <img src={lang === 'zh' ? banner2.src : banneren2.src}></img>

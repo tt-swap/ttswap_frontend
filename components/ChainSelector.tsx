@@ -47,11 +47,11 @@ const ChainSelector: FC = () => {
   // const switchChain = useSwitchChain();
   // const { chainId, isActive, account } = useWeb3React();
   // const { isTablet } = useWindowSize();
-  const [chainId1, setChainId] = useState(0);
   const [selected, setSelected] = useState<MenuItem>();
   const [label, setLabel] = useState<JSX.Element>();
   // @ts-ignore
   const { ssionChian,setSsionChian } = useLocalStorage();
+  const [chainId1, setChainId] = useState(ssionChian);
 
   const routeSegments = pathname.split('/');
 
@@ -114,7 +114,7 @@ const ChainSelector: FC = () => {
       // setChainId(chainId);
     }
 
-    // if (!chainId1) return;
+    // if (chainId1===0) return;
     let selectedLabel;
     if (chainId1 === 1 || chainId1 === 11155111) {
       selectedLabel = labelToShow(ethereum_Logo, "Ethereum_logo");
