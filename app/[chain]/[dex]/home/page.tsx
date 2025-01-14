@@ -6,10 +6,10 @@ import i18n from '@/i18n/i18n';
 // import { message, Button, Tabs } from 'antd';
 // import type { TabsProps } from 'antd';
 // import { handleTabSwitch } from "@/utils/router";
-import banner1 from "static/christmas-banner.png";
-import banner2 from "static/christmas-banner-1.png";
-import banneren1 from "static/christmas-banner-en.png";
-import banneren2 from "static/christmas-banner-1-en.png";
+// import banner1 from "static/christmas-banner.png";
+// import banner2 from "static/christmas-banner-1.png";
+// import banneren1 from "static/christmas-banner-en.png";
+// import banneren2 from "static/christmas-banner-1-en.png";
 
 export default function Home({ params }: { params: { chain: string, dex: string } }) {
 
@@ -28,8 +28,8 @@ export default function Home({ params }: { params: { chain: string, dex: string 
     // style={{ margin: "-3rem 0rem" }}
     >
       {/* <Flex align="end" gap="4"> */}
-      <img src={lang==='zh'?banner1.src:banneren1.src}></img>
-      <img src={lang==='zh'?banner2.src:banneren2.src}></img>
+      {/* <img src={lang==='zh'?banner1.src:banneren1.src}></img>
+      <img src={lang==='zh'?banner2.src:banneren2.src}></img> */}
       {/* </Flex> */}
     </div>
   )
