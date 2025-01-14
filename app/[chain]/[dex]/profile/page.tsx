@@ -12,6 +12,7 @@ import type { TabsProps } from 'antd';
 import { handleTabSwitch } from "@/utils/router";
 import { useEffect, useState, useMemo } from "react";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
+// import { Faucet } from "@/components/test01"
 
 // import { useWeb3React } from "@web3-react/core";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
@@ -240,6 +241,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
   return (
     <div className="w-full flex flex-col gap-4">
       {contextHolder}
+      {/* <Faucet></Faucet> */}
       {/* <h1 className="pt-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
         Account
       </h1> */}

@@ -173,6 +173,7 @@
         "body.goods.level3.divestchips.tip": "The chips use when divist and is configed by token's manager.",
         "body.swap.tolerance": "Tolerance",
         "body.swap.tolerance.all": "Only Whole Commit.",
+        "body.swap.tolerance.maxApprove": "Max Approval",
         "body.swap.from": "From",
         "body.swap.to": "To (estimated)",
         "body.swap.balance": "Balance",

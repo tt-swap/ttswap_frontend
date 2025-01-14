@@ -89,6 +89,8 @@ export const Faucet = ({ }: Props) => {
             id: "0x9989dED344CB231C6a3BE58f253122f9303fE7eC", symbol: "GRT", logo_url: "", address: "0x9989dED344CB231C6a3BE58f253122f9303fE7eC"
         }, {
             id: "0x7aff8befc7cbe268d90d7248035133881526734b", symbol: "MKR", logo_url: "", address: "0x7aff8befc7cbe268d90d7248035133881526734b"
+        }, {
+            id: "0x711B27D526Eb688c0D509014E413f993C463D39e", symbol: "ADA", logo_url: "", address: "0x711B27D526Eb688c0D509014E413f993C463D39e"
         }],
         97: [{
             id: "0x11E10725a6Fc7C47833209C6DE31307Fbd389494", symbol: "USDT", logo_url: "", address: "0x11E10725a6Fc7C47833209C6DE31307Fbd389494"

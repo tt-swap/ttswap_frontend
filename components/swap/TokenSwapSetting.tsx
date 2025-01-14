@@ -8,24 +8,31 @@ import { Switch, Input, InputNumber } from 'antd';
 interface Props {
   value: number;
   value1: boolean;
-  onChange: (val: number, val1: boolean) => void;
+  value2: boolean;
+  onChange: (val: number, val1: boolean, val2: boolean) => void;
 }
 
-const TokenSwapSetting = ({ value, value1, onChange }: Props) => {
+const TokenSwapSetting = ({ value, value1,value2, onChange }: Props) => {
   const [open, setOpen] = useState(false);
   const [istotal, setIstotal] = useState(value1);
+  const [maxApprove, setMaxApprove] = useState(value2);
   const [tolerance, setTolerance] = useState(value);
   const { t } = useTranslation();
 
   const isSwitch = (checked: boolean) => {
     // console.log(`switch to ${checked}`);
     setIstotal(checked);
-    onChange(tolerance, checked);
+    onChange(tolerance, checked,maxApprove);
+  };
+  const isMax = (checked: boolean) => {
+    // console.log(`switch to ${checked}`);
+    setMaxApprove(checked);
+    onChange(tolerance, istotal,checked);
   };
   const onInput = (val: number) => {
     // console.log(`switch to ${checked}`);
     setTolerance(val);
-    onChange(val, istotal);
+    onChange(val, istotal,maxApprove);
   };
   return (
     <>
@@ -54,22 +61,14 @@ const TokenSwapSetting = ({ value, value1, onChange }: Props) => {
           <div className=" flex justify-between gap-4 pt-5">
             <p>
             {t('body.swap.tolerance.all')}
-              {/* <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://google.com"
-                className="components__StyledLink-sc-88ab9cb5-5 ekQQ"
-              >
-                <div className="text-[#8ae7be]">Learn more</div>
-              </a> */}
             </p>
             <Switch value={value1} onChange={isSwitch} />
-            {/* <div className="flex items-center justify-center">
-              <label className="relative inline-flex items-center me-5 cursor-pointer">
-                <input type="checkbox" value="" className="w-11 h-6 sr-only peer" />
-                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 outline-none dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#8ae7be]"></div>
-              </label>
-            </div> */}
+          </div>
+          <div className=" flex justify-between gap-4 pt-5">
+            <p>
+            {t('body.swap.tolerance.maxApprove')}
+            </p>
+            <Switch value={value2} onChange={isMax} />
           </div>
         </div>
       </TokenSwapModal>

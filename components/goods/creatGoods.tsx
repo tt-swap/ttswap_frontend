@@ -4,7 +4,7 @@ import {
   Form,
   Input,
   InputNumber,
-  Select, Space, Avatar, Spin, message, Button
+  Select, Space, Avatar, Spin, message, Button, Switch
 } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 // import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import useWallet from "@/hooks/useWallet";
 // import { useSwitchChain } from "hooks";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 // import BigNumber from 'bignumber.js';
+import { useMaxApprove } from '@/hooks/useMaxApprove';
 
 import { GoodsDatas } from '@/graphql';
 
@@ -30,6 +31,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   const [spinning, setSpinning] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const { t } = useTranslation();
+  const { maxApprove, setMaxApprove } = useMaxApprove();
 
   // const switchChain = useSwitchChain();
   // const { chainId } = useWeb3React();
@@ -51,6 +53,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   const [goodC, setGoodC] = useState("");
   const [goodV, setGoodV] = useState("");
   const [goodVAddr, setGoodVAddr] = useState("");
+  const [goodVName, setGoodVName] = useState("");
   const [goodDec, setGoodDec] = useState(0);
   const [selectVgood, setSelectVgood] = useState([]);
 
@@ -63,6 +66,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
       // console.log(tokens, 99)
       setGoodV(tokens[0].id);
       setGoodVAddr(tokens[0].address);
+      setGoodVName(tokens[0].name);
       setGoodDec(tokens[0].decimals);
       setSelectVgood(tokens);
     })();
@@ -99,46 +103,46 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   const newGood = async () => {
     setSpinning(true);
     // await switchChain(Number(ssionChian)).then(async () => {
-      if (goodC.length > 5) {
-        const staust = await checkContractExists(goodC).then(exists => {
-          if (exists) {
-            console.log('合约存在');
-            return true;
-          } else {
-            console.log('合约不存在');
-            return false;
-          }
-        });
-        if (!staust) {
-          setSpinning(false);
-          document.body.style.overflow = "";
-          messageApi.open({
-            type: 'error',
-            content: t('common.mess.address.error'),
-          });
-          return
-        };
-        console.log(staust)
-      }
-      // @ts-ignore
-      const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
-
-      // @ts-ignore
-      const isSuccess = await newGoods(goodVAddr, goodV, goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0");
-      console.log("isSuccess:", isSuccess)
-      if (isSuccess) {
-        messageApi.open({
-          type: 'success',
-          content: t('common.mess.create') + t('common.mess.success'),
-        });
-        setDataNum(1);
-        setOpen(false);
-      } else {
+    if (goodC.length > 5) {
+      const staust = await checkContractExists(goodC).then(exists => {
+        if (exists) {
+          console.log('合约存在');
+          return true;
+        } else {
+          console.log('合约不存在');
+          return false;
+        }
+      });
+      if (!staust) {
+        setSpinning(false);
+        document.body.style.overflow = "";
         messageApi.open({
           type: 'error',
-          content: t('common.mess.create') + t('common.mess.error'),
+          content: t('common.mess.address.error'),
         });
-      }
+        return
+      };
+      console.log(staust)
+    }
+    // @ts-ignore
+    const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
+
+    // @ts-ignore
+    const isSuccess = await newGoods(goodVAddr,goodVName, goodV, goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0", maxApprove);
+    console.log("isSuccess:", isSuccess)
+    if (isSuccess) {
+      messageApi.open({
+        type: 'success',
+        content: t('common.mess.create') + t('common.mess.success'),
+      });
+      setDataNum(1);
+      setOpen(false);
+    } else {
+      messageApi.open({
+        type: 'error',
+        content: t('common.mess.create') + t('common.mess.error'),
+      });
+    }
     // }).catch((error) => {
     //   console.error(`"Failed to switch chains: " ${error}`);
     // });
@@ -339,6 +343,14 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                 onChange={(e) => { setGoodVQ(e.target.value); }}
                 value={goodVQ}
               />
+            </Form.Item>
+            <Form.Item>
+              <div className=" flex justify-between gap-4">
+                <p>
+                  {t('body.swap.tolerance.maxApprove')}
+                </p>
+                <Switch value={maxApprove} onChange={(checked: boolean) => setMaxApprove(checked)} />
+              </div>
             </Form.Item>
           </Form>
           <Button

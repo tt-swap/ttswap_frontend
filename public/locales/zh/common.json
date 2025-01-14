@@ -172,6 +172,7 @@
         "body.goods.level3.divestchips.tip": "这个切片数在撤资和代币所有者进行配置时使用。",
         "body.swap.tolerance": "容差",
         "body.swap.tolerance.all": "仅全部成交才成功",
+        "body.swap.tolerance.maxApprove": "最大授权",
         "body.swap.from": "From",
         "body.swap.to": "To (预估)",
         "body.swap.balance": "余额",

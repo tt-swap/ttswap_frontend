@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 // import { useWeb3React } from "@web3-react/core";
 // import { useSwitchChain } from "hooks";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
-import { Spin, message } from 'antd';
+import { Spin, message, Switch } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import "./index.css";
 import Message from '@/components/MessModal/index';
@@ -20,6 +20,7 @@ import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { powerIterative, prettifyBalance } from '@/graphql/util';
 import { GoodsDatas } from '@/graphql/invest';
 import { newGoodsPrice } from '@/graphql/swap/index';
+import { useMaxApprove } from '@/hooks/useMaxApprove';
 
 const styles = {
     wrapper:
@@ -77,6 +78,7 @@ const TokenInvest = () => {
     const [timerId, setTimerId] = useState(null);
     const [focus, setFocus] = useState("from");
     const [isDisabled, setisDisabled] = useState(disabled);
+    const { maxApprove, setMaxApprove } = useMaxApprove();
 
     useEffect(() => {
         if (isValueGood) {
@@ -174,7 +176,7 @@ const TokenInvest = () => {
         if (investAmount.to.amount !== "" && investAmount.to.amount > 0 && !isValueGood) {
             tAmount = investAmount.to.amount * powerIterative(10, invest.to.decimals);
         }
-        const isSuccess = await investGoods(invest, BigInt(Math.round(fAmount)), BigInt(Math.round(tAmount)), isValueGood);
+        const isSuccess = await investGoods(invest, BigInt(Math.round(fAmount)), BigInt(Math.round(tAmount)), isValueGood, maxApprove);
         if (isSuccess) {
             setOpen(true);
             setMesStatus("success");
@@ -352,6 +354,12 @@ const TokenInvest = () => {
                                 </div>
                             </div>
                         )}
+                        <div className=" flex justify-between gap-4 pt-5">
+                            <p>
+                                {t('body.swap.tolerance.maxApprove')}
+                            </p>
+                            <Switch value={maxApprove} onChange={(checked: boolean) => setMaxApprove(checked)} />
+                        </div>
                         <button
                             onClick={handleInvest}
                             type="button"
