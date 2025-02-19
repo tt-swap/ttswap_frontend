@@ -12,7 +12,6 @@ import type { TabsProps } from 'antd';
 import { handleTabSwitch } from "@/utils/router";
 import { useEffect, useState, useMemo } from "react";
 import { useValueGood, useGoodId } from "@/stores/valueGood";
-import { Faucet } from "@/components/test01"
 
 // import { useWeb3React } from "@web3-react/core";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
