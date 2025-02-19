@@ -179,7 +179,7 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
             map.divestFee = goodConfig.mod(m217).div(m211).integerValue(1).div(100).toNumber();
             map.buyFee = goodConfig.mod(m211).div(m204).integerValue(1).div(100).toNumber();
             map.sellFee = goodConfig.mod(m204).div(m197).integerValue(1).div(100).toNumber();
-            map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(64)).toNumber();
+            map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
             map.divestChips = goodConfig.mod(m187).div(m177).integerValue(1).toNumber();
             let uintF = (Number(e.feeQuantity) + Number(e.investQuantity)) / e.investQuantity;
             if (e.goodData.length > 0) {
