@@ -90,7 +90,7 @@ const ChainSelector: FC = () => {
       // { label: "Fantom testnet", key: chainIds.fantomtest, icon: labelToShow(fantom_Logo, "Fantom_Logo") },
       // { label: "BNB Chain", key: chainIds.binance, icon: labelToShow(bsc_Logo, "BNB_logo") },
       // { label: "BSC Testnet", key: chainIds.binancetestnet, icon: labelToShow(bsc_Logo, "BNB_logo") },
-      { label: "Mantle Sepolia", key: chainIds.mantleSepolia, icon: labelToShow(mantle_Logo, "MNT_logo") },
+      // { label: "Mantle Sepolia", key: chainIds.mantleSepolia, icon: labelToShow(mantle_Logo, "MNT_logo") },
       // { label: "FlowEVM Testnet", key: chainIds.flowTestnet, icon: labelToShow(flow_Logo, "FLOW_logo") },
     ],
     []

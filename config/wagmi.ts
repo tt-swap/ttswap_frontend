@@ -194,7 +194,7 @@ export const config = getDefaultConfig({
     // flowPreviewnet,
     // flowTestnet,
     // mantle,
-    mantleSepolia,
+    // mantleSepolia,
     // mantleTestnet,
   ],
   wallets: [
@@ -269,7 +269,7 @@ export const config = getDefaultConfig({
   ],
   transports: {
     [sepolia.id]: http(),
-    [mantleSepoliaTestnet.id]: http(),
+    // [mantleSepoliaTestnet.id]: http(),
     // [mantleTestnet.id]: http(),
     // [mainnet.id]: http(),
     // [arbitrum.id]: http(),

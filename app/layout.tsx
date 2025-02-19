@@ -44,7 +44,7 @@ const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   let pathname = usePathname();
-  const [ssionChian, setSsionChian] = useState(5003);
+  const [ssionChian, setSsionChian] = useState(11155111);
   const { info, setValueGood } = useValueGood();
 
   const [language, setLanguage] = useState('en');
