@@ -240,7 +240,6 @@ export default function Account({ params }: { params: { chain: string, dex: stri
   return (
     <div className="w-full flex flex-col gap-4">
       {contextHolder}
-      <Faucet></Faucet>
       {/* <h1 className="pt-4 text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
         Account
       </h1> */}
