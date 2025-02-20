@@ -239,7 +239,7 @@ export async function GoodsSearchDatas(params: { id: string; sel: string }, ssio
             };
             let base_decimals = powerIterative(10, en.tokendecimals);
             let current_price = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / goodValue;
-            let current_price24 = ((en.goodData[0].currentValue / tokendecimals) / (en.goodData[0].currentQuantity / base_decimals)) / goodValue24;
+            let current_price24 = ((en.goodData[0].currentValue / tokendecimals) / (en.goodData[0].currentQuantity / base_decimals)) / goodValue;
 
             map1.id = en.id;
             map1.name = en.tokenname;
