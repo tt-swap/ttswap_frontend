@@ -23,7 +23,7 @@ export async function goodsTransactionsDatas(params: { id: string; address: stri
         item.tokensymbol = goodsDatas.data.goodState.tokensymbol;
 
         item.items = items;
-        if (goodsDatas.data.transactions.length < params.pageSize) {
+        if (goodsDatas.data.transactions.length < params.pageSize || goodsDatas.data.transactions.length === 0) {
             item.pagination.has_more = false;
         }
 

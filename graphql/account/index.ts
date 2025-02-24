@@ -2,7 +2,7 @@ import { getExplorer, getChainName } from '@/data/networks';
 import { ethers } from "ethers";
 import MarketManager from '@/data/abi/MarketManager.json';
 import { getContractAddress } from '@/data/contractConfig';
-import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex, myCommission,referees,myReferees } from './graphql';
+import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex, myCommission, referees, myReferees } from './graphql';
 import { timestampdToDateSub, powerIterative, iconUrl, timestampSubH } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
 
@@ -22,7 +22,7 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
         let items: object[] = [];
 
         item.items = items;
-        if (goodsDatas.data.proofStates.length < params.pageSize) {
+        if (goodsDatas.data.proofStates.length < params.pageSize || goodsDatas.data.proofStates.length === 0) {
             item.pagination.has_more = false;
         }
         goodsDatas.data.proofStates.forEach((e: any) => {
@@ -101,7 +101,7 @@ export async function myTransactionsDatas(params: { id: string; address: string;
         item.tokensymbol = goodsDatas.data.goodState.tokensymbol;
 
         item.items = items;
-        if (goodsDatas.data.transactions.length < params.pageSize) {
+        if (goodsDatas.data.transactions.length < params.pageSize || goodsDatas.data.transactions.length === 0) {
             item.pagination.has_more = false;
         }
 
@@ -240,8 +240,10 @@ export async function myDisInvestProofGood(id: number, ssionChian: number): Prom
 // myIndexes
 export async function myIndexes(id: string, wallet_address: any, ssionChian: number): Promise<object> {
 
-    let items = { disinvestCount: 0, disinvestValue: 0, investCount: 0, investValue: 0, stakettsvalue:0,getfromstake:0,mining:0,
-        tradeCount: 0, tradeValue: 0, totalcommissionvalue: 0, totalprofitvalue: 0, isEmpty: true };
+    let items = {
+        disinvestCount: 0, disinvestValue: 0, investCount: 0, investValue: 0, stakettsvalue: 0, getfromstake: 0, mining: 0,
+        tradeCount: 0, tradeValue: 0, totalcommissionvalue: 0, totalprofitvalue: 0, isEmpty: true
+    };
     if (id && wallet_address !== null) {
         const goodsDatas = await myIndex({ id: id, address: wallet_address.toLowerCase() }, ssionChian);
         let goodQuantity = goodsDatas.data.goodState.currentQuantity / goodsDatas.data.goodState.currentValue;
@@ -258,7 +260,7 @@ export async function myIndexes(id: string, wallet_address: any, ssionChian: num
         items.totalprofitvalue = data.totalprofitvalue / tokendecimals * goodQuantity;
         items.stakettsvalue = data.stakettsvalue / tokendecimals * goodQuantity;
         items.getfromstake = data.getfromstake / tokendecimals;
-        items.mining = ((goodsDatas.data.ttsEnv.poolasset/goodsDatas.data.ttsEnv.poolvalue) * data.stakettsvalue - data.stakettscontruct) / tokendecimals;
+        items.mining = ((goodsDatas.data.ttsEnv.poolasset / goodsDatas.data.ttsEnv.poolvalue) * data.stakettsvalue - data.stakettscontruct) / tokendecimals;
     }
     return items;
 }
@@ -291,7 +293,7 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
         item.pagination.page_number = params.pageNumber;
         item.pagination.page_size = params.pageSize;
 
-        if (goodsDatas.data.goodStates.length < params.pageSize) {
+        if (goodsDatas.data.goodStates.length < params.pageSize || goodsDatas.data.goodStates.length === 0) {
             item.pagination.has_more = false;
         }
         goodsDatas.data.goodStates.forEach((e: any) => {
@@ -361,13 +363,13 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
 export async function myCommissions(params: { id: string; pageNumber: number; pageSize: number; address: string; }, ssionChian: number) {
     const chainName = getChainName(ssionChian);
     const goodsDatas = await myCommission({ id: params.id, first: params.pageSize, skip: params.pageSize * params.pageNumber }, ssionChian);
-    let item = { items: {},ids:{}, pagination: { has_more: true }, error: false, error_message: "" };
+    let item = { items: {}, ids: {}, pagination: { has_more: true }, error: false, error_message: "" };
 
     let items: object[] = [];
     let ids: number[] = [];
     item.items = items;
     item.ids = ids;
-    if (goodsDatas.data.goodStates.length < params.pageSize) {
+    if (goodsDatas.data.goodStates.length < params.pageSize || goodsDatas.data.goodStates.length === 0) {
         item.pagination.has_more = false;
     }
 
@@ -379,7 +381,7 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
         const price = goods / goodsValue;
         // console.log(goodsValue,goods,(e.currentValue / base_decimals),(e.currentQuantity / base_decimals1))
         let map = {
-            id: "", name: "", symbol: "", logo_url: "", totalFeeQantity: 0, price: 0,valueSymbol:'',tokendecimals:0,
+            id: "", name: "", symbol: "", logo_url: "", totalFeeQantity: 0, price: 0, valueSymbol: '', tokendecimals: 0,
             totalFeeAmount: 0, myFeeQuanity: 0, myFeeAmount: 0, totalTradeCount: 0
         };
 
@@ -393,7 +395,7 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
         map.totalTradeCount = e.totalTradeCount;
         map.price = price;
         map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
-        
+
         ids.push(e.id);
         items.push(map);
     });
@@ -404,21 +406,21 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
     const signer = await provider.getSigner()
     const contract = new ethers.Contract(contractAddress, MarketManager, signer);
     console.log(item.ids);
-    
+
     let feeQs: number[] = [];
-    await contract.queryCommission(item.ids,params.address).then((transaction) => {
-        transaction.map((num: any)=>{
-            // feeQs.push(Number(num));
+    await contract.queryCommission(item.ids, params.address).then((transaction) => {
+        transaction.map((num: any) => {
+            feeQs.push(Number(num));
         })
         console.log('Transaction sent:', feeQs);
     }).catch((error: any) => {
         console.error('出错:', error);
     });
-    items.map((value,index)=>{
+    items.map((value, index) => {
         // console.log('items:', value,index);
-        if (feeQs[index]>0) {
+        if (feeQs[index] > 0) {
             // @ts-ignore
-            value.myFeeQuanity = feeQs[index] / 10**value.tokendecimals;
+            value.myFeeQuanity = feeQs[index] / 10 ** value.tokendecimals;
             // @ts-ignore
             value.myFeeAmount = value.myFeeQuanity * value.price
         }
@@ -457,7 +459,7 @@ export async function myRefereesDatas(params: { id: string; address: string; pag
         item.tokensymbol = goodsDatas.data.goodState.tokensymbol;
 
         item.items = items;
-        if (goodsDatas.data.customers.length < params.pageSize) {
+        if (goodsDatas.data.customers.length < params.pageSize || goodsDatas.data.customers.length === 0) {
             item.pagination.has_more = false;
         }
 

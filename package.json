@@ -1,6 +1,6 @@
 {
   "name": "ttswap",
-  "version": "2.5.4",
+  "version": "2.5.6",
   "private": true,
   "scripts": {
     "dev": "next dev",

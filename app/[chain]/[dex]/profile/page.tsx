@@ -49,8 +49,9 @@ export default function Account({ params }: { params: { chain: string, dex: stri
       const data = await refereesDatas(address, ssionChian);
       // @ts-ignore
       setReferees(data.referralnum);
+      // console.log("referees：address：",referees,data)
     })();
-  }, []);
+  }, [address, ssionChian]);
 
   function fallbackCopyTextToClipboard(text: string): void {
     const textarea = document.createElement('textarea');
@@ -80,7 +81,6 @@ export default function Account({ params }: { params: { chain: string, dex: stri
       content: t('common.mess.copy'),
     });
   }
-  console.log("referees",referees)
 
 
   const onChange = (key: string) => {

@@ -96,7 +96,7 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
         item.pagination.page_number = params.pageNumber;
         item.pagination.page_size = params.pageSize;
 
-        if (goodsDatas.data.goodStates.length < params.pageSize) {
+        if (goodsDatas.data.goodStates.length < params.pageSize || goodsDatas.data.goodStates.length === 0) {
             item.pagination.has_more = false;
         }
 
@@ -159,7 +159,7 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
 export async function investGoodsDatas(params: { id: string; pageNumber: number; pageSize: number; }, ssionChian: number): Promise<object> {
 
     const chainName = getChainName(ssionChian);
-    let item = { items: {}, pagination: { page_number: 0, page_size: 0, has_more: true }, error: false, error_message: "" };
+    let item = { items: {}, pagination: { page_number: 0, page_size: 0, has_more: false }, error: false, error_message: "" };
 
     if (params.id !== "") {
         const goodsDatas = await InvestGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateYear(1), time24: timestampdToDateSub(0), skip: params.pageSize * params.pageNumber }, ssionChian);
@@ -181,7 +181,7 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
         item.pagination.page_number = params.pageNumber;
         item.pagination.page_size = params.pageSize;
 
-        if (goodsDatas.data.goodStates.length < params.pageSize) {
+        if (goodsDatas.data.goodStates.length < params.pageSize || goodsDatas.data.goodStates.length === 0) {
             item.pagination.has_more = false;
         }
         goodsDatas.data.goodStates.forEach((e: any) => {

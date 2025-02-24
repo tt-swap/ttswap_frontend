@@ -392,7 +392,7 @@ const useWallet = () => {
             }
         }
         setbalanceMap({ from: from, to: to });
-    }, [isConnected, swaps, sawpFromTokenData, sawpToTokenData]);
+    }, [isConnected, swaps, sawpFromTokenData, sawpToTokenData, address]);
 
     useEffect(() => {
         let from: any = 0;
@@ -410,7 +410,7 @@ const useWallet = () => {
         }
         setbalanceMap1({ from: from, to: to });
         // console.log("investFromTokenData---------", investFromTokenData)
-    }, [investFromTokenData, investToTokenData, invest, isConnected]);
+    }, [investFromTokenData, investToTokenData, invest, isConnected, address]);
 
     // 使用 useSimulateContract 预估 gas
     // 添加一个状态来跟踪是否可以进行模拟
@@ -516,7 +516,7 @@ const useWallet = () => {
         }
 
         return { amount: 0, decimals: 18 };
-    }, [sawpFromTokenData, sawpToTokenData, swaps, isConnected]);
+    }, [sawpFromTokenData, sawpToTokenData, swaps, isConnected, address]);
 
 
     const balanceSelI = useCallback((ConAddress: string): BalanceResult => {
@@ -535,7 +535,7 @@ const useWallet = () => {
         }
 
         return { amount: 0, decimals: 18 };
-    }, [investFromTokenData, investToTokenData, invest, isConnected]);
+    }, [investFromTokenData, investToTokenData, invest, isConnected, address]);
 
 
     // useEffect(() => {
@@ -1193,7 +1193,7 @@ const useWallet = () => {
         try {
 
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-            const address0 = ConAddress1;
+            const address0 = ConAddress0;
             // const [references] = useLocalStorages("reference", null);
             let reference = localStorage.getItem("reference");
             if (reference === null || !ethers.isAddress(reference)) {

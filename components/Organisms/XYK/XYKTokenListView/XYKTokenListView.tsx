@@ -49,7 +49,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
     const [pagination, setPagination] = useState({
         page_number: 1,
     });
-    const [hasMore, setHasMore] = useState<boolean>();
+    const [hasMore, setHasMore] = useState<boolean>(false);
     const [spinning, setSpinning] = useState(false);
     const { t } = useTranslation();
 
@@ -76,7 +76,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             window.removeEventListener("scroll", handleScroll);
         };
     }, [hasMore, pagination]);
-
+    // console.log("pafas:", pagination,hasMore)
     useEffect(() => {
         (async () => {
             setSpinning(true);
@@ -89,7 +89,7 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
                         pageNumber: pagination.page_number - 1,
                         pageSize: page_size,
                     }, chain_id);
-                console.log(response, "***");
+                // console.log(response, "***");
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
                 setResult(prev => {
