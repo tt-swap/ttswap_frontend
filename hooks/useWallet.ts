@@ -52,6 +52,8 @@ const useWallet = () => {
             setIsActive(true);
             setAccount(address);
         }
+        // (async () => {
+        // console.log(await provider?.getBalance(address), "balanceSel") })();
     }, [isConnected, address]);
 
     async function checkContractSupport(contractToken: string | ethers.Addressable, amount: any) {
@@ -380,35 +382,69 @@ const useWallet = () => {
         // console.log(simulateData, "-----------", MarketManagerContract, ssionChian)
         let from: any = 0;
         let to: any = 0;
-        if (isConnected) {
-            const fromBalance = balanceSel(swaps?.from?.address);
-            const toBalance = balanceSel(swaps?.to?.address);
-            // console.log(fromBalance.amount, 88888)
-            if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
-                from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
+        (async () => {
+            if (isConnected) {
+
+                if (swaps?.from?.address === ConAddress1) {
+                    // @ts-ignore
+                    const senderBalanceBefore = await provider.getBalance(address); //账户1余额
+                    console.log(swaps?.from?.address, "ConAddress", senderBalanceBefore)
+                    from = ethers.formatEther(senderBalanceBefore);
+                } else {
+                    const fromBalance = balanceSel(swaps?.from?.address);
+                    if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
+                        from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
+                    }
+                }
+                if (swaps?.to?.address === ConAddress1) {
+                    // (async () => {
+                    // @ts-ignore
+                    const senderBalanceBefore = await provider.getBalance(address); //账户1余额
+                    console.log(swaps?.from?.address, "ConAddress", senderBalanceBefore)
+                    to = ethers.formatEther(senderBalanceBefore);
+                } else {
+                    const toBalance = balanceSel(swaps?.to?.address);
+                    if (toBalance.amount !== undefined && toBalance.amount !== null) {
+                        to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
+                    }
+                }
             }
-            if (toBalance.amount !== undefined && toBalance.amount !== null) {
-                to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
-            }
-        }
-        setbalanceMap({ from: from, to: to });
+            setbalanceMap({ from: from, to: to });
+        })();
     }, [isConnected, swaps, sawpFromTokenData, sawpToTokenData, address]);
 
     useEffect(() => {
         let from: any = 0;
         let to: any = 0;
-        if (isConnected) {
-            const fromBalance = balanceSelI(invest?.from?.address);
-            const toBalance = balanceSelI(invest?.to?.address);
-            // console.log(fromBalance, 88888)
-            if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
-                from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
+
+        (async () => {
+            if (isConnected) {
+                if (invest?.from?.address === ConAddress1) {
+                    // @ts-ignore
+                    const senderBalanceBefore = await provider.getBalance(address); //账户1余额
+                    console.log(invest?.from?.address, "ConAddress", senderBalanceBefore)
+                    from = ethers.formatEther(senderBalanceBefore);
+                } else {
+                    const fromBalance = balanceSelI(invest?.from?.address);
+                    if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
+                        from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
+                    }
+                }
+                if (invest?.to?.address === ConAddress1) {
+                    // (async () => {
+                    // @ts-ignore
+                    const senderBalanceBefore = await provider.getBalance(address); //账户1余额
+                    console.log(invest?.from?.address, "ConAddress", senderBalanceBefore)
+                    to = ethers.formatEther(senderBalanceBefore);
+                } else {
+                    const toBalance = balanceSelI(invest?.to?.address);
+                    if (toBalance.amount !== undefined && toBalance.amount !== null) {
+                        to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
+                    }
+                }
+                setbalanceMap1({ from: from, to: to });
             }
-            if (toBalance.amount !== undefined && toBalance.amount !== null) {
-                to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
-            }
-        }
-        setbalanceMap1({ from: from, to: to });
+        })();
         // console.log("investFromTokenData---------", investFromTokenData)
     }, [investFromTokenData, investToTokenData, invest, isConnected, address]);
 
@@ -502,7 +538,6 @@ const useWallet = () => {
 
     const balanceSel = useCallback((ConAddress: string): BalanceResult => {
         if (!ConAddress || !isConnected) return { amount: 0, decimals: 18 };
-
         if (ConAddress === swaps?.from?.address) {
             return {
                 amount: sawpFromTokenData?.[0]?.result,
@@ -514,7 +549,6 @@ const useWallet = () => {
                 decimals: sawpToTokenData?.[1]?.result
             };
         }
-
         return { amount: 0, decimals: 18 };
     }, [sawpFromTokenData, sawpToTokenData, swaps, isConnected, address]);
 
@@ -536,6 +570,7 @@ const useWallet = () => {
 
         return { amount: 0, decimals: 18 };
     }, [investFromTokenData, investToTokenData, invest, isConnected, address]);
+
 
 
     // useEffect(() => {
@@ -687,10 +722,9 @@ const useWallet = () => {
 
             let decimals = 18;
             let nameG;
-            // if (addr.length < 5 || addr === ConAddress1) {
-            //     decimals = 18;
-            // } else 
-            if (addr === goodVaddr) {
+            if (addr === ConAddress1) {
+                decimals = 18;
+            } else if (addr === goodVaddr) {
                 decimals = goodDec;
             } else if (ethers.isAddress(addr)) {
                 decimals = await new ethers.Contract(addr, erc20, provider).decimals();
@@ -1193,11 +1227,11 @@ const useWallet = () => {
         try {
 
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-            const address0 = ConAddress0;
+            const address0 = ConAddress1;
             // const [references] = useLocalStorages("reference", null);
             let reference = localStorage.getItem("reference");
             if (reference === null || !ethers.isAddress(reference)) {
-                reference = address0;
+                reference = ConAddress0;
             } else {
                 reference = reference;
             }
@@ -1206,7 +1240,7 @@ const useWallet = () => {
             const { a, transferData, approveAmount } = await signerData(address, amount, symbol, maxApprove);
 
             if (address === address0) {
-                console.log(0, amount)
+                // console.log("buyGood"+0, params[0], params[1], params[2], params[3], params[4], reference, transferData,amount)
                 return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference, transferData, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
                     return true;

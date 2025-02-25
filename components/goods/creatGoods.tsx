@@ -103,7 +103,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   const newGood = async () => {
     setSpinning(true);
     // await switchChain(Number(ssionChian)).then(async () => {
-    if (goodC.length > 5) {
+    if (goodC !== "0x0000000000000000000000000000000000000001") {
       const staust = await checkContractExists(goodC).then(exists => {
         if (exists) {
           console.log('合约存在');
@@ -128,7 +128,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
     const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
 
     // @ts-ignore
-    const isSuccess = await newGoods(goodVAddr,goodVName, goodV, goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0", maxApprove);
+    const isSuccess = await newGoods(goodVAddr, goodVName, goodV, goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0", maxApprove);
     console.log("isSuccess:", isSuccess)
     if (isSuccess) {
       messageApi.open({

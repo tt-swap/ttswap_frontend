@@ -199,18 +199,18 @@ const TokenSwap = () => {
         if (fromV > toV) {
             const toVl = Math.ceil(fromV / (toV / dec));
             limitPrice = BigInt(toVl * 2 ** 128) + BigInt(dec);
-            console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swaps)
+            // console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swapsAmount)
         } else {
             const toVl = Math.ceil(toV / (fromV / dec));
             limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
-            console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swaps)
+            // console.log(2, toVl, fromV / toV, 22555522222222, limitPrice, swapsAmount)
         }
         // const toVl = Math.ceil(toV / fromV);
         // limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
         const a: BigInt = BigInt(Math.round(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals));
         // const b: BigInt = BigInt(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals);
         // const b: BigInt = BigInt(1.1 * 2 ** 128 + 3500);
-        console.log(a, 2222222222)
+        // console.log(a, 2222222222,fromV,toV)
         const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, a, limitPrice, istotal], a, swaps.from.address, swaps.from.symbol, maxApprove);
         // const isSuccess = await swapBuyGood(["51649299683075463979090664991608549190737649190809275440655607745038800234274", "14700013424982216455688397208100595100161518504028027706369398309082945288267", a, b, istotal], a.toString(), "0x0000000000000000000000000000000000000000");
         // const isSuccess = false;

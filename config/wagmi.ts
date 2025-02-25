@@ -273,7 +273,7 @@ export const config = getDefaultConfig({
     // [mantleTestnet.id]: http(),
     // [mainnet.id]: http(),
     // [arbitrum.id]: http(),
-    // [polygon.id]: http(),
+    // [bscTestnet.id]: http(),
   },
   ssr: true,
 });
