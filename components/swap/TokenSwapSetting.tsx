@@ -52,7 +52,7 @@ const TokenSwapSetting = ({ value, value1,value2, onChange }: Props) => {
         </div>
         <div className="p-10">
           <InputNumber
-            max={5}
+            max={100}
             suffix="%"
             value={value}
             onChange={(e: any) => onInput(e)}
