@@ -89,7 +89,7 @@ const GoodsSearch = ({ isValue }: Props) => {
             setTreeData(a);
             setSpinning(false);
         })()
-    }, [keyword, info, ssionChian]);
+    }, [keyword, info, ssionChian, searchOpen]);
 
     const handleClickOutside = (event: MouseEvent) => {
         if (searchOpenRef.current && !searchOpenRef.current.contains(event.target as Node)) {
