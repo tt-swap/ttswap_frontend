@@ -21,6 +21,7 @@ import { GoodsDatas, newGoodsPrice } from '@/graphql/swap/index';
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { useMaxApprove } from '@/hooks/useMaxApprove';
+import { useErrorMess } from '@/hooks/useErrorMess';
 
 const styles = {
     wrapper:
@@ -216,16 +217,20 @@ const TokenSwap = () => {
         // const isSuccess = await swapBuyGood(["51649299683075463979090664991608549190737649190809275440655607745038800234274", "14700013424982216455688397208100595100161518504028027706369398309082945288267", a, b, istotal], a.toString(), "0x0000000000000000000000000000000000000000");
         // const isSuccess = false;
         console.log("isSuccess:", isSuccess)
-        if (isSuccess) {
+        if (isSuccess === true) {
             setOpen(true);
             setMesStatus("success");
             setMesTitle(t('common.swap') + t('common.mess.success'));
             setAmount("from", "", 0);
-        } else {
+        } else if (isSuccess === false) {
             setOpen(true);
             setMesStatus("error");
             setMesTitle(t('common.swap') + t('common.mess.error'));
-        }
+        } else {
+            setOpen(true);
+            setMesStatus("error");
+            setMesTitle(useErrorMess(isSuccess,t));
+          }
         // }).catch((error) => {
         //     console.error(`"Failed to switch chains: " ${error}`);
         // });

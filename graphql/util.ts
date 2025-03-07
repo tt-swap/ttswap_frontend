@@ -65,33 +65,19 @@ export function iconUrl(chainName: string | undefined, address: string) {
 
 // 数字处理
 export function prettifyCurrencys(value: number) {
-    // console.log(value,"ylqk")
-    if (value < 1000000) {
-
-        if (value === 0) {
-            return '0'
-        }
-        if (value < 0.01 && value > 0) {
-            return '<0.01'
-        }
-
-        return toThousands(value.toFixed(2));
+    if (value === 0) {
+        return '0'
+    }
+    if (value < 0.01 && value > 0) {
+        return '<0.01'
     }
 
-    const suffixes = ['', '', 'M', 'B', 'T'];
-    let magnitude = Math.floor(Math.log(value) / Math.log(1000));
-    let scaled = value / Math.pow(1000, magnitude);
-    // 将数字保留到适当的小数位
-    // 例如：如果scaled < 10, 保留一位小数；如果 scaled < 100, 则不保留小数
-    // if (scaled < 10) {
-    return toThousands(scaled.toFixed(2)) + suffixes[magnitude];
+    return formatLargeNumber(value,2);
 };
 
 
 // 数字处理
 export function prettifyCurrencysFee(value: number) {
-    if (value < 1000000) {
-
         if (value === 0) {
             return '0'
         }
@@ -99,16 +85,7 @@ export function prettifyCurrencysFee(value: number) {
             return '<0.000001'
         }
 
-        return toThousands(value.toFixed(6));
-    }
-
-    const suffixes = ['', '', 'M', 'B', 'T'];
-    let magnitude = Math.floor(Math.log(value) / Math.log(1000));
-    let scaled = value / Math.pow(1000, magnitude);
-    // 将数字保留到适当的小数位
-    // 例如：如果scaled < 10, 保留一位小数；如果 scaled < 100, 则不保留小数
-    // if (scaled < 10) {
-    return toThousands(scaled.toFixed(6)) + suffixes[magnitude];
+        return formatLargeNumber(value,6);
 };
 
 
@@ -153,4 +130,34 @@ export function splitNumber(values: number) {
     let quantity = values % powerIterative(2, 128);
 
     return { value: value, quantity: quantity };
+}
+
+
+function formatLargeNumber(num: number,a:number): string {
+    const suffixes = ["", "M", "B", "T"]; // 后缀：百万、十亿、万亿
+    const threshold = 1000000; // 阈值，超过 100 万才添加后缀
+
+    // 处理负数
+    const isNegative = num < 0;
+    num = Math.abs(num);
+
+    // 判断是否需要添加后缀
+    let suffixIndex = 0;
+    while (num >= threshold && suffixIndex < suffixes.length - 1) {
+        num /= threshold;
+        suffixIndex++;
+    }
+
+    // 格式化整数部分和小数部分
+    const formattedNumber = num.toLocaleString("en-US", {
+        minimumFractionDigits: a,
+        maximumFractionDigits: a,
+    });
+
+    // 添加后缀
+    const suffix = suffixes[suffixIndex];
+    const result = `${formattedNumber}${suffix}`;
+
+    // 恢复负数符号
+    return isNegative ? `-${result}` : result;
 }

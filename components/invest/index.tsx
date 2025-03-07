@@ -16,6 +16,7 @@ import "./index.css";
 import Message from '@/components/MessModal/index';
 
 import { useLocalStorage } from "@/utils/LocalStorageManager";
+import { useErrorMess } from '@/hooks/useErrorMess';
 
 import { powerIterative, prettifyBalance } from '@/graphql/util';
 import { GoodsDatas } from '@/graphql/invest';
@@ -177,16 +178,20 @@ const TokenInvest = () => {
             tAmount = investAmount.to.amount * powerIterative(10, invest.to.decimals);
         }
         const isSuccess = await investGoods(invest, BigInt(Math.round(fAmount)), BigInt(Math.round(tAmount)), isValueGood, maxApprove);
-        if (isSuccess) {
+        if (isSuccess === true) {
             setOpen(true);
             setMesStatus("success");
             setMesTitle(t('common.invest') + t('common.mess.success'));
             setAmount("from", "", 0);
-        } else {
+        } else if (isSuccess === false) {
             setOpen(true);
             setMesStatus("error");
             setMesTitle(t('common.invest') + t('common.mess.error'));
-        }
+        } else {
+            setOpen(true);
+            setMesStatus("error");
+            setMesTitle(useErrorMess(isSuccess,t));
+          }
         // }).catch((error) => {
         //     console.error(`"Failed to switch chains: " ${error}`);
         // });

@@ -658,8 +658,7 @@ const useWallet = () => {
                 console.log('Transaction sent:', transaction);
                 return true;
             }).catch((error: any) => {
-                console.error('出错:', error);
-                return false;
+                return errorData(error);
             });
         } catch {
             return false;
@@ -706,8 +705,7 @@ const useWallet = () => {
             console.log('Transaction sent:', transaction);
             return true;
         }).catch((error: any) => {
-            console.error('出错:', error);
-            return false;
+            return errorData(error);
         });
     }
 
@@ -927,8 +925,7 @@ const useWallet = () => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
-                        console.error('Error transaction:', error);
-                        return false;
+                        return errorData(error);
                     });
                 } else {
                     console.log(3333, vgood, qunt, addr, config)
@@ -936,14 +933,39 @@ const useWallet = () => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
-                        console.error('Error transaction:', error);
-                        return false;
+                        return errorData(error);
                     });
                 }
             }
 
         } catch (error) {
-            console.error('出错:', error);
+            return errorData(error);
+        }
+    }
+
+    function errorData(error: unknown) {
+        if (error instanceof Error && 'data' in error) {
+            const errorData = error.data; // 获取错误中的 data 字段
+            console.error('Transaction failed with data:', errorData);
+            // 如果需要解析 data 字段（例如 ABI 编码的错误信息）
+            if (typeof errorData === 'string') {
+                const firstErrorData = errorData.slice(0, 10);
+                if (firstErrorData === "0xd1b51911") {
+                    const errorArgsData = "0x" + errorData.slice(10);
+                    const [code] = abiCoder.decode(["uint256"], errorArgsData);
+                    return Number(code.toString());
+                } else {
+                    return firstErrorData;
+                }
+                // console.error('Error data (hex):', errorData);
+                // const errorArgsData = "0x" + errorData.slice(10);
+                // // 如果需要进一步解析，可以使用 ethers.js 或 web3.js
+                // const [code] = abiCoder.decode(["uint256"], errorArgsData);
+                // console.error('Decoded error:', code.toString());
+                // return code.toString();
+            }
+        } else {
+            console.error('An unknown error occurred:', error);
             return false;
         }
     }
@@ -1183,16 +1205,14 @@ const useWallet = () => {
                             console.log('Transaction sent1:', transaction);
                             return true;
                         }).catch((error: any) => {
-                            console.error('Error transaction1:', error);
-                            return false;
+                            return errorData(error);
                         });
                     } else {
                         return await contract.investGood(invest.from.id, ConAddress0, famount, transferDataF, transferDataT).then((transaction) => {
                             console.log('Transaction sent2:', transaction);
                             return true;
                         }).catch((error: any) => {
-                            console.error('Error transaction2:', error);
-                            return false;
+                            return errorData(error);
                         });
                     }
                 } else {
@@ -1201,24 +1221,21 @@ const useWallet = () => {
                             console.log('Transaction sent1:', transaction);
                             return true;
                         }).catch((error: any) => {
-                            console.error('Error transaction1:', error);
-                            return false;
+                            return errorData(error);
                         });
                     } else {
                         return await contract.investGood(invest.from.id, invest.to.id, famount, transferDataF, transferDataT).then((transaction) => {
                             console.log('Transaction sent2:', transaction);
                             return true;
                         }).catch((error: any) => {
-                            console.error('Error transaction2:', error);
-                            return false;
+                            return errorData(error);
                         });
                     }
 
                 }
             }
         } catch (error) {
-            console.error('Error receipt:', error);
-            return false;
+            return errorData(error);
         };
 
     };
@@ -1245,8 +1262,7 @@ const useWallet = () => {
                     console.log('Transaction sent:', transaction);
                     return true;
                 }).catch((error: any) => {
-                    console.error('Error transaction:', error);
-                    return false;
+                    return errorData(error);
                 });
             } else {
                 if (a === 1) {
@@ -1267,8 +1283,7 @@ const useWallet = () => {
                             console.log('buyGood Transaction sent:', transaction);
                             return true;
                         }).catch((error: any) => {
-                            console.error('Error buyGood transaction:', error);
-                            return false;
+                            return errorData(error);
                         });
                     } else {
                         return await contractF.approve(contractAddress, approveAmount).then(async (transaction) => {
@@ -1279,8 +1294,7 @@ const useWallet = () => {
                                     console.log('buyGood Transaction sent:', transaction);
                                     return true;
                                 }).catch((error: any) => {
-                                    console.error('Error buyGood transaction:', error);
-                                    return false;
+                                    return errorData(error);
                                 });
                             }).catch((error: any) => {
                                 console.error('Error approve receipt:', error);
@@ -1296,15 +1310,13 @@ const useWallet = () => {
                         console.log('buyGood Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
-                        console.error('Error buyGood transaction:', error);
-                        return false;
+                        return errorData(error);
                     });
                 }
             }
 
         } catch (error) {
-            console.error('Error receipt:', error);
-            return false;
+            return errorData(error);
         };
 
     };

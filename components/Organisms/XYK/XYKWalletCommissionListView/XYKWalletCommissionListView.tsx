@@ -27,6 +27,7 @@ import { SkeletonTable } from "@/components/ui/skeletonTable";
 import { Tooltip, message, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import useWallet from "@/hooks/useWallet";
+import { useErrorMess } from '@/hooks/useErrorMess';
 
 import { myCommissions } from '@/graphql/account';
 import { prettifyCurrencys, prettifyCurrencysFee } from '@/graphql/util';
@@ -91,17 +92,22 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
         setSpinning(true);
         const isSuccess = await collect(collectIds);
         console.log(isSuccess)
-        if (isSuccess) {
+        if (isSuccess === true) {
             messageApi.open({
                 type: 'success',
                 content: t('common.mess.collect') + t('common.mess.success'),
             });
-        } else {
+        } else if (isSuccess === false) {
             messageApi.open({
                 type: 'error',
                 content: t('common.mess.collect') + t('common.mess.error'),
             });
-        }
+        } else {
+            messageApi.open({
+              type: 'error',
+              content: useErrorMess(isSuccess,t),
+            });
+          }
         setSpinning(false);
         document.body.style.overflow = "";
 

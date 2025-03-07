@@ -13,6 +13,7 @@ import useWallet from "@/hooks/useWallet";
 import { LoadingOutlined } from '@ant-design/icons';
 import { useWeb3React } from "@web3-react/core";
 // import { useSwitchChain } from "hooks";
+import { useErrorMess } from '@/hooks/useErrorMess';
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 
 import { myDisInvestProofGood } from '@/graphql/account';
@@ -87,19 +88,24 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
             // @ts-ignore
             const qunt = Number(goodQ * powerIterative(10, disgood.good1.decimals));
             const isSuccess = await disinvest(disgood.id, BigInt(qunt));
-            if (isSuccess) {
+            if (isSuccess === true) {
                 messageApi.open({
                     type: 'success',
                     content: t('common.divest') + t('common.mess.success'),
                 });
                 setDataNum(1);
                 setOpen(false);
-            } else {
+            } else if (isSuccess === false) {
                 messageApi.open({
                     type: 'error',
                     content: t('common.divest') + t('common.mess.error'),
                 });
-            }
+            } else {
+                messageApi.open({
+                  type: 'error',
+                  content: useErrorMess(isSuccess,t),
+                });
+              }
         // }).catch((error) => {
         //     console.error(`"Failed to switch chains: " ${error}`);
         // });

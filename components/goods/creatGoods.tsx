@@ -17,6 +17,7 @@ import useWallet from "@/hooks/useWallet";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 // import BigNumber from 'bignumber.js';
 import { useMaxApprove } from '@/hooks/useMaxApprove';
+import { useErrorMess } from '@/hooks/useErrorMess';
 
 import { GoodsDatas } from '@/graphql';
 
@@ -129,18 +130,23 @@ export const CreatGoods = ({ setDataNum }: Props) => {
 
     // @ts-ignore
     const isSuccess = await newGoods(goodVAddr, goodVName, goodV, goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0", maxApprove);
-    console.log("isSuccess:", isSuccess)
-    if (isSuccess) {
+    console.log("isSuccess:", isSuccess,useErrorMess(isSuccess,t))
+    if (isSuccess === true) {
       messageApi.open({
         type: 'success',
         content: t('common.mess.create') + t('common.mess.success'),
       });
       setDataNum(1);
       setOpen(false);
-    } else {
+    } else if (isSuccess === false) {
       messageApi.open({
         type: 'error',
         content: t('common.mess.create') + t('common.mess.error'),
+      });
+    } else {
+      messageApi.open({
+        type: 'error',
+        content: useErrorMess(isSuccess,t),
       });
     }
     // }).catch((error) => {
