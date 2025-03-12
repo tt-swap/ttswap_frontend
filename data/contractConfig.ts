@@ -35,7 +35,7 @@ export const contractCon: {
   },
   11155111: {
     chainId: "11155111",
-    contractAddress: "0x382fc6bfa0b8e23d5009b2c0881a38501e122f78",
+    contractAddress: "0x5dd8b02b60410833368cd251ace9b1338e4ab468",
     theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap/version/latest",
     permit2Address:"0x419C606ed7dd9e411826A26CE9F146ed5A5F7C34"
   },

@@ -925,8 +925,8 @@ const useWallet = () => {
             console.log(1111, allowanceV, allowanceB, approveS, initGoodV, initGoodVA, approveV, approveB)
             if (approveV && approveB) {
 
-                console.log(2222, vgood, qunt, addr, config, initGoodV)
                 if (initGoodVA) {
+                    console.log(2222, vgood, qunt, addr, config, initGoodV)
                     return await contract.initGood(vgood, qunt, addr, config, transferDataT, transferDataF, { value: initGoodV }).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
