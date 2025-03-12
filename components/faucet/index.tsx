@@ -91,13 +91,15 @@ export const Faucet = ({ }: Props) => {
             id: "0x7aff8befc7cbe268d90d7248035133881526734b", symbol: "MKR", logo_url: "", address: "0x7aff8befc7cbe268d90d7248035133881526734b"
         }, {
             id: "0x711B27D526Eb688c0D509014E413f993C463D39e", symbol: "ADA", logo_url: "", address: "0x711B27D526Eb688c0D509014E413f993C463D39e"
+        }, {
+            id: "0xe9f08e8D860b96Cdd5dd8fDCCBF5bBA764873ed4", symbol: "SOL", logo_url: "", address: "0xe9f08e8D860b96Cdd5dd8fDCCBF5bBA764873ed4"
         }],
         97: [{
-            id: "0x11E10725a6Fc7C47833209C6DE31307Fbd389494", symbol: "USDT", logo_url: "", address: "0x11E10725a6Fc7C47833209C6DE31307Fbd389494"
+            id: "0xD83d10d21ed402653B69dFe47187E3a9192F187E", symbol: "USDT", logo_url: "", address: "0xD83d10d21ed402653B69dFe47187E3a9192F187E"
         }, {
-            id: "0x875A9522d695804e1F1636eE3616E6185F74b563", symbol: "WBTC", logo_url: "", address: "0x875A9522d695804e1F1636eE3616E6185F74b563"
+            id: "0xbc7EB48dD5220BC4EB8e1BD11D7ba45Eb6Ee368A", symbol: "WBTC", logo_url: "", address: "0xbc7EB48dD5220BC4EB8e1BD11D7ba45Eb6Ee368A"
         }, {
-            id: "0x9588F74Df5BbC1CD3a45720Cb944A4b1048A4450", symbol: "WBNB", logo_url: "", address: "0x9588F74Df5BbC1CD3a45720Cb944A4b1048A4450"
+            id: "0x0674E4Df85987c4FC317757ec9942e099F7E5118", symbol: "WETH", logo_url: "", address: "0x0674E4Df85987c4FC317757ec9942e099F7E5118"
         }],
         5003: [{
             id: "0x875A9522d695804e1F1636eE3616E6185F74b563", symbol: "USDT", logo_url: "", address: "0x875A9522d695804e1F1636eE3616E6185F74b563"

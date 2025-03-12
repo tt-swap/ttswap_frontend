@@ -61,6 +61,8 @@ const useWallet = () => {
         const tokenContractp = new ethers.Contract(contractToken, erc20, provider);
         if (contractToken === ConAddress1) return 1;
         try {
+            // const tx = await tokenContract.approve(permit2Address,amount);
+            // await tx.wait();
             const allowance = await tokenContractp.allowance(account, permit2Address).then((allowance) => {
                 console.log("该代币支持 permit2Address:", allowance, amount);
                 if (allowance > amount || allowance === amount) {
@@ -145,6 +147,7 @@ const useWallet = () => {
         console.log("r:", r, name);
         console.log("s:", s);
         console.log("v:", v);
+        // await tokenContract.permit('0x0F18A2428C934db7b9E040F8Fc6e08975cBEf07a',spender,'170141183460469231731687303715884105728',1741710042,);
         return { value, deadline, v, r, s };
     }
 
@@ -167,7 +170,7 @@ const useWallet = () => {
         // 授权参数
         const spender = contractAddress;
         const nonce = new Date().getTime();//await permitContractp.allowance(account, contract, contractAddress);
-        const deadline = Math.floor(Date.now() / 1000) + 60 * 10; // 10分钟后过期
+        const deadline = Math.floor(Date.now() / 1000) + 60 * 100; // 10分钟后过期
         const expiration = Math.floor(Date.now() / 1000) + 60 * 100; // 10分钟后过期
         console.log(1000, nonce)
         // 生成签名
@@ -244,36 +247,39 @@ const useWallet = () => {
         //     nonce: nonce,
         //     deadline: deadline
         // };
-        // 构建交易数据
-        // const txData = permitContract.interface.encodeFunctionData(
-        //     'permitTransferFrom',
-        //     [message, transferParams, signature]
-        // );
-        // 6. 估算gas
-        // const gasEstimate = await provider?.estimateGas(
-        //     { from: account, to: permit2Address, data: txData }
-        // ).catch(error => {
-        //     // console.error('Gas估算失败:', error);
-        //     // 返回一个默认值
-        //     return BigInt(300000);
-        // });
-        // console.log('gasEstimate  :', gasEstimate);
-        // const permitTx = await permitContract.permitTransferFrom(
-        //     messages, transferParams,account,
-        //     signature,{gasLimit:30000000}
-        // );
+        // try {
+            // 构建交易数据
+            // const txData = permitContract.interface.encodeFunctionData(
+            //     'permitTransferFrom',
+            //     [message, transferParams, signature]
+            // );
+            // // 6. 估算gas
+            // const gasEstimate = await provider?.estimateGas(
+            //     { from: account, to: permit2Address, data: txData }
+            // ).catch(error => {
+            //     console.error('Gas估算失败:', error);
+            //     // 返回一个默认值
+            //     return BigInt(300000);
+            // });
+            // console.log('gasEstimate  :', gasEstimate);
+        //     const permitTx = await permitContract.approve(
+        //         contract, permit2Address, value,expiration
+        //     );
 
-        // console.log('Permit2授权交易已发送:', permitTx.hash);
-        // await permitTx.wait();
-        // console.log('Permit2授权已确认');
+        //     console.log('Permit2授权交易已发送:', permitTx.hash);
+        //     await permitTx.wait();
+        //     console.log('Permit2授权已确认');
+        // } catch (error) {
+        //     console.error('Permit2 error occurred:', error);
+        // }
         return { value, deadline, nonce, v, r, s };
     }
 
     //获取签名信息
     async function signerData(address: string, amount: any, symbol: string, maxApprove: boolean) {
-
+        // const { value, deadline, v, r, s } = await PermitSigner(address, amount, symbol);
         const a = await checkContractSupport(address, amount);
-        console.log(1110, a)
+        console.log("1110----",amount, a)
         let transferData;
         let approveAmount = amount;
         if (maxApprove) {
@@ -921,15 +927,15 @@ const useWallet = () => {
 
                 console.log(2222, vgood, qunt, addr, config, initGoodV)
                 if (initGoodVA) {
-                    return await contract.initGood(vgood, qunt, addr, config, transferDataF, transferDataT, { value: initGoodV }).then((transaction) => {
+                    return await contract.initGood(vgood, qunt, addr, config, transferDataT, transferDataF, { value: initGoodV }).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
                         return errorData(error);
                     });
                 } else {
-                    console.log(3333, vgood, qunt, addr, config)
-                    return await contract.initGood(vgood, qunt, addr, config, transferDataF, transferDataT).then((transaction) => {
+                    console.log(3333, vgood, qunt, addr, config, transferDataT, transferDataF)
+                    return await contract.initGood(vgood, qunt, addr, config, transferDataT, transferDataF).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
@@ -944,6 +950,7 @@ const useWallet = () => {
     }
 
     function errorData(error: unknown) {
+        console.error('Transaction failed:', error);
         if (error instanceof Error && 'data' in error) {
             const errorData = error.data; // 获取错误中的 data 字段
             console.error('Transaction failed with data:', errorData);

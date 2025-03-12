@@ -35,7 +35,7 @@ export const contractCon: {
   },
   11155111: {
     chainId: "11155111",
-    contractAddress: "0x2d5ab924508ccbd4b7e062b8c16ef3d40083d356",
+    contractAddress: "0x382fc6bfa0b8e23d5009b2c0881a38501e122f78",
     theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap/version/latest",
     permit2Address:"0x419C606ed7dd9e411826A26CE9F146ed5A5F7C34"
   },
@@ -113,9 +113,9 @@ export const contractCon: {
   },
   97: {
     chainId: "97",
-    contractAddress: "0xa50eb0d081E986c280efF32dae089939Ea07bd22",
+    contractAddress: "0x382Fc6BFA0b8e23D5009B2c0881A38501E122f78",
     theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_bnb/version/latest",
-    permit2Address:"0xC564c491EF1639C83b6F721374b5531ba6A1EcEb"
+    permit2Address:"0x4a31A278aDc90D967735696D5160Aa490998D851"
   },
   747: {
     chainId: "747",

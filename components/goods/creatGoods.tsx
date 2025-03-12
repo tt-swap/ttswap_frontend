@@ -93,7 +93,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   }, [open]);
 
   const isDisabled = useMemo(() => {
-    console.log(buyF, sellF, inF, disinF, swapS, disinS, goodQ, goodVQ, goodC, goodV)
+    // console.log(buyF, sellF, inF, disinF, swapS, disinS, goodQ, goodVQ, goodC, goodV)
     // @ts-ignore
     if (buyF < 1 || sellF < 1 || inF < 1 || disinF < 1 || swapS < 1 || disinS < 1 || goodQ === "" || goodQ === "0" || goodQ < 0 || goodVQ === "" || goodVQ === "0" || goodVQ < 0 || goodV === "" || goodC === "")
       return true;
