@@ -59,7 +59,8 @@ const useWallet = () => {
     async function checkContractSupport(contractToken: string | ethers.Addressable, amount: any) {
         const tokenContract = new ethers.Contract(contractToken, erc20, signer);
         const tokenContractp = new ethers.Contract(contractToken, erc20, provider);
-        if (contractToken === ConAddress1) return 1;
+        const tokenSymbol = await tokenContractp.symbol();
+        if (contractToken === ConAddress1 || tokenSymbol === "DAI" || tokenSymbol === "dai") return 1;
         try {
             // const tx = await tokenContract.approve(permit2Address,amount);
             // await tx.wait();
@@ -93,9 +94,9 @@ const useWallet = () => {
                 return true;
             });
             if (!allowance) {
+                console.log("该代币支持 Permit，nonce:", nonce.toString());
                 return 2;
             }
-            console.log("该代币支持 Permit，nonce:", nonce.toString());
             return 1;
         } catch (error: unknown) {
             if (error instanceof Error) {
