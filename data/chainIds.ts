@@ -15,4 +15,5 @@ export const chainIds: { [chname: string]: any } = {
   arbitrumsepolia: "421614", flowMainnet: "747", flowPreviewnet: "646", flowTestnet: "545", mantle: "5000",
   mantleSepolia: "5003",
   mantleTestnet: "5001",
+  hoodiTestnet: "560048",
 };

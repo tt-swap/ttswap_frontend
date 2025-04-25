@@ -9,7 +9,7 @@ import { useSwapAmountStore } from "@/stores/swapAmount";
 import { powerIterative } from '@/graphql/util';
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 
-import { getContractAddress, getPermit2PAddress } from '@/data/contractConfig';
+import { getContractAddress, getPermit2PAddress, getSWETH } from '@/data/contractConfig';
 import { useEthersSigner, useEthersProvider } from '@/connectors/wagmiEthersV6';
 
 import { useAccount, useReadContracts, useReadContract, useBalance, useWriteContract, useSimulateContract, useEstimateGas } from 'wagmi';
@@ -20,10 +20,12 @@ interface BalanceResult {
 }
 const useWallet = () => {
 
-    const defaultData = "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000";
+    const defaultData = "";
     const MarketManager = TTSwapMarket;
     const ConAddress0 = "0x0000000000000000000000000000000000000000";
     const ConAddress1 = "0x0000000000000000000000000000000000000001";
+    const ConAddress2 = "0x0000000000000000000000000000000000000002";
+    const ConAddress3 = "0x0000000000000000000000000000000000000003";
     const defaultAmount = BigInt(2 ** 127);//ethers.MaxUint256;//
     // @ts-ignore
     const { ssionChian } = useLocalStorage();
@@ -34,6 +36,7 @@ const useWallet = () => {
 
     const contractAddress = getContractAddress(ssionChian);
     const permit2Address = getPermit2PAddress(ssionChian);
+    const SWETH = getSWETH(ssionChian);
     const gater = '0x0f18a2428c934db7b9e040f8fc6e08975cbef07a'; // gater address
 
     const { swaps } = useSwap();
@@ -57,10 +60,13 @@ const useWallet = () => {
     }, [isConnected, address]);
 
     async function checkContractSupport(contractToken: string | ethers.Addressable, amount: any) {
+        if (contractToken === ConAddress3) {
+            contractToken = SWETH;
+        }
         const tokenContract = new ethers.Contract(contractToken, erc20, signer);
         const tokenContractp = new ethers.Contract(contractToken, erc20, provider);
         const tokenSymbol = await tokenContractp.symbol();
-        if (contractToken === ConAddress1 || tokenSymbol === "DAI" || tokenSymbol === "dai") return 1;
+        if (contractToken === ConAddress1 || contractToken === ConAddress2 || tokenSymbol === "DAI" || tokenSymbol === "dai") return 1;
         try {
             // const tx = await tokenContract.approve(permit2Address,amount);
             // await tx.wait();
@@ -249,20 +255,20 @@ const useWallet = () => {
         //     deadline: deadline
         // };
         // try {
-            // 构建交易数据
-            // const txData = permitContract.interface.encodeFunctionData(
-            //     'permitTransferFrom',
-            //     [message, transferParams, signature]
-            // );
-            // // 6. 估算gas
-            // const gasEstimate = await provider?.estimateGas(
-            //     { from: account, to: permit2Address, data: txData }
-            // ).catch(error => {
-            //     console.error('Gas估算失败:', error);
-            //     // 返回一个默认值
-            //     return BigInt(300000);
-            // });
-            // console.log('gasEstimate  :', gasEstimate);
+        // 构建交易数据
+        // const txData = permitContract.interface.encodeFunctionData(
+        //     'permitTransferFrom',
+        //     [message, transferParams, signature]
+        // );
+        // // 6. 估算gas
+        // const gasEstimate = await provider?.estimateGas(
+        //     { from: account, to: permit2Address, data: txData }
+        // ).catch(error => {
+        //     console.error('Gas估算失败:', error);
+        //     // 返回一个默认值
+        //     return BigInt(300000);
+        // });
+        // console.log('gasEstimate  :', gasEstimate);
         //     const permitTx = await permitContract.approve(
         //         contract, permit2Address, value,expiration
         //     );
@@ -280,7 +286,7 @@ const useWallet = () => {
     async function signerData(address: string, amount: any, symbol: string, maxApprove: boolean) {
         // const { value, deadline, v, r, s } = await PermitSigner(address, amount, symbol);
         const a = await checkContractSupport(address, amount);
-        console.log("1110----",amount, a)
+        console.log("1110----", amount, a)
         let transferData;
         let approveAmount = amount;
         if (maxApprove) {
@@ -391,26 +397,33 @@ const useWallet = () => {
         let to: any = 0;
         (async () => {
             if (isConnected) {
-
-                if (swaps?.from?.address === ConAddress1) {
+                let fromAddress = swaps?.from?.address;
+                let toAddress = swaps?.to?.address;
+                if (fromAddress === ConAddress3) {
+                    fromAddress = SWETH;
+                }
+                if (toAddress === ConAddress3) {
+                    toAddress = SWETH;
+                }
+                if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
                     // @ts-ignore
                     const senderBalanceBefore = await provider.getBalance(address); //账户1余额
-                    console.log(swaps?.from?.address, "ConAddress", senderBalanceBefore)
+                    console.log(fromAddress, "ConAddress", senderBalanceBefore)
                     from = ethers.formatEther(senderBalanceBefore);
                 } else {
-                    const fromBalance = balanceSel(swaps?.from?.address);
+                    const fromBalance = balanceSel(fromAddress);
                     if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
                         from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
                     }
                 }
-                if (swaps?.to?.address === ConAddress1) {
+                if (toAddress === ConAddress1 || toAddress === ConAddress2) {
                     // (async () => {
                     // @ts-ignore
                     const senderBalanceBefore = await provider.getBalance(address); //账户1余额
-                    console.log(swaps?.from?.address, "ConAddress", senderBalanceBefore)
+                    console.log(toAddress, "ConAddress", senderBalanceBefore)
                     to = ethers.formatEther(senderBalanceBefore);
                 } else {
-                    const toBalance = balanceSel(swaps?.to?.address);
+                    const toBalance = balanceSel(toAddress);
                     if (toBalance.amount !== undefined && toBalance.amount !== null) {
                         to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
                     }
@@ -426,25 +439,33 @@ const useWallet = () => {
 
         (async () => {
             if (isConnected) {
-                if (invest?.from?.address === ConAddress1) {
+                let fromAddress = invest?.from?.address;
+                let toAddress = invest?.to?.address;
+                if (fromAddress === ConAddress3) {
+                    fromAddress = SWETH;
+                }
+                if (toAddress === ConAddress3) {
+                    toAddress = SWETH;
+                }
+                if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
                     // @ts-ignore
                     const senderBalanceBefore = await provider.getBalance(address); //账户1余额
-                    console.log(invest?.from?.address, "ConAddress", senderBalanceBefore)
+                    console.log(fromAddress, "ConAddress", senderBalanceBefore)
                     from = ethers.formatEther(senderBalanceBefore);
                 } else {
-                    const fromBalance = balanceSelI(invest?.from?.address);
+                    const fromBalance = balanceSelI(fromAddress);
                     if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
                         from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
                     }
                 }
-                if (invest?.to?.address === ConAddress1) {
+                if (toAddress === ConAddress1 || toAddress === ConAddress2) {
                     // (async () => {
                     // @ts-ignore
                     const senderBalanceBefore = await provider.getBalance(address); //账户1余额
-                    console.log(invest?.from?.address, "ConAddress", senderBalanceBefore)
+                    console.log(toAddress, "ConAddress", senderBalanceBefore)
                     to = ethers.formatEther(senderBalanceBefore);
                 } else {
-                    const toBalance = balanceSelI(invest?.to?.address);
+                    const toBalance = balanceSelI(toAddress);
                     if (toBalance.amount !== undefined && toBalance.amount !== null) {
                         to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
                     }
@@ -727,7 +748,10 @@ const useWallet = () => {
 
             let decimals = 18;
             let nameG;
-            if (addr === ConAddress1) {
+            if (addr === ConAddress3) {
+                addr = SWETH;
+            }
+            if (addr === ConAddress1 || addr === ConAddress2) {
                 decimals = 18;
             } else if (addr === goodVaddr) {
                 decimals = goodDec;
@@ -766,8 +790,8 @@ const useWallet = () => {
 
             if (!ethers.isAddress(addr)) return;
 
-            if (addr === ConAddress1) {
-                addr = ConAddress1;
+            if (addr === ConAddress1 || addr === ConAddress2) {
+                // addr = ConAddress1;
                 initGoodV = tAmount;
                 initGoodVA = true;
                 allowanceB = true;
@@ -786,12 +810,12 @@ const useWallet = () => {
                 } else {
                     allowanceV = true;
                 }
-            } else if (addr === ConAddress1 && goodVaddr === ConAddress1) {
+            } else if (addr === ConAddress1 && goodVaddr === ConAddress1 || addr === ConAddress2 && goodVaddr === ConAddress2) {
                 initGoodV = tAmount + fAmount;
                 initGoodVA = true;
                 allowanceV = true;
                 allowanceB = true;
-            } else if (goodVaddr === ConAddress1) {
+            } else if (goodVaddr === ConAddress1 || goodVaddr === ConAddress2) {
                 initGoodV = fAmount;
                 initGoodVA = true;
                 allowanceV = true;
@@ -925,7 +949,9 @@ const useWallet = () => {
             }
             console.log(1111, allowanceV, allowanceB, approveS, initGoodV, initGoodVA, approveV, approveB)
             if (approveV && approveB) {
-
+                if (addr === SWETH) {
+                    addr = ConAddress3;
+                }
                 if (initGoodVA) {
                     console.log(2222, vgood, qunt, addr, config, initGoodV)
                     return await contract.initGood(vgood, qunt, addr, config, transferDataT, transferDataF, { value: initGoodV }).then((transaction) => {
@@ -979,14 +1005,10 @@ const useWallet = () => {
     }
 
     const investGoods = async (invest: any, famount: any, tamount: any, isValueGood: boolean, maxApprove: boolean) => {
-        // console.log("csinvest:", famount, tamount)
-        // const contractAddress = '0x9d0108882640990941FbC5677C1D9e3281a4e74C'; // multicall 合约地址
+
         try {
 
-            //const signer = await provider.getSigner()
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-            // const contractF = new ethers.Contract(invest.from.address, erc20, signer);
-            // const contractT = new ethers.Contract(invest.to.address, erc20, signer);
             console.log(0)
 
             let allowanceF;
@@ -997,7 +1019,15 @@ const useWallet = () => {
             let investGoodVA;
             let investGoodV = BigInt(0);
 
-            const f = await signerData(invest.from.address, famount, invest.from.symbol, maxApprove);
+            let fromAddress = invest.from.address;
+            let toAddress = invest.to.address;
+            if (fromAddress === ConAddress3) {
+                fromAddress = SWETH;
+            }
+            if (toAddress === ConAddress3) {
+                toAddress = SWETH;
+            }
+            const f = await signerData(fromAddress, famount, invest.from.symbol, maxApprove);
             const aF = f.a;
             const approveAmountF = f.approveAmount;
             const transferDataF = f.transferData;
@@ -1005,7 +1035,7 @@ const useWallet = () => {
             let approveAmountT;
             let transferDataT = defaultData;
             if (isValueGood) {
-                if (invest.from.address === ConAddress1) {
+                if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
                     allowanceF = true;
                     investGoodV = famount;
                     investGoodVA = true;
@@ -1013,7 +1043,7 @@ const useWallet = () => {
                 } else {
                     allowanceT = true;
                     if (aF === 1) {
-                        const contractAllowF = new ethers.Contract(invest.from.address, erc20, provider);
+                        const contractAllowF = new ethers.Contract(fromAddress, erc20, provider);
                         allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
                             if (allowance > famount || allowance === famount) {
                                 return true;
@@ -1028,17 +1058,17 @@ const useWallet = () => {
                     }
                 }
             } else {
-                const t = await signerData(invest.to.address, tamount, invest.to.symbol, maxApprove);
+                const t = await signerData(toAddress, tamount, invest.to.symbol, maxApprove);
                 aT = t.a;
                 approveAmountT = t.approveAmount;
                 transferDataT = t.transferData;
 
-                if (invest.from.address === ConAddress1) {
+                if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
                     allowanceF = true;
                     investGoodV = famount;
                     investGoodVA = true;
                     if (aT === 1) {
-                        const contractAllowT = new ethers.Contract(invest.to.address, erc20, provider);
+                        const contractAllowT = new ethers.Contract(toAddress, erc20, provider);
                         allowanceT = await contractAllowT.allowance(account, contractAddress).then((allowance) => {
                             console.log(allowance, tamount)
                             if (allowance > tamount || allowance === tamount) {
@@ -1052,12 +1082,12 @@ const useWallet = () => {
                     } else {
                         allowanceT = true;
                     }
-                } else if (invest.to.address === ConAddress1) {
+                } else if (toAddress === ConAddress1 || toAddress === ConAddress2) {
                     allowanceT = true;
                     investGoodV = tamount;
                     investGoodVA = true;
                     if (aF === 1) {
-                        const contractAllowF = new ethers.Contract(invest.from.address, erc20, provider);
+                        const contractAllowF = new ethers.Contract(fromAddress, erc20, provider);
                         allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
                             if (allowance > famount || allowance === famount) {
                                 return true;
@@ -1070,25 +1100,14 @@ const useWallet = () => {
                     } else {
                         allowanceF = true;
                     }
-                    // const contractAllowF = new ethers.Contract(invest.from.address, erc20, provider);
-                    // allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
-                    //     console.log(allowance, famount)
-                    //     if (allowance > famount || allowance === famount) {
-                    //         return true;
-                    //     } else {
-                    //         return false;
-                    //     }
-                    // }).catch((error) => {
-                    //     return false;
-                    // });
 
-                } else if (invest.to.address === ConAddress1 || invest.from.address === ConAddress1) {
+                } else if (toAddress === ConAddress1 || toAddress === ConAddress2 || fromAddress === ConAddress1 || fromAddress === ConAddress2) {
                     investGoodV = tamount + famount;
                     investGoodVA = true;
                     allowanceT = true;
                     allowanceF = true;
-                } else if (invest.to.address === invest.from.address) {
-                    const contractAllowF = new ethers.Contract(invest.from.address, erc20, provider);
+                } else if (toAddress === fromAddress) {
+                    const contractAllowF = new ethers.Contract(fromAddress, erc20, provider);
                     allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
                         console.log(allowance, (famount + tamount))
                         if (allowance > (famount + tamount) || allowance === (famount + tamount)) {
@@ -1105,19 +1124,8 @@ const useWallet = () => {
                     });
                 } else {
 
-                    // const contractAllowT = new ethers.Contract(invest.to.address, erc20, provider);
-                    // allowanceT = await contractAllowT.allowance(account, contractAddress).then((allowance) => {
-                    //     console.log(allowance, tamount)
-                    //     if (allowance > tamount || allowance === tamount) {
-                    //         return true;
-                    //     } else {
-                    //         return false;
-                    //     }
-                    // }).catch((error) => {
-                    //     return false;
-                    // });
                     if (aT === 1) {
-                        const contractAllowT = new ethers.Contract(invest.to.address, erc20, provider);
+                        const contractAllowT = new ethers.Contract(toAddress, erc20, provider);
                         allowanceT = await contractAllowT.allowance(account, contractAddress).then((allowance) => {
                             console.log(allowance, tamount)
                             if (allowance > tamount || allowance === tamount) {
@@ -1132,7 +1140,7 @@ const useWallet = () => {
                         allowanceT = true;
                     }
                     if (aF === 1) {
-                        const contractAllowF = new ethers.Contract(invest.from.address, erc20, provider);
+                        const contractAllowF = new ethers.Contract(fromAddress, erc20, provider);
                         allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
                             if (allowance > famount || allowance === famount) {
                                 return true;
@@ -1145,23 +1153,12 @@ const useWallet = () => {
                     } else {
                         allowanceF = true;
                     }
-                    // const contractAllowF = new ethers.Contract(invest.from.address, erc20, provider);
-                    // allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
-                    //     console.log(allowance, famount)
-                    //     if (allowance > famount || allowance === famount) {
-                    //         return true;
-                    //     } else {
-                    //         return false;
-                    //     }
-                    // }).catch((error) => {
-                    //     return false;
-                    // });
                 }
             }
 
 
             if (approveS) {
-                const contractF = new ethers.Contract(invest.from.address, erc20, signer);
+                const contractF = new ethers.Contract(fromAddress, erc20, signer);
                 approveF = await contractF.approve(contractAddress, famount + tamount).then((transaction) => {
                     return transaction.wait().then(() => {
                         allowanceT = true;
@@ -1176,7 +1173,7 @@ const useWallet = () => {
                 if (allowanceF) {
                     approveF = true;
                 } else {
-                    const contractF = new ethers.Contract(invest.from.address, erc20, signer);
+                    const contractF = new ethers.Contract(fromAddress, erc20, signer);
                     approveF = await contractF.approve(contractAddress, approveAmountF).then((transaction) => {
                         return transaction.wait().then(() => {
                             return true;
@@ -1191,7 +1188,7 @@ const useWallet = () => {
                     if (allowanceT) {
                         approveT = true;
                     } else {
-                        const contractT = new ethers.Contract(invest.to.address, erc20, signer);
+                        const contractT = new ethers.Contract(toAddress, erc20, signer);
                         approveT = await contractT.approve(contractAddress, approveAmountT).then((transaction) => {
                             return transaction.wait().then(() => {
                                 return true;
@@ -1252,7 +1249,10 @@ const useWallet = () => {
         try {
 
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-            const address0 = ConAddress1;
+            // let address0 = ConAddress1;
+            if (address === ConAddress3) {
+                address = SWETH;
+            }
             // const [references] = useLocalStorages("reference", null);
             let reference = localStorage.getItem("reference");
             if (reference === null || !ethers.isAddress(reference)) {
@@ -1264,9 +1264,9 @@ const useWallet = () => {
             // await contractF.approve(permit2Address, amount)
             const { a, transferData, approveAmount } = await signerData(address, amount, symbol, maxApprove);
 
-            if (address === address0) {
+            if (address === ConAddress1 || address === ConAddress2) {
                 // console.log("buyGood"+0, params[0], params[1], params[2], params[3], params[4], reference, transferData,amount)
-                return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference, transferData, { value: amount }).then((transaction) => {
+                return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
                     return true;
                 }).catch((error: any) => {
@@ -1287,7 +1287,7 @@ const useWallet = () => {
                         return false;
                     });
                     if (allowanceF) {
-                        return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference, transferData).then((transaction) => {
+                        return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData).then((transaction) => {
                             console.log('buyGood Transaction sent:', transaction);
                             return true;
                         }).catch((error: any) => {
@@ -1298,7 +1298,7 @@ const useWallet = () => {
                             console.log('approve Transaction sent:', transaction);
                             return transaction.wait().then(async (receipt: any) => {
                                 console.log('approve Transaction mined:', receipt);
-                                return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference, transferData).then((transaction) => {
+                                return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData).then((transaction) => {
                                     console.log('buyGood Transaction sent:', transaction);
                                     return true;
                                 }).catch((error: any) => {
@@ -1314,7 +1314,7 @@ const useWallet = () => {
                         });
                     }
                 } else {
-                    return await contract.buyGood(params[0], params[1], params[2], params[3], params[4], reference, transferData).then((transaction) => {
+                    return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData).then((transaction) => {
                         console.log('buyGood Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {

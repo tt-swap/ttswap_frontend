@@ -16,7 +16,7 @@ import Message from '@/components/MessModal/index';
 
 
 import { prettifyBalance, Timestamp } from '@/graphql/util';
-import { GoodsDatas, newGoodsPrice } from '@/graphql/swap/index';
+import { GoodsDatas, newGoodsPrice, SwapNum } from '@/graphql/swap/index';
 
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
@@ -69,7 +69,7 @@ const TokenSwap = () => {
 
     const [isFees, setFees] = useState(true);
     const [istotal, setIstotal] = useState(false);
-    const {maxApprove, setMaxApprove} = useMaxApprove();
+    const { maxApprove, setMaxApprove } = useMaxApprove();
     const [tolerance, setTolerance] = useState(0.5);
     const [balanceF, setBalanceF] = useState<string | number>(0);
     const [balanceT, setBalanceT] = useState<string | number>(0);
@@ -189,6 +189,40 @@ const TokenSwap = () => {
         setAmounts(focus, amount);
     };
     // console.log(getExplorer(11155111))
+    async function swapCount(address: any, amount: bigint) {
+
+        const datas: any = await SwapNum(address, ssionChian);
+        console.log(11155111, datas)
+        let currentQuantity = Number(datas.currentQuantity);
+        let currentValue = Number(datas.currentValue);
+        let value = currentValue / currentQuantity;
+        let limtMax = value * (1 + tolerance / 100);
+        let limtMin = value * (1 - tolerance / 100);
+        let count = 0;
+        const swapChips = datas.swapChips;
+        let chipsLimit = BigInt(Math.trunc(currentQuantity / swapChips));
+        let balance = amount;
+        if (amount > chipsLimit) {
+            while (
+                balance > chipsLimit
+                // && value >= limtMin && value <= limtMax
+            ) {
+                currentQuantity = currentQuantity + Number(chipsLimit);
+                currentValue = currentValue - Math.trunc(Number(chipsLimit) * value);
+                value = currentValue / currentQuantity;
+                balance = balance - chipsLimit;
+                count += 1;
+            }
+            // if (value >= limtMin && value <= limtMax) {
+            //     count += 1;
+            // }
+            count += 1;
+        } else {
+            count = 1;
+        }
+        return count;
+    }
+
     const handleSwap = async () => {
 
         setSpinning(true);
@@ -208,12 +242,14 @@ const TokenSwap = () => {
         }
         // const toVl = Math.ceil(toV / fromV);
         // limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
-        const a: BigInt = BigInt(Math.round(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals));
         // const b: BigInt = BigInt(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals);
         // const b: BigInt = BigInt(1.1 * 2 ** 128 + 3500);
         // limitPrice = BigInt(3402823669209384634633746074359549531636230)
-        console.log(a, 2222222222,fromV,toV,limitPrice)
-        const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, a, limitPrice, istotal], a, swaps.from.address, swaps.from.symbol, maxApprove);
+        // console.log(a, 2222222222,fromV,toV,limitPrice)
+        const a: bigint = BigInt(Math.round(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals));
+        const s = await swapCount(swaps.from.id, a);
+        console.log(a, 2222222222, s)
+        const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, a, s], a, swaps.from.address, swaps.from.symbol, maxApprove);
         // const isSuccess = await swapBuyGood(["51649299683075463979090664991608549190737649190809275440655607745038800234274", "14700013424982216455688397208100595100161518504028027706369398309082945288267", a, b, istotal], a.toString(), "0x0000000000000000000000000000000000000000");
         // const isSuccess = false;
         console.log("isSuccess:", isSuccess)
@@ -229,8 +265,8 @@ const TokenSwap = () => {
         } else {
             setOpen(true);
             setMesStatus("error");
-            setMesTitle(useErrorMess(isSuccess,t));
-          }
+            setMesTitle(useErrorMess(isSuccess, t));
+        }
         // }).catch((error) => {
         //     console.error(`"Failed to switch chains: " ${error}`);
         // });

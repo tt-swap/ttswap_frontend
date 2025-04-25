@@ -158,3 +158,18 @@ export function newGoodsPrices(params: { id: string; from: string; to: string },
         variables: params
     })
 }
+
+// SwapNumber
+export function SwapNumber(params: { id: string; }, ssionChian: number) {
+    return apolloClient(ssionChian).query({
+        query: gql`query($id: String) {
+            goodState(id: $id) {
+                currentQuantity
+                currentValue
+                feeQuantity
+                goodConfig
+            }
+		}`,
+        variables: params
+    })
+}

@@ -1,6 +1,6 @@
 import { getExplorer, getChainName } from '@/data/networks';
 import { SwapTokens } from "@/shared/types/token";
-import { parGoodDatas, newGoodsPrices } from './graphql';
+import { parGoodDatas, newGoodsPrices, SwapNumber } from './graphql';
 import { powerIterative, iconUrl } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
 
@@ -125,6 +125,30 @@ export async function newGoodsPrice(params: { id: string; from: string; to: stri
             map.toValue = to.currentValue;
             map.toPrice = goodsTValue / goodsValue;
         }
+    }
+    return item;
+}
+
+
+
+//SwapNum
+export async function SwapNum(address: any, ssionChian: number): Promise<object> {
+
+    let item = {
+        currentValue: 0, currentQuantity: 0, swapChips: 0, feeQuantity: 0
+    };
+    if (address !== "") {
+
+        const goodsDatas = await SwapNumber({ id: address }, ssionChian);
+
+        // let map = item;
+        const goodConfig = new BigNumber(goodsDatas.data.goodState.goodConfig);
+        const m197 = new BigNumber(2).pow(197);
+        const m187 = new BigNumber(2).pow(187);
+        item.currentQuantity = goodsDatas.data.goodState.currentQuantity;
+        item.currentValue = goodsDatas.data.goodState.currentValue;
+        item.feeQuantity = goodsDatas.data.goodState.feeQuantity;
+        item.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
     }
     return item;
 }

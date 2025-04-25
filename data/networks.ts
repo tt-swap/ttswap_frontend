@@ -342,6 +342,17 @@ export const CHAINS: {
     nativeCurrency: MNT,
     blockExplorerUrls: ["https://explorer.sepolia.mantle.xyz/"]
   },
+  560048: {
+    chainId: "560048",
+    urls: ["https://rpc.hoodi.ethpandaops.io"].filter(
+      Boolean
+    ),
+    publicUrls: ["https://rpc.hoodi.ethpandaops.io"].filter(Boolean),
+    name: "Hoodi testnet",
+    chainName: "hoodiTestnet",
+    nativeCurrency: ETH,
+    blockExplorerUrls: ["	https://hoodi.etherscan.io/"]
+  },
 };
 
 export const URLS: { [chainId: number]: string[] } = Object.keys(CHAINS).reduce<{ [chainId: number]: string[] }>(
