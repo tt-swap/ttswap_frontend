@@ -20,7 +20,7 @@ interface BalanceResult {
 }
 const useWallet = () => {
 
-    const defaultData = "";
+    const defaultData = "0x";
     const MarketManager = TTSwapMarket;
     const ConAddress0 = "0x0000000000000000000000000000000000000000";
     const ConAddress1 = "0x0000000000000000000000000000000000000001";

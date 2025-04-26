@@ -204,13 +204,14 @@ const TokenSwap = () => {
         let balance = amount;
         if (amount > chipsLimit) {
             while (
-                balance > chipsLimit
+                balance > chipsLimit && count <= 3
                 // && value >= limtMin && value <= limtMax
             ) {
                 currentQuantity = currentQuantity + Number(chipsLimit);
                 currentValue = currentValue - Math.trunc(Number(chipsLimit) * value);
                 value = currentValue / currentQuantity;
                 balance = balance - chipsLimit;
+                chipsLimit = BigInt(Math.trunc(currentQuantity / swapChips));
                 count += 1;
             }
             // if (value >= limtMin && value <= limtMax) {
@@ -227,19 +228,19 @@ const TokenSwap = () => {
 
         setSpinning(true);
         // await switchChain(Number(ssionChian)).then(async () => {
-        const dec = 10000;
-        const fromV = swapsAmount.from.currentValue * swapsAmount.to.currentQuantity;///dec;//swaps.from.currentValue / swaps.from.currentQuantity * 10 ** swaps.from.decimals;
-        const toV = swapsAmount.to.currentValue * swapsAmount.from.currentQuantity * (1 + tolerance / 100);//swaps.to.currentValue / swaps.to.currentQuantity * 10 ** swaps.to.decimals;
-        let limitPrice;
-        if (fromV > toV) {
-            const toVl = Math.ceil(fromV / (toV / dec));
-            limitPrice = BigInt(toVl * 2 ** 128) + BigInt(dec);
-            console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swapsAmount)
-        } else {
-            const toVl = Math.ceil(toV / (fromV / dec));
-            limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
-            console.log(2, toVl, fromV / toV, 22555522222222, limitPrice, swapsAmount)
-        }
+        // const dec = 10000;
+        // const fromV = swapsAmount.from.currentValue * swapsAmount.to.currentQuantity;///dec;//swaps.from.currentValue / swaps.from.currentQuantity * 10 ** swaps.from.decimals;
+        // const toV = swapsAmount.to.currentValue * swapsAmount.from.currentQuantity * (1 + tolerance / 100);//swaps.to.currentValue / swaps.to.currentQuantity * 10 ** swaps.to.decimals;
+        // let limitPrice;
+        // if (fromV > toV) {
+        //     const toVl = Math.ceil(fromV / (toV / dec));
+        //     limitPrice = BigInt(toVl * 2 ** 128) + BigInt(dec);
+        //     console.log(1, toVl, fromV / toV, 22555522222222, limitPrice, swapsAmount)
+        // } else {
+        //     const toVl = Math.ceil(toV / (fromV / dec));
+        //     limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
+        //     console.log(2, toVl, fromV / toV, 22555522222222, limitPrice, swapsAmount)
+        // }
         // const toVl = Math.ceil(toV / fromV);
         // limitPrice = BigInt(dec * 2 ** 128) + BigInt(toVl);
         // const b: BigInt = BigInt(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals);
