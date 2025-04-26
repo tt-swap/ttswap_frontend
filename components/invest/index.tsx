@@ -120,7 +120,7 @@ const TokenInvest = () => {
                 }, ssionChian);
                 if (goodId.invest.id !== "") {
                     setToken("from", tokens.tokens[0]);
-                    setIsValueGood(tokens.tokenValue[0].isvaluegood);
+                    setIsValueGood(tokens.tokens[0].isvaluegood);
                 } else {
                     setToken("from", tokens.tokenValue[0]);
                     setIsValueGood(tokens.tokenValue[0].isvaluegood);
