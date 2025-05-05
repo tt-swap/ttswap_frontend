@@ -20,6 +20,7 @@ import { useMaxApprove } from '@/hooks/useMaxApprove';
 import { useErrorMess } from '@/hooks/useErrorMess';
 
 import { GoodsDatas } from '@/graphql';
+import { getSWETH } from '@/data/contractConfig';
 
 type SizeType = Parameters<typeof Form>[0]['size'];
 const { Option } = Select;
@@ -38,6 +39,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   // const { chainId } = useWeb3React();
   // @ts-ignore
   const { ssionChian } = useLocalStorage();
+  const SWETH = getSWETH(ssionChian);
   const [open, setOpen] = useState(false);
   const [buyF, setBuyF] = useState(8);
   const [sellF, setSellF] = useState(8);
@@ -104,8 +106,13 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   const newGood = async () => {
     setSpinning(true);
     // await switchChain(Number(ssionChian)).then(async () => {
-    if (goodC !== "0x0000000000000000000000000000000000000001") {
-      const staust = await checkContractExists(goodC).then(exists => {
+    if (goodC === "0x0000000000000000000000000000000000000001" || goodC === "0x0000000000000000000000000000000000000002") { }
+    else {
+      let a = goodC;
+      if (goodC === "0x0000000000000000000000000000000000000003") {
+        a = SWETH;
+      }
+      const staust = await checkContractExists(a).then(exists => {
         if (exists) {
           console.log('合约存在');
           return true;
@@ -130,7 +137,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
 
     // @ts-ignore
     const isSuccess = await newGoods(goodVAddr, goodVName, goodV, goodDec, goodQ, goodVQ, goodC, BigInt(config).toString(), "0", maxApprove);
-    console.log("isSuccess:", isSuccess,useErrorMess(isSuccess,t))
+    console.log("isSuccess:", isSuccess, useErrorMess(isSuccess, t))
     if (isSuccess === true) {
       messageApi.open({
         type: 'success',
@@ -146,7 +153,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
     } else {
       messageApi.open({
         type: 'error',
-        content: useErrorMess(isSuccess,t),
+        content: useErrorMess(isSuccess, t),
       });
     }
     // }).catch((error) => {
