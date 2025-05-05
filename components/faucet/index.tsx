@@ -108,6 +108,17 @@ export const Faucet = ({ }: Props) => {
         }, {
             id: "0xCaFBbAd55eb09efe7bec8408Cff9932Be7D9A7fA", symbol: "WETH", logo_url: "", address: "0xCaFBbAd55eb09efe7bec8408Cff9932Be7D9A7fA"
         }],
+        560048: [{
+            id: "0x9588F74Df5BbC1CD3a45720Cb944A4b1048A4450", symbol: "USDT", logo_url: "", address: "0x9588F74Df5BbC1CD3a45720Cb944A4b1048A4450"
+        }, {
+            id: "0x11E10725a6Fc7C47833209C6DE31307Fbd389494", symbol: "WBTC", logo_url: "", address: "0x11E10725a6Fc7C47833209C6DE31307Fbd389494"
+        }, {
+            id: "0x2387fD72C1DA19f6486B843F5da562679FbB4057", symbol: "WETH", logo_url: "", address: "0x2387fD72C1DA19f6486B843F5da562679FbB4057"
+        }, {
+            id: "0x875A9522d695804e1F1636eE3616E6185F74b563", symbol: "TWETH", logo_url: "", address: "0x875A9522d695804e1F1636eE3616E6185F74b563"
+        }, {
+            id: "0xCaFBbAd55eb09efe7bec8408Cff9932Be7D9A7fA", symbol: "DAI", logo_url: "", address: "0xCaFBbAd55eb09efe7bec8408Cff9932Be7D9A7fA"
+        }],
     };
 
     useEffect(() => {
@@ -280,18 +291,24 @@ export const Faucet = ({ }: Props) => {
                     >{t('header.menu.faucet.obtain')}</Button>
                 </div>
                 <div className='flex justify-between py-8'>
-                    <a href='https://www.alchemy.com/faucets/ethereum-sepolia' className='w-full mr-4' target='_bank'>
+                    <a href='https://hoodi-faucet.pk910.de' className='w-full' target='_bank'>
                         <Button
                             type="primary"
                             style={styles.newButton1}
                         >{t('header.menu.faucet.testeth')}</Button>
                     </a>
-                    <a href='https://docs.mantle.xyz/network/for-uers/how-to-guides/fetching-test-tokens#faucets' className='w-full' target='_bank'>
+                    {/* <a href='https://www.alchemy.com/faucets/ethereum-sepolia' className='w-full' target='_bank'>
+                        <Button
+                            type="primary"
+                            style={styles.newButton1}
+                        >{t('header.menu.faucet.testeth')}</Button>
+                    </a> */}
+                    {/* <a href='https://docs.mantle.xyz/network/for-uers/how-to-guides/fetching-test-tokens#faucets' className='w-full' target='_bank'>
                         <Button
                             type="primary"
                             style={styles.newButton1}
                         >{t('header.menu.faucet.testmnt')}</Button>
-                    </a>
+                    </a> */}
                 </div>
             </CreatModal>
         </>

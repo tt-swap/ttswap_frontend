@@ -77,7 +77,8 @@ const ChainSelector: FC = () => {
   const items: MenuProps["items"] = useMemo(
     () => [
       // { label: "Ethereum", key: chainIds.ethereum, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
-      { label: "Sepolia Testnet", key: chainIds.sepolia, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
+      // { label: "Sepolia Testnet", key: chainIds.sepolia, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
+      { label: "Hoodi Testnet", key: chainIds.hoodiTestnet, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
       // { label: "Optimism", key: chainIds.optimism, icon: labelToShow(optimistim_Logo, "Optimistim_Logo") },
       // { label: "Optimism Goerli", key: chainIds.optimismgoerli, icon: labelToShow(optimistim_Logo, "Optimistim_Logo") },
       // { label: "Arbitrum", key: chainIds.arbitrum, icon: labelToShow(arbitrum_Logo, "Arbitrum_Logo") },
@@ -108,7 +109,7 @@ const ChainSelector: FC = () => {
   useEffect(() => {
     // const cid = routeSegments[1];
     // setChainId(chainIds[cid]);
-    console.log(chainId1, "accounsfdsdfsdt");
+    // console.log(chainId1, "accounsfdsdfsdt");
     if (chainId) {
       swithC(chainId1);
       // setChainId(chainId);
@@ -116,7 +117,7 @@ const ChainSelector: FC = () => {
 
     // if (chainId1===0) return;
     let selectedLabel;
-    if (chainId1 === 1 || chainId1 === 11155111) {
+    if (chainId1 === 1 || chainId1 === 11155111 || chainId1 === 560048) {
       selectedLabel = labelToShow(ethereum_Logo, "Ethereum_logo");
     } else if (chainId1 === 137 || chainId1 === 80001) {
       selectedLabel = labelToShow(polygon_logo, "Polygon_logo");
@@ -158,7 +159,7 @@ const ChainSelector: FC = () => {
     //   console.error(`"Failed to switch chains: " ${error}`);
     // });
     // }
-    console.log(chainId1, key, 999)
+    // console.log(chainId1, key, 999)
   };
 
   async function swithC(key: any) {

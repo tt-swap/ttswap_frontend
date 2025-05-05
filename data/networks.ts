@@ -344,14 +344,14 @@ export const CHAINS: {
   },
   560048: {
     chainId: "560048",
-    urls: ["https://rpc.hoodi.ethpandaops.io"].filter(
+    urls: ["https://rpc.hoodi.ethpandaops.io","https://hoodi.drpc.org"].filter(
       Boolean
     ),
-    publicUrls: ["https://rpc.hoodi.ethpandaops.io"].filter(Boolean),
-    name: "Hoodi testnet",
+    publicUrls: ["https://rpc.hoodi.ethpandaops.io","https://hoodi.drpc.org"].filter(Boolean),
+    name: "Hoodi Testnet",
     chainName: "hoodiTestnet",
     nativeCurrency: ETH,
-    blockExplorerUrls: ["	https://hoodi.etherscan.io/"]
+    blockExplorerUrls: ["https://hoodi.etherscan.io"]
   },
 };
 

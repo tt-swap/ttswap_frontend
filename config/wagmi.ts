@@ -97,6 +97,7 @@ import {
 } from 'wagmi/chains';
 import { http, createConfig } from 'wagmi';
 import mantle_Logo from "assets/images/mantle_Logo.png";
+import hoodi_Logo from "assets/images/ethereum_Logo.png";
 
 const projectId = 'fba1325852fabad486bab619f8300d1c';
 
@@ -164,6 +165,34 @@ const mantleSepolia = {
   testnet: true,
 } as const satisfies Chain;
 
+const hoodiTestnet = {
+  id: 560048,
+  name: 'Hoodi Testnet',
+  iconUrl: hoodi_Logo.src,
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ETH',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: { http: ['https://hoodi.drpc.org'] },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Hoodi Testnet Explorer',
+      url: 'https://hoodi.etherscan.io',
+      // apiUrl: 'https://hoodi.etherscan.io/api',
+    },
+  },
+  // contracts: {
+  //   multicall3: {
+  //     address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+  //     blockCreated: 4584012,
+  //   },
+  // },
+  testnet: true,
+} as const satisfies Chain;
+
 // Enable Smart Wallet and EOA
 // Testing `preference` type
 coinbaseWallet.preference = 'all';
@@ -172,7 +201,7 @@ export const config = getDefaultConfig({
   appName: 'ttswap',
   projectId,
   chains: [
-    sepolia,
+    // sepolia,
     // mainnet,
     // arbitrum,
     // polygon,
@@ -196,6 +225,7 @@ export const config = getDefaultConfig({
     // mantle,
     // mantleSepolia,
     // mantleTestnet,
+    hoodiTestnet
   ],
   wallets: [
     {
@@ -268,7 +298,8 @@ export const config = getDefaultConfig({
     },
   ],
   transports: {
-    [sepolia.id]: http(),
+    // [sepolia.id]: http(),
+    [hoodiTestnet.id]: http(),
     // [mantleSepoliaTestnet.id]: http(),
     // [mantleTestnet.id]: http(),
     // [mainnet.id]: http(),
