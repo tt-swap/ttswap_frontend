@@ -60,6 +60,9 @@ const useWallet = () => {
     }, [isConnected, address]);
 
     async function checkContractSupport(contractToken: string | ethers.Addressable, amount: any) {
+        if (contractToken === ConAddress1 || contractToken === ConAddress2) {
+            return 1;
+        }
         if (contractToken === ConAddress3) {
             contractToken = SWETH;
         }
@@ -304,7 +307,9 @@ const useWallet = () => {
             }];
             console.log(1110678678, values)
             const sigdata = abiCoder.encode(types, values);
+            // console.log(1111111, sigdata)
             transferData = abiCoder.encode(["tuple(uint8 transfertype, bytes sigdata)"], [{ transfertype: a, sigdata: sigdata }]);
+            // console.log(2222222, transferData)
         } else if (a === 5) {
             const types = ["tuple(uint256 value, uint256 deadline, uint256 nonce, uint8 v, bytes32 r, bytes32 s)"];
             const { value, deadline, nonce, v, r, s } = await Permit2Signer(address, amount, symbol);
@@ -322,6 +327,7 @@ const useWallet = () => {
         } else {
             transferData = defaultData;
         }
+        // console.log(333333, a, transferData, approveAmount)
         return { a, transferData, approveAmount };
     }
 
@@ -780,7 +786,9 @@ const useWallet = () => {
             let initGoodV = BigInt(0);
 
             const f = await signerData(goodVaddr, fAmount, goodVName, maxApprove);
+            // console.log(444444,f)
             const t = await signerData(addr, tAmount, nameG, maxApprove);
+            // console.log(555555,t)
             const aF = f.a;
             const approveAmountF = f.approveAmount;
             const transferDataF = f.transferData;
@@ -953,7 +961,7 @@ const useWallet = () => {
                     addr = ConAddress3;
                 }
                 if (initGoodVA) {
-                    console.log(2222, vgood, qunt, addr, config, initGoodV)
+                    console.log(2222, vgood, qunt, addr, config, transferDataT, transferDataF, initGoodV)
                     return await contract.initGood(vgood, qunt, addr, config, transferDataT, transferDataF, { value: initGoodV }).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
@@ -1265,7 +1273,7 @@ const useWallet = () => {
             const { a, transferData, approveAmount } = await signerData(address, amount, symbol, maxApprove);
 
             if (address === ConAddress1 || address === ConAddress2) {
-                // console.log("buyGood"+0, params[0], params[1], params[2], params[3], params[4], reference, transferData,amount)
+                console.log("buyGood"+0, params[0], params[1], params[2], params[3], reference, transferData,amount)
                 return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
                     return true;
