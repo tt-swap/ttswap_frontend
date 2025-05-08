@@ -13,10 +13,11 @@ import { Button, Spin, message } from 'antd';
 import Message from '@/components/MessModal/index';
 // import { useSwitchChain } from "hooks";
 // import { useWeb3React } from "@web3-react/core";
+import { useAccount } from 'wagmi';
 
 
 import { prettifyBalance, Timestamp } from '@/graphql/util';
-import { GoodsDatas, newGoodsPrice, SwapNum } from '@/graphql/swap/index';
+import { GoodsDatas, newGoodsPrice, SwapNum, myRefer } from '@/graphql/swap/index';
 
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
@@ -62,6 +63,7 @@ const TokenSwap = () => {
     // const switchChain = useSwitchChain();
     // const { chainId } = useWeb3React();
     const { t } = useTranslation();
+    const { isConnected, address } = useAccount();
 
     const [spinning, setSpinning] = useState(false);
     const { info } = useValueGood();
@@ -249,8 +251,9 @@ const TokenSwap = () => {
         // console.log(a, 2222222222,fromV,toV,limitPrice)
         const a: bigint = BigInt(Math.round(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals));
         const s = await swapCount(swaps.from.id, a);
-        console.log(a, 2222222222, s)
-        const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, a, s], a, swaps.from.address, swaps.from.symbol, maxApprove);
+        const datas: any = await myRefer(address, ssionChian);
+        console.log(a, 2222222222, s, datas)
+        const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, a, s], a, swaps.from.address, swaps.from.symbol, maxApprove, datas.refer);
         // const isSuccess = await swapBuyGood(["51649299683075463979090664991608549190737649190809275440655607745038800234274", "14700013424982216455688397208100595100161518504028027706369398309082945288267", a, b, istotal], a.toString(), "0x0000000000000000000000000000000000000000");
         // const isSuccess = false;
         console.log("isSuccess:", isSuccess)

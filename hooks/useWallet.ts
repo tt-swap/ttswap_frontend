@@ -8,6 +8,7 @@ import TTSwapMarket from '@/data/abi/MarketManager.json';
 import { useSwapAmountStore } from "@/stores/swapAmount";
 import { powerIterative } from '@/graphql/util';
 import { useLocalStorage } from "@/utils/LocalStorageManager";
+import { portal } from "@/config/PortalAddress";
 
 import { getContractAddress, getPermit2PAddress, getSWETH } from '@/data/contractConfig';
 import { useEthersSigner, useEthersProvider } from '@/connectors/wagmiEthersV6';
@@ -37,7 +38,7 @@ const useWallet = () => {
     const contractAddress = getContractAddress(ssionChian);
     const permit2Address = getPermit2PAddress(ssionChian);
     const SWETH = getSWETH(ssionChian);
-    const gater = '0x0f18a2428c934db7b9e040f8fc6e08975cbef07a'; // gater address
+    // const gater = portal; // gater address
 
     const { swaps } = useSwap();
     const { invest } = useInvest();
@@ -734,8 +735,8 @@ const useWallet = () => {
         //const signer = await provider.getSigner()
         const contract = new ethers.Contract(contractAddress, MarketManager, signer);
 
-        console.log(pid, qut);
-        return await contract.disinvestProof(pid, qut, gater).then((transaction) => {
+        console.log("disinvest-----",pid, qut, portal);
+        return await contract.disinvestProof(pid, qut, portal).then((transaction) => {
             console.log('Transaction sent:', transaction);
             return true;
         }).catch((error: any) => {
@@ -1253,7 +1254,7 @@ const useWallet = () => {
 
     };
 
-    const swapBuyGood = async (params: any, amount: any, address: string, symbol: string, maxApprove: boolean) => {
+    const swapBuyGood = async (params: any, amount: any, address: string, symbol: string, maxApprove: boolean, refer: string) => {
         try {
 
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
@@ -1261,9 +1262,10 @@ const useWallet = () => {
             if (address === ConAddress3) {
                 address = SWETH;
             }
+            // console.log("000000werwerwe", refer)
             // const [references] = useLocalStorages("reference", null);
             let reference = localStorage.getItem("reference");
-            if (reference === null || !ethers.isAddress(reference)) {
+            if (reference === null || !ethers.isAddress(reference) || reference === address || refer !== "#") {
                 reference = ConAddress0;
             } else {
                 reference = reference;
@@ -1273,7 +1275,7 @@ const useWallet = () => {
             const { a, transferData, approveAmount } = await signerData(address, amount, symbol, maxApprove);
 
             if (address === ConAddress1 || address === ConAddress2) {
-                console.log("buyGood"+0, params[0], params[1], params[2], params[3], reference, transferData,amount)
+                console.log("buyGood" + 0, params[0], params[1], params[2], params[3], reference, transferData, amount)
                 return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
                     return true;

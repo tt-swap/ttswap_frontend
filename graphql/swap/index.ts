@@ -1,6 +1,6 @@
 import { getExplorer, getChainName } from '@/data/networks';
 import { SwapTokens } from "@/shared/types/token";
-import { parGoodDatas, newGoodsPrices, SwapNumber } from './graphql';
+import { parGoodDatas, newGoodsPrices, SwapNumber,customerRefer } from './graphql';
 import { powerIterative, iconUrl } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
 
@@ -149,6 +149,25 @@ export async function SwapNum(address: any, ssionChian: number): Promise<object>
         item.currentValue = goodsDatas.data.goodState.currentValue;
         item.feeQuantity = goodsDatas.data.goodState.feeQuantity;
         item.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
+    }
+    return item;
+}
+
+
+//myRefer
+export async function myRefer(address: any, ssionChian: number): Promise<object> {
+
+    let item = {
+        id: "", refer: "", customerno: 0, referralnum: 0
+    };
+    if (address !== "") {
+
+        const goodsDatas = await customerRefer({ id: address.toLowerCase() }, ssionChian);
+
+        item.id = goodsDatas.data.customer.id;
+        item.refer = goodsDatas.data.customer.refer;
+        item.customerno = goodsDatas.data.customer.customerno;
+        item.referralnum = goodsDatas.data.customer.referralnum;
     }
     return item;
 }

@@ -173,3 +173,18 @@ export function SwapNumber(params: { id: string; }, ssionChian: number) {
         variables: params
     })
 }
+
+// customerRefer
+export function customerRefer(params: { id: string; }, ssionChian: number) {
+    return apolloClient(ssionChian).query({
+        query: gql`query($id: String) {
+            customer(id: $id) {
+                id
+                refer
+                customerno
+                referralnum
+            }
+		}`,
+        variables: params
+    })
+}
