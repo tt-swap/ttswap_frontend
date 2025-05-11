@@ -1274,8 +1274,8 @@ const useWallet = () => {
             // await contractF.approve(permit2Address, amount)
             const { a, transferData, approveAmount } = await signerData(address, amount, symbol, maxApprove);
 
+            console.log("buyGood----", params[0], params[1], params[2], params[3], reference, transferData, amount,refer)
             if (address === ConAddress1 || address === ConAddress2) {
-                console.log("buyGood" + 0, params[0], params[1], params[2], params[3], reference, transferData, amount)
                 return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
                     return true;

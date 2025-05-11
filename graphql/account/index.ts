@@ -396,7 +396,7 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
         map.price = price;
         map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
 
-        ids.push(e.id);
+        // ids.push(e.id);
         items.push(map);
     });
 
@@ -422,7 +422,12 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
             // @ts-ignore
             value.myFeeQuanity = feeQs[index] / 10 ** value.tokendecimals;
             // @ts-ignore
-            value.myFeeAmount = value.myFeeQuanity * value.price
+            value.myFeeAmount = value.myFeeQuanity * value.price;
+            // @ts-ignore
+            if (value.myFeeAmount > 0.1) {
+                // @ts-ignore
+                ids.push(value.id);
+            }
         }
     })
     return item;
