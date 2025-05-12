@@ -396,7 +396,7 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
         map.price = price;
         map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
 
-        // ids.push(e.id);
+        ids.push(e.id);
         items.push(map);
     });
 
@@ -412,10 +412,11 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
         transaction.map((num: any) => {
             feeQs.push(Number(num));
         })
-        console.log('Transaction sent:', feeQs);
+        console.log('Transaction sent:', transaction, feeQs, item.ids, params.address);
     }).catch((error: any) => {
         console.error('出错:', error);
     });
+    ids.length = 0;
     items.map((value, index) => {
         // console.log('items:', value,index);
         if (feeQs[index] > 0) {

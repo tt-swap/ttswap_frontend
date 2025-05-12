@@ -46,7 +46,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
     ]);
     const [rowSelection, setRowSelection] = useState({});
     const [maybeResult, setResult] = useState<Option<Pool[]>>(None);
-    const [collectIds, setCollectIds] = useState<[]>();
+    const [collectIds, setCollectIds] = useState<[]>([]);
     const [error, setError] = useState({ error: false, error_message: "" });
     const [windowWidth, setWindowWidth] = useState<number>(0);
     const [pagination, setPagination] = useState({
@@ -425,6 +425,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                         type="primary"
                         className="mx-2"
                         onClick={collectCommission}
+                        disabled={collectIds.length>0?false:true}
                     >
                     {t('body.account.tabs.commission.bnt')}</Button>
                 </Tooltip>
