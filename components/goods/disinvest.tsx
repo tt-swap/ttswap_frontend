@@ -85,27 +85,28 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
     const disinvestgood = async () => {
         setSpinning(true);
         // await switchChain(Number(ssionChian)).then(async () => {
-            // @ts-ignore
-            const qunt = Number(goodQ * powerIterative(10, disgood.good1.decimals));
-            const isSuccess = await disinvest(disgood.id, BigInt(qunt));
-            if (isSuccess === true) {
-                messageApi.open({
-                    type: 'success',
-                    content: t('common.divest') + t('common.mess.success'),
-                });
-                setDataNum(1);
-                setOpen(false);
-            } else if (isSuccess === false) {
-                messageApi.open({
-                    type: 'error',
-                    content: t('common.divest') + t('common.mess.error'),
-                });
-            } else {
-                messageApi.open({
-                  type: 'error',
-                  content: useErrorMess(isSuccess,t),
-                });
-              }
+        // @ts-ignore
+        const qunt = Number(goodQ * powerIterative(10, disgood.good1.decimals)).toFixed(0);
+        console.log("dis---",qunt,goodQ)
+        const isSuccess = await disinvest(disgood.id, BigInt(qunt));
+        if (isSuccess === true) {
+            messageApi.open({
+                type: 'success',
+                content: t('common.divest') + t('common.mess.success'),
+            });
+            setDataNum(1);
+            setOpen(false);
+        } else if (isSuccess === false) {
+            messageApi.open({
+                type: 'error',
+                content: t('common.divest') + t('common.mess.error'),
+            });
+        } else {
+            messageApi.open({
+                type: 'error',
+                content: useErrorMess(isSuccess, t),
+            });
+        }
         // }).catch((error) => {
         //     console.error(`"Failed to switch chains: " ${error}`);
         // });
@@ -114,14 +115,20 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
     };
 
     const goodQOn = (e: any) => {
-        console.log(e.target, disgood)
+        console.log(e.target, disgood);
+        // @ts-ignore
+        const g1 = disgood.good1.decimals;
+        let numg1 = e.target.value;
+        if ((numg1.toString().length - 2) > g1) {
+            numg1 = numg1.toFixed(g1);
+        }
         // @ts-ignore
         if (disgood.isvaluegood) {
             let num = 0;
             // @ts-ignore
             if (e.target.value < disgood.good1.quantity && e.target.value < disgood.good1.maxNum) {
-                setGoodQ(e.target.value);
-                num = Number(e.target.value);
+                setGoodQ(numg1);
+                num = Number(numg1);
             } else {
                 setGoodQ(goodQ);
                 num = Number(goodQ);
@@ -135,14 +142,20 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
             setDisgoodCot(count);
             console.log(count, 999)
         } else {
-            let num = Number(e.target.value);
             // @ts-ignore
-            let num1 = disgood.good2.quantity * num / disgood.good1.quantity;
+            const g2 = disgood.good2.decimals;
+            let num = Number(numg1);
+            // @ts-ignore
+            let num1 :any = disgood.good2.quantity * num / disgood.good1.quantity;
+            if ((num1.toString().length - 2) > g2) {
+                num1 = num1.toFixed(g2);
+            }
             // @ts-ignore
             if (num < disgood.good1.quantity && num < disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum) {
-                setGoodQ(e.target.value);
+                setGoodQ(numg1);
                 // @ts-ignore
                 setGoodVQ(num1);
+                num1 = Number(num1);
             } else {
                 setGoodQ(goodQ);
                 setGoodVQ(goodVQ);
@@ -162,27 +175,41 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
             count.good2.disfee = num1 * disgood.good2.rate;
             count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
             setDisgoodCot(count);
+            console.log("------", numg1,num1,count)
 
         }
 
     };
     // @ts-ignore
     const goodVQOn = (e: any) => {
-
-        let num1 = Number(e.target.value);
         // @ts-ignore
-        let num = disgood.good1.quantity * num1 / disgood.good2.quantity;
+        const g1 = disgood.good1.decimals;  const g2 = disgood.good2.decimals;
+
+        // let num1 = Number(e.target.value);
+        let num1 = e.target.value;
+        if ((num1.toString().length - 2) > g2) {
+            num1 = num1.toFixed(g2);
+        }
+        // @ts-ignore
+        let num :any = disgood.good1.quantity * num1 / disgood.good2.quantity;
+        console.log("++++++", num)
+        if ((num.toString().length - 2) > g1) {
+            num = num.toFixed(g1);
+        }
         // @ts-ignore
         if (num < disgood.good1.quantity && num < disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum) {
 
             // @ts-ignore
-            setGoodQ(num); setGoodVQ(e.target.value);
+            setGoodQ(num); setGoodVQ(num1);
+            num = Number(num);
+            num1 = Number(num1);
         } else {
             setGoodQ(goodQ);
             setGoodVQ(goodVQ);
             num = Number(goodQ);
             num1 = Number(goodVQ);
         }
+        console.log("++++++", num,num1)
         count.good1.quantity = num;
         // @ts-ignore
         count.good1.profit = disgood.good1.nowUnitFee * num - num / disgood.good1.quantity * disgood.good1.contructFee;
