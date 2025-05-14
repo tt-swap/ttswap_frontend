@@ -14,6 +14,7 @@ import { getContractAddress, getPermit2PAddress, getSWETH } from '@/data/contrac
 import { useEthersSigner, useEthersProvider } from '@/connectors/wagmiEthersV6';
 
 import { useAccount, useReadContracts, useReadContract, useBalance, useWriteContract, useSimulateContract, useEstimateGas } from 'wagmi';
+import { erc20Abi } from "viem";
 
 interface BalanceResult {
     amount: any;
@@ -335,7 +336,19 @@ const useWallet = () => {
 
     // 在组件顶层使用 useReadContracts
     const { data: sawpFromTokenData } = useReadContracts({
-        contracts: swaps?.from?.address ? [
+        contracts: swaps?.from?.address === ConAddress3 ? [
+            {
+                address: SWETH as `0x${string}`,
+                abi: erc20,
+                functionName: 'balanceOf',
+                args: [address],
+            },
+            {
+                address: SWETH as `0x${string}`,
+                abi: erc20,
+                functionName: 'decimals'
+            }
+        ] : [
             {
                 address: swaps.from.address as `0x${string}`,
                 abi: erc20,
@@ -347,11 +360,23 @@ const useWallet = () => {
                 abi: erc20,
                 functionName: 'decimals'
             }
-        ] : []
+        ]
     });
 
     const { data: sawpToTokenData } = useReadContracts({
-        contracts: swaps?.to?.address ? [
+        contracts: swaps?.to?.address === ConAddress3 ? [
+            {
+                address: SWETH as `0x${string}`,
+                abi: erc20,
+                functionName: 'balanceOf',
+                args: [address],
+            },
+            {
+                address: SWETH as `0x${string}`,
+                abi: erc20,
+                functionName: 'decimals'
+            }
+        ] : [
             {
                 address: swaps.to.address as `0x${string}`,
                 abi: erc20,
@@ -363,11 +388,23 @@ const useWallet = () => {
                 abi: erc20,
                 functionName: 'decimals'
             }
-        ] : []
+        ]
     });
 
     const { data: investFromTokenData } = useReadContracts({
-        contracts: invest?.from?.address ? [
+        contracts: invest?.from?.address === ConAddress3 ? [
+            {
+                address: SWETH as `0x${string}`,
+                abi: erc20,
+                functionName: 'balanceOf',
+                args: [address],
+            },
+            {
+                address: SWETH as `0x${string}`,
+                abi: erc20,
+                functionName: 'decimals'
+            }
+        ] : [
             {
                 address: invest.from.address as `0x${string}`,
                 abi: erc20,
@@ -379,11 +416,23 @@ const useWallet = () => {
                 abi: erc20,
                 functionName: 'decimals'
             }
-        ] : []
+        ]
     });
 
     const { data: investToTokenData } = useReadContracts({
-        contracts: invest?.to?.address ? [
+        contracts: invest?.to?.address === ConAddress3 ? [
+            {
+                address: SWETH as `0x${string}`,
+                abi: erc20,
+                functionName: 'balanceOf',
+                args: [address],
+            },
+            {
+                address: SWETH as `0x${string}`,
+                abi: erc20,
+                functionName: 'decimals'
+            }
+        ] : [
             {
                 address: invest.to.address as `0x${string}`,
                 abi: erc20,
@@ -395,7 +444,7 @@ const useWallet = () => {
                 abi: erc20,
                 functionName: 'decimals'
             }
-        ] : []
+        ]
     });
 
     useEffect(() => {
@@ -404,20 +453,16 @@ const useWallet = () => {
         let to: any = 0;
         (async () => {
             if (isConnected) {
+                const SWETHc = new ethers.Contract(SWETH, erc20, provider);
                 let fromAddress = swaps?.from?.address;
                 let toAddress = swaps?.to?.address;
-                if (fromAddress === ConAddress3) {
-                    fromAddress = SWETH;
-                }
-                if (toAddress === ConAddress3) {
-                    toAddress = SWETH;
-                }
                 if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
                     // @ts-ignore
                     const senderBalanceBefore = await provider.getBalance(address); //账户1余额
                     console.log(fromAddress, "ConAddress", senderBalanceBefore)
                     from = ethers.formatEther(senderBalanceBefore);
-                } else {
+                }
+                else {
                     const fromBalance = balanceSel(fromAddress);
                     if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
                         from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
@@ -429,7 +474,8 @@ const useWallet = () => {
                     const senderBalanceBefore = await provider.getBalance(address); //账户1余额
                     console.log(toAddress, "ConAddress", senderBalanceBefore)
                     to = ethers.formatEther(senderBalanceBefore);
-                } else {
+                }
+                else {
                     const toBalance = balanceSel(toAddress);
                     if (toBalance.amount !== undefined && toBalance.amount !== null) {
                         to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
@@ -448,12 +494,6 @@ const useWallet = () => {
             if (isConnected) {
                 let fromAddress = invest?.from?.address;
                 let toAddress = invest?.to?.address;
-                if (fromAddress === ConAddress3) {
-                    fromAddress = SWETH;
-                }
-                if (toAddress === ConAddress3) {
-                    toAddress = SWETH;
-                }
                 if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
                     // @ts-ignore
                     const senderBalanceBefore = await provider.getBalance(address); //账户1余额
@@ -572,6 +612,7 @@ const useWallet = () => {
 
 
     const balanceSel = useCallback((ConAddress: string): BalanceResult => {
+        console.log("===balanceSel----", ConAddress)
         if (!ConAddress || !isConnected) return { amount: 0, decimals: 18 };
         if (ConAddress === swaps?.from?.address) {
             return {
@@ -735,7 +776,7 @@ const useWallet = () => {
         //const signer = await provider.getSigner()
         const contract = new ethers.Contract(contractAddress, MarketManager, signer);
 
-        console.log("disinvest-----",pid, qut, portal);
+        console.log("disinvest-----", pid, qut, portal);
         return await contract.disinvestProof(pid, qut, portal).then((transaction) => {
             console.log('Transaction sent:', transaction);
             return true;
@@ -1274,7 +1315,7 @@ const useWallet = () => {
             // await contractF.approve(permit2Address, amount)
             const { a, transferData, approveAmount } = await signerData(address, amount, symbol, maxApprove);
 
-            console.log("buyGood----", params[0], params[1], params[2], params[3], reference, transferData, amount,refer)
+            console.log("buyGood----", params[0], params[1], params[2], params[3], reference, transferData, amount, refer)
             if (address === ConAddress1 || address === ConAddress2) {
                 return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
