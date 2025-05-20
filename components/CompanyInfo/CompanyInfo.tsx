@@ -84,16 +84,22 @@ const CompanyInfo: FC = () => {
             children: [
                 {
                     key: '1-1',
-                    label: (<a target="_blank" rel="noopener noreferrer" href="/whitepaper_cn.pdf">
-                        {t('footer.title2.wpcn')}
+                    label: (<a target="_blank" rel="noopener noreferrer" href="//ttswap.io">
+                        {t('footer.title2')}
                     </a>),
                 },
-                {
-                    key: '1-2',
-                    label: (<a target="_blank" rel="noopener noreferrer" href="/whitepaper_en.pdf">
-                        {t('footer.title2.wpen')}
-                    </a>),
-                },
+                // {
+                //     key: '1-1',
+                //     label: (<a target="_blank" rel="noopener noreferrer" href="/whitepaper_cn.pdf">
+                //         {t('footer.title2.wpcn')}
+                //     </a>),
+                // },
+                // {
+                //     key: '1-2',
+                //     label: (<a target="_blank" rel="noopener noreferrer" href="/whitepaper_en.pdf">
+                //         {t('footer.title2.wpen')}
+                //     </a>),
+                // },
             ],
         },
         {
@@ -143,16 +149,22 @@ const CompanyInfo: FC = () => {
             children: [
                 {
                     key: '1-1',
-                    label: (<a target="_blank" rel="noopener noreferrer" href="/whitepaper_cn.pdf">
-                        {t('footer.title2.wpcn')}
+                    label: (<a target="_blank" rel="noopener noreferrer" href="//ttswap.io">
+                        {t('footer.title2')}
                     </a>),
                 },
-                {
-                    key: '1-2',
-                    label: (<a target="_blank" rel="noopener noreferrer" href="/whitepaper_en.pdf">
-                        {t('footer.title2.wpen')}
-                    </a>),
-                },
+                // {
+                //     key: '1-1',
+                //     label: (<a target="_blank" rel="noopener noreferrer" href="/whitepaper_cn.pdf">
+                //         {t('footer.title2.wpcn')}
+                //     </a>),
+                // },
+                // {
+                //     key: '1-2',
+                //     label: (<a target="_blank" rel="noopener noreferrer" href="/whitepaper_en.pdf">
+                //         {t('footer.title2.wpen')}
+                //     </a>),
+                // },
             ],
         },
         {
