@@ -241,7 +241,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                 </div>
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencysFee(
+                const valueFormatted = prettifyCurrencys(
                     row.original.totalFeeAmount
                 );
                 return <div className="text-right">{valueFormatted}{" "}{
@@ -257,7 +257,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                 </div>
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(row.original.myFeeQuanity);
+                const valueFormatted = prettifyCurrencysFee(row.original.myFeeQuanity);
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },
@@ -270,7 +270,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                 </div>
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
+                const valueFormatted = prettifyCurrencysFee(
                     row.original.myFeeAmount
                 );
                 return <div className="text-right mr-4">{valueFormatted}{" "}{// @ts-ignore

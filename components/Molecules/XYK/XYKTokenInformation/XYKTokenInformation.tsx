@@ -24,6 +24,8 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
     const { toast } = useToast();
     const [messageApi, contextHolder] = message.useMessage();
     const { t } = useTranslation();
+    const ConAddress1 = "0x0000000000000000000000000000000000000001";
+    const ConAddress2 = "0x0000000000000000000000000000000000000002";
 
     const InformationContainer: React.FC<{
         label: string;
@@ -44,7 +46,7 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
             messageApi.open({
                 type: 'success',
                 content: t('common.mess.copy'),
-              });
+            });
         };
 
         return (
@@ -113,16 +115,18 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
                                     text={`${result.name}`}
                                     copy
                                 />
-                                <InformationContainer
-                                    label={t("body.goods.info.address")}
-                                    text={`${result.address}`}
-                                    copy
-                                />
-                                <InformationContainer
-                                    label={t("body.goods.info.goodsid")}
-                                    text={token_address}
-                                    copy
-                                />
+                                {result.address === ConAddress1 || result.address === ConAddress2 ? "" : (<>
+                                    <InformationContainer
+                                        label={t("body.goods.info.address")}
+                                        text={`${result.address}`}
+                                        copy
+                                    />
+                                    {/* <InformationContainer
+                                        label={t("body.goods.info.goodsid")}
+                                        text={token_address}
+                                        copy
+                                    /> */}
+                                </>)}
                             </div>
                         );
                     },
@@ -135,7 +139,10 @@ export const XYKTokenInformation: React.FC<XYKTokenInformationProps> = ({
                             <Button
                                 // shape="round"
                                 size="large"
-                                type="primary">{t("body.goods.info.bnt")}</Button>
+                                type="primary"
+                                disabled={result.address === ConAddress1 || result.address === ConAddress2 ? true : false}
+                            >{t("body.goods.info.bnt")}
+                            </Button>
                         </a>
                     ),
                 })}

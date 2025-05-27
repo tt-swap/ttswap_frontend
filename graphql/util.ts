@@ -68,13 +68,17 @@ export function prettifyCurrencys(value: number) {
     if (value === 0) {
         return '0'
     }
-    if (value < 0.01 && value > 0) {
-        return '<0.01'
+    if (value < 1 && value > 0) {
+        return toPrecision(value);
+        // return '<0.01'
     }
 
     return formatLargeNumber(value,2);
 };
 
+export function toPrecision(value: number) {
+    return parseFloat(value.toPrecision(3));
+}
 
 // 数字处理
 export function prettifyCurrencysFee(value: number) {

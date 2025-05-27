@@ -2,6 +2,7 @@ import { getExplorer, getChainName } from '@/data/networks';
 import { goodsTransactions, goodDataView, GoodsSearch } from './graphql';
 import { timestampdToDateSub, powerIterative, iconUrl, timestampdToDateYear } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
+import { getSWETH } from '@/data/contractConfig';
 
 // 物品记录列表
 export async function goodsTransactionsDatas(params: { id: string; address: string; pageNumber: number; pageSize: number; }, ssionChian: number): Promise<object> {
@@ -87,6 +88,8 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
 
     const chainName = getChainName(ssionChian);
     const blockExplorerUrls = getExplorer(ssionChian);
+    const SWETH = getSWETH(ssionChian);
+    const address3 = "0x0000000000000000000000000000000000000003";
 
     let item = { items: {}, error: false, error_message: "" };
 
@@ -143,11 +146,16 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
             map.id = e.id;
             map.name = e.tokenname;
             map.symbol = e.tokensymbol;
-            map.address = e.erc20Address;
+            if (e.erc20Address === address3) {
+                map.address = SWETH;
+            } else {
+                map.address = e.erc20Address;
+            }
+            // map.address = e.erc20Address;
             map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
             map.logo_url = iconUrl(chainName, e.erc20Address);
             // @ts-ignore
-            map.exp_url = blockExplorerUrls[0] + "/address/" + e.erc20Address;
+            map.exp_url = blockExplorerUrls[0] + "/address/" + map.address;
             map.decimals = e.tokendecimals;
             map.price = current_price;
             map.investQuantity = e.investQuantity / base_decimals;
