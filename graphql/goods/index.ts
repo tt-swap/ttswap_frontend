@@ -116,7 +116,7 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
                 totalInvestQuantity: 0, totalInvestValue: 0, totalTradeQuantity: 0, totalTradeValue: 0, totalDisinvestQuantity: 0, totalDisinvestValue: 0,
                 totalTradeCount: 0, totalInvestCount: 0, owner: "",
                 buyFee: 0, sellFee: 0, investFee: 0, divestFee: 0, swapChips: 0, divestChips: 0,
-                chart_data: { volume_chart_7d: {}, volume_chart_30d: {} }
+                chart_data: { volume_chart_7d: {}, volume_chart_30d: {}, quote_currency: "" }
             };
 
             let volume_chart_7d: object[] = [];
@@ -125,13 +125,14 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
             map.chart_data.volume_chart_7d = volume_chart_7d;
             map.chart_data.volume_chart_30d = volume_chart_30d;
 
+            map.chart_data.quote_currency = e.tokensymbol;
             e.days7.forEach((e: any) => {
                 let map1 = { dt: 0, quote_currency: "", pretty_volume_quote: 0, volume_quote: 0 };
                 // let jz1 = e.currentValue * e.currentQuantity / tokendecimals;
                 map1.dt = e.modifiedTime * 1000;
                 map1.volume_quote = e.currentQuantity / base_decimals;
                 map1.pretty_volume_quote = map1.volume_quote * current_price;
-                map1.quote_currency = goodsDatas.data.goodState.tokensymbol;
+                // map1.quote_currency = map.symbol;
                 volume_chart_7d.push(map1);
             });
             e.days30.forEach((e: any) => {
@@ -139,7 +140,7 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
                 map1.dt = e.modifiedTime * 1000;
                 map1.volume_quote = e.currentQuantity / base_decimals;
                 map1.pretty_volume_quote = map1.volume_quote * current_price;
-                map1.quote_currency = goodsDatas.data.goodState.tokensymbol;
+                // map1.quote_currency = map.symbol;
                 volume_chart_30d.push(map1);
             });
 

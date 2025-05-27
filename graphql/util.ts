@@ -77,7 +77,7 @@ export function prettifyCurrencys(value: number) {
 };
 
 export function toPrecision(value: number) {
-    return parseFloat(value.toPrecision(3));
+    return parseFloat(value.toPrecision(3)).toString();
 }
 
 // 数字处理

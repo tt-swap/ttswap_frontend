@@ -45,6 +45,7 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
 
                 console.log("000000",response)
 
+                currencys = response.quote_currency;
                 const chart_key = `${timeSeries}_chart_${period}d`;
                 const value_key =
                     timeSeries === "price"
@@ -58,11 +59,10 @@ export const XYKTokenTimeSeries: React.FC<XYKTokenTimeSeriesProps> = ({
                     // @ts-ignore
                 ).map((x) => {
                     const dt = timestampParser(x.dt, "DD MMM YY");
-                    currencys = x.quote_currency;
                     return {
                         // currency: x.quote_currency,
                         date: dt,
-                        [`${capitalizeFirstLetter(timeSeries)} (${x.quote_currency})`]:
+                        [`${capitalizeFirstLetter(timeSeries)} (${currencys})`]:
                             x[value_key as keyof VolumeEcosystemChart],
                     };
                 });
