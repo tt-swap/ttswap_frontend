@@ -104,10 +104,13 @@ export default function Goods({ params }: { params: { chain: string, dex: string
           dex_name={params.dex}
           chain_id={ssionChian}
           on_token_click={(e: any, id: string) => {
-            setGoodId({ invest: { id: id }, swap: { id: id } });
-            setTrade(e);
-            router.push(`${handleTabSwitch("trade", pathname)}`);
-            // router.push(`/${params.chain}/${params.dex}/tokens/${e}`)
+            if (e === "swap" || e === "invest") {
+              setGoodId({ invest: { id: id }, swap: { id: id } });
+              setTrade(e);
+              router.push(`${handleTabSwitch("trade", pathname)}`);
+            } else {
+              router.push(`${handleTabSwitch(e, pathname)}`);
+            }
           }}
           page_size={100}
           value_good_id={info.id}

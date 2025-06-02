@@ -145,9 +145,13 @@ export default function Account({ params }: { params: { chain: string, dex: stri
             chain_id={ssionChian}
             // is_over={true}
             on_pool_click={(e: any, id: string) => {
-              setGoodId({ invest: { id: id }, swap: { id: id } });
-              setTrade(e);
-              router.push(`${handleTabSwitch("trade", pathname)}`);
+              if (e === "swap" || e === "invest") {
+                setGoodId({ invest: { id: id }, swap: { id: id } });
+                setTrade(e);
+                router.push(`${handleTabSwitch("trade", pathname)}`);
+              } else {
+                router.push(`${handleTabSwitch(e, pathname)}`);
+              }
               // if (e === "invest") {
               //   setGoodId({ invest: { id: id }, swap: { id: id } });
               //   // sessionStorage.setItem("invest", id);
