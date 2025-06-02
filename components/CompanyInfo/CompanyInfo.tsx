@@ -58,7 +58,7 @@ const CompanyInfo: FC = () => {
                 <a target="_blank" rel="noopener noreferrer" href="mailto:ttswapfinance@gmail.com">
                     <MailOutlined />
                 </a>
-                <a target="_blank" rel="noopener noreferrer" href="https://github.com/tt-swap">
+                <a target="_blank" rel="noopener noreferrer" href="https://github.com/ttswap">
                     <GithubOutlined />
                 </a>
                 <a target="_blank" rel="noopener noreferrer" href="https://t.me/ttswap01">
