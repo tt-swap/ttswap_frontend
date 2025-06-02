@@ -12,6 +12,7 @@ import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { ethers } from "ethers";
 // import i18n from '@/i18n/i18n';
 import Banner from "@/components/banner";
+import { useTrade } from '@/hooks/useTrade';
 
 export default function Goods({ params }: { params: { chain: string, dex: string } }) {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function Goods({ params }: { params: { chain: string, dex: string
   // @ts-ignore
   const { ssionChian } = useLocalStorage();
   const { t, ready } = useTranslation();
+  const { setTrade } = useTrade();
 
   useEffect(() => {
     document.title = t('header.menu.goods');
@@ -103,8 +105,8 @@ export default function Goods({ params }: { params: { chain: string, dex: string
           chain_id={ssionChian}
           on_token_click={(e: any, id: string) => {
             setGoodId({ invest: { id: id }, swap: { id: id } });
-            // sessionStorage.setItem("swap",id);
-            router.push(`${handleTabSwitch(e, pathname)}`);
+            setTrade(e);
+            router.push(`${handleTabSwitch("trade", pathname)}`);
             // router.push(`/${params.chain}/${params.dex}/tokens/${e}`)
           }}
           page_size={100}

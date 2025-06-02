@@ -19,6 +19,7 @@ import useLocalStorages from "@/hooks/useLocalStorage";
 import { useAccount } from 'wagmi';
 
 import { refereesDatas } from '@/graphql/account';
+import { useTrade } from '@/hooks/useTrade';
 
 export default function Account({ params }: { params: { chain: string, dex: string } }) {
 
@@ -38,6 +39,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
   const { setGoodId } = useGoodId();
   const [messageApi, contextHolder] = message.useMessage();
   const { t } = useTranslation();
+  const { setTrade } = useTrade();
 
   const pathname = usePathname()
 
@@ -143,14 +145,17 @@ export default function Account({ params }: { params: { chain: string, dex: stri
             chain_id={ssionChian}
             // is_over={true}
             on_pool_click={(e: any, id: string) => {
-              if (e === "invest") {
-                setGoodId({ invest: { id: id }, swap: { id: "" } });
-                // sessionStorage.setItem("invest", id);
-              } else {
-                setGoodId({ invest: { id: "" }, swap: { id: id } });
-                // sessionStorage.setItem("swap", id);
-              }
-              router.push(`${handleTabSwitch(e, pathname)}`);
+              setGoodId({ invest: { id: id }, swap: { id: id } });
+              setTrade(e);
+              router.push(`${handleTabSwitch("trade", pathname)}`);
+              // if (e === "invest") {
+              //   setGoodId({ invest: { id: id }, swap: { id: id } });
+              //   // sessionStorage.setItem("invest", id);
+              // } else {
+              //   setGoodId({ invest: { id: "" }, swap: { id: id } });
+              //   // sessionStorage.setItem("swap", id);
+              // }
+              // router.push(`${handleTabSwitch(e, pathname)}`);
             }}
           />
         </GoldRushProvider>

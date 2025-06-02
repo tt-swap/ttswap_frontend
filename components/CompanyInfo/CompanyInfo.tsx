@@ -126,15 +126,20 @@ const CompanyInfo: FC = () => {
                     onClick: () => handleTabSwitch("goods"),
                 },
                 {
-                    label: t('header.menu.trade.swap') || "Swap",
-                    key: 'swap',
-                    onClick: () => handleTabSwitch("swap"),
+                    label: t('header.menu.trade') || "Trade",
+                    key: 'trade',
+                    onClick: () => handleTabSwitch("trade"),
                 },
-                {
-                    label: t('header.menu.trade.invest') || "Invest",
-                    key: 'invest',
-                    onClick: () => handleTabSwitch("invest"),
-                },
+                // {
+                //     label: t('header.menu.trade.swap') || "Swap",
+                //     key: 'swap',
+                //     onClick: () => handleTabSwitch("swap"),
+                // },
+                // {
+                //     label: t('header.menu.trade.invest') || "Invest",
+                //     key: 'invest',
+                //     onClick: () => handleTabSwitch("invest"),
+                // },
                 {
                     label: t('header.menu.myaccount') || "Profile",
                     key: 'profile',

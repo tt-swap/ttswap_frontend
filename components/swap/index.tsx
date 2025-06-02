@@ -8,8 +8,8 @@ import InputNumber from "rc-input-number";
 import { useMemo, useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 
-import { ArrowDownOutlined, DownOutlined, UpOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Spin, message } from 'antd';
+import { ArrowDownOutlined, DownOutlined, UpOutlined, LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Button, Spin, message, Tooltip } from 'antd';
 import Message from '@/components/MessModal/index';
 // import { useSwitchChain } from "hooks";
 // import { useWeb3React } from "@web3-react/core";
@@ -73,6 +73,7 @@ const TokenSwap = () => {
     const [istotal, setIstotal] = useState(false);
     const { maxApprove, setMaxApprove } = useMaxApprove();
     const [tolerance, setTolerance] = useState(0.5);
+    const [timelimits, setTimelimits] = useState(3);
     const [balanceF, setBalanceF] = useState<string | number>(0);
     const [balanceT, setBalanceT] = useState<string | number>(0);
 
@@ -250,10 +251,10 @@ const TokenSwap = () => {
         // limitPrice = BigInt(3402823669209384634633746074359549531636230)
         // console.log(a, 2222222222,fromV,toV,limitPrice)
         const a: bigint = BigInt(Math.round(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals));
-        const s = await swapCount(swaps.from.id, a);
+        // const s = await swapCount(swaps.from.id, a);
         const datas: any = await myRefer(address, ssionChian);
-        console.log(a, 2222222222, s, datas)
-        const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, a, s], a, swaps.from.address, swaps.from.symbol, maxApprove, datas.refer);
+        // console.log(a, 2222222222, s, datas)
+        const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, a, timelimits], a, swaps.from.address, swaps.from.symbol, maxApprove, datas.refer);
         // const isSuccess = await swapBuyGood(["51649299683075463979090664991608549190737649190809275440655607745038800234274", "14700013424982216455688397208100595100161518504028027706369398309082945288267", a, b, istotal], a.toString(), "0x0000000000000000000000000000000000000000");
         // const isSuccess = false;
         console.log("isSuccess:", isSuccess)
@@ -291,13 +292,15 @@ const TokenSwap = () => {
                 <div className={cn(styles.boxContainer, "box-shadow")}>
                     <form className="">
                         <div className="flex justify-between h-[30px]">
-                            <h5 className="text-2xl font-semibold mb-4">{t('common.swap')}</h5>
+                            <h5 className="text-2xl font-semibold mb-4">
+                                {/* {t('common.swap')} */}
+                            </h5>
                             <TokenSwapSetting
-                                value={tolerance}
+                                value={timelimits}
                                 value1={istotal}
                                 value2={maxApprove}
                                 onChange={(val, val1, val2) => {
-                                    setTolerance(val)
+                                    setTimelimits(val)
                                     setIstotal(val1)
                                     setMaxApprove(val2)
                                 }}
@@ -492,8 +495,10 @@ const TokenSwap = () => {
                                                 <div>{priceImpact ? priceImpact + '%' : ''}</div>
                                             </div> */}
                                             <div className="flex justify-between">
-                                                <div>{t('body.swap.tolerance')}</div>
-                                                <div>{tolerance}%</div>
+                                                <div>{t('body.swap.tolerance.timelimits')}{' '}
+                                                    <Tooltip title={t('body.swap.tolerance.timelimits.tip')}><QuestionCircleOutlined style={{color:"#999999"}} /></Tooltip>
+                                                </div>
+                                                <div>{timelimits}</div>
                                             </div>
                                             <div className="flex justify-between">
                                                 <div>{t('body.swap.fee')}</div>

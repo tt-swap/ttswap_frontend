@@ -83,19 +83,19 @@ export function SiteHeader() {
         {
             label: t('header.menu.trade') || "Trade",
             key: 'trade',
-            // onClick: () => handleTabSwitch("swap"),
-            children: [
-                {
-                    label: t('header.menu.trade.swap') || "Swap",
-                    key: 'swap',
-                    onClick: () => handleTabSwitch("swap"),
-                },
-                {
-                    label: t('header.menu.trade.invest') || "Invest",
-                    key: 'invest',
-                    onClick: () => handleTabSwitch("invest"),
-                }
-            ]
+            onClick: () => handleTabSwitch("trade"),
+            // children: [
+            //     {
+            //         label: t('header.menu.trade.swap') || "Swap",
+            //         key: 'swap',
+            //         onClick: () => handleTabSwitch("swap"),
+            //     },
+            //     {
+            //         label: t('header.menu.trade.invest') || "Invest",
+            //         key: 'invest',
+            //         onClick: () => handleTabSwitch("invest"),
+            //     }
+            // ]
         },
         {
             label: t('header.menu.myaccount') || "Profile",

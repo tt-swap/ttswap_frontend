@@ -1,5 +1,5 @@
 'use client'
-import { useMemo,useEffect } from "react";
+import { useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from 'react-i18next';
 import { GoldRushProvider } from "@/utils/store";
@@ -20,7 +20,7 @@ export default function Token({ params }: { params: { chain: string, dex: string
   useEffect(() => {
     document.title = t('header.menu.goods');
   }, [t('header.menu.goods')]);
-  
+
 
   return (
     <div className="w-full flex flex-col gap-4">

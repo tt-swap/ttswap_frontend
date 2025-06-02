@@ -17,6 +17,7 @@ import {
     XYKTokenInformation,
     XYKTokenTimeSeries,
 } from "@/components/Molecules";
+import { useTrade } from '@/hooks/useTrade';
 
 import { getLpTokenView } from '@/graphql/goods';
 import { prettifyCurrencys, prettifyCurrencysFee } from '@/graphql/util';
@@ -32,6 +33,7 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
     const [maybeResult, setResult] = useState<Option<TokenV2VolumeWithChartData>>(None);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { t } = useTranslation();
+    const { setTrade } = useTrade();
 
     useEffect(() => {
         (async () => {
@@ -141,7 +143,8 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                             type="primary"
                             onClick={() => {
                                 setGoodId({ invest: { id: token_address }, swap: { id: token_address } });
-                                router.push(`${handleTabSwitch("swap", pathname)}`);
+                                setTrade("swap");
+                                router.push(`${handleTabSwitch("trade", pathname)}`);
                             }}>
                             {t('common.swap')}
                         </Button>
@@ -150,7 +153,8 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                             type="primary"
                             onClick={() => {
                                 setGoodId({ invest: { id: token_address }, swap: { id: token_address } });
-                                router.push(`${handleTabSwitch("invest", pathname)}`);
+                                setTrade("invest");
+                                router.push(`${handleTabSwitch("trade", pathname)}`);
                             }}>
                             {t('common.invest')}
                         </Button>

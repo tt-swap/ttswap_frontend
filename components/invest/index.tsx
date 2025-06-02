@@ -216,7 +216,7 @@ const TokenInvest = () => {
                 <div className={cn(styles.boxContainer, "box-shadow")}>
                     <form className="">
                         <div className="flex justify-between h-[30px]">
-                            <h5 className="text-2xl font-semibold mb-4">{t('common.invest')}</h5>
+                            {/* <h5 className="text-2xl font-semibold mb-4">{t('common.invest')}</h5> */}
                         </div>
                         <div
                             // key={swaps.from.symbol + 0}
