@@ -291,25 +291,15 @@ const TokenSwap = () => {
                 {/* <ChainSelector/> */}
                 <div className={cn(styles.boxContainer, "box-shadow")}>
                     <form className="">
-                        <div className="flex justify-between h-[30px]">
-                            <h5 className="text-2xl font-semibold mb-4">
-                                {/* {t('common.swap')} */}
+                        {/*<div className="flex justify-between h-[30px]">
+                             <h5 className="text-2xl font-semibold mb-4">
+                                {t('common.swap')}
                             </h5>
-                            <TokenSwapSetting
-                                value={timelimits}
-                                value1={istotal}
-                                value2={maxApprove}
-                                onChange={(val, val1, val2) => {
-                                    setTimelimits(val)
-                                    setIstotal(val1)
-                                    setMaxApprove(val2)
-                                }}
-                            />
-                        </div>
+                        </div> */}
                         <div
                             // key={swaps.from.symbol + 0}
                             className="border z-11 rounded-xl p-2 space-y-4"
-                            style={{ marginTop: "20px" }}
+                            // style={{ marginTop: "20px" }}
                         >
                             <label className={styles.label}>
                                 {t('body.swap.from')}
@@ -463,6 +453,16 @@ const TokenSwap = () => {
                             {t('common.swap')}
                         </button>
                     </form>
+                    <TokenSwapSetting
+                        value={timelimits}
+                        value1={istotal}
+                        value2={maxApprove}
+                        onChange={(val, val1, val2) => {
+                            setTimelimits(val)
+                            setIstotal(val1)
+                            setMaxApprove(val2)
+                        }}
+                    />
                     {swaps.to.symbol !== DEFAULT_TOKEN && swaps.from.symbol !== DEFAULT_TOKEN && (
                         <>
                             {/* <div>
@@ -496,7 +496,7 @@ const TokenSwap = () => {
                                             </div> */}
                                             <div className="flex justify-between">
                                                 <div>{t('body.swap.tolerance.timelimits')}{' '}
-                                                    <Tooltip title={t('body.swap.tolerance.timelimits.tip')}><QuestionCircleOutlined style={{color:"#999999"}} /></Tooltip>
+                                                    <Tooltip title={t('body.swap.tolerance.timelimits.tip')}><QuestionCircleOutlined style={{ color: "#999999" }} /></Tooltip>
                                                 </div>
                                                 <div>{timelimits}</div>
                                             </div>

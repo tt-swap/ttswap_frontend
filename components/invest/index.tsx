@@ -215,13 +215,13 @@ const TokenInvest = () => {
                 {/* <ChainSelector/> */}
                 <div className={cn(styles.boxContainer, "box-shadow")}>
                     <form className="">
-                        <div className="flex justify-between h-[30px]">
-                            {/* <h5 className="text-2xl font-semibold mb-4">{t('common.invest')}</h5> */}
-                        </div>
+                        {/* <div className="flex justify-between h-[30px]">
+                            <h5 className="text-2xl font-semibold mb-4">{t('common.invest')}</h5>
+                        </div> */}
                         <div
                             // key={swaps.from.symbol + 0}
                             className="border z-11 rounded-xl p-2 space-y-4"
-                            style={{ marginTop: "20px" }}
+                            // style={{ marginTop: "20px" }}
                         >
                             <label className={styles.label}>
                                 {t('body.invest.goods')}
