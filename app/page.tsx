@@ -4,6 +4,8 @@ import { useEffect } from "react"
 import { useRouter, usePathname } from 'next/navigation';
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { getAddChainParameters } from "@/data/networks";
+import { getString } from "@/utils/router";
+import { ethers } from "ethers";
 
 export default function IndexPage() {
   const router = useRouter();
@@ -14,7 +16,15 @@ export default function IndexPage() {
   const chainName = getAddChainParameters(ssionChian).chainName;
 
   useEffect(() => {
-    // alert(ssionChian)
+    if (typeof window !== "undefined") {
+      const params = window.location.search;
+      const a: any = getString(params);
+      // console.log(ethers.isAddress(null),"reference---")
+      if (getString(params) !== null && ethers.isAddress(a) && !ethers.isAddress(localStorage.getItem("reference"))) {
+        // @ts-ignore
+        localStorage.setItem("reference", a);
+      }
+    }
     if (pathname === '/') {
       const value = chainName;
       const address = "ttswap";

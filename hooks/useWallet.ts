@@ -904,6 +904,7 @@ const useWallet = () => {
                 if (aT === 1) {
                     const contractAllow = new ethers.Contract(addr, erc20, provider);
                     allowanceB = await contractAllow.allowance(account, contractAddress).then((allowance) => {
+                        console.log("aT--",addr,allowance,tAmount)
                         if (allowance > tAmount || allowance === tAmount) {
                             return true;
                         } else {
@@ -918,7 +919,7 @@ const useWallet = () => {
                 if (aF === 1) {
                     const contractAllowV = new ethers.Contract(goodVaddr, erc20, provider);
                     allowanceV = await contractAllowV.allowance(account, contractAddress).then((allowance) => {
-                        console.log(allowance, fAmount)
+                        console.log("aF--",addr,allowance, fAmount)
                         if (allowance > fAmount || allowance === fAmount) {
                             return true;
                         } else {
