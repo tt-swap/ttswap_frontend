@@ -98,6 +98,30 @@ export function useErrorMess(a: any,t: any) {
         case 32: {
             return t("common.mess.TTSwapError.32");
         }
+        case 33: {
+            return t("common.mess.TTSwapError.33");
+        }
+        case 34: {
+            return t("common.mess.TTSwapError.34");
+        }
+        case 35: {
+            return t("common.mess.TTSwapError.35");
+        }
+        case 36: {
+            return t("common.mess.TTSwapError.36");
+        }
+        case 37: {
+            return t("common.mess.TTSwapError.37");
+        }
+        case 38: {
+            return t("common.mess.TTSwapError.38");
+        }
+        case 39: {
+            return t("common.mess.TTSwapError.39");
+        }
+        case 40: {
+            return t("common.mess.TTSwapError.40");
+        }
         case "0xb5a7db92": {
             return t("common.mess.error.ERC3156UnsupportedToken");
         }
@@ -127,6 +151,12 @@ export function useErrorMess(a: any,t: any) {
         }
         case "0xff633a38": {
             return t("common.mess.error.LengthMismatch");
+        }
+        case "0x79cacff1": {
+            return t("common.mess.error.DepositFailed");
+        }
+        case "0x6c0f429e": {
+            return t("common.mess.error.NativeETHTransferFailed");
         }
     }
 }
