@@ -35,10 +35,10 @@ export const contractCon: {
 } = {
   1: {
     chainId: "1",
-    contractAddress: "0xC564c491EF1639C83b6F721374b5531ba6A1EcEb",
-    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap/version/latest",
-    permit2Address:"0xC564c491EF1639C83b6F721374b5531ba6A1EcEb",
-    weth9:"0xC564c491EF1639C83b6F721374b5531ba6A1EcEb"
+    contractAddress: "0xA0701755c2113f955c931Ab49B99489484BEBBaA",
+    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_v1/version/latest",
+    permit2Address:"0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    weth9:"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
   },
   11155111: {
     chainId: "11155111",

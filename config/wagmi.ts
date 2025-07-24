@@ -202,7 +202,7 @@ export const config = getDefaultConfig({
   projectId,
   chains: [
     // sepolia,
-    // mainnet,
+    mainnet,
     // arbitrum,
     // polygon,
     // optimism,
@@ -225,7 +225,7 @@ export const config = getDefaultConfig({
     // mantle,
     // mantleSepolia,
     // mantleTestnet,
-    hoodiTestnet
+    // hoodiTestnet
   ],
   wallets: [
     {
@@ -299,10 +299,10 @@ export const config = getDefaultConfig({
   ],
   transports: {
     // [sepolia.id]: http(),
-    [hoodiTestnet.id]: http(),
+    // [hoodiTestnet.id]: http(),
     // [mantleSepoliaTestnet.id]: http(),
     // [mantleTestnet.id]: http(),
-    // [mainnet.id]: http(),
+    [mainnet.id]: http(),
     // [arbitrum.id]: http(),
     // [bscTestnet.id]: http(),
   },

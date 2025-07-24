@@ -5,6 +5,10 @@ const nextConfig = {
   //   defaultLocale: 'en',
   // },
   // ... 其他配置
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ?
+      { exclude: ['error', 'warn'] } : false
+  }
 }
 
 module.exports = nextConfig

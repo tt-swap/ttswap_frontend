@@ -140,7 +140,7 @@ export function SiteHeader() {
                     <div className="flex items-center justify-end w-full">
                         <nav className="flex items-center gap-3">
                             <GoodsSearch isValue={"button"} />
-                            {isConnected && (<Faucet />)}
+                            {/* {isConnected && (<Faucet />)} */}
                             {!isConnected && (<><ChainSelector />
                             </>)}
                             <LanguageSwitcher />
