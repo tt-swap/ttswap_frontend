@@ -118,6 +118,12 @@ export const Faucet = ({ }: Props) => {
             id: "0x875A9522d695804e1F1636eE3616E6185F74b563", symbol: "TWETH", logo_url: "", address: "0x875A9522d695804e1F1636eE3616E6185F74b563"
         }, {
             id: "0xCaFBbAd55eb09efe7bec8408Cff9932Be7D9A7fA", symbol: "DAI", logo_url: "", address: "0xCaFBbAd55eb09efe7bec8408Cff9932Be7D9A7fA"
+        }, {
+            id: "0xe20aC55EbFD0FFE2e99e667252703300B2A1062f", symbol: "USDC", logo_url: "", address: "0xe20aC55EbFD0FFE2e99e667252703300B2A1062f"
+        }, {
+            id: "0x681bb0286E2A0e967107aB414FC8F5a200b76E2e", symbol: "BNB", logo_url: "", address: "0x681bb0286E2A0e967107aB414FC8F5a200b76E2e"
+        }, {
+            id: "0x8A84fEd4f7B46Dd2513208dda18ee2BAD2669485", symbol: "TON", logo_url: "", address: "0x8A84fEd4f7B46Dd2513208dda18ee2BAD2669485"
         }],
     };
 

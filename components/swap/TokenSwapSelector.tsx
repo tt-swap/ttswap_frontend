@@ -52,7 +52,7 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
                 par: Timestamp()
             }, ssionChian);
             let rest: Array<LocalCurrency> = a.tokenValue;
-            // console.log(a,33332)
+            console.log(a,33332)
             setTokensValue(rest);
             a.tokens.map((el: any, index: number) => {
                 a.tokens[index].key = el.id;
@@ -138,7 +138,7 @@ const TokenSwapSelector = ({ value, onChange }: Props) => {
                                 <img alt="icon"
                                     className="w-6"
                                     // src={"/token.png"}
-                                    src={value.logo_url ?? "/token.svg"}
+                                    src={el.logo_url ?? "/token.svg"}
                                     onError={(e) => {
                                         e.currentTarget.src =
                                             "/token.svg";

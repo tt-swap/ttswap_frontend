@@ -60,7 +60,7 @@ export function timestampdToDateYear(year: number): number {
 // 物品图标地址
 export function iconUrl(chainName: string | undefined, address: string) {
 
-    return `https://raw.githubusercontent.com/tt-swap/assets/master/blockchains/${chainName}/assets/${ethers.getAddress(address)}/logo.png`;
+    return `https://raw.githubusercontent.com/ttswap/assets/master/blockchains/${chainName}/assets/${ethers.getAddress(address)}/logo.png`;
 }
 
 // 数字处理

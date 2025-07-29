@@ -136,7 +136,7 @@ const TokenInvestSelector = ({ value, onChange, isValue }: Props) => {
                             >
                                 <img alt="icon"
                                     className="w-6"
-                                    src={value.logo_url ?? "/token.svg"}
+                                    src={el.logo_url ?? "/token.svg"}
                                     onError={(e) => {
                                         e.currentTarget.src =
                                             "/token.svg";

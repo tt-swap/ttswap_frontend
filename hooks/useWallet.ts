@@ -613,8 +613,9 @@ const useWallet = () => {
 
     const balanceSel = useCallback((ConAddress: string): BalanceResult => {
         console.log("===balanceSel----", ConAddress)
-        if (!ConAddress || !isConnected) return { amount: 0, decimals: 18 };
+        if (!ConAddress || !isConnected) {console.log("===11balanceSel----", ConAddress); return { amount: 0, decimals: 18 };}
         if (ConAddress === swaps?.from?.address) {
+            console.log("===1221balanceSel----", sawpFromTokenData?.[0]?.error);
             return {
                 amount: sawpFromTokenData?.[0]?.result,
                 decimals: sawpFromTokenData?.[1]?.result
