@@ -265,7 +265,7 @@ export const config = getDefaultConfig({
     // mantle,
     // mantleSepolia,
     // mantleTestnet,
-    // hoodiTestnet
+    hoodiTestnet
   ],
   wallets: [
     {
