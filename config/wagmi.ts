@@ -201,8 +201,9 @@ const ethereum = {
   rpcUrls: {
     default: {
       http: [
-        // 'https://rpc.ankr.com/eth',
-        // 'https://1rpc.io/eth',
+        'https://ttswap.io/eth',
+        'https://rpc.ankr.com/eth',
+        'https://1rpc.io/eth',
         'https://eth-mainnet.public.blastapi.io',
         'https://cloudflare-eth.com',
       ],
