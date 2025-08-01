@@ -253,10 +253,17 @@ const TokenSwap = () => {
         // console.log(a, 2222222222,fromV,toV,limitPrice)
         // mevValue
         const a: bigint = BigInt(Math.round(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals));
+        const b: bigint = BigInt(Math.round(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals));
+        let swapquantity;
+        if (mevValue) {
+            swapquantity = a * BigInt(2 ** 128) + b;
+        } else {
+            swapquantity = a * BigInt(2 ** 128) + BigInt(0);
+        }
         // const s = await swapCount(swaps.from.id, a);
         const datas: any = await myRefer(address, ssionChian);
         // console.log(a, 2222222222, s, datas)
-        const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, a, timelimits], a, swaps.from.address, swaps.from.symbol, maxApprove, datas.refer);
+        const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, swapquantity, 1], a, swaps.from.address, swaps.from.symbol, maxApprove, datas.refer);
         // const isSuccess = await swapBuyGood(["51649299683075463979090664991608549190737649190809275440655607745038800234274", "14700013424982216455688397208100595100161518504028027706369398309082945288267", a, b, istotal], a.toString(), "0x0000000000000000000000000000000000000000");
         // const isSuccess = false;
         console.log("isSuccess:", isSuccess)
