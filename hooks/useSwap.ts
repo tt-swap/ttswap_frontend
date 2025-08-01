@@ -101,9 +101,9 @@ const useSwap = () => {
             return tnum;
         } else if (type === 1) {
             let ta = value * 10 ** swaps.to.decimals;
-            ta = ta - ta * swaps.to.sellFee;
+            ta = ta + ta * swaps.to.sellFee;
             const fa = (ta * Number(data.fromQuan) * Number(data.toValue)) / (Number(data.fromValue) * Number(data.toQuan - ta) - ta * Number(data.toValue));
-            let tnum = (fa + fa * swaps.from.sellFee) / 10 ** swaps.from.decimals;
+            let tnum = (fa + fa * swaps.from.buyFee) / 10 ** swaps.from.decimals;
             tnum = Number(tnum.toFixed(6));
             console.log(fa, ta, tnum, 8981)
             return tnum;
