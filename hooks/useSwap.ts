@@ -1,7 +1,7 @@
 import { useSwapStore } from "@/stores/swap";
 import { useSwapAmountStore } from "@/stores/swapAmount";
 import { SwapKeys } from "@/shared/enums/tokens";
-import { useMemo, useState,useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { DEFAULT_TOKEN } from "@/shared/constants/common";
 import { toast } from "react-toastify";
 import { useAccount } from 'wagmi';
@@ -89,14 +89,107 @@ const useSwap = () => {
         }
     };
 
-    const setAmount = (element: string, value: number | '' | null,data:any) => {
-        // console.log(data,898)
+    const cionNum = (value: number, data: any, type: number) => {
+        if (type === 0) {
+            const fa = value * 10 ** swaps.from.decimals;
+            const rv = (Number(data.fromValue) / (Number(data.fromQuan) + fa)) * fa;
+            const ta = (Number(data.toQuan) / (Number(data.toValue) + rv)) * rv;
+            let tnum = (ta - ta * swaps.to.sellFee) / 10 ** swaps.to.decimals;
+            tnum = Number(tnum.toFixed(6));
+            console.log(fa, rv, ta, tnum, 8980)
+            return tnum;
+        } else if (type === 1) {
+            const ta = value * 10 ** swaps.to.decimals;
+            const fa = (ta * Number(data.fromQuan) * Number(data.toValue)) / (Number(data.fromValue) * Number(data.toQuan - ta) - ta * Number(data.toValue));
+            let tnum = fa / 10 ** swaps.from.decimals;
+            tnum = Number(tnum.toFixed(6));
+            console.log(fa, ta, tnum, 8981)
+            return tnum;
+        } else if (type === 2) {
+            const fa = value * 10 ** swaps.from.decimals;
+            const rv = (Number(data.fromValue) / (Number(data.fromQuan) + fa)) * fa;
+            const ta = (Number(data.valueQ) / (Number(data.valueV) + rv)) * rv;
+            let tnum = ta / 10 ** data.valueD;
+            tnum = Number(tnum.toFixed(6));
+            console.log(fa, rv, ta, tnum, 8982)
+            return tnum;
+        } else {
+            const fa = value * 10 ** swaps.to.decimals;
+            const rv = (Number(data.toValue) / (Number(data.toQuan) + fa)) * fa;
+            const ta = (Number(data.valueQ) / (Number(data.valueV) + rv)) * rv;
+            let tnum = ta / 10 ** data.valueD;
+            tnum = Number(tnum.toFixed(6));
+            console.log(fa, rv, ta, tnum, 8983)
+            return tnum;
+        }
+    }
+    const setAmount = (element: string, value: any, data: any) => {
+        console.log(data, 898)
 
+        // const fa = value * 10**swaps.from.decimals;
+        // const rv = (Number(data.fromValue)/(Number(data.fromQuan)+fa))*fa;
+        // const ta = (Number(data.toQuan)/(Number(data.toValue)+rv))*rv;
+        // let tnum = (ta-ta*swaps.to.sellFee)/10**swaps.to.decimals;
+        // tnum = Number(tnum.toFixed(6));
+        if (element === SwapKeys.From) {
+            const tnum = cionNum(value, data, 0);
+            const fprice = cionNum(value, data, 2);
+            const tprice = cionNum(tnum, data, 3);
+            setSwapAmount({
+                from: {
+                    token: swaps.from.symbol,
+                    // @ts-ignore
+                    amount: value,
+                    id: swaps.from.id,
+                    currentQuantity: data.fromQuan,
+                    currentValue: data.fromValue,
+                    price: fprice
+                },
+                to: {
+                    token: swaps.to.symbol,
+                    // @ts-ignore
+                    amount: tnum,
+                    id: swaps.to.id,
+                    currentQuantity: data.toQuan,
+                    currentValue: data.toValue,
+                    price: tprice
+                },
+            });
+        } else {
+            const fnum = cionNum(value, data, 1);
+            const fprice = cionNum(fnum, data, 2);
+            const tprice = cionNum(value, data, 3);
+            setSwapAmount({
+                from: {
+                    token: swaps.from.symbol,
+                    // @ts-ignore
+                    amount: fnum,
+                    id: swaps.from.id,
+                    currentQuantity: data.fromQuan,
+                    currentValue: data.fromValue,
+                    price: fprice
+                },
+                to: {
+                    token: swaps.to.symbol,
+                    // @ts-ignore
+                    amount: value,
+                    id: swaps.to.id,
+                    currentQuantity: data.toQuan,
+                    currentValue: data.toValue,
+                    price: tprice
+                },
+            });
+
+        }
+    };
+
+    const setAmount1 = (element: string, value: any, data: any) => {
+        // console.log(data,898)
         let fromPrice = 0;
-        let toPrice =0;
-        if (data!==0) {
+        let toPrice = 0;
+        if (data !== 0) {
             fromPrice = data.fromPrice;
-            if (data.toPrice>0) {
+            if (data.toPrice > 0) {
                 toPrice = data.toPrice;
             }
         }
@@ -122,7 +215,7 @@ const useSwap = () => {
                     id: swaps.from.id,
                     currentQuantity: data.fromQuan,
                     currentValue: data.fromValue,
-                    price:priceF > 0 ? Number(priceF.toFixed(6)) : 0
+                    price: priceF > 0 ? Number(priceF.toFixed(6)) : 0
                 },
                 to: {
                     token: swaps.to.symbol,
@@ -131,7 +224,7 @@ const useSwap = () => {
                     id: swaps.to.id,
                     currentQuantity: data.toQuan,
                     currentValue: data.toValue,
-                    price:priceT > 0 ? Number(priceT.toFixed(6)) : 0
+                    price: priceT > 0 ? Number(priceT.toFixed(6)) : 0
                 },
             });
         } else {
@@ -144,7 +237,7 @@ const useSwap = () => {
             // @ts-ignore
             const priceF = num * fromPrice * (1 - swaps.from.sellFee);
             // @ts-ignore
-            const priceT = value * toPrice*(1 - swaps.to.buyFee);
+            const priceT = value * toPrice * (1 - swaps.to.buyFee);
             setSwapAmount({
                 from: {
                     token: swaps.from.symbol,
@@ -153,7 +246,7 @@ const useSwap = () => {
                     id: swaps.from.id,
                     currentQuantity: data.fromQuan,
                     currentValue: data.fromValue,
-                    price:priceF > 0 ? Number(priceF.toFixed(6)) : 0
+                    price: priceF > 0 ? Number(priceF.toFixed(6)) : 0
                 },
                 to: {
                     token: swaps.to.symbol,
@@ -162,7 +255,7 @@ const useSwap = () => {
                     id: swaps.to.id,
                     currentQuantity: data.toQuan,
                     currentValue: data.toValue,
-                    price:priceT > 0 ? Number(priceT.toFixed(6)) : 0
+                    price: priceT > 0 ? Number(priceT.toFixed(6)) : 0
                 },
             });
         }

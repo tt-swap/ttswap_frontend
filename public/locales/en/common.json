@@ -173,6 +173,8 @@
         "body.goods.level3.divestchips.tip": "The chips use when divist and is configed by token's manager.",
         "body.swap.tolerance": "Tolerance",
         "body.swap.tolerance.all": "Only Whole Commit.",
+        "body.swap.tolerance.mev": "Preventing MEV attacks",
+        "body.swap.tolerance.mev.tip": "stopping miners, validators, and other users from exploiting their privileged positions in the blockchain (such as transaction ordering rights) to engage in manipulative behaviors like arbitrage, front-running, or sandwiching, thereby protecting ordinary users' transaction fairness and asset security, if enabled , The transaction may be failure.",
         "body.swap.tolerance.maxApprove": "Max Approval",
         "body.swap.tolerance.timelimits": "Sub-transaction limit",
         "body.swap.tolerance.timelimits.tip": "The protocol automatically splits a user's trade into multiple sub-transactions based on the trading thresholds between the two tokens and the trade size. The 'sub-transaction limit' means the protocol will only execute the first few sub-transactions in order, and ignore the rest.",

@@ -102,28 +102,37 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string;
 export async function newGoodsPrice(params: { id: string; from: string; to: string }, ssionChian: number): Promise<object> {
 
     let item = {
-        fromPrice: 0, toPrice: 0, fromValue: 0, toValue: 0, fromQuan: 0, toQuan: 0
+        fromPrice: 0, toPrice: 0, fromValue: 0, toValue: 0, fromQuan: 0, toQuan: 0, swapChips: 0,valueV: 0,valueQ: 0,valueD:0
     };
     if (params.id !== "") {
 
         const goodsDatas = await newGoodsPrices({ id: params.id, from: params.from, to: params.to }, ssionChian);
 
         let map = item;
+        const m197 = new BigNumber(2).pow(197);
+        const m187 = new BigNumber(2).pow(187);
         const goodsValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         const tokendecimals = powerIterative(10, 6);
+        map.valueV = goodsDatas.data.goodState.currentValue;
+        map.valueQ = goodsDatas.data.goodState.currentQuantity;
+        map.valueD = goodsDatas.data.goodState.tokendecimals;
         if (goodsDatas.data.from.length > 0) {
             const from = goodsDatas.data.from[0];
+            const goodConfig = new BigNumber(from.goodConfig);
             const goodsFValue = (from.currentValue / tokendecimals) / (from.currentQuantity / 10 ** from.tokendecimals);
             map.fromQuan = from.currentQuantity;
             map.fromValue = from.currentValue;
             map.fromPrice = goodsFValue / goodsValue;
+            map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
         }
         if (goodsDatas.data.to.length > 0) {
             const to = goodsDatas.data.to[0];
+            const goodConfig = new BigNumber(to.goodConfig);
             const goodsTValue = (to.currentValue / tokendecimals) / (to.currentQuantity / 10 ** to.tokendecimals);
             map.toQuan = to.currentQuantity;
             map.toValue = to.currentValue;
             map.toPrice = goodsTValue / goodsValue;
+            map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
         }
     }
     return item;

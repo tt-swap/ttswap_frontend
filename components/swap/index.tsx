@@ -9,7 +9,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 
 import { ArrowDownOutlined, DownOutlined, UpOutlined, LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, Spin, message, Tooltip } from 'antd';
+import { Button, Spin, Switch, message, Tooltip } from 'antd';
 import Message from '@/components/MessModal/index';
 // import { useSwitchChain } from "hooks";
 // import { useWeb3React } from "@web3-react/core";
@@ -84,6 +84,7 @@ const TokenSwap = () => {
     const [timerId, setTimerId] = useState(null);
     const [focus, setFocus] = useState("from");
     const [handleF, setHandleF] = useState(false);
+    const [mevValue, setMevValue] = useState(true);
     const [isDisabled, setisDisabled] = useState(disabled);
 
     useEffect(() => {
@@ -250,6 +251,7 @@ const TokenSwap = () => {
         // const b: BigInt = BigInt(1.1 * 2 ** 128 + 3500);
         // limitPrice = BigInt(3402823669209384634633746074359549531636230)
         // console.log(a, 2222222222,fromV,toV,limitPrice)
+        // mevValue
         const a: bigint = BigInt(Math.round(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals));
         // const s = await swapCount(swaps.from.id, a);
         const datas: any = await myRefer(address, ssionChian);
@@ -299,7 +301,7 @@ const TokenSwap = () => {
                         <div
                             // key={swaps.from.symbol + 0}
                             className="border z-11 rounded-xl p-2 space-y-4"
-                            // style={{ marginTop: "20px" }}
+                        // style={{ marginTop: "20px" }}
                         >
                             <label className={styles.label}>
                                 {t('body.swap.from')}
@@ -453,7 +455,7 @@ const TokenSwap = () => {
                             {t('common.swap')}
                         </button>
                     </form>
-                    <TokenSwapSetting
+                    {/* <TokenSwapSetting
                         value={timelimits}
                         value1={istotal}
                         value2={maxApprove}
@@ -462,8 +464,22 @@ const TokenSwap = () => {
                             setIstotal(val1)
                             setMaxApprove(val2)
                         }}
-                    />
-                    {swaps.to.symbol !== DEFAULT_TOKEN && swaps.from.symbol !== DEFAULT_TOKEN && (
+                    /> */}
+
+                    <div className=" flex justify-between gap-4 pt-5">
+                        <p>
+                            {t('body.swap.tolerance.mev')}{'  '}
+                            <Tooltip title={t('body.swap.tolerance.mev.tip')}><QuestionCircleOutlined style={{ color: "#999999" }} /></Tooltip>
+                        </p>
+                        <Switch value={mevValue} onChange={(checked: boolean) => setMevValue(checked)} />
+                    </div>
+                    <div className=" flex justify-between gap-4 pt-5">
+                        <p>
+                            {t('body.swap.tolerance.maxApprove')}
+                        </p>
+                        <Switch value={maxApprove} onChange={(checked: boolean) => setMaxApprove(checked)} />
+                    </div>
+                    {swaps.to.symbol !== DEFAULT_TOKEN && swaps.from.symbol !== DEFAULT_TOKEN && swapsAmount.from.amount !== 0 && swapsAmount.from.amount !== '' && (
                         <>
                             {/* <div>
                                 <div>
@@ -477,7 +493,7 @@ const TokenSwap = () => {
                                 {/* <span>Price</span> <span>${computedPrice}</span> */}
                                 <div className="flex cursor-pointer justify-between"
                                     onClick={handleFees}>
-                                    <div>1 {swaps.from.symbol} = {(swaps.from.price / swaps.to.price).toFixed(6)} {swaps.to.symbol}</div>
+                                    <div>1 {swaps.from.symbol} ≈ {(Number(swapsAmount.to.amount) / Number(swapsAmount.from.amount)).toFixed(6)} {swaps.to.symbol}</div>
                                     <div>
                                         {isFees && (
                                             <UpOutlined />
@@ -494,17 +510,17 @@ const TokenSwap = () => {
                                                 <div>Price impact</div>
                                                 <div>{priceImpact ? priceImpact + '%' : ''}</div>
                                             </div> */}
-                                            <div className="flex justify-between">
+                                            {/* <div className="flex justify-between">
                                                 <div>{t('body.swap.tolerance.timelimits')}{' '}
                                                     <Tooltip title={t('body.swap.tolerance.timelimits.tip')}><QuestionCircleOutlined style={{ color: "#999999" }} /></Tooltip>
                                                 </div>
                                                 <div>{timelimits}</div>
-                                            </div>
+                                            </div> */}
                                             <div className="flex justify-between">
                                                 <div>{t('body.swap.fee')}</div>
                                                 <div>{
                                                     // @ts-ignore
-                                                    ((swaps.to.buyFee * swaps.to.price * swapsAmount.to.amount + swaps.from.sellFee * swapsAmount.from.amount * swaps.from.price)).toFixed(6)}{" "}{info.symbol}</div>
+                                                    ((swaps.from.sellFee * swapsAmount.from.price * 2)).toFixed(6)}{" "}{info.symbol}</div>
                                             </div>
                                             {/* <div className="flex justify-between">
                         <div>Network cost</div>

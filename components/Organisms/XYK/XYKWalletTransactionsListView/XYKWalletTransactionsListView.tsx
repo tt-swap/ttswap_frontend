@@ -188,18 +188,18 @@ export const XYKWalletTransactionsListView: React.FC<XYKWalletTransactionsListVi
                 );
             },
         },
-        {
-            id: "totalValue",
-            accessorKey: "totalValue",
-            header: () => (
-                <div className="">
-                    {t('body.account.tabs.transactions.value')}
-                </div>
-            ),
-            cell: ({ row }) => {
-                return <>{prettifyCurrencys(row.original.totalValue)}{" "}{row.original.valueSymbol}</>;
-            },
-        },
+        // {
+        //     id: "totalValue",
+        //     accessorKey: "totalValue",
+        //     header: () => (
+        //         <div className="">
+        //             {t('body.account.tabs.transactions.value')}
+        //         </div>
+        //     ),
+        //     cell: ({ row }) => {
+        //         return <>{prettifyCurrencys(row.original.totalValue)}{" "}{row.original.valueSymbol}</>;
+        //     },
+        // },
         {
             id: "fromgoodQuanity",
             accessorKey: "fromgoodQuanity",

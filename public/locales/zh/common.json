@@ -172,6 +172,8 @@
         "body.goods.level3.divestchips.tip": "这个切片数在撤资和代币所有者进行配置时使用。",
         "body.swap.tolerance": "容差",
         "body.swap.tolerance.all": "仅全部成交才成功",
+        "body.swap.tolerance.mev": "防MEV攻击",
+        "body.swap.tolerance.mev.tip": "防止矿工,验证者,和其它用户利用其在区块链中的特权地位（如交易排序权）进行套利、抢跑或夹击等操纵行为，以保护普通用户的交易公平性和资产安全。开启后，交易可能会失败。",
         "body.swap.tolerance.maxApprove": "最大授权",
         "body.swap.tolerance.timelimits": "子交易限制",
         "body.swap.tolerance.timelimits.tip": "协议根据两代币形成的交易阈值和用户交易的大小自动拆分成多个子交易，“子交易限制”指协议最多只执行前几个拆分出的子交易，超过部分不进行处理。",

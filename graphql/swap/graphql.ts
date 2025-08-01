@@ -147,12 +147,14 @@ export function newGoodsPrices(params: { id: string; from: string; to: string },
 				currentQuantity
 				currentValue
 				tokendecimals
+                goodConfig
               }
 			to: goodStates(where: {id: $to}) {
                 id
 				currentQuantity
 				currentValue
 				tokendecimals
+                goodConfig
               }
 		}`,
         variables: params
