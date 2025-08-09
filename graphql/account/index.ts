@@ -51,7 +51,7 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
             map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
             map.totalInvestValue = proofValue;
             map.logo_url = iconUrl(chainName, e.good1.erc20Address);
-            map.investQuantity = e.good1Quantity / base_decimals1;
+            map.investQuantity = e.good1ActualQuantity / base_decimals1;
             map.unitFee = e.good1.feeQuantity / e.good1.investQuantity;
             map.profit = map.unitFee * map.investQuantity - (e.good1ContructFee / base_decimals1);
             // map.APY = (map.profit / (map.investQuantity * timestampSubH(e.good1.modifiedTime))) * 365 * 100;
@@ -65,7 +65,7 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
                 map1.valueSymbol = goodsDatas.data.goodState.tokensymbol;
                 map1.totalInvestValue = proofValue;
                 map1.logo_url = iconUrl(chainName, e.good2.erc20Address);
-                map1.investQuantity = e.good2Quantity / base_decimals2;
+                map1.investQuantity = e.good2ActualQuantity / base_decimals2;
                 map1.unitFee = e.good2.feeQuantity / e.good2.investQuantity;
                 map1.profit = map1.unitFee * map1.investQuantity - (e.good2ContructFee / base_decimals2);
                 // map1.APY = (map1.profit / (map1.investQuantity * timestampSubH(e.good2.modifiedTime))) * 365;
@@ -109,8 +109,8 @@ export async function myTransactionsDatas(params: { id: string; address: string;
             let from_decimals = powerIterative(10, e.fromgood.tokendecimals);
             let to_decimals = powerIterative(10, e.togood.tokendecimals);
             let map = {
-                id: "", blockNumber: "", type: "", symbol1: "", symbol2: "", fromgoodQuanity: 0, togoodQuantity: 0,
-                hash: "", totalValue: 0, time: 0, valueSymbol: ""
+                id: "", blockNumber: "", type: "", symbol1: "", symbol2: "", fromgoodQuanity: 0, fromgoodActualQuanity: 0, togoodQuantity: 0,
+                togoodActualQuantity: 0, hash: "", totalValue: 0, time: 0, valueSymbol: ""
             };
 
             map.id = e.id;
@@ -124,13 +124,17 @@ export async function myTransactionsDatas(params: { id: string; address: string;
             map.symbol2 = e.togood.tokensymbol;
             if (from_decimals > 0) {
                 map.fromgoodQuanity = e.fromgoodQuanity / from_decimals;
+                map.fromgoodActualQuanity = e.fromgoodActualQuanity / from_decimals;
             } else {
                 map.fromgoodQuanity = 0;
+                map.fromgoodActualQuanity = 0;
             }
             if (to_decimals > 0) {
                 map.togoodQuantity = e.togoodQuantity / to_decimals;
+                map.togoodActualQuantity = e.togoodActualQuantity / to_decimals;
             } else {
                 map.togoodQuantity = 0;
+                map.togoodActualQuantity = 0;
             }
 
             map.totalValue = e.transvalue / tokendecimals;
@@ -189,8 +193,8 @@ export async function myDisInvestProofGood(id: number, ssionChian: number): Prom
     map.id = good1.id;
     map.symbol = good1.tokensymbol;
     map.decimals = good1.tokendecimals;
-    map.quantity = good.good1Quantity / decimals1;
-    map.unitFee = good.good1ContructFee / good.good1Quantity;
+    map.quantity = good.good1ActualQuantity / decimals1;
+    map.unitFee = good.good1ContructFee / good.good1ActualQuantity;
     map.unitV = unitV1;
     map.logo_url = iconUrl(chainName, good1.erc20Address);
     map.nowUnitFee = good1.feeQuantity / good1.investQuantity;
@@ -219,8 +223,8 @@ export async function myDisInvestProofGood(id: number, ssionChian: number): Prom
     map1.id = good2.id;
     map1.symbol = good2.tokensymbol;
     map1.decimals = good2.tokendecimals;
-    map1.quantity = good.good2Quantity / decimals2;
-    map1.unitFee = good.good2ContructFee / good.good2Quantity;
+    map1.quantity = good.good2ActualQuantity / decimals2;
+    map1.unitFee = good.good2ContructFee / good.good2ActualQuantity;
     map1.unitV = unitV2;
     if (good2.id != 0) {
         map1.logo_url = iconUrl(chainName, good2.erc20Address);

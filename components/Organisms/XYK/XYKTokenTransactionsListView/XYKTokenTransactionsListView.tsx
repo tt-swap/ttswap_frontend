@@ -210,7 +210,13 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
                 </div>
             ),
             cell: ({ row }) => {
-                return (<span>{prettifyCurrencys(row.original.fromgoodQuanity)}{" "}{row.original.symbol1}</span>);
+                if (row.original.type === 'divest' || row.original.type === 'invest') {
+                    return (<><span>{prettifyCurrencys(row.original.fromgoodQuanity) + " / "}</span>
+                        <span style={{ color: "#86d38b" }}>{prettifyCurrencys(row.original.fromgoodActualQuanity)}</span>
+                        <span>{" "}{row.original.symbol1}</span></>);
+                } else {
+                    return (<span>{prettifyCurrencys(row.original.fromgoodQuanity)}{" "}{row.original.symbol1}</span>);
+                }
             },
         },
         {
@@ -222,9 +228,17 @@ export const XYKTokenTransactionsListView: React.FC<XYKTokenTransactionsListView
                 </div>
             ),
             cell: ({ row }) => {
-                const name = prettifyCurrencys(row.original.togoodQuantity) + " " + row.original.symbol2;
-                return (<span>{// @ts-ignore
-                    row.original.symbol2 === "#" ? "-" : name}</span>);
+                if (row.original.symbol2 === "#") {
+                    return (<span>-</span>);
+                } else {
+                    if (row.original.type === 'divest' || row.original.type === 'invest') {
+                        return (<><span>{prettifyCurrencys(row.original.togoodQuantity) + " / "}</span>
+                            <span style={{ color: "#86d38b" }}>{prettifyCurrencys(row.original.togoodActualQuantity)}</span>
+                            <span>{" "}{row.original.symbol2}</span></>);
+                    } else {
+                        return (<span>{prettifyCurrencys(row.original.togoodQuantity)}{" "}{row.original.symbol2}</span>);
+                    }
+                }
             },
         },
         {

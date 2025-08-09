@@ -29,6 +29,7 @@ export function goodsTransactions(params: { id: string; first: number; skip: num
 				timestamp
 				transtype
 				fromgoodQuanity
+				fromgoodActualQuanity
 				fromgoodfee
 				transvalue
 				fromgood {
@@ -39,6 +40,7 @@ export function goodsTransactions(params: { id: string; first: number; skip: num
 				currentQuantity
 				}
 				togoodQuantity
+				togoodActualQuantity
 				togoodfee
 				togood {
 				tokenname

@@ -41,8 +41,8 @@ export async function goodsTransactionsDatas(params: { id: string; address: stri
             // }
 
             let map = {
-                id: "", blockNumber: "", type: "", symbol1: "", symbol2: "", fromgoodQuanity: 0, togoodQuantity: 0,
-                hash: "", totalValue: 0, time: 0, valueSymbol: ""
+                id: "", blockNumber: "", type: "", symbol1: "", symbol2: "", fromgoodQuanity: 0, fromgoodActualQuanity: 0, togoodQuantity: 0,
+                togoodActualQuantity: 0, hash: "", totalValue: 0, time: 0, valueSymbol: ""
             };
 
             map.id = e.id;
@@ -56,13 +56,17 @@ export async function goodsTransactionsDatas(params: { id: string; address: stri
             map.symbol2 = e.togood.tokensymbol;
             if (from_decimals > 0) {
                 map.fromgoodQuanity = e.fromgoodQuanity / from_decimals;
+                map.fromgoodActualQuanity = e.fromgoodActualQuanity / from_decimals;
             } else {
                 map.fromgoodQuanity = 0;
+                map.fromgoodActualQuanity = 0;
             }
             if (to_decimals > 0) {
                 map.togoodQuantity = e.togoodQuantity / to_decimals;
+                map.togoodActualQuantity = e.togoodActualQuantity / to_decimals;
             } else {
                 map.togoodQuantity = 0;
+                map.togoodActualQuantity = 0;
             }
 
             map.totalValue = e.transvalue / tokendecimals;
@@ -188,7 +192,8 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
             map.divestFee = goodConfig.mod(m217).div(m211).integerValue(1).div(100).toNumber();
             map.buyFee = goodConfig.mod(m211).div(m204).integerValue(1).div(100).toNumber();
             map.sellFee = goodConfig.mod(m204).div(m197).integerValue(1).div(100).toNumber();
-            map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
+            // map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
+            map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).toNumber();
             map.divestChips = goodConfig.mod(m187).div(m177).integerValue(1).toNumber();
             let uintF = (Number(e.feeQuantity) + Number(e.investQuantity)) / e.investQuantity;
             if (e.goodData.length > 0) {

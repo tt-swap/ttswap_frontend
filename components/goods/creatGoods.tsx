@@ -45,7 +45,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
   const [sellF, setSellF] = useState(8);
   const [inF, setInF] = useState(8);
   const [disinF, setDisinF] = useState(8);
-  const [swapS, setSwapS] = useState(2);
+  const [swapS, setSwapS] = useState(1);
   const [disinS, setDisinS] = useState(10);
   const [goodType, setGoodType] = useState("");
   const [goodInfo, setGoodInfo] = useState("");
@@ -80,7 +80,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
     setSellF(8);
     setInF(8);
     setDisinF(8);
-    setSwapS(2);
+    setSwapS(1);
     setDisinS(10);
     setGoodType("");
     setGoodInfo("");
@@ -254,7 +254,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
             </Space>
             <h2>{t('body.account.create.chips')}</h2>
             <Space className='spanS'>
-              <Form.Item label={t('common.swap')}>
+              {/* <Form.Item label={t('common.swap')}>
                 <InputNumber
                   // addonAfter="x64"
                   min={2}
@@ -265,7 +265,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                   value={swapS}
                   defaultValue={2}
                 />{" x10"}
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item label={t('common.divest')}>
                 <InputNumber
                   min={10}
@@ -317,6 +317,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                   setGoodV(e);
                   setGoodVAddr(op.address);
                   setGoodDec(op.decimals);
+                  setGoodVName(op.symbol);
                 }}
               >
                 {selectVgood.map(item => (
@@ -347,7 +348,7 @@ export const CreatGoods = ({ setDataNum }: Props) => {
                 value={goodQ}
               />
             </Form.Item>
-            <h2>{t('body.account.create.value')}</h2>
+            <h2>{t('body.account.create.value')}({goodVName})</h2>
             <Form.Item>
               <Input
                 placeholder="0"

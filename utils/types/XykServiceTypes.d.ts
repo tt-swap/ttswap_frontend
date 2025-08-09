@@ -708,6 +708,8 @@ export interface ExchangeTransaction {
     type:any;
     fromgoodQuanity:any;
     togoodQuantity:any;
+    fromgoodActualQuanity:any;
+    togoodActualQuantity:any;
     valueSymbol:any;
     totalValue:any;
     disinvestValue:any;

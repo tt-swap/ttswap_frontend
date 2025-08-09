@@ -29,6 +29,7 @@ export function myTransactions(params: { id: string; first: number; skip: number
 				timestamp
 				transtype
 				fromgoodQuanity
+				fromgoodActualQuanity
 				fromgoodfee
 				transvalue
 				fromgood {
@@ -39,6 +40,7 @@ export function myTransactions(params: { id: string; first: number; skip: number
 				currentQuantity
 				}
 				togoodQuantity
+				togoodActualQuantity
 				togoodfee
 				togood {
 				tokenname
@@ -75,8 +77,10 @@ export function myInvestGoodDatas(params: { id: string; first: number; skip: num
 				createTime
 				good1ContructFee
 				good1Quantity
+				good1ActualQuantity
 				good2ContructFee
 				good2Quantity
+				good2ActualQuantity
 				id
 				owner
 				proofValue
@@ -179,8 +183,10 @@ export function myDisInvestProof(params: { id: number; },ssionChian:number) {
 				proofValue
 				good1ContructFee
 				good1Quantity
+				good1ActualQuantity
 				good2ContructFee
 				good2Quantity
+				good2ActualQuantity
 				createTime
 				good1 {
 				  id
