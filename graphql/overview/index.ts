@@ -209,6 +209,7 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
             let d24 = e.date24[0];
             let uintFY = (en.feeQuantity + en.investQuantity) / en.investQuantity;
             let current_price_24h = ((d24.currentValue / tokendecimals) / (d24.currentQuantity / base_decimals)) / jz;
+            map.price_24h = current_price_24h;
             map.priceC_24h = (current_price - current_price_24h) / current_price_24h;
             map.apy = uintF / uintFY - 1;
 
@@ -216,7 +217,7 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
         });
 
     }
-    // console.log(item)
+    console.log(1111111,item)
     return item;
 }
 
