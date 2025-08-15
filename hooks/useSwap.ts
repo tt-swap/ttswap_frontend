@@ -93,8 +93,9 @@ const useSwap = () => {
         if (type === 0) {
             let fa = value * 10 ** swaps.from.decimals;
             fa = fa - fa * swaps.from.buyFee;
-            const rv = (Number(data.fromValue) / (Number(data.fromQuan) + fa)) * fa;
-            const ta = (Number(data.toQuan) / (Number(data.toValue) + rv)) * rv;
+            const rv = 2 * Number(data.fromValue) * Number(data.toQuan) * fa;
+            const rv1 = 2 * Number(data.toValue) * Number(data.fromQuan) + Number(data.toValue) * fa + Number(data.fromValue) * fa;
+            const ta = rv / rv1;
             let tnum = (ta - ta * swaps.to.sellFee) / 10 ** swaps.to.decimals;
             tnum = Number(tnum.toFixed(6));
             console.log(fa, rv, ta, tnum, 8980)
@@ -102,26 +103,38 @@ const useSwap = () => {
         } else if (type === 1) {
             let ta = value * 10 ** swaps.to.decimals;
             ta = ta + ta * swaps.to.sellFee;
-            const fa = (ta * Number(data.fromQuan) * Number(data.toValue)) / (Number(data.fromValue) * Number(data.toQuan - ta) - ta * Number(data.toValue));
+            const rv = 2 * ta * Number(data.fromQuan) * Number(data.toValue);
+            const rv1 = 2 * Number(data.fromValue) * Number(data.toQuan) - Number(data.fromValue) * ta - ta * Number(data.toValue);
+            const fa = rv / rv1;
             let tnum = (fa + fa * swaps.from.buyFee) / 10 ** swaps.from.decimals;
             tnum = Number(tnum.toFixed(6));
-            console.log(fa, ta, tnum, 8981)
+            console.log(ta, rv,rv1, fa,tnum, 8981)
             return tnum;
         } else if (type === 2) {
             const fa = value * 10 ** swaps.from.decimals;
-            const rv = (Number(data.fromValue) / (Number(data.fromQuan) + fa)) * fa;
-            const ta = (Number(data.valueQ) / (Number(data.valueV) + rv)) * rv;
+            // const rv = (Number(data.fromValue) / (Number(data.fromQuan) + fa)) * fa;
+            // const ta = (Number(data.valueQ) / (Number(data.valueV) + rv)) * rv;
+            const rv = 2 * Number(data.fromValue) * Number(data.valueQ) * fa;
+            const rv1 = 2 * Number(data.valueV) * Number(data.fromQuan) + Number(data.valueV) * fa + Number(data.fromValue) * fa;
+            // const rv = 2 * fa * Number(data.fromQuan) * Number(data.valueV);
+            // const rv1 = 2 * Number(data.fromValue) * Number(data.valueQ) - Number(data.fromValue) * fa - fa * Number(data.valueV);
+            const ta = rv / rv1;
             let tnum = ta / 10 ** data.valueD;
             tnum = Number(tnum.toFixed(6));
             console.log(fa, rv, ta, tnum, 8982)
             return tnum;
         } else {
             const fa = value * 10 ** swaps.to.decimals;
-            const rv = (Number(data.toValue) / (Number(data.toQuan) + fa)) * fa;
-            const ta = (Number(data.valueQ) / (Number(data.valueV) + rv)) * rv;
+            // const rv = (Number(data.toValue) / (Number(data.toQuan) + fa)) * fa;
+            // const ta = (Number(data.valueQ) / (Number(data.valueV) + rv)) * rv;
+            const rv = 2 * Number(data.toValue) * Number(data.valueQ) * fa;
+            const rv1 = 2 * Number(data.valueV) * Number(data.toQuan) + Number(data.valueV) * fa + Number(data.toValue) * fa;
+            // const rv = 2 * fa * Number(data.toQuan) * Number(data.valueV);
+            // const rv1 = 2 * Number(data.toValue) * Number(data.valueQ) - Number(data.toValue) * fa - fa * Number(data.valueV);
+            const ta = rv / rv1;
             let tnum = ta / 10 ** data.valueD;
             tnum = Number(tnum.toFixed(6));
-            console.log(fa, rv, ta, tnum, 8983)
+            console.log(fa, rv,rv1, ta, tnum, 8983)
             return tnum;
         }
     }
