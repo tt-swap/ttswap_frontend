@@ -240,7 +240,7 @@ export const config = getDefaultConfig({
   appName: 'ttswap',
   projectId,
   chains: [
-    ethereum,
+    // ethereum,
     // sepolia,
     // mainnet,
     // arbitrum,

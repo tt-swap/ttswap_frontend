@@ -76,7 +76,7 @@ const ChainSelector: FC = () => {
 
   const items: MenuProps["items"] = useMemo(
     () => [
-      { label: "Ethereum", key: chainIds.ethereum, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
+      // { label: "Ethereum", key: chainIds.ethereum, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
       // { label: "Sepolia Testnet", key: chainIds.sepolia, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
       { label: "Hoodi Testnet", key: chainIds.hoodiTestnet, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
       // { label: "Optimism", key: chainIds.optimism, icon: labelToShow(optimistim_Logo, "Optimistim_Logo") },
