@@ -10,7 +10,7 @@ const useFaucet = () => {
     const provider = useEthersProvider(ssionChian);
     const signer = useEthersSigner(ssionChian);
 
-    const faucetTestCion = async (amount: any, contractA: string, account: any) => {
+    const faucetTestCion = async (amount: any, contractA: string, account: any,decimals:number) => {
 
         try {
             // const message = "获取测试币!";
@@ -22,6 +22,7 @@ const useFaucet = () => {
             // console.log("r:", r);
             // console.log("s:", s);
             // console.log("v:", v);
+            const num =Number(amount)*10**decimals;
             const contract = new ethers.Contract(contractA, erc20, signer);
 
             return await contract.mint(account, amount).then((transaction) => {
