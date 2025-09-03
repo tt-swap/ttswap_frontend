@@ -183,16 +183,16 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
             },
         },
         {
-            id: "unitFee",
-            accessorKey: "unitFee",
+            id: "NAVPS",
+            accessorKey: "NAVPS",
             header: () => (
                 <div className="text-right">
-                    {t('body.account.tabs.goods.unitfee')}
+                    {t('body.account.tabs.goods.NAVPS')}
                 </div>
             ),
             cell: ({ row }) => {
                 const valueFormatted = prettifyCurrencysFee(
-                    row.original.unitFee
+                    row.original.NAVPS
                 );
                 return <div className="text-right">{valueFormatted}</div>;
             },

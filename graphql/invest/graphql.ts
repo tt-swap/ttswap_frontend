@@ -29,6 +29,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; tim
                         currentValue
                         feeQuantity
                         investQuantity
+						investShares
                     }
                     parGoodStates :goodStates(where: {id: $gid}) {
                             id
@@ -42,8 +43,8 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; tim
                             tokensymbol
                             tokendecimals
                             investQuantity
-                            contructFee
                             modifiedTime
+						    investShares
                             goodData(
                                 first: 1
                                 orderBy: modifiedTime
@@ -53,6 +54,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; tim
                                 feeQuantity
                                 investQuantity
                                 modifiedTime
+						        investShares
                             }
                     }
                 }`,
@@ -83,6 +85,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; tim
                         currentValue
                         feeQuantity
                         investQuantity
+						investShares
                     }
                     parGoodStates :goodStates(
                         where: {or: [{erc20Address_starts_with: $sel}, {symbol_lower_contains: $sel}, {name_lower_contains: $sel}]}
@@ -100,8 +103,8 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; tim
                             tokensymbol
                             tokendecimals
                             investQuantity
-                            contructFee
                             modifiedTime
+						    investShares
                             goodData(
                                 first: 1
                                 orderBy: modifiedTime
@@ -111,6 +114,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; tim
                                 feeQuantity
                                 investQuantity
                                 modifiedTime
+						        investShares
                             }
                     }
                 }`,
@@ -140,6 +144,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; tim
                             currentValue
                             feeQuantity
                             investQuantity
+						    investShares
                         }
                         parGoodStates :goodStates(where: {id_not: "0x0000000000000000000000000000000000000000"}, orderBy: currentValue, orderDirection: desc) {
                                 id
@@ -153,8 +158,8 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; tim
                                 tokensymbol
                                 tokendecimals
                                 investQuantity
-                                contructFee
                                 modifiedTime
+						        investShares
                                 goodData(
                                     first: 1
                                     orderBy: modifiedTime
@@ -164,6 +169,7 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; tim
                                     feeQuantity
                                     investQuantity
                                     modifiedTime
+						            investShares
                                 }
                         }
                     }`,

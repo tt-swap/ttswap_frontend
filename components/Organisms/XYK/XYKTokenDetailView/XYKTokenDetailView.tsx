@@ -218,10 +218,10 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                         </div>
                     </Tooltip>
                     <Tooltip placement="top" title={<span>
-                        {t("body.goods.level1.unitfee.tip")}</span>}>
+                        {t("body.goods.level1.NAVPS.tip")}</span>}>
                         <div className="flex w-full flex-grow flex-col justify-center gap-2 rounded border p-4 cursor-pointer">
                             <h2 className="font-color-1">
-                                {t("body.goods.level1.unitfee")}
+                                {t("body.goods.level1.NAVPS")}
                             </h2>
                             <div className="flex items-end gap-2">
                                 <span className="text-xl">
@@ -232,7 +232,7 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                                         Some: (result) => {
                                             return (
                                                 <span>
-                                                    {prettifyCurrencysFee(result.unitFee)}
+                                                    {prettifyCurrencysFee(result.NAVPS)}
                                                 </span>
                                             );
                                         },
@@ -375,7 +375,7 @@ export const XYKTokenDetailView: React.FC<XYKTokenDetailViewProps> = ({
                                             num={`${prettifyCurrencys(result.totalDisinvestQuantity)}`}
                                             value={`${prettifyCurrencys(result.totalDisinvestValue)}`}
                                             title={t("body.goods.level2.totaldivest.tip")}
-                                            valueSymbol={""}
+                                            valueSymbol={`${result.valueSymbol}`}
                                         />
                                         {/* </div>
                                         <div className="flex flex-grow flex-wrap items-center gap-8"> */}

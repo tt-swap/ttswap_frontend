@@ -1,5 +1,4 @@
 import { usePathname, useRouter } from "next/navigation"
-import ConnectAccount from "@/components/components/Account/ConnectAccount";
 import ChainSelector from "@/components/ChainSelector";
 import { LanguageSwitcher } from "@/components/Language/LanguageSwitcher"
 import { Faucet } from "@/components/faucet"

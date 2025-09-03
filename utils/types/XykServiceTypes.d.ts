@@ -62,7 +62,7 @@ export interface Pool {
     totalFeeValue: any;
     fee24: any;
     feeValue24: any;
-    unitFee: any;
+    NAVPS: any;
     APY: any;
     myFeeAmount:any;
     totalTradeCount:any;
@@ -121,7 +121,7 @@ export interface walletPool {
     totalFeeValue: any;
     fee24: any;
     feeValue24: any;
-    unitFee: any;
+    NAVPS: any;
     APY: any;
 }
 
@@ -468,7 +468,7 @@ export interface TokenV2Volume {
     fee24: any;
     apy: any;
     feeValue24: any;
-    unitFee: any;
+    NAVPS: any;
     totalTradeQuantity: any;
     totalTradeValue: any;
     tradeQuantity24: any;
@@ -549,7 +549,7 @@ export interface TokenV2VolumeWithChartData {
     totalFeeValue: any;
     fee24: any;
     feeValue24: any;
-    unitFee: any;
+    NAVPS: any;
     totalTradeQuantity: any;
     totalTradeValue: any;
     tradeQuantity24: any;

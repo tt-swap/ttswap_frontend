@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import MarketManager from '@/data/abi/MarketManager.json';
 import { getContractAddress } from '@/data/contractConfig';
 import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex, myCommission, referees, myReferees } from './graphql';
-import { timestampdToDateSub, powerIterative, iconUrl, timestampSubH } from '@/graphql/util';
+import { timestampdToDateSub, powerIterative, iconUrl, timestampSubH, withoutRounding } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
 
 // 我的投资列表
@@ -31,12 +31,12 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
             // let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
 
             let map = {
-                id: "", name: "", symbol: "", logo_url: "", investQuantity: 0,
-                totalInvestValue: 0, unitFee: 0, profit: 0, APY: 0, valueSymbol: "", earningRate: 0
+                id: "", name: "", symbol: "", logo_url: "", investQuantity: 0, investShares: 0, allNAVPS: 0, investActualQuantity: 0,
+                totalInvestValue: 0, NAVPS: 0, profit: 0, APY: 0, valueSymbol: "", earningRate: 0
             };
             let map1 = {
-                id: "", name: "", symbol: "", logo_url: "", investQuantity: 0,
-                totalInvestValue: 0, unitFee: 0, profit: 0, APY: 0, valueSymbol: "", earningRate: 0
+                id: "", name: "", symbol: "", logo_url: "", investQuantity: 0, investShares: 0, allNAVPS: 0, investActualQuantity: 0,
+                totalInvestValue: 0, NAVPS: 0, profit: 0, APY: 0, valueSymbol: "", earningRate: 0
             };
 
             let proofValue = 0;
@@ -51,11 +51,14 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
             map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
             map.totalInvestValue = proofValue;
             map.logo_url = iconUrl(chainName, e.good1.erc20Address);
-            map.investQuantity = e.good1ActualQuantity / base_decimals1;
-            map.unitFee = e.good1.feeQuantity / e.good1.investQuantity;
-            map.profit = map.unitFee * map.investQuantity - (e.good1ContructFee / base_decimals1);
+            map.investQuantity = e.good1Quantity / base_decimals1;
+            map.investActualQuantity = e.good1ActualQuantity / base_decimals1;
+            map.NAVPS = e.good1Quantity / e.good1Shares;//e.good1.feeQuantity / e.good1.investQuantity;
+            map.allNAVPS = e.good1.investQuantity / e.good1.investShares;
+            map.profit = (map.allNAVPS - map.NAVPS) * e.good1Shares / base_decimals1;//map.NAVPS * map.investQuantity - (e.good1ContructFee / base_decimals1);
             // map.APY = (map.profit / (map.investQuantity * timestampSubH(e.good1.modifiedTime))) * 365 * 100;
-            map.earningRate = map.profit / map.investQuantity;
+            map.earningRate = (map.allNAVPS - map.NAVPS) / map.NAVPS;//map.profit / map.investQuantity;
+            map.investShares = e.good1Shares / base_decimals1;
 
             items.push(map);
             if (e.good2Quantity > 0) {
@@ -65,11 +68,14 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
                 map1.valueSymbol = goodsDatas.data.goodState.tokensymbol;
                 map1.totalInvestValue = proofValue;
                 map1.logo_url = iconUrl(chainName, e.good2.erc20Address);
-                map1.investQuantity = e.good2ActualQuantity / base_decimals2;
-                map1.unitFee = e.good2.feeQuantity / e.good2.investQuantity;
-                map1.profit = map1.unitFee * map1.investQuantity - (e.good2ContructFee / base_decimals2);
+                map1.investQuantity = e.good2Quantity / base_decimals2;
+                map1.investActualQuantity = e.good2ActualQuantity / base_decimals2;
+                map1.NAVPS = e.good2Quantity / e.good2Shares;
+                map1.allNAVPS = e.good2.investQuantity / e.good2.investShares;//e.good2.feeQuantity / e.good2.investQuantity;
+                map1.profit = (map1.allNAVPS - map1.NAVPS) * e.good2Shares / base_decimals2;//map1.NAVPS * map1.investQuantity - (e.good2ContructFee / base_decimals2);
                 // map1.APY = (map1.profit / (map1.investQuantity * timestampSubH(e.good2.modifiedTime))) * 365;
-                map1.earningRate = map1.profit / map1.investQuantity;
+                map1.earningRate = (map1.allNAVPS - map1.NAVPS) / map1.NAVPS;//map1.profit / map1.investQuantity;
+                map1.investShares = e.good2Shares / base_decimals2;
 
                 items.push(map1);
             }
@@ -155,12 +161,12 @@ export async function myDisInvestProofGood(id: number, ssionChian: number): Prom
         good2: {}
     };
     let map = {
-        id: 0, symbol: "", decimals: 0, quantity: 0, unitFee: 0, maxNum: 0, rate: 0, earningRate: 0,
-        profit: 0, APY: 0, nowUnitFee: 0, disfee: 0, unitV: 0, logo_url: "", contructFee: 0
+        id: 0, symbol: "", decimals: 0, quantity: 0, NAVPS: 0, maxNum: 0, rate: 0, earningRate: 0,
+        profit: 0, APY: 0, nowNAVPS: 0, disfee: 0, investActualQuantity: 0, logo_url: "", investShares: 0, investQuantity: 0, allInvestShares: 0
     }
     let map1 = {
-        id: 0, symbol: "", decimals: 0, quantity: 0, unitFee: 0, maxNum: 0, rate: 0, earningRate: 0,
-        profit: 0, APY: 0, nowUnitFee: 0, disfee: 0, unitV: 0, logo_url: "", contructFee: 0
+        id: 0, symbol: "", decimals: 0, quantity: 0, NAVPS: 0, maxNum: 0, rate: 0, earningRate: 0,
+        profit: 0, APY: 0, nowNAVPS: 0, disfee: 0, investActualQuantity: 0, logo_url: "", investShares: 0, investQuantity: 0, allInvestShares: 0
     }
 
     const m211 = new BigNumber(2).pow(211);
@@ -176,35 +182,40 @@ export async function myDisInvestProofGood(id: number, ssionChian: number): Prom
     let decimals1 = powerIterative(10, good1.tokendecimals);
     let disfeeL1 = BigNumber(good1.goodConfig).mod(m217).div(m211).integerValue(1).div(10000).toNumber();// Math.floor(good1.goodConfig % (2 ** 217) / (2 ** 211)) / 10000;
     let click1 = BigNumber(good1.goodConfig).mod(m187).div(m177).toNumber();
-    let unitV1 = (good1.currentValue / decimals) / (good1.currentQuantity / decimals1);
+    // let unitV1 = (good1.currentValue / decimals) / (good1.currentQuantity / decimals1);
     let good1N1;
     let good1N2;
     let maxNum1 = good1.currentQuantity / decimals1;
     if (click1 > 0) {
         good1N1 = (good1.currentQuantity / decimals1) / click1;
-        good1N2 = (good1.currentValue / decimals) / click1 / unitV1;
-        maxNum1 = good1N1 > good1N2 ? good1N2 : good1N1;
+        // good1N2 = (good1.currentValue / decimals) / click1 / unitV1;
+        maxNum1 = good1N1;// > good1N2 ? good1N2 : good1N1;
     }
 
-    console.log(click1, maxNum1, good1)
     data.id = good.id;
     data.isvaluegood = good1.isvaluegood;
 
     map.id = good1.id;
     map.symbol = good1.tokensymbol;
     map.decimals = good1.tokendecimals;
-    map.quantity = good.good1ActualQuantity / decimals1;
-    map.unitFee = good.good1ContructFee / good.good1ActualQuantity;
-    map.unitV = unitV1;
+    map.quantity = good.good1Quantity / decimals1;
+    map.investActualQuantity = good.good1ActualQuantity / decimals1;
+    map.investShares = good.good1Shares / decimals1;
+    map.investQuantity = good1.investQuantity / decimals1;
+    map.allInvestShares = good1.investShares / decimals1;
+    map.nowNAVPS = good1.investQuantity / good1.investShares;
+    map.NAVPS = good.good1Quantity / good.good1Shares;
     map.logo_url = iconUrl(chainName, good1.erc20Address);
-    map.nowUnitFee = good1.feeQuantity / good1.investQuantity;
-    map.contructFee = good.good1ContructFee / decimals1;
-    map.profit = map.nowUnitFee * map.quantity - map.contructFee;
+    // map.unitV = unitV1;
+    // map.contructFee = good.good1ContructFee / decimals1;
+    map.profit = (map.nowNAVPS - map.NAVPS) * map.investShares;//map.nowNAVPS * map.quantity - map.contructFee;
     map.APY = (map.profit / (map.quantity * timestampSubH(good.createTime))) * 365;
     map.disfee = map.quantity * disfeeL1;
-    map.maxNum = maxNum1;
+    let czfs = maxNum1 / map.nowNAVPS;
+    map.maxNum = withoutRounding(czfs, 6);
+    console.log("??????", click1, czfs, good1, map.maxNum)
     map.rate = disfeeL1;
-    map.earningRate = map.profit / map.quantity;
+    map.earningRate = (map.nowNAVPS - map.NAVPS) / map.NAVPS;//map.profit / map.quantity;
 
     let good2 = good.good2;
     let decimals2 = powerIterative(10, good2.tokendecimals);
@@ -216,27 +227,36 @@ export async function myDisInvestProofGood(id: number, ssionChian: number): Prom
     let maxNum2 = good2.currentQuantity / decimals2;
     if (click2 > 0) {
         good2N1 = (good2.currentQuantity / decimals2) / click2;
-        good2N2 = (good2.currentValue / decimals) / click2 / unitV2;
-        maxNum2 = good2N1 > good2N2 ? good2N2 : good2N1;
+        // good2N2 = (good2.currentValue / decimals) / click2 / unitV2;
+        maxNum2 = good2N1;// > good2N2 ? good2N2 : good2N1;
     }
 
     map1.id = good2.id;
     map1.symbol = good2.tokensymbol;
     map1.decimals = good2.tokendecimals;
-    map1.quantity = good.good2ActualQuantity / decimals2;
-    map1.unitFee = good.good2ContructFee / good.good2ActualQuantity;
-    map1.unitV = unitV2;
+    map1.quantity = good.good2Quantity / decimals2;
+    map1.investActualQuantity = good.good2ActualQuantity / decimals2;
+    map1.investShares = good.good2Shares / decimals2;
+    map1.investQuantity = good2.investQuantity / decimals2;
+    map1.allInvestShares = good2.investShares / decimals2;
+    map1.nowNAVPS = good2.investQuantity / good2.investShares;
+    map1.NAVPS = good.good2Quantity / good.good2Shares;
+    // map1.unitV = unitV2;
     if (good2.id != 0) {
         map1.logo_url = iconUrl(chainName, good2.erc20Address);
     }
-    map1.nowUnitFee = good2.feeQuantity / good2.investQuantity;
-    map1.contructFee = good.good2ContructFee / decimals2;
-    map1.profit = map1.nowUnitFee * map1.quantity - map1.contructFee;
+    // map1.nowNAVPS = good2.feeQuantity / good2.investQuantity;
+    // map1.contructFee = good.good2ContructFee / decimals2;
+    // map1.profit = map1.nowNAVPS * map1.quantity - map1.contructFee;
+    map1.profit = (map1.nowNAVPS - map1.NAVPS) * map1.investShares;
+    map1.earningRate = (map1.nowNAVPS - map1.NAVPS) / map1.NAVPS;
     map1.APY = (map1.profit / (map1.quantity * timestampSubH(good.createTime))) * 365;
     map1.disfee = map1.quantity * disfeeL2;
-    map1.maxNum = maxNum2;
+    let czfs2 = maxNum2 / map1.nowNAVPS;
+    map1.maxNum = withoutRounding(czfs2, 6);
     map1.rate = disfeeL2;
-    map1.earningRate = map1.profit / map1.quantity;
+    // map1.earningRate = map1.profit / map1.quantity;
+    // console.log("??????", good1.investQuantity,good1.investShares,good2.investQuantity,good2.investShares,data)
     return data;
 }
 
@@ -307,7 +327,7 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
             let map = {
                 id: "", name: "", decimals: 0, symbol: "", logo_url: "", investQuantity: 0, investValue: 0, valueSymbol: "",
                 totalInvestQuantity: 0, totalInvestValue: 0, investQuantity24: 0, investValue24: 0, unitPrice: 0, currentQuantity: 0,
-                totalFee: 0, price: 0, price_24h: 0, totalFeeValue: 0, fee24: 0, feeValue24: 0, unitFee: 0, APY: 0
+                totalFee: 0, price: 0, price_24h: 0, totalFeeValue: 0, fee24: 0, feeValue24: 0, NAVPS: 0, APY: 0
             };
 
             map.id = e.id;
@@ -325,9 +345,9 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
             map.totalFeeValue = e.feeQuantity / base_decimals * current_price;
             map.logo_url = iconUrl(chainName, e.erc20Address);
             map.price = current_price;
-            map.unitFee = map.totalFee / map.investQuantity;
+            map.NAVPS = e.investQuantity / e.investShares;//map.totalFee / map.investQuantity;
 
-            let uintF = e.feeQuantity / e.investQuantity;
+            // let uintF = e.feeQuantity / e.investQuantity;
             if (e.goodData.length > 0) {
                 let en = e.goodData[0];
                 // e.goodData.forEach((en: any) => {
@@ -339,7 +359,7 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
                 map.investValue24 = (e.totalInvestQuantity - en.totalInvestQuantity) / base_decimals * current_price_24h;
                 map.feeValue24 = (e.feeQuantity - en.feeQuantity) / base_decimals * current_price_24h;
                 map.price_24h = current_price_24h;
-                map.APY = (uintF - en.feeQuantity / en.investQuantity) * 365;
+                // map.APY = (uintF - en.feeQuantity / en.investQuantity) * 365;
                 //     }
                 // });
             } else {
@@ -347,9 +367,9 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
                 map.fee24 = map.totalFee;
                 map.investValue24 = map.investValue;
                 map.feeValue24 = map.totalFeeValue;
-                if (map.totalFee > 0)
-                    map.APY = (uintF - map.unitFee) * 365;
-                map.APY = 0;
+                // if (map.totalFee > 0)
+                //     map.APY = (uintF - map.NAVPS) * 365;
+                // map.APY = 0;
             }
 
             items.push(map);

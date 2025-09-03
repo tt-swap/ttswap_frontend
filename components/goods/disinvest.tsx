@@ -17,7 +17,7 @@ import { useErrorMess } from '@/hooks/useErrorMess';
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 
 import { myDisInvestProofGood } from '@/graphql/account';
-import { prettifyCurrencys, powerIterative, prettifyCurrencysFee } from '@/graphql/util';
+import { prettifyCurrencys, powerIterative, prettifyCurrencysFee, getDecimalPlaces, withoutRounding } from '@/graphql/util';
 
 interface Props {
     open_zt: boolean;
@@ -59,15 +59,16 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                 let tokens: any = await myDisInvestProofGood(dis_id, ssionChian);
                 console.log(tokens, 99)
                 setDisgood(tokens);
-                count.good1.quantity = tokens.good1.quantity;
-                count.good1.profit = tokens.good1.profit;
-                count.good1.disfee = tokens.good1.disfee;
-                count.good1.count = tokens.good1.quantity + tokens.good1.profit - tokens.good1.disfee;
-                count.good2.quantity = tokens.good2.quantity;
-                count.good2.profit = tokens.good2.profit;
-                count.good2.disfee = tokens.good2.disfee;
-                count.good2.count = tokens.good2.quantity + tokens.good2.profit - tokens.good2.disfee;
-                setDisgoodCot(count);
+                // count.good1.quantity = tokens.good1.investActualQuantity;
+                // count.good1.profit = tokens.good1.profit;
+                // count.good1.disfee = tokens.good1.disfee;
+                // count.good1.count = tokens.good1.quantity + tokens.good1.profit - tokens.good1.disfee;
+                // count.good2.quantity = tokens.good2.quantity;
+                // count.good2.profit = tokens.good2.profit;
+                // count.good2.disfee = tokens.good2.disfee;
+                // count.good2.count = tokens.good2.quantity + tokens.good2.profit - tokens.good2.disfee;
+                // setDisgoodCot(count);
+                disAmount(tokens, 0, 0);
                 setSpinning(false);
                 // setPercent(0);
             }
@@ -82,12 +83,53 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
         return false;
     }, [goodQ, goodVQ])
 
+    function disAmount(e: any, zt: number, amount: number,amount2: number) {
+        console.log("99999999", e, zt, amount)
+        if (zt == 0) {
+            count.good1.quantity = e.good1.investActualQuantity;
+            count.good1.profit = e.good1.profit;
+            count.good1.disfee = e.good1.disfee;
+            count.good1.count = e.good1.quantity + e.good1.profit - e.good1.disfee;
+            count.good2.quantity = e.good2.quantity;
+            count.good2.profit = e.good2.profit;
+            count.good2.disfee = e.good2.disfee;
+            count.good2.count = e.good2.quantity + e.good2.profit - e.good2.disfee;
+        } else if (zt == 1) {
+            let g1da = e.good1.quantity / e.good1.investShares * amount;
+            let g1ada = e.good1.investActualQuantity / e.good1.investShares * amount;
+            let sy = e.good1.investQuantity / e.good1.allInvestShares * amount - g1da;
+            let sxf = g1da * e.good1.rate;
+            count.good1.quantity = g1ada;
+            count.good1.profit = sy;
+            count.good1.disfee = sxf;
+            count.good1.count = sy + g1ada - sxf;
+        } else {
+            let g1da = e.good1.quantity / e.good1.investShares * amount;
+            let g1ada = e.good1.investActualQuantity / e.good1.investShares * amount;
+            let sy = e.good1.investQuantity / e.good1.allInvestShares * amount - g1da;
+            let sxf = g1da * e.good1.rate;
+            count.good1.quantity = g1ada;
+            count.good1.profit = sy;
+            count.good1.disfee = sxf;
+            count.good1.count = sy + g1ada - sxf;
+
+            let g2da = e.good2.quantity / e.good1.investShares * amount;
+            let g2ada = e.good2.investActualQuantity / e.good1.investShares * amount;
+            let sy2 = e.good2.investQuantity / e.good2.allInvestShares * amount2 - g2da;
+            let sxf2 = g2da * e.good2.rate;
+            count.good2.quantity = g2ada;
+            count.good2.profit = sy2;
+            count.good2.disfee = sxf2;
+            count.good2.count = sy2 + g2ada - sxf2;
+        }
+        setDisgoodCot(count);
+    }
     const disinvestgood = async () => {
         setSpinning(true);
         // await switchChain(Number(ssionChian)).then(async () => {
         // @ts-ignore
         const qunt = Number(goodQ * powerIterative(10, disgood.good1.decimals)).toFixed(0);
-        console.log("dis---",qunt,goodQ)
+        console.log("dis---", qunt, goodQ)
         const isSuccess = await disinvest(disgood.id, BigInt(qunt));
         if (isSuccess === true) {
             messageApi.open({
@@ -115,46 +157,117 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
     };
 
     const goodQOn = (e: any) => {
-        console.log(e.target, disgood);
         // @ts-ignore
-        const g1 = disgood.good1.decimals;
+        const g1: number = disgood.good1.decimals;
         let numg1 = e.target.value;
-        if ((numg1.toString().length - 2) > g1) {
-            numg1 = numg1.toFixed(g1);
-        }
-        // @ts-ignore
-        if (disgood.isvaluegood) {
-            let num = 0;
-            // @ts-ignore
-            if (e.target.value < disgood.good1.quantity && e.target.value < disgood.good1.maxNum) {
-                setGoodQ(numg1);
-                num = Number(numg1);
-            } else {
-                setGoodQ(goodQ);
-                num = Number(goodQ);
-            }
-            count.good1.quantity = num;
-            // @ts-ignore
-            count.good1.profit = disgood.good1.nowUnitFee * num - num / disgood.good1.quantity * disgood.good1.contructFee;
-            // @ts-ignore
-            count.good1.disfee = num * disgood.good1.rate;
-            count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
-            setDisgoodCot(count);
-            console.log(count, 999)
+        const pd = parseFloat(e.target.value);
+        if (Number(numg1) < 0 || isNaN(pd)) {
+            // numg1 = 0;
         } else {
+            const ws = getDecimalPlaces(numg1);
+            if (ws > g1) {
+                numg1 = withoutRounding(numg1, 6);//Number(numg1).toFixed(g1);
+            }
+            // console.log("------00--",withoutRounding(2.111111111111111, g1));
             // @ts-ignore
-            const g2 = disgood.good2.decimals;
-            let num = Number(numg1);
-            // @ts-ignore
-            let num1 :any = disgood.good2.quantity * num / disgood.good1.quantity;
-            if ((num1.toString().length - 2) > g2) {
-                num1 = num1.toFixed(g2);
+            if (disgood.isvaluegood) {
+                // let num = 0;
+                // @ts-ignore
+                if (numg1 < disgood.good1.quantity && numg1 < disgood.good1.maxNum || numg1 == disgood.good1.maxNum) {
+                    setGoodQ(numg1);
+                    numg1 = Number(numg1);
+                } else {
+                    setGoodQ(goodQ);
+                    numg1 = Number(goodQ);
+                }
+                // @ts-ignore
+                // let g1dn = disgood.good1.quantity / disgood.good1.investShares * numg1;
+                // count.good1.quantity = g1dn;
+                // // @ts-ignore
+                // count.good1.profit = disgood.good1.nowNAVPS * num - num / disgood.good1.quantity * disgood.good1.contructFee;
+                // // @ts-ignore
+                // count.good1.disfee = num * disgood.good1.rate;
+                // count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
+                // setDisgoodCot(count);
+                disAmount(disgood, 1, numg1);
+                console.log("00000", disgoodCot, 999)
+            } else {
+                // @ts-ignore
+                const g2 = disgood.good2.decimals;
+                let num = Number(numg1);
+                // @ts-ignore
+                let num1: any = disgood.good2.investShares / disgood.good1.investShares * num;
+                const ws = getDecimalPlaces(num1);
+                if (ws > g2) {
+                    num1 = withoutRounding(Number(num1), g2);//num1.toFixed(g2);
+                }
+                // @ts-ignore
+                if (num < disgood.good1.quantity && num < disgood.good1.maxNum || num == disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum || num1 == disgood.good2.maxNum) {
+                    setGoodQ(numg1);
+                    // @ts-ignore
+                    setGoodVQ(num1);
+                    num1 = Number(num1);
+                } else {
+                    setGoodQ(goodQ);
+                    setGoodVQ(goodVQ);
+                    numg1 = Number(goodQ);
+                    num1 = Number(goodVQ);
+                }
+                // count.good1.quantity = num;
+                // // @ts-ignore
+                // count.good1.profit = disgood.good1.nowNAVPS * num - num / disgood.good1.quantity * disgood.good1.contructFee;
+                // // @ts-ignore
+                // count.good1.disfee = num * disgood.good1.rate;
+                // count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
+                // count.good2.quantity = num1;
+                // // @ts-ignore
+                // count.good2.profit = disgood.good2.nowNAVPS * num1 - num1 / disgood.good2.quantity * disgood.good2.contructFee;
+                // // @ts-ignore
+                // count.good2.disfee = num1 * disgood.good2.rate;
+                // count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
+                // setDisgoodCot(count);
+                disAmount(disgood, 2, numg1,num1);
+                console.log("------", numg1, num1, count)
+
+            }
+        }
+
+    };
+    // @ts-ignore
+    const goodVQOn = (e: any) => {
+        // @ts-ignore
+        const g1: number = disgood.good1.decimals; const g2: number = disgood.good2.decimals;
+
+        // let num1 = Number(e.target.value);
+        // let num1 = e.target.value;
+        // if ((num1.toString().length - 2) > g2) {
+        //     num1 = num1.toFixed(g2);
+        // }
+        let num1 = e.target.value;
+        const pd = parseFloat(e.target.value);
+        if (Number(num1) < 0 || isNaN(pd)) {
+            // numg1 = 0;
+        } else {
+            const ws = getDecimalPlaces(num1);
+            if (ws > g2) {
+                num1 = withoutRounding(Number(num1), g2);//Number(num1).toFixed(g2);
             }
             // @ts-ignore
-            if (num < disgood.good1.quantity && num < disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum) {
-                setGoodQ(numg1);
+            let num: any = num1 / (disgood.good2.investShares / disgood.good1.investShares);
+            console.log("++++++", num)
+            // if ((num.toString().length - 2) > g1) {
+            //     num = num.toFixed(g1);
+            // }
+            const ws1 = getDecimalPlaces(num);
+            if (ws1 > g1) {
+                num = withoutRounding(Number(num), g1);//Number(num).toFixed(g1);
+            }
+            // @ts-ignore
+            if (num < disgood.good1.quantity && num < disgood.good1.maxNum || num == disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum || num1 == disgood.good2.maxNum) {
+
                 // @ts-ignore
-                setGoodVQ(num1);
+                setGoodQ(num); setGoodVQ(num1);
+                num = Number(num);
                 num1 = Number(num1);
             } else {
                 setGoodQ(goodQ);
@@ -162,69 +275,24 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                 num = Number(goodQ);
                 num1 = Number(goodVQ);
             }
-            count.good1.quantity = num;
-            // @ts-ignore
-            count.good1.profit = disgood.good1.nowUnitFee * num - num / disgood.good1.quantity * disgood.good1.contructFee;
-            // @ts-ignore
-            count.good1.disfee = num * disgood.good1.rate;
-            count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
-            count.good2.quantity = num1;
-            // @ts-ignore
-            count.good2.profit = disgood.good2.nowUnitFee * num1 - num1 / disgood.good2.quantity * disgood.good2.contructFee;
-            // @ts-ignore
-            count.good2.disfee = num1 * disgood.good2.rate;
-            count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
-            setDisgoodCot(count);
-            console.log("------", numg1,num1,count)
-
+            console.log("++++++", num, num1)
+            // count.good1.quantity = num;
+            // // @ts-ignore
+            // count.good1.profit = disgood.good1.nowNAVPS * num - num / disgood.good1.quantity * disgood.good1.contructFee;
+            // // @ts-ignore
+            // count.good1.disfee = num * disgood.good1.rate;
+            // count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
+            // count.good2.quantity = num1;
+            // // @ts-ignore
+            // count.good2.profit = disgood.good2.nowNAVPS * num1 - num1 / disgood.good2.quantity * disgood.good2.contructFee;
+            // // @ts-ignore
+            // count.good2.disfee = num1 * disgood.good2.rate;
+            // count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
+            // setDisgoodCot(count);
+            disAmount(disgood, 2, num,num1);
         }
-
     };
-    // @ts-ignore
-    const goodVQOn = (e: any) => {
-        // @ts-ignore
-        const g1 = disgood.good1.decimals;  const g2 = disgood.good2.decimals;
 
-        // let num1 = Number(e.target.value);
-        let num1 = e.target.value;
-        if ((num1.toString().length - 2) > g2) {
-            num1 = num1.toFixed(g2);
-        }
-        // @ts-ignore
-        let num :any = disgood.good1.quantity * num1 / disgood.good2.quantity;
-        console.log("++++++", num)
-        if ((num.toString().length - 2) > g1) {
-            num = num.toFixed(g1);
-        }
-        // @ts-ignore
-        if (num < disgood.good1.quantity && num < disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum) {
-
-            // @ts-ignore
-            setGoodQ(num); setGoodVQ(num1);
-            num = Number(num);
-            num1 = Number(num1);
-        } else {
-            setGoodQ(goodQ);
-            setGoodVQ(goodVQ);
-            num = Number(goodQ);
-            num1 = Number(goodVQ);
-        }
-        console.log("++++++", num,num1)
-        count.good1.quantity = num;
-        // @ts-ignore
-        count.good1.profit = disgood.good1.nowUnitFee * num - num / disgood.good1.quantity * disgood.good1.contructFee;
-        // @ts-ignore
-        count.good1.disfee = num * disgood.good1.rate;
-        count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
-        count.good2.quantity = num1;
-        // @ts-ignore
-        count.good2.profit = disgood.good2.nowUnitFee * num1 - num1 / disgood.good2.quantity * disgood.good2.contructFee;
-        // @ts-ignore
-        count.good2.disfee = num1 * disgood.good2.rate;
-        count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
-        setDisgoodCot(count);
-
-    };
     return (
         <>
             {contextHolder}
@@ -244,17 +312,23 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                         }} />} /><span>{
                                             // @ts-ignore
                                             disgood.good1.symbol}</span></Space></div>
-                                    <div><Space><span>{t('body.account.divest.unitfee')}:</span><span>{
+                                    <div><Space><span>{t('body.account.divest.NAVPS')}:</span><span>{
                                         // @ts-ignore
-                                        prettifyCurrencysFee(disgood.good1.nowUnitFee)}</span></Space></div>
+                                        prettifyCurrencysFee(disgood.good1.nowNAVPS)}</span></Space></div>
                                 </div>
                                 <div className='pt-2 pb-2'>
+                                    <div><Space><span>{t('body.account.divest.investShares')}:</span><span>{
+                                        // @ts-ignore
+                                        prettifyCurrencys(disgood.good1.investShares)}</span></Space></div>
                                     <div><Space><span>{t('body.account.divest.investquantity')}:</span><span>{
                                         // @ts-ignore
                                         prettifyCurrencys(disgood.good1.quantity)}</span></Space></div>
-                                    <div><Space><span>{t('body.account.divest.investunitfee')}:</span><span>{
+                                    <div><Space><span>{t('body.account.divest.investActualQuantity')}:</span><span>{
                                         // @ts-ignore
-                                        prettifyCurrencysFee(disgood.good1.unitFee)}</span></Space></div>
+                                        prettifyCurrencys(disgood.good1.investActualQuantity)}</span></Space></div>
+                                    <div><Space><span>{t('body.account.divest.investNAVPS')}:</span><span>{
+                                        // @ts-ignore
+                                        prettifyCurrencysFee(disgood.good1.NAVPS)}</span></Space></div>
                                     <div><Space><span>{t('body.account.divest.estprofit')}:</span><span>{
                                         // @ts-ignore
                                         prettifyCurrencysFee(disgood.good1.profit)}</span></Space></div>
@@ -277,17 +351,23 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                                 }} />} /><span>{
                                                     // @ts-ignore
                                                     disgood.good2.symbol}</span></Space></div>
-                                            <div><Space><span>{t('body.account.divest.unitfee')}:</span><span>{
+                                            <div><Space><span>{t('body.account.divest.NAVPS')}:</span><span>{
                                                 // @ts-ignore
-                                                prettifyCurrencysFee(disgood.good2.nowUnitFee)}</span></Space></div>
+                                                prettifyCurrencysFee(disgood.good2.nowNAVPS)}</span></Space></div>
                                         </div>
                                         <div className='pt-2 pb-2'>
+                                            <div><Space><span>{t('body.account.divest.investShares')}:</span><span>{
+                                                // @ts-ignore
+                                                prettifyCurrencys(disgood.good2.investShares)}</span></Space></div>
                                             <div><Space><span>{t('body.account.divest.investquantity')}:</span><span>{
                                                 // @ts-ignore
                                                 prettifyCurrencys(disgood.good2.quantity)}</span></Space></div>
-                                            <div><Space><span>{t('body.account.divest.investunitfee')}:</span><span>{
+                                            <div><Space><span>{t('body.account.divest.investActualQuantity')}:</span><span>{
                                                 // @ts-ignore
-                                                prettifyCurrencysFee(disgood.good2.unitFee)}</span></Space></div>
+                                                prettifyCurrencys(disgood.good2.investActualQuantity)}</span></Space></div>
+                                            <div><Space><span>{t('body.account.divest.investNAVPS')}:</span><span>{
+                                                // @ts-ignore
+                                                prettifyCurrencysFee(disgood.good2.NAVPS)}</span></Space></div>
                                             <div><Space><span>{t('body.account.divest.estprofit')}:</span><span>{
                                                 // @ts-ignore
                                                 prettifyCurrencysFee(disgood.good2.profit)}</span></Space></div>
@@ -300,8 +380,9 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                         </div>
 
                         <Form className='form-new' colon={false}>
-
-                            <h2>{t('body.account.divest.divestquantity')}</h2>
+                            <h2>{
+                                // @ts-ignore
+                                t('body.account.divest.divestShares')}{"(Max:"}{disgood.good1.maxNum}{")"}</h2>
                             <Form.Item>
                                 <Input
                                     placeholder="0"
@@ -340,7 +421,9 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                                 // @ts-ignore
                                 !disgood.isvaluegood && (
                                     <>
-                                        <h2>{t('body.account.divest.divestvalue')}</h2>
+                                        <h2>{
+                                            // @ts-ignore
+                                            t('body.account.divest.divestShares')}{"(Max:"}{disgood.good2.maxNum}{")"}</h2>
                                         <Form.Item>
                                             <Input
                                                 placeholder="0"

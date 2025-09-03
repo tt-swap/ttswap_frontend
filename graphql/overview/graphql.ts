@@ -163,6 +163,7 @@ export function InvestGoodDatas(params: {
 					totalInvestCount
 					investQuantity
 					feeQuantity
+					investShares
 					goodData(
 						orderBy: modifiedTime
 						orderDirection: desc
@@ -179,6 +180,7 @@ export function InvestGoodDatas(params: {
 						investQuantity
 						currentQuantity
 						currentValue
+						investShares
 					}
 					date24: goodData(
 						orderBy: modifiedTime

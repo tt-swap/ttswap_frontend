@@ -114,7 +114,7 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
 
             let map = {
                 id: "", name: "", decimals: 0, symbol: "", logo_url: "", exp_url: "", address: "", valueSymbol: "",
-                price: 0, unitFee: 0, APY: 0, price_24h: 0,
+                price: 0, NAVPS: 0, APY: 0, price_24h: 0,
                 currentQuantity: 0, currentValue: 0, investQuantity: 0, investValue: 0, currentFee: 0, currentFeeValue: 0,
                 tradeQuantity24: 0, tradeValue24: 0, fee24: 0, feeValue24: 0, investQuantity24: 0, investValue24: 0,
                 totalInvestQuantity: 0, totalInvestValue: 0, totalTradeQuantity: 0, totalTradeValue: 0, totalDisinvestQuantity: 0, totalDisinvestValue: 0,
@@ -169,7 +169,7 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
             map.currentValue = map.currentQuantity * current_price;
             map.currentFee = e.feeQuantity / base_decimals;
             map.currentFeeValue = map.currentFee * current_price;
-            map.unitFee = map.currentFee / map.investQuantity;
+            map.NAVPS = map.currentFee / map.investQuantity;
             map.totalInvestQuantity = e.totalInvestQuantity / base_decimals;
             map.totalInvestValue = map.totalInvestQuantity * current_price;
             map.totalTradeQuantity = e.totalTradeQuantity / base_decimals;

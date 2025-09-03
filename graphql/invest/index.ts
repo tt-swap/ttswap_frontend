@@ -92,9 +92,9 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string 
             map1.disinvestFee = goodConfig1.mod(m217).div(m211).integerValue(1).div(10000).toNumber();
             if (en.goodData.length > 0) {
                 let enY = en.goodData[0];
-                let unitFee = (Number(map1.feeQuantity) + Number(map1.investQuantity)) / map1.investQuantity;
-                let uintFY = (enY.feeQuantity + enY.investQuantity) / enY.investQuantity;
-                map1.apy = unitFee / uintFY - 1;
+                let NAVPS = en.investQuantity / en.investShares;//(Number(map1.feeQuantity) + Number(map1.investQuantity)) / map1.investQuantity;
+                let uintFY = enY.investQuantity / enY.investShares;//(enY.feeQuantity + enY.investQuantity) / enY.investQuantity;
+                map1.apy = NAVPS / uintFY - 1;
                 // map1.apy = (en.feeQuantity - en.goodData[0].feeQuantity) / en.feeQuantity * 365;
             } else {
                 map1.apy = 0;

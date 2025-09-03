@@ -200,15 +200,15 @@ export const XYKTokenListView: React.FC<XYKTokenListViewProps> = ({
             },
         },
         {
-            id: "unitFee",
-            accessorKey: "unitFee",
+            id: "NAVPS",
+            accessorKey: "NAVPS",
             header: () => (
                 <div className="text-right">
-                    {t('body.home.goods.table.unitfee')}
+                    {t('body.home.goods.table.NAVPS')}
                 </div>
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencysFee(row.original.unitFee);
+                const valueFormatted = prettifyCurrencysFee(row.original.NAVPS);
                 return <div className="text-right">{valueFormatted}</div>;
             },
         },

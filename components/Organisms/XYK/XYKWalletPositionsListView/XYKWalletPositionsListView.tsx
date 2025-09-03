@@ -194,6 +194,24 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
             },
         },
         {
+            id: "investShares",
+            accessorKey: "investShares",
+            header: () => (
+                <div className="text-right">
+                    {t('body.account.tabs.proof.investShares')}
+                </div>
+            ),
+            cell: ({ row }) => {
+
+                const valueFormatted = prettifyCurrencys(
+                    // @ts-ignore
+                    row.original.investShares
+                );
+
+                return <div className="text-right">{valueFormatted}</div>;
+            },
+        },
+        {
             id: "investQuantity",
             accessorKey: "investQuantity",
             header: () => (
@@ -202,29 +220,37 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                 </div>
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencys(
+                const investQuantity = prettifyCurrencys(
                     // @ts-ignore
                     row.original.investQuantity
                 );
+                const investActualQuantity = prettifyCurrencys(
+                    // @ts-ignore
+                    row.original.investActualQuantity
+                );
 
-                return <div className="text-right">{valueFormatted}</div>;
+                return <div className="text-right">{investQuantity}{" / "}{investActualQuantity}</div>;
             },
         },
         {
-            id: "unitFee",
-            accessorKey: "unitFee",
+            id: "NAVPS",
+            accessorKey: "NAVPS",
             header: () => (
                 <div className="text-right">
-                    {t('body.account.tabs.proof.unitfee')}
+                    {t('body.account.tabs.proof.NAVPS')}
                 </div>
             ),
             cell: ({ row }) => {
-                const valueFormatted = prettifyCurrencysFee(
+                const NAVPS = prettifyCurrencysFee(
                     // @ts-ignore
-                    row.original.unitFee
+                    row.original.NAVPS
+                );
+                const allNAVPS = prettifyCurrencysFee(
+                    // @ts-ignore
+                    row.original.allNAVPS
                 );
 
-                return <div className="text-right">{valueFormatted}</div>;
+                return <div className="text-right">{NAVPS}{" / "}{allNAVPS}</div>;
             },
         },
         {
@@ -241,36 +267,52 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                     row.original.profit
                 );
 
-                return <div className="text-right">{valueFormatted}</div>;
-            },
-        },
-        {
-            id: "earningRate",
-            accessorKey: "earningRate",
-            header: () => (
-                <div className="text-right">
-                    {t('body.account.tabs.proof.earningrate')}
-                </div>
-            ),
-            cell: ({ row }) => {
-                const valueFormatted = calculateFeePercentage(
+                const earningRate = calculateFeePercentage(
                     // @ts-ignore
                     row.original.earningRate
                 );
-
-                return (
-                    <div
+                return <div className="text-right">
+                    {valueFormatted}
+                    {" / "}
+                    <span
                         className={`text-right ${
                             // @ts-ignore
                             parseFloat(row.original.earningRate) > 0 ?
                                 "text-green-600" : "text-red-600"
                             }`}
                     >
-                        {valueFormatted}
-                    </div>
-                );
+                        {earningRate}
+                    </span>
+                    </div>;
             },
         },
+        // {
+        //     id: "earningRate",
+        //     accessorKey: "earningRate",
+        //     header: () => (
+        //         <div className="text-right">
+        //             {t('body.account.tabs.proof.earningrate')}
+        //         </div>
+        //     ),
+        //     cell: ({ row }) => {
+        //         const valueFormatted = calculateFeePercentage(
+        //             // @ts-ignore
+        //             row.original.earningRate
+        //         );
+
+        //         return (
+        //             <div
+        //                 className={`text-right ${
+        //                     // @ts-ignore
+        //                     parseFloat(row.original.earningRate) > 0 ?
+        //                         "text-green-600" : "text-red-600"
+        //                     }`}
+        //             >
+        //                 {valueFormatted}
+        //             </div>
+        //         );
+        //     },
+        // },
         {
             id: "actions",
             header: () => (

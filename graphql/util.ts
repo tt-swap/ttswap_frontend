@@ -73,25 +73,41 @@ export function prettifyCurrencys(value: number) {
         // return '<0.01'
     }
 
-    return formatLargeNumber(value,2);
+    return formatLargeNumber(value, 2);
 };
 
+//正则表达式增强版获取小数位数
+export function getDecimalPlaces(num: number): number {
+    const match = num.toString().match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+    if (!match || !match[1]) return 0;
+    return match[1].length - (match[2] ? parseInt(match[2]) : 0);
+}
 export function toPrecision(value: number) {
     return parseFloat(value.toPrecision(3)).toString();
 }
 
 // 数字处理
 export function prettifyCurrencysFee(value: number) {
-        if (value === 0) {
-            return '0'
-        }
-        if (value < 0.000001 && value > 0) {
-            return '<0.000001'
-        }
+    if (value === 0) {
+        return '0'
+    }
+    if (value < 0.000001 && value > 0) {
+        return '<0.000001'
+    }
 
-        return formatLargeNumber(value,6);
+    return formatLargeNumber(value, 6);
 };
 
+// 小数处理（不四舍五入）
+export function withoutRounding(value: number, a: number) {
+    let str = value.toString();
+    let decimalIndex = str.indexOf('.');
+    a = Number(decimalIndex) + Number(a) + 1;
+    let result = str.slice(0, a);
+    console.log("---==[[", a, str, decimalIndex, result);
+
+    return Number(result);
+};
 
 // 钱包余额数字处理
 export function prettifyBalance(value: number) {
@@ -137,7 +153,7 @@ export function splitNumber(values: number) {
 }
 
 
-function formatLargeNumber(num: number,a:number): string {
+function formatLargeNumber(num: number, a: number): string {
     const suffixes = ["", "M", "B", "T"]; // 后缀：百万、十亿、万亿
     const threshold = 1000000; // 阈值，超过 100 万才添加后缀
 

@@ -75,15 +75,15 @@ export function myInvestGoodDatas(params: { id: string; first: number; skip: num
 				skip: $skip
 				) {
 				createTime
-				good1ContructFee
 				good1Quantity
 				good1ActualQuantity
-				good2ContructFee
 				good2Quantity
 				good2ActualQuantity
 				id
 				owner
 				proofValue
+    			good1Shares
+    			good2Shares
 				good1 {
 				  tokendecimals
 				  tokenname
@@ -94,6 +94,7 @@ export function myInvestGoodDatas(params: { id: string; first: number; skip: num
 				  currentValue
 				  erc20Address
 				  investQuantity
+				  investShares
 				}
 				good2 {
 					tokendecimals
@@ -105,6 +106,7 @@ export function myInvestGoodDatas(params: { id: string; first: number; skip: num
 					currentValue
 					erc20Address
 					investQuantity
+					investShares
 				}
 			  }
 		}`,
@@ -143,6 +145,7 @@ export async function myGoodDatas(params: {
 					totalInvestCount
 					investQuantity
 					feeQuantity
+				  	investShares
 					goodData(
 						orderBy: modifiedTime
 						orderDirection: desc
@@ -160,6 +163,7 @@ export async function myGoodDatas(params: {
 						investQuantity
 						currentQuantity
 						currentValue
+				  		investShares
 						good {
 							id
 							tokenname
@@ -181,13 +185,13 @@ export function myDisInvestProof(params: { id: number; },ssionChian:number) {
 			proofState(id: $id) {
 				id
 				proofValue
-				good1ContructFee
 				good1Quantity
 				good1ActualQuantity
-				good2ContructFee
 				good2Quantity
 				good2ActualQuantity
 				createTime
+    			good1Shares
+    			good2Shares
 				good1 {
 				  id
 				  tokendecimals
@@ -199,6 +203,7 @@ export function myDisInvestProof(params: { id: number; },ssionChian:number) {
 				  feeQuantity
 				  investQuantity
 				  isvaluegood
+				  investShares
 				}
 				good2 {
 				  id
@@ -210,6 +215,7 @@ export function myDisInvestProof(params: { id: number; },ssionChian:number) {
 				  currentValue
 				  feeQuantity
 				  investQuantity
+				  investShares
 				}
 			  }
 		}`,

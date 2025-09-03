@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { Flex } from "@radix-ui/themes";
 import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n/i18n';
+import { XYKTokenListView } from "@/components/Organisms"
 // import { message, Button, Tabs } from 'antd';
 // import type { TabsProps } from 'antd';
 // import { handleTabSwitch } from "@/utils/router";
@@ -10,11 +11,17 @@ import i18n from '@/i18n/i18n';
 // import banner2 from "static/christmas-banner-1.png";
 // import banneren1 from "static/christmas-banner-en.png";
 // import banneren2 from "static/christmas-banner-1-en.png";
+import { useValueGood, useGoodId } from "@/stores/valueGood";
+import { useLocalStorage } from "@/utils/LocalStorageManager";
 
 export default function Home({ params }: { params: { chain: string, dex: string } }) {
 
   const { t } = useTranslation();
   const [lang, setLang] = useState('en');
+  const { info } = useValueGood();
+  const { setGoodId } = useGoodId();
+  // @ts-ignore
+  const { ssionChian } = useLocalStorage();
 
   useEffect(() => {
     document.title = t('header.menu.home');
@@ -31,6 +38,25 @@ export default function Home({ params }: { params: { chain: string, dex: string 
       {/* <img src={lang==='zh'?banner1.src:banneren1.src}></img>
       <img src={lang==='zh'?banner2.src:banneren2.src}></img> */}
       {/* </Flex> */}
+      
+      <XYKTokenListView
+          // @ts-ignore
+          chain_name={params.chain}
+          dex_name={params.dex}
+          chain_id={ssionChian}
+          on_token_click={(e: any, id: string) => {
+            // if (e === "swap" || e === "invest") {
+            //   setGoodId({ invest: { id: id }, swap: { id: id } });
+            //   setTrade(e);
+            //   router.push(`${handleTabSwitch("trade", pathname)}`);
+            // } else {
+            //   router.push(`${handleTabSwitch(e, pathname)}`);
+            // }
+          }}
+          page_size={100}
+          value_good_id={info.id}
+        // is_over={true}
+        />
     </div>
   )
 

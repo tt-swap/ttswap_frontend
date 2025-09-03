@@ -106,7 +106,7 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
 
             let map = {
                 id: "", name: "", decimals: 0, symbol: "", valueSymbol: "", totalTradeQuantity: 0, currentQuantity: 0,
-                totalFee: 0, price: 0, price_24h: 0, totalTradeValue: 0, totalFeeValue: 0,unitFee: 0, apy: 0,
+                totalFee: 0, price: 0, price_24h: 0, totalTradeValue: 0, totalFeeValue: 0, NAVPS: 0, apy: 0,
                 tradeQuantity24: 0, fee24: 0, tradeValue24: 0, feeValue24: 0, logo_url: "", priceC_24h: 0
             };
 
@@ -162,6 +162,7 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
     let item = { items: {}, pagination: { page_number: 0, page_size: 0, has_more: false }, error: false, error_message: "" };
 
     if (params.id !== "") {
+        console.log("investGoodsDatas", params);
         const goodsDatas = await InvestGoodDatas({ id: params.id, first: params.pageSize, time: timestampdToDateYear(1), time24: timestampdToDateSub(0), skip: params.pageSize * params.pageNumber }, ssionChian);
 
         let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
@@ -190,7 +191,7 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
 
             let map = {
                 id: "", name: "", decimals: 0, symbol: "", logo_url: "", currentQuantity: 0, currentValue: 0, valueSymbol: "",
-                priceC_24h: 0, price: 0, price_24h: 0, unitFee: 0, apy: 0, unitPrice: 0
+                priceC_24h: 0, price: 0, price_24h: 0, NAVPS: 0, apy: 0, unitPrice: 0
             };
 
             map.id = e.id;
@@ -203,21 +204,24 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
             map.currentValue = e.currentQuantity / base_decimals * current_price;
             map.logo_url = iconUrl(chainName, e.erc20Address);
             map.price = current_price;
-            map.unitFee = e.feeQuantity / e.investQuantity;
-            let uintF = (Number(e.feeQuantity) + Number(e.investQuantity)) / e.investQuantity;
+            map.NAVPS = e.investQuantity / e.investShares;
+            // let uintF = (Number(e.feeQuantity) + Number(e.investQuantity)) / e.investQuantity;
             let en = e.goodData[0];
             let d24 = e.date24[0];
-            let uintFY = (en.feeQuantity + en.investQuantity) / en.investQuantity;
+            console.log("investGoodsData-----s", en);
+            // let uintFY = (en.feeQuantity + en.investQuantity) / en.investQuantity;
+            let NAVPS = en.investQuantity / en.investShares;
+            console.log(22222222, jz)
             let current_price_24h = ((d24.currentValue / tokendecimals) / (d24.currentQuantity / base_decimals)) / jz;
             map.price_24h = current_price_24h;
             map.priceC_24h = (current_price - current_price_24h) / current_price_24h;
-            map.apy = uintF / uintFY - 1;
+            map.apy = map.NAVPS / NAVPS - 1;//uintF / uintFY - 1;
 
             items.push(map);
         });
 
     }
-    console.log(1111111,item)
+    console.log(3333333333, item)
     return item;
 }
 
