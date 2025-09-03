@@ -68,7 +68,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                 // count.good2.disfee = tokens.good2.disfee;
                 // count.good2.count = tokens.good2.quantity + tokens.good2.profit - tokens.good2.disfee;
                 // setDisgoodCot(count);
-                disAmount(tokens, 0, 0);
+                disAmount(tokens, 0, 0, 0);
                 setSpinning(false);
                 // setPercent(0);
             }
@@ -83,7 +83,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
         return false;
     }, [goodQ, goodVQ])
 
-    function disAmount(e: any, zt: number, amount: number,amount2: number) {
+    function disAmount(e: any, zt: number, amount: number, amount2: number) {
         console.log("99999999", e, zt, amount)
         if (zt == 0) {
             count.good1.quantity = e.good1.investActualQuantity;
@@ -226,7 +226,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
                 // count.good2.disfee = num1 * disgood.good2.rate;
                 // count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
                 // setDisgoodCot(count);
-                disAmount(disgood, 2, numg1,num1);
+                disAmount(disgood, 2, numg1, num1);
                 console.log("------", numg1, num1, count)
 
             }
@@ -289,7 +289,7 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
             // count.good2.disfee = num1 * disgood.good2.rate;
             // count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
             // setDisgoodCot(count);
-            disAmount(disgood, 2, num,num1);
+            disAmount(disgood, 2, num, num1);
         }
     };
 
