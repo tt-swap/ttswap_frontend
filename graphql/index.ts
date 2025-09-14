@@ -16,6 +16,8 @@ export async function GoodsDatas(ssionChian: number) {
             symbol: e.tokensymbol,
             logo_url: iconUrl(chainName, e.erc20Address),
             address: e.erc20Address,
+            currentQuantity: e.currentQuantity,
+            currentValue: e.currentValue,
         };
         items.push(map);
     });

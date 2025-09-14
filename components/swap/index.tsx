@@ -277,9 +277,27 @@ const TokenSwap = () => {
             setMesStatus("error");
             setMesTitle(t('common.swap') + t('common.mess.error'));
         } else {
+            let yz = "";
+            if (isSuccess === 7) {
+                let n;
+                n = swaps.to.currentQuantity - swaps.to.currentQuantity / 10;
+                yz = "; <" + n + swaps.to.symbol;
+            }
+            if (isSuccess === 14) {
+                let n;
+                n = 2 * 1e6 * swaps.from.currentQuantity / (2 * swaps.from.currentValue - 1e6) / (1 - swaps.from.buyFee);
+                n = Math.floor(n);
+                n = n / 10 ** swaps.from.decimals;
+                yz = "; >=" + n + swaps.from.symbol;
+            }
+            // if (isSuccess === 16) {
+            //     let n;
+            //     n = 1 * swaps.from.currentQuantity / swaps.from.currentValue;
+            //     yz = ">=" + n + swaps.from.symbol;
+            // }
             setOpen(true);
             setMesStatus("error");
-            setMesTitle(useErrorMess(isSuccess, t));
+            setMesTitle(useErrorMess(isSuccess, t) + yz);
         }
         // }).catch((error) => {
         //     console.error(`"Failed to switch chains: " ${error}`);

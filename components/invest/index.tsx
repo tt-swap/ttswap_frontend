@@ -188,10 +188,21 @@ const TokenInvest = () => {
             setMesStatus("error");
             setMesTitle(t('common.invest') + t('common.mess.error'));
         } else {
+            let yz = "";
+            // if (isSuccess === 33) {
+            //     let a;
+            //     a=invest.from.min;
+            //   yz = "<="+a+invest.from.symbol;
+            // }
+            if (isSuccess === 38) {
+                let n;
+                n = 1 * investAmount.from.currentQuantity / investAmount.from.currentValue / (1 - invest.from.investFee);
+                yz = "; >" + n + invest.from.symbol;
+            }
             setOpen(true);
             setMesStatus("error");
-            setMesTitle(useErrorMess(isSuccess,t));
-          }
+            setMesTitle(useErrorMess(isSuccess, t) + yz);
+        }
         // }).catch((error) => {
         //     console.error(`"Failed to switch chains: " ${error}`);
         // });
@@ -221,7 +232,7 @@ const TokenInvest = () => {
                         <div
                             // key={swaps.from.symbol + 0}
                             className="border z-11 rounded-xl p-2 space-y-4"
-                            // style={{ marginTop: "20px" }}
+                        // style={{ marginTop: "20px" }}
                         >
                             <label className={styles.label}>
                                 {t('body.invest.goods')}

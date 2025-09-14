@@ -337,3 +337,22 @@ export function myReferees(params: { id: string; first: number; skip: number; ad
 		variables: params
 	})
 }
+
+
+// goodStateMin
+export function goodStateMin(params: { address: string },ssionChian:number) {
+	return apolloClient(ssionChian).query({
+		query: gql`query($address: String) {
+			goodState(id: $address) {
+				id
+				tokenname
+				tokensymbol
+				tokendecimals
+				erc20Address
+				currentQuantity
+				currentValue
+			  }
+		}`,
+		variables: params
+	})
+}

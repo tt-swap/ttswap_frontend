@@ -20,6 +20,7 @@ import { useMaxApprove } from '@/hooks/useMaxApprove';
 import { useErrorMess } from '@/hooks/useErrorMess';
 
 import { GoodsDatas } from '@/graphql';
+import { minThreshold } from '@/graphql/account';
 import { getSWETH } from '@/data/contractConfig';
 
 type SizeType = Parameters<typeof Form>[0]['size'];
@@ -151,9 +152,15 @@ export const CreatGoods = ({ setDataNum }: Props) => {
         content: t('common.mess.create') + t('common.mess.error'),
       });
     } else {
+      let yz = "";
+      if (isSuccess === 35) {
+        const tokens: any = await minThreshold(goodVAddr, ssionChian);
+        console.log("35--: " ,tokens);
+        yz = "; >=" + tokens.minThreshold;
+      }
       messageApi.open({
         type: 'error',
-        content: useErrorMess(isSuccess, t),
+        content: useErrorMess(isSuccess, t) + yz,
       });
     }
     // }).catch((error) => {

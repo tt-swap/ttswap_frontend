@@ -19,7 +19,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { TokenAvatar } from "../../../Atoms";
-import { Button, Spin } from 'antd';
+import { Button, Spin, Tooltip } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { TableHeaderSorting } from "@/components/ui/tableHeaderSorting";
 import { GRK_SIZES } from "@/utils/constants/shared.constants";
@@ -151,9 +151,11 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
             id: "name",
             accessorKey: "name",
             header: () => (
-                <div className="text-left ml-4">
-                    {t('body.account.tabs.proof.name')}
-                </div>
+                <Tooltip placement="top" title={<span>{t('body.account.tabs.proof.name.tip')}</span>}>
+                    <div className="text-left ml-4 cursor-pointer">
+                        {t('body.account.tabs.proof.name')}
+                    </div>
+                </Tooltip>
             ),
             cell: ({ row }) => {
                 return (
@@ -283,7 +285,7 @@ export const XYKWalletPositionsListView: React.FC<XYKWalletPositionsListViewProp
                     >
                         {earningRate}
                     </span>
-                    </div>;
+                </div>;
             },
         },
         // {

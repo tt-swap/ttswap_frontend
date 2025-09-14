@@ -2,9 +2,10 @@ import { getExplorer, getChainName } from '@/data/networks';
 import { ethers } from "ethers";
 import MarketManager from '@/data/abi/MarketManager.json';
 import { getContractAddress } from '@/data/contractConfig';
-import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex, myCommission, referees, myReferees } from './graphql';
+import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex, myCommission, referees, myReferees,goodStateMin } from './graphql';
 import { timestampdToDateSub, powerIterative, iconUrl, timestampSubH, withoutRounding } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
+import { goodState } from '../graphql';
 
 // 我的投资列表
 export async function myInvestGoodsDatas(params: { id: string; address: string; pageNumber: number; pageSize: number; }, ssionChian: number): Promise<object> {
@@ -511,3 +512,18 @@ export async function myRefereesDatas(params: { id: string; address: string; pag
     }
     return item;
 }
+
+
+//minThreshold
+export async function minThreshold(id: string, ssionChian: number): Promise<object> {
+
+    let items = { minThreshold: "" };
+    if (id !== undefined) {
+        const goodsDatas = await goodStateMin({ address: id.toLowerCase() }, ssionChian);
+        let data = goodsDatas.data.goodState;
+        const quantity= 500000000 * (data.currentQuantity/data.currentValue) /powerIterative(10, data.tokendecimals);
+        items.minThreshold = quantity+" " + data.tokensymbol;
+    }
+    return items;
+}
+

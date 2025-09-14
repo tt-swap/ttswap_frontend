@@ -78,13 +78,13 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
     const isDisabled = useMemo(() => {
         // console.log(buyF, sellF, inF, disinF, swapS, disinS, goodQ, goodVQ, goodC, goodV)
         // @ts-ignore
-        if (goodQ === "" || goodQ === "0" || goodQ < 0)
+        if (goodQ === "" || goodQ === "0" || goodQ <= 0)
             return true;
         return false;
     }, [goodQ, goodVQ])
 
     function disAmount(e: any, zt: number, amount: number, amount2: number) {
-        console.log("99999999", e, zt, amount)
+        // console.log("99999999", e, zt, amount)
         if (zt == 0) {
             count.good1.quantity = e.good1.investActualQuantity;
             count.good1.profit = e.good1.profit;
@@ -162,75 +162,84 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
         let numg1 = e.target.value;
         const pd = parseFloat(e.target.value);
         if (Number(numg1) < 0 || isNaN(pd)) {
-            // numg1 = 0;
-        } else {
-            const ws = getDecimalPlaces(numg1);
-            if (ws > g1) {
-                numg1 = withoutRounding(numg1, 6);//Number(numg1).toFixed(g1);
-            }
-            // console.log("------00--",withoutRounding(2.111111111111111, g1));
-            // @ts-ignore
-            if (disgood.isvaluegood) {
-                // let num = 0;
-                // @ts-ignore
-                if (numg1 < disgood.good1.quantity && numg1 < disgood.good1.maxNum || numg1 == disgood.good1.maxNum) {
-                    setGoodQ(numg1);
-                    numg1 = Number(numg1);
-                } else {
-                    setGoodQ(goodQ);
-                    numg1 = Number(goodQ);
-                }
-                // @ts-ignore
-                // let g1dn = disgood.good1.quantity / disgood.good1.investShares * numg1;
-                // count.good1.quantity = g1dn;
-                // // @ts-ignore
-                // count.good1.profit = disgood.good1.nowNAVPS * num - num / disgood.good1.quantity * disgood.good1.contructFee;
-                // // @ts-ignore
-                // count.good1.disfee = num * disgood.good1.rate;
-                // count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
-                // setDisgoodCot(count);
-                disAmount(disgood, 1, numg1);
-                console.log("00000", disgoodCot, 999)
-            } else {
-                // @ts-ignore
-                const g2 = disgood.good2.decimals;
-                let num = Number(numg1);
-                // @ts-ignore
-                let num1: any = disgood.good2.investShares / disgood.good1.investShares * num;
-                const ws = getDecimalPlaces(num1);
-                if (ws > g2) {
-                    num1 = withoutRounding(Number(num1), g2);//num1.toFixed(g2);
-                }
-                // @ts-ignore
-                if (num < disgood.good1.quantity && num < disgood.good1.maxNum || num == disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum || num1 == disgood.good2.maxNum) {
-                    setGoodQ(numg1);
-                    // @ts-ignore
-                    setGoodVQ(num1);
-                    num1 = Number(num1);
-                } else {
-                    setGoodQ(goodQ);
-                    setGoodVQ(goodVQ);
-                    numg1 = Number(goodQ);
-                    num1 = Number(goodVQ);
-                }
-                // count.good1.quantity = num;
-                // // @ts-ignore
-                // count.good1.profit = disgood.good1.nowNAVPS * num - num / disgood.good1.quantity * disgood.good1.contructFee;
-                // // @ts-ignore
-                // count.good1.disfee = num * disgood.good1.rate;
-                // count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
-                // count.good2.quantity = num1;
-                // // @ts-ignore
-                // count.good2.profit = disgood.good2.nowNAVPS * num1 - num1 / disgood.good2.quantity * disgood.good2.contructFee;
-                // // @ts-ignore
-                // count.good2.disfee = num1 * disgood.good2.rate;
-                // count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
-                // setDisgoodCot(count);
-                disAmount(disgood, 2, numg1, num1);
-                console.log("------", numg1, num1, count)
-
-            }
+            numg1 = 0;
+            setGoodQ("");
+            console.log("----00000", goodQ, e.target.value)
         }
+        // else {
+        const ws = getDecimalPlaces(numg1);
+        if (ws > g1) {
+            numg1 = withoutRounding(numg1, 6);//Number(numg1).toFixed(g1);
+        }
+        // console.log("------00--",withoutRounding(2.111111111111111, g1));
+        // @ts-ignore
+        if (disgood.isvaluegood) {
+            // let num = 0;
+            // @ts-ignore
+            if (numg1 < disgood.good1.quantity && numg1 < disgood.good1.maxNum || numg1 == disgood.good1.maxNum) {
+                if (e.target.value == "" && numg1 == 0) {
+                } else {
+                    setGoodQ(numg1);
+                }
+                numg1 = Number(numg1);
+            } else {
+                setGoodQ(goodQ);
+                numg1 = Number(goodQ);
+            }
+            // @ts-ignore
+            // let g1dn = disgood.good1.quantity / disgood.good1.investShares * numg1;
+            // count.good1.quantity = g1dn;
+            // // @ts-ignore
+            // count.good1.profit = disgood.good1.nowNAVPS * num - num / disgood.good1.quantity * disgood.good1.contructFee;
+            // // @ts-ignore
+            // count.good1.disfee = num * disgood.good1.rate;
+            // count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
+            // setDisgoodCot(count);
+            disAmount(disgood, 1, numg1);
+            console.log("00000", disgoodCot, 999)
+        } else {
+            // @ts-ignore
+            const g2 = disgood.good2.decimals;
+            let num = Number(numg1);
+            // @ts-ignore
+            let num1: any = disgood.good2.investShares / disgood.good1.investShares * num;
+            const ws = getDecimalPlaces(num1);
+            if (ws > g2) {
+                num1 = withoutRounding(Number(num1), g2);//num1.toFixed(g2);
+            }
+            // @ts-ignore
+            if (num < disgood.good1.quantity && num < disgood.good1.maxNum || num == disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum || num1 == disgood.good2.maxNum) {
+                if (e.target.value == "" && numg1 == 0) {
+                } else {
+                    setGoodQ(numg1);
+                }
+                // @ts-ignore
+                setGoodVQ(num1);
+                num1 = Number(num1);
+            } else {
+                setGoodQ(goodQ);
+                setGoodVQ(goodVQ);
+                numg1 = Number(goodQ);
+                num1 = Number(goodVQ);
+            }
+            // count.good1.quantity = num;
+            // // @ts-ignore
+            // count.good1.profit = disgood.good1.nowNAVPS * num - num / disgood.good1.quantity * disgood.good1.contructFee;
+            // // @ts-ignore
+            // count.good1.disfee = num * disgood.good1.rate;
+            // count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
+            // count.good2.quantity = num1;
+            // // @ts-ignore
+            // count.good2.profit = disgood.good2.nowNAVPS * num1 - num1 / disgood.good2.quantity * disgood.good2.contructFee;
+            // // @ts-ignore
+            // count.good2.disfee = num1 * disgood.good2.rate;
+            // count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
+            // setDisgoodCot(count);
+            disAmount(disgood, 2, numg1, num1);
+            console.log("------", numg1, num1, count)
+
+        }
+        // }
 
     };
     // @ts-ignore
@@ -246,51 +255,57 @@ export const Disinvest = ({ open_zt, dis_id, setOpen, setDataNum }: Props) => {
         let num1 = e.target.value;
         const pd = parseFloat(e.target.value);
         if (Number(num1) < 0 || isNaN(pd)) {
-            // numg1 = 0;
-        } else {
-            const ws = getDecimalPlaces(num1);
-            if (ws > g2) {
-                num1 = withoutRounding(Number(num1), g2);//Number(num1).toFixed(g2);
-            }
-            // @ts-ignore
-            let num: any = num1 / (disgood.good2.investShares / disgood.good1.investShares);
-            console.log("++++++", num)
-            // if ((num.toString().length - 2) > g1) {
-            //     num = num.toFixed(g1);
-            // }
-            const ws1 = getDecimalPlaces(num);
-            if (ws1 > g1) {
-                num = withoutRounding(Number(num), g1);//Number(num).toFixed(g1);
-            }
-            // @ts-ignore
-            if (num < disgood.good1.quantity && num < disgood.good1.maxNum || num == disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum || num1 == disgood.good2.maxNum) {
-
-                // @ts-ignore
-                setGoodQ(num); setGoodVQ(num1);
-                num = Number(num);
-                num1 = Number(num1);
-            } else {
-                setGoodQ(goodQ);
-                setGoodVQ(goodVQ);
-                num = Number(goodQ);
-                num1 = Number(goodVQ);
-            }
-            console.log("++++++", num, num1)
-            // count.good1.quantity = num;
-            // // @ts-ignore
-            // count.good1.profit = disgood.good1.nowNAVPS * num - num / disgood.good1.quantity * disgood.good1.contructFee;
-            // // @ts-ignore
-            // count.good1.disfee = num * disgood.good1.rate;
-            // count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
-            // count.good2.quantity = num1;
-            // // @ts-ignore
-            // count.good2.profit = disgood.good2.nowNAVPS * num1 - num1 / disgood.good2.quantity * disgood.good2.contructFee;
-            // // @ts-ignore
-            // count.good2.disfee = num1 * disgood.good2.rate;
-            // count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
-            // setDisgoodCot(count);
-            disAmount(disgood, 2, num, num1);
+            num1 = 0;
+            setGoodVQ("");
         }
+        // else {
+        const ws = getDecimalPlaces(num1);
+        if (ws > g2) {
+            num1 = withoutRounding(Number(num1), g2);//Number(num1).toFixed(g2);
+        }
+        // @ts-ignore
+        let num: any = num1 / (disgood.good2.investShares / disgood.good1.investShares);
+        console.log("++++++", num)
+        // if ((num.toString().length - 2) > g1) {
+        //     num = num.toFixed(g1);
+        // }
+        const ws1 = getDecimalPlaces(num);
+        if (ws1 > g1) {
+            num = withoutRounding(Number(num), g1);//Number(num).toFixed(g1);
+        }
+        // @ts-ignore
+        if (num < disgood.good1.quantity && num < disgood.good1.maxNum || num == disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum || num1 == disgood.good2.maxNum) {
+
+            if (e.target.value == "" && num1 == 0) {
+            } else {
+                setGoodVQ(num1);
+            }
+            setGoodQ(num);
+            // setGoodVQ(num1);
+            num = Number(num);
+            num1 = Number(num1);
+        } else {
+            setGoodQ(goodQ);
+            setGoodVQ(goodVQ);
+            num = Number(goodQ);
+            num1 = Number(goodVQ);
+        }
+        console.log("++++++", num, num1)
+        // count.good1.quantity = num;
+        // // @ts-ignore
+        // count.good1.profit = disgood.good1.nowNAVPS * num - num / disgood.good1.quantity * disgood.good1.contructFee;
+        // // @ts-ignore
+        // count.good1.disfee = num * disgood.good1.rate;
+        // count.good1.count = count.good1.quantity + count.good1.profit - count.good1.disfee;
+        // count.good2.quantity = num1;
+        // // @ts-ignore
+        // count.good2.profit = disgood.good2.nowNAVPS * num1 - num1 / disgood.good2.quantity * disgood.good2.contructFee;
+        // // @ts-ignore
+        // count.good2.disfee = num1 * disgood.good2.rate;
+        // count.good2.count = count.good2.quantity + count.good2.profit - count.good2.disfee;
+        // setDisgoodCot(count);
+        disAmount(disgood, 2, num, num1);
+        // }
     };
 
     return (

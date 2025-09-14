@@ -11,6 +11,8 @@ export function goodStates(ssionChian:number) {
 				tokendecimals
 				tokensymbol
 				erc20Address
+				currentQuantity
+				currentValue
 			}
 		}`
 	})

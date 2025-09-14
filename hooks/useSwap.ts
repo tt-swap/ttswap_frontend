@@ -108,7 +108,7 @@ const useSwap = () => {
             const rv1 = 2 * Number(data.fromValue) * Number(data.toQuan) - Number(data.fromValue) * ta - ta * Number(data.toValue);
             const fa = rv / rv1;
             let tnum = (fa + fa * swaps.from.buyFee) / 10 ** swaps.from.decimals;
-            tnum = Math.floor(tnum * 1e6) / 1e6;
+            tnum = Math.ceil(tnum * 1e6) / 1e6;
             console.log(ta, rv,rv1, fa,tnum, 8981)
             return tnum;
         } else if (type === 2) {
