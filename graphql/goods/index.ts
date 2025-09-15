@@ -169,7 +169,7 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
             map.currentValue = map.currentQuantity * current_price;
             map.currentFee = e.feeQuantity / base_decimals;
             map.currentFeeValue = map.currentFee * current_price;
-            map.NAVPS = map.currentFee / map.investQuantity;
+            map.NAVPS = e.investQuantity / e.investShares;
             map.totalInvestQuantity = e.totalInvestQuantity / base_decimals;
             map.totalInvestValue = map.totalInvestQuantity * current_price;
             map.totalTradeQuantity = e.totalTradeQuantity / base_decimals;

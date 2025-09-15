@@ -95,6 +95,7 @@ export function goodDataView(params: { id: string; time: number; time24: number;
                     totalDisinvestQuantity
                     owner
                     goodConfig
+				  	investShares
                     goodData(
                         orderBy: modifiedTime
                         orderDirection: desc
@@ -112,6 +113,7 @@ export function goodDataView(params: { id: string; time: number; time24: number;
                         investQuantity
                         currentQuantity
                         currentValue
+				  	    investShares
                     }
                     date24: goodData(
                         orderBy: modifiedTime
@@ -130,6 +132,7 @@ export function goodDataView(params: { id: string; time: number; time24: number;
                         currentQuantity
                         currentValue
                         totalTradeQuantity
+				  	    investShares
                     }
                     days7: goodData(
                         orderBy: modifiedTime
@@ -160,170 +163,170 @@ export function goodDataView(params: { id: string; time: number; time24: number;
 
 
 // 我的物品
-export async function myGoodDatas(params: {
-    id: string; first: number; time: number; skip: number; address: string
-}, ssionChian: number) {
-    return apolloClient(ssionChian).query({
-        query: gql`query($id: BigInt,$first: Int,$time: BigInt,$skip: Int,$address:String) {
-            goodState(id: $id) {
-                currentValue
-                currentQuantity
-                id
-                tokendecimals
-                tokenname
-                tokensymbol
-            }
-            goodStates(
-                first: $first
-                skip: $skip
-                where: {owner: $address}
-                ) {
-                    id
-                    tokenname
-                    tokensymbol
-                    tokendecimals
-                    erc20Address
-                    currentQuantity
-                    currentValue
-                    totalInvestQuantity
-                    totalInvestCount
-                    investQuantity
-                    feeQuantity
-                    goodData(
-                        orderBy: modifiedTime
-                        orderDirection: desc
-                        first: 1
-                        where: {modifiedTime_lte: $time, timetype: "d"}
-                      ) {
-                        id
-                        decimals
-                        modifiedTime
-                        open
-                        timetype
-                        totalInvestQuantity
-                        totalInvestCount
-                        feeQuantity
-                        investQuantity
-                        currentQuantity
-                        currentValue
-                        good {
-                            id
-                            tokenname
-                            tokendecimals
-                            tokensymbol
-                        }
-                    }
-              }
-        }`,
-        variables: params
-    })
-}
+// export async function myGoodDatas(params: {
+//     id: string; first: number; time: number; skip: number; address: string
+// }, ssionChian: number) {
+//     return apolloClient(ssionChian).query({
+//         query: gql`query($id: BigInt,$first: Int,$time: BigInt,$skip: Int,$address:String) {
+//             goodState(id: $id) {
+//                 currentValue
+//                 currentQuantity
+//                 id
+//                 tokendecimals
+//                 tokenname
+//                 tokensymbol
+//             }
+//             goodStates(
+//                 first: $first
+//                 skip: $skip
+//                 where: {owner: $address}
+//                 ) {
+//                     id
+//                     tokenname
+//                     tokensymbol
+//                     tokendecimals
+//                     erc20Address
+//                     currentQuantity
+//                     currentValue
+//                     totalInvestQuantity
+//                     totalInvestCount
+//                     investQuantity
+//                     feeQuantity
+//                     goodData(
+//                         orderBy: modifiedTime
+//                         orderDirection: desc
+//                         first: 1
+//                         where: {modifiedTime_lte: $time, timetype: "d"}
+//                       ) {
+//                         id
+//                         decimals
+//                         modifiedTime
+//                         open
+//                         timetype
+//                         totalInvestQuantity
+//                         totalInvestCount
+//                         feeQuantity
+//                         investQuantity
+//                         currentQuantity
+//                         currentValue
+//                         good {
+//                             id
+//                             tokenname
+//                             tokendecimals
+//                             tokensymbol
+//                         }
+//                     }
+//               }
+//         }`,
+//         variables: params
+//     })
+// }
 
 //我的撤资数据
-export function myDisInvestProof(params: { id: number; }, ssionChian: number) {
-    return apolloClient(ssionChian).query({
-        query: gql`query($id: BigInt) {
-            proofState(id: $id) {
-                id
-                proofValue
-                good1ContructFee
-                good1Quantity
-                good2ContructFee
-                good2Quantity
-                createTime
-                good1 {
-                  id
-                  tokendecimals
-                  tokensymbol
-                  goodConfig
-                  erc20Address
-                  currentQuantity
-                  currentValue
-                  feeQuantity
-                  investQuantity
-                  isvaluegood
-                }
-                good2 {
-                  id
-                  tokendecimals
-                  tokensymbol
-                  goodConfig
-                  erc20Address
-                  currentQuantity
-                  currentValue
-                  feeQuantity
-                  investQuantity
-                }
-              }
-        }`,
-        variables: params
-    })
-}
+// export function myDisInvestProof(params: { id: number; }, ssionChian: number) {
+//     return apolloClient(ssionChian).query({
+//         query: gql`query($id: BigInt) {
+//             proofState(id: $id) {
+//                 id
+//                 proofValue
+//                 good1ContructFee
+//                 good1Quantity
+//                 good2ContructFee
+//                 good2Quantity
+//                 createTime
+//                 good1 {
+//                   id
+//                   tokendecimals
+//                   tokensymbol
+//                   goodConfig
+//                   erc20Address
+//                   currentQuantity
+//                   currentValue
+//                   feeQuantity
+//                   investQuantity
+//                   isvaluegood
+//                 }
+//                 good2 {
+//                   id
+//                   tokendecimals
+//                   tokensymbol
+//                   goodConfig
+//                   erc20Address
+//                   currentQuantity
+//                   currentValue
+//                   feeQuantity
+//                   investQuantity
+//                 }
+//               }
+//         }`,
+//         variables: params
+//     })
+// }
 
 
 // 我的指标
-export function myIndex(params: { id: string, address: string }, ssionChian: number) {
-    return apolloClient(ssionChian).query({
-        query: gql`query($id: BigInt,$address: String) {
-            goodState(id: $id) {
-                currentQuantity
-                currentValue
-                id
-                tokenname
-                tokensymbol
-                tokendecimals
-            }
-            customer(id: $address) {
-                id
-                disinvestCount
-                disinvestValue
-                investCount
-                investValue
-                tradeCount
-                tradeValue
-                totalcommissionvalue
-                totalprofitvalue
-              }
-        }`,
-        variables: params
-    })
-}
+// export function myIndex(params: { id: string, address: string }, ssionChian: number) {
+//     return apolloClient(ssionChian).query({
+//         query: gql`query($id: BigInt,$address: String) {
+//             goodState(id: $id) {
+//                 currentQuantity
+//                 currentValue
+//                 id
+//                 tokenname
+//                 tokensymbol
+//                 tokendecimals
+//             }
+//             customer(id: $address) {
+//                 id
+//                 disinvestCount
+//                 disinvestValue
+//                 investCount
+//                 investValue
+//                 tradeCount
+//                 tradeValue
+//                 totalcommissionvalue
+//                 totalprofitvalue
+//               }
+//         }`,
+//         variables: params
+//     })
+// }
 
 
 // My Commission
-export function myCommission(params: { id: string, first: number; skip: number; }, ssionChian: number) {
-    return apolloClient(ssionChian).query({
-        query: gql`query($id: BigInt,$first: Int,$skip: Int) {
-            goodState(id: $id) {
-                currentQuantity
-                currentValue
-                id
-                tokenname
-                tokensymbol
-                tokendecimals
-            }
-            goodStates(
-                first: $first
-                skip: $skip
-                orderBy: totalTradeCount
-                orderDirection: desc
-                where: {id_not: "0x0000000000000000000000000000000000000000"}
-                ) {
-                id
-                tokensymbol
-                tokenname
-                tokendecimals
-                erc20Address
-                feeQuantity
-                totalTradeCount
-                currentQuantity
-                currentValue
-                goodConfig
-              }
-        }`,
-        variables: params
-    })
-}
+// export function myCommission(params: { id: string, first: number; skip: number; }, ssionChian: number) {
+//     return apolloClient(ssionChian).query({
+//         query: gql`query($id: BigInt,$first: Int,$skip: Int) {
+//             goodState(id: $id) {
+//                 currentQuantity
+//                 currentValue
+//                 id
+//                 tokenname
+//                 tokensymbol
+//                 tokendecimals
+//             }
+//             goodStates(
+//                 first: $first
+//                 skip: $skip
+//                 orderBy: totalTradeCount
+//                 orderDirection: desc
+//                 where: {id_not: "0x0000000000000000000000000000000000000000"}
+//                 ) {
+//                 id
+//                 tokensymbol
+//                 tokenname
+//                 tokendecimals
+//                 erc20Address
+//                 feeQuantity
+//                 totalTradeCount
+//                 currentQuantity
+//                 currentValue
+//                 goodConfig
+//               }
+//         }`,
+//         variables: params
+//     })
+// }
 
 
 
