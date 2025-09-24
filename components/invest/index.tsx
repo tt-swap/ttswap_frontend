@@ -101,6 +101,7 @@ const TokenInvest = () => {
     useEffect(() => {
         document.title = t('header.menu.trade.invest');
     }, [t('header.menu.trade.invest')]);
+    
     useMemo(() => {
         // @ts-ignore
         setBalanceF(balanceMap1.from); setBalanceT(balanceMap1.to);

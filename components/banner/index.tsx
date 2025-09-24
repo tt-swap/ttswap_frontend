@@ -2,14 +2,22 @@
 import { useEffect, useState } from "react";
 import { Carousel } from 'antd';
 import i18n from '@/i18n/i18n';
-import banner1 from "static/banner/christmas-banner.png";
-import banner2 from "static/banner/christmas-banner-1.png";
-import banneren1 from "static/banner/christmas-banner-en.png";
-import banneren2 from "static/banner/christmas-banner-1-en.png";
-import testBanner1 from "static/banner/test-banner1.png";
-import testBanner2 from "static/banner/test-banner2.png";
-import testBanneren1 from "static/banner/test-banner1en.png";
-import testBanneren2 from "static/banner/test-banner2en.png";
+// import banner1 from "static/banner/christmas-banner.png";
+// import banner2 from "static/banner/christmas-banner-1.png";
+// import banneren1 from "static/banner/christmas-banner-en.png";
+// import banneren2 from "static/banner/christmas-banner-1-en.png";
+// import testBanner1 from "static/banner/test-banner1.png";
+// import testBanner2 from "static/banner/test-banner2.png";
+// import testBanneren1 from "static/banner/test-banner1en.png";
+// import testBanneren2 from "static/banner/test-banner2en.png";
+import banner1 from "static/banner/christmas-banner.jpg";
+import banner2 from "static/banner/christmas-banner-1.jpg";
+import banneren1 from "static/banner/christmas-banner-en.jpg";
+import banneren2 from "static/banner/christmas-banner-1-en.jpg";
+import testBanner1 from "static/banner/test-banner1.jpg";
+import testBanner2 from "static/banner/test-banner2.jpg";
+import testBanneren1 from "static/banner/test-banner1en.jpg";
+import testBanneren2 from "static/banner/test-banner2en.jpg";
 
 const Banner = () => {
   const [lang, setLang] = useState('en');

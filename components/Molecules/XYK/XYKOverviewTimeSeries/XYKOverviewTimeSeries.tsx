@@ -43,31 +43,41 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
         maybeResult.match({
             None: () => null,
             Some: (response) => {
+                // 添加空值检查
+                if (!response) return;
 
-                currencys = response.quote_currency;
+                currencys = response.quote_currency || '';
 
                 const chart_key = `${timeSeries}_chart_${period}d`;
                 const value_key =
                     timeSeries === "price"
                         ? "price"
                         : `${timeSeries}_quote`;
+
+                // 添加安全检查
+                const chartData = response[chart_key as keyof typeof response];
+                if (!chartData) return;
+
                 const result = (
-                    response[
-                    chart_key as keyof typeof response
-                    // @ts-ignore
-                    ] as UniswapLikeEcosystemCharts["liquidity_chart_7d"]
-                    // @ts-ignore
+                    chartData as UniswapLikeEcosystemCharts["liquidity_chart_7d"]
                 ).map((x) => {
+                    // 添加空值检查
+                    if (!x) {
+                        const currency = response.quote_currency || '';
+                        return {
+                            date: '',
+                            [`${capitalizeFirstLetter(timeSeries)} (${currency})`]: 0
+                        };
+                    }
+
                     const dt = timestampParser(x.dt, "DD MMM YY");
                     return {
-                        // currency: x.quote_currency,
                         date: dt,
-                        [`${capitalizeFirstLetter(timeSeries)} (${x.quote_currency})`]:
-                            x[value_key as keyof LiquidityEcosystemChart],
+                        [`${capitalizeFirstLetter(timeSeries)} (${x.quote_currency || ''})`]:
+                            x[value_key as keyof LiquidityEcosystemChart] || 0,
                     };
                 });
                 setChartData(new Some(result));
-                // console.log(chart_key,value_key,0,`${capitalizeFirstLetter(timeSeries)} (USD)`,"****",currencys)
             },
         });
     }, [maybeResult, period, timeSeries, displayMetrics]);
@@ -79,14 +89,18 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
         }
         (async () => {
             setResult(None);
-            const response =
-
-                await ecosystemChartDatas(value_good_id, chain_id);
-
-            // @ts-ignore
-            setResult(new Some(response));
+            try {
+                const response = await ecosystemChartDatas(value_good_id, chain_id);
+                // @ts-ignore
+                if (response) {
+                    setResult(new Some(response as UniswapLikeEcosystemCharts));
+                }
+            } catch (error) {
+                console.error("Error fetching ecosystem chart data:", error);
+                setResult(None);
+            }
         })();
-    }, [overview_data, dex_name, chain_name, displayMetrics, value_good_id]);
+    }, [overview_data, dex_name, chain_name, displayMetrics, value_good_id, chain_id]);
 
     useEffect(() => {
         if (displayMetrics === "both") return;
@@ -102,7 +116,15 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
             );
         },
         Some: (result) => {
-            // console.log(result,"###**")
+            // 添加空值检查
+            if (!result || result.length === 0) {
+                return (
+                    <div className="mt-8">
+                        <Skeleton size={GRK_SIZES.LARGE} />
+                    </div>
+                );
+            }
+
             if (timeSeries === "liquidity") {
                 return (
                     <AreaChart
@@ -139,7 +161,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
     return (
         <div className="min-h-[20rem] w-full">
             <div className="pb-4">
-                <TypographyH4>{`${capitalizeFirstLetter(title)} (${currencys})`}</TypographyH4>
+                <TypographyH4>{`${capitalizeFirstLetter(title || '')} (${currencys})`}</TypographyH4>
             </div>
 
             <div className="flex justify-between">

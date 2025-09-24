@@ -2,10 +2,10 @@
 import { useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from 'react-i18next';
-import { GoldRushProvider } from "@/utils/store";
+// import { GoldRushProvider } from "@/utils/store";
 import { XYKTokenDetailView, XYKTokenTransactionsListView } from "@/components/Organisms"
-import { Flex } from "@radix-ui/themes";
-import { Button } from 'antd';
+// import { Flex } from "@radix-ui/themes";
+// import { Button } from 'antd';
 
 import { useValueGood } from "@/stores/valueGood";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
@@ -24,12 +24,12 @@ export default function Token({ params }: { params: { chain: string, dex: string
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <GoldRushProvider
+      {/* <GoldRushProvider
         apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
         newTheme={{
           borderRadius: 10,
         }}
-      >
+      > */}
         <XYKTokenDetailView
           // @ts-ignore
           chain_name={params.chain}
@@ -56,7 +56,7 @@ export default function Token({ params }: { params: { chain: string, dex: string
         //   window.open(`https://goldrush-tx-receipt-ui.vercel.app/tx/${params.chain}/${e.tx_hash}/`, '_blank');
         // }}
         />
-      </GoldRushProvider>
+      {/* </GoldRushProvider> */}
       {/* <Flex onClick={() => {
         router.back()
       }}>

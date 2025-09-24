@@ -1,7 +1,7 @@
 'use client'
 import { useRouter, usePathname } from "next/navigation";
-import { GoldRushProvider } from "@/utils/store";
-import { XYKWalletPositionsListView, XYKWalletTransactionsListView, XYKWalletPoolListView, XYKWalletCommissionListView,XYKWalletRefereesView } from "@/components/Organisms"
+// import { GoldRushProvider } from "@/utils/store";
+import { XYKWalletPositionsListView, XYKWalletTransactionsListView, XYKWalletPoolListView, XYKWalletCommissionListView, XYKWalletRefereesView } from "@/components/Organisms"
 import { XYKWalletInformation } from "@/components/Molecules"
 import { CreatGoods } from "@/components/goods/creatGoods"
 import { Disinvest } from "@/components/goods/disinvest"
@@ -25,7 +25,7 @@ export default function Account({ params }: { params: { chain: string, dex: stri
 
   // @ts-ignore
   const { ssionChian } = useLocalStorage();
-  const { isConnected,address } = useAccount();
+  const { isConnected, address } = useAccount();
   // const { account } = useWeb3React();
   const router = useRouter();
   // const [walletAddress, setAddress] = useState<string | null>("")
@@ -38,10 +38,15 @@ export default function Account({ params }: { params: { chain: string, dex: stri
   const [maybeResult, setResult] = useState({});
   const { setGoodId } = useGoodId();
   const [messageApi, contextHolder] = message.useMessage();
-  const { t } = useTranslation();
   const { setTrade } = useTrade();
 
   const pathname = usePathname()
+  const { t, ready } = useTranslation();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     document.title = t('header.menu.myaccount');
@@ -93,76 +98,76 @@ export default function Account({ params }: { params: { chain: string, dex: stri
       key: 'myproof',
       label: t('body.account.tabs.proof'),
       children: (
-        <GoldRushProvider
-          apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
-          newTheme={{
-            borderRadius: 10,
+        // <GoldRushProvider
+        //   apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
+        //   newTheme={{
+        //     borderRadius: 10,
+        //   }}
+        // >
+        <XYKWalletPositionsListView
+          // @ts-ignore
+          chain_name={params.chain}
+          dex_name={params.dex}
+          wallet_address={address}
+          data_num={dataNum}
+          page_size={20}
+          value_good_id={info.id}
+          chain_id={ssionChian}
+          on_pool_click={(e: any) => {
+            if (e === "invest") {
+              router.push(`${handleTabSwitch(e, pathname)}`);
+            }
+            //  else if (e != 0) {
+            //   router.push(`${handleTabSwitch(e, pathname)}`);
+            // }
+            else {
+              setProofid(e);
+              setOpen(true);
+            }
           }}
-        >
-          <XYKWalletPositionsListView
-            // @ts-ignore
-            chain_name={params.chain}
-            dex_name={params.dex}
-            wallet_address={address}
-            data_num={dataNum}
-            page_size={20}
-            value_good_id={info.id}
-            chain_id={ssionChian}
-            on_pool_click={(e: any) => {
-              if (e === "invest") {
-                router.push(`${handleTabSwitch(e, pathname)}`);
-              }
-              //  else if (e != 0) {
-              //   router.push(`${handleTabSwitch(e, pathname)}`);
-              // }
-              else {
-                setProofid(e);
-                setOpen(true);
-              }
-            }}
-          />
-        </GoldRushProvider>
+        />
+        // </GoldRushProvider>
       ),
     },
     {
       key: 'mygoods',
       label: t('body.account.tabs.goods'),
       children: (
-        <GoldRushProvider
-          apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
-          newTheme={{
-            borderRadius: 10,
+        // <GoldRushProvider
+        //   apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
+        //   newTheme={{
+        //     borderRadius: 10,
+        //   }}
+        // >
+        <XYKWalletPoolListView
+          // @ts-ignore
+          chain_name={params.chain}
+          dex_name={params.dex}
+          page_size={20}
+          wallet_address={address}
+          data_num={dataNum}
+          value_good_id={info.id}
+          chain_id={ssionChian}
+          // is_over={true}
+          on_pool_click={(e: any, id: string) => {
+            if (e === "swap" || e === "invest") {
+              setGoodId({ invest: { id: id }, swap: { id: id } });
+              setTrade(e);
+              router.push(`${handleTabSwitch("trade", pathname)}`);
+            } else {
+              router.push(`${handleTabSwitch(e, pathname)}`);
+            }
+            // if (e === "invest") {
+            //   setGoodId({ invest: { id: id }, swap: { id: id } });
+            //   // sessionStorage.setItem("invest", id);
+            // } else {
+            //   setGoodId({ invest: { id: "" }, swap: { id: id } });
+            //   // sessionStorage.setItem("swap", id);
+            // }
+            // router.push(`${handleTabSwitch(e, pathname)}`);
           }}
-        >
-          <XYKWalletPoolListView
-            // @ts-ignore
-            chain_name={params.chain}
-            dex_name={params.dex}
-            page_size={20}
-            wallet_address={address}
-            data_num={dataNum}
-            value_good_id={info.id}
-            chain_id={ssionChian}
-            // is_over={true}
-            on_pool_click={(e: any, id: string) => {
-              if (e === "swap" || e === "invest") {
-                setGoodId({ invest: { id: id }, swap: { id: id } });
-                setTrade(e);
-                router.push(`${handleTabSwitch("trade", pathname)}`);
-              } else {
-                router.push(`${handleTabSwitch(e, pathname)}`);
-              }
-              // if (e === "invest") {
-              //   setGoodId({ invest: { id: id }, swap: { id: id } });
-              //   // sessionStorage.setItem("invest", id);
-              // } else {
-              //   setGoodId({ invest: { id: "" }, swap: { id: id } });
-              //   // sessionStorage.setItem("swap", id);
-              // }
-              // router.push(`${handleTabSwitch(e, pathname)}`);
-            }}
-          />
-        </GoldRushProvider>
+        />
+        // </GoldRushProvider>
 
       ),
     },
@@ -170,81 +175,98 @@ export default function Account({ params }: { params: { chain: string, dex: stri
       key: 'mycommission',
       label: t('body.account.tabs.commission'),
       children: (
-        <GoldRushProvider
-          apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
-          newTheme={{
-            borderRadius: 10,
+        // <GoldRushProvider
+        //   apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
+        //   newTheme={{
+        //     borderRadius: 10,
+        //   }}
+        // >
+        <XYKWalletCommissionListView
+          // @ts-ignore
+          chain_name={params.chain}
+          dex_name={params.dex}
+          page_size={20}
+          wallet_address={address}
+          data_num={dataNum}
+          value_good_id={info.id}
+          chain_id={ssionChian}
+          on_pool_click={(e: any, id: string) => {
+            router.push(`${handleTabSwitch(e, pathname)}`);
           }}
-        >
-          <XYKWalletCommissionListView
-            // @ts-ignore
-            chain_name={params.chain}
-            dex_name={params.dex}
-            page_size={20}
-            wallet_address={address}
-            data_num={dataNum}
-            value_good_id={info.id}
-            chain_id={ssionChian}
-            on_pool_click={(e: any, id: string) => {
-              router.push(`${handleTabSwitch(e, pathname)}`);
-            }}
-          />
-        </GoldRushProvider>
+        />
+        // </GoldRushProvider>
       ),
     },
     {
       key: 'mytransactions',
       label: t('body.account.tabs.transactions'),
       children: (
-        <GoldRushProvider
-          apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
-          newTheme={{
-            borderRadius: 10,
+        // <GoldRushProvider
+        //   apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
+        //   newTheme={{
+        //     borderRadius: 10,
+        //   }}
+        // >
+        <XYKWalletTransactionsListView
+          // @ts-ignore
+          chain_name={params.chain}
+          dex_name={params.dex}
+          wallet_address={address}
+          data_num={dataNum}
+          value_good_id={info.id}
+          page_size={20}
+          chain_id={ssionChian}
+          on_native_explorer_click={(e: string) => {
+            window.open(e, '_blank');
           }}
-        >
-          <XYKWalletTransactionsListView
-            // @ts-ignore
-            chain_name={params.chain}
-            dex_name={params.dex}
-            wallet_address={address}
-            data_num={dataNum}
-            value_good_id={info.id}
-            page_size={20}
-            chain_id={ssionChian}
-            on_native_explorer_click={(e: string) => {
-              window.open(e, '_blank');
-            }}
-          />
-        </GoldRushProvider>
+        />
+        // </GoldRushProvider>
       ),
     },
     {
       key: 'referees',
-      label: t('body.account.tabs.referees')+'('+referees+')',
+      label: t('body.account.tabs.referees') + '(' + referees + ')',
       children: (
-        <GoldRushProvider
-          apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
-          newTheme={{
-            borderRadius: 10,
+        // <GoldRushProvider
+        //   apikey="cqt_rQR8cdBV8vyD43KCb3vC6cDx9Xqf"
+        //   newTheme={{
+        //     borderRadius: 10,
+        //   }}
+        // >
+        <XYKWalletRefereesView
+          // @ts-ignore
+          chain_name={params.chain}
+          dex_name={params.dex}
+          wallet_address={address}
+          data_num={dataNum}
+          value_good_id={info.id}
+          page_size={20}
+          chain_id={ssionChian}
+          on_native_explorer_click={(e: string) => {
+            window.open(e, '_blank');
           }}
-        >
-          <XYKWalletRefereesView
-            // @ts-ignore
-            chain_name={params.chain}
-            dex_name={params.dex}
-            wallet_address={address}
-            data_num={dataNum}
-            value_good_id={info.id}
-            page_size={20}
-            chain_id={ssionChian}
-            on_native_explorer_click={(e: string) => {
-              window.open(e, '_blank');
-            }}
-          />
-        </GoldRushProvider>
+        />
+        // </GoldRushProvider>
       ),
     },
   ];
+
+
+
+  // 在客户端和服务端渲染一致之前不渲染可能导致hydration错误的内容
+  if (!ready || !isClient) {
+    return (
+      <div className="w-full flex flex-col gap-4">
+        <div className="skeleton h-10 w-3/4"></div>
+        <div className="skeleton h-64"></div>
+        <div className="skeleton h-64"></div>
+        <div className="flex justify-between">
+          <div className="skeleton h-8 w-1/4"></div>
+        </div>
+        <div className="skeleton h-96"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col gap-4">

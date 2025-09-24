@@ -124,7 +124,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <html lang={language} suppressHydrationWarning>
         <head />
         {/* bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% */}
-        <body>
+        <body suppressHydrationWarning>
           {/* <Theme>
             <ThemeProvider attribute="class" defaultTheme="system" forcedTheme='dark' enableSystem={false}> */}
           <Web3ReactProvider connectors={connectors}>
@@ -148,6 +148,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                           // overlayBlur: 'small',
                         })}
                         avatar={CustomAvatar}
+                        showRecentTransactions={false}
                       >
                         {isLoading && <Loading />}
                         <div className="relative flex min-h-screen flex-col">
