@@ -221,7 +221,7 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
         });
 
     }
-    console.log(3333333333, item)
+    console.log(3333333333,params, item)
     return item;
 }
 

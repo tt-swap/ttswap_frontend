@@ -35,8 +35,8 @@ export const contractCon: {
 } = {
   1: {
     chainId: "1",
-    contractAddress: "0xA0701755c2113f955c931Ab49B99489484BEBBaA",
-    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap_v1/version/latest",
+    contractAddress: "0x5f06f5eCd628dbF79683e1e6fa8acdde8FA8C238",
+    theGraphApi: "https://api.studio.thegraph.com/query/1685388/ttswap-ethereum/version/latest",
     permit2Address:"0x000000000022D473030F116dDEE9F6B43aC78BA3",
     weth9:"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
   },

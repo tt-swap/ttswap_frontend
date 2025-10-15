@@ -44,7 +44,8 @@ const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   let pathname = usePathname();
-  const [ssionChian, setSsionChian] = useState(560048);
+  const [ssionChian, setSsionChian] = useState(1);
+  // const [ssionChian, setSsionChian] = useState(560048);
   const { info, setValueGood } = useValueGood();
 
   const [language, setLanguage] = useState('en');
@@ -133,7 +134,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
               value={{ ssionChian, setSsionChian }}>
               <DexProvider>
                 <I18nextProvider i18n={i18n}>
-                  {/* <Suspense fallback={<Skeleton active />}> */}
+                  <Suspense fallback={<Loading />}>
 
                   <WagmiProvider config={config}>
                     <QueryClientProvider client={queryClient}>
@@ -159,7 +160,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                       </RainbowKitProvider>
                     </QueryClientProvider>
                   </WagmiProvider>
-                  {/* </Suspense> */}
+                  </Suspense>
                 </I18nextProvider>
               </DexProvider>
             </LocalStorageManager.Provider>
