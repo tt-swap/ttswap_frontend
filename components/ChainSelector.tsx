@@ -78,7 +78,7 @@ const ChainSelector: FC = () => {
     () => [
       { label: "Ethereum", key: chainIds.ethereum, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
       // { label: "Sepolia Testnet", key: chainIds.sepolia, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
-      // { label: "Hoodi Testnet", key: chainIds.hoodiTestnet, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
+      { label: "Hoodi Testnet", key: chainIds.hoodiTestnet, icon: labelToShow(ethereum_Logo, "Ethereum_logo") },
       // { label: "Optimism", key: chainIds.optimism, icon: labelToShow(optimistim_Logo, "Optimistim_Logo") },
       // { label: "Optimism Goerli", key: chainIds.optimismgoerli, icon: labelToShow(optimistim_Logo, "Optimistim_Logo") },
       // { label: "Arbitrum", key: chainIds.arbitrum, icon: labelToShow(arbitrum_Logo, "Arbitrum_Logo") },

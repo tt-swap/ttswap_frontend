@@ -265,7 +265,7 @@ export const config = getDefaultConfig({
     // mantle,
     // mantleSepolia,
     // mantleTestnet,
-    // hoodiTestnet
+    hoodiTestnet
   ],
   wallets: [
     {
@@ -340,7 +340,7 @@ export const config = getDefaultConfig({
   transports: {
     [ethereum.id]: http(),
     // [sepolia.id]: http(),
-    // [hoodiTestnet.id]: http(),
+    [hoodiTestnet.id]: http(),
     // [mantleSepoliaTestnet.id]: http(),
     // [mantleTestnet.id]: http(),
     // [mainnet.id]: http(),
