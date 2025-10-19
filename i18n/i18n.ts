@@ -24,6 +24,7 @@ i18n
     react: {
       useSuspense: true,
     },
+    supportedLngs: ['en', 'zh']
   });
 
 export default i18n;

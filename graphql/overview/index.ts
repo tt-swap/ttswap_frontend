@@ -13,18 +13,33 @@ import { timestampdToDateSub, timestampdToDateYear, powerIterative, iconUrl } fr
 // overview charts
 export async function ecosystemChartDatas(id: string, ssionChian: number): Promise<object> {
 
+
     // const chainName = getChainName(ssionChian);
-    let item = { quote_currency: '', volume_chart_7d: [{}], volume_chart_30d: [{}], liquidity_chart_7d: [{}], liquidity_chart_30d: [{}] };
+    let item = {
+        quote_currency: '', volume_chart_7d: [{ dt: 0, quote_currency: "", pretty_volume_quote: 0, volume_quote: 0 }],
+        volume_chart_30d: [{ dt: 0, quote_currency: "", pretty_volume_quote: 0, volume_quote: 0 }],
+        liquidity_chart_7d: [{ dt: 0, quote_currency: "", pretty_liquidity_quote: 0, liquidity_quote: 0 }],
+        liquidity_chart_30d: [{ dt: 0, quote_currency: "", pretty_liquidity_quote: 0, liquidity_quote: 0 }]
+    };
 
     if (id !== "") {
         const data = await ecosystemChartData({ id: id, eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) }, ssionChian);
         let goodValue = data.data.goodState.currentValue / data.data.goodState.currentQuantity;
         let tokendecimals = powerIterative(10, 6);
         item.quote_currency = data.data.goodState.tokensymbol;
-        let volume_chart_7d: object[] = [];
-        let volume_chart_30d: object[] = [];
-        let liquidity_chart_7d: object[] = [];
-        let liquidity_chart_30d: object[] = [];
+        // let volume_chart_7d: object[] = [];
+        // let volume_chart_30d: object[] = [];
+        // let liquidity_chart_7d: object[] = [];
+        // let liquidity_chart_30d: object[] = [];
+        let volume_chart_7d: { dt: number; quote_currency: string; pretty_volume_quote: number; volume_quote: number }[] = [];
+        let volume_chart_30d: { dt: number; quote_currency: string; pretty_volume_quote: number; volume_quote: number }[] = [];
+        let liquidity_chart_7d: { dt: number; quote_currency: string; pretty_liquidity_quote: number; liquidity_quote: number }[] = [];
+        let liquidity_chart_30d: { dt: number; quote_currency: string; pretty_liquidity_quote: number; liquidity_quote: number }[] = [];
+
+        item.volume_chart_7d = volume_chart_7d;
+        item.volume_chart_30d = volume_chart_30d;
+        item.liquidity_chart_7d = liquidity_chart_7d;
+        item.liquidity_chart_30d = liquidity_chart_30d;
 
         item.volume_chart_7d = volume_chart_7d;
         item.volume_chart_30d = volume_chart_30d;
@@ -159,7 +174,12 @@ export async function GoodsDatas(params: { id: string; pageNumber: number; pageS
 export async function investGoodsDatas(params: { id: string; pageNumber: number; pageSize: number; }, ssionChian: number): Promise<object> {
 
     const chainName = getChainName(ssionChian);
-    let item = { items: {}, pagination: { page_number: 0, page_size: 0, has_more: false }, error: false, error_message: "" };
+    let item = {
+        items: [{
+            id: "", name: "", decimals: 0, symbol: "", logo_url: "", currentQuantity: 0, currentValue: 0, valueSymbol: "",
+            priceC_24h: 0, price: 0, price_24h: 0, NAVPS: 0, apy: 0, unitPrice: 0
+        }], pagination: { page_number: 0, page_size: 0, has_more: false }, error: false, error_message: ""
+    };
 
     if (params.id !== "") {
         console.log("investGoodsDatas", params);
@@ -169,7 +189,22 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
         let tokendecimals = powerIterative(10, 6);
         let jz = goodValue;
 
-        let items: object[] = [];
+        let items: {
+            id: string;
+            name: string;
+            decimals: number;
+            symbol: string;
+            logo_url: string;
+            currentQuantity: number;
+            currentValue: number;
+            valueSymbol: string;
+            priceC_24h: number;
+            price: number;
+            price_24h: number;
+            NAVPS: number;
+            apy: number;
+            unitPrice: number;
+        }[] = [];
         let pagination = {
             has_more: true,
             page_number: 0,
@@ -221,7 +256,7 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
         });
 
     }
-    console.log(3333333333,params, item)
+    console.log(3333333333, params, item)
     return item;
 }
 

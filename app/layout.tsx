@@ -26,7 +26,7 @@ import { valueGood } from '@/graphql';
 import { config } from '@/config/wagmi';
 
 import { Loading } from '@/components/Loading';
-import {Footer} from '@/components/footer/Footer';
+import { Footer } from '@/components/footer/Footer';
 import Jazzicons from "@/components/components/Jazzicons";
 import { useLoadingStore } from '@/hooks/useLoading';
 
@@ -77,8 +77,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
   }, [setLoading]);
 
   useEffect(() => {
-    i18n.loadLanguages(i18n.language);
-    setLanguage(i18n.language);
+    // i18n.loadLanguages(i18n.language);
+    // setLanguage(i18n.language);
+
+    // 确保只在客户端执行，并且i18n已初始化
+    if (typeof window !== 'undefined' && i18n.isInitialized) {
+      setLanguage(i18n.language);
+    }
   }, []);
 
   useEffect(() => {
@@ -136,30 +141,30 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 <I18nextProvider i18n={i18n}>
                   <Suspense fallback={<Loading />}>
 
-                  <WagmiProvider config={config}>
-                    <QueryClientProvider client={queryClient}>
-                      <RainbowKitProvider
-                        locale={language as Locale}
-                        initialChain={ssionChian}
-                        theme={lightTheme({
-                          accentColor: 'rgb(134 211 139)',
-                          accentColorForeground: 'white',
-                          borderRadius: 'medium',
-                          // fontStack: 'system',
-                          // overlayBlur: 'small',
-                        })}
-                        avatar={CustomAvatar}
-                        showRecentTransactions={false}
-                      >
-                        {isLoading && <Loading />}
-                        <div className="relative flex min-h-screen flex-col">
-                          <SiteHeader />
-                          <div className="flex-1">{children}</div>
-                          <Footer />
-                        </div>
-                      </RainbowKitProvider>
-                    </QueryClientProvider>
-                  </WagmiProvider>
+                    <WagmiProvider config={config}>
+                      <QueryClientProvider client={queryClient}>
+                        <RainbowKitProvider
+                          locale={language as Locale}
+                          initialChain={ssionChian}
+                          theme={lightTheme({
+                            accentColor: 'rgb(134 211 139)',
+                            accentColorForeground: 'white',
+                            borderRadius: 'medium',
+                            // fontStack: 'system',
+                            // overlayBlur: 'small',
+                          })}
+                          avatar={CustomAvatar}
+                          showRecentTransactions={false}
+                        >
+                          {isLoading && <Loading />}
+                          <div className="relative flex min-h-screen flex-col">
+                            <SiteHeader />
+                            <div className="flex-1">{children}</div>
+                            <Footer />
+                          </div>
+                        </RainbowKitProvider>
+                      </QueryClientProvider>
+                    </WagmiProvider>
                   </Suspense>
                 </I18nextProvider>
               </DexProvider>

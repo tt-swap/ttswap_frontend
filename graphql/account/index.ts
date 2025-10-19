@@ -2,7 +2,7 @@ import { getExplorer, getChainName } from '@/data/networks';
 import { ethers } from "ethers";
 import MarketManager from '@/data/abi/MarketManager.json';
 import { getContractAddress } from '@/data/contractConfig';
-import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex, myCommission, referees, myReferees,goodStateMin } from './graphql';
+import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myIndex, myCommission, referees, myReferees, goodStateMin } from './graphql';
 import { timestampdToDateSub, powerIterative, iconUrl, timestampSubH, withoutRounding } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
 import { goodState } from '../graphql';
@@ -269,7 +269,8 @@ export async function myIndexes(id: string, wallet_address: any, ssionChian: num
         disinvestCount: 0, disinvestValue: 0, investCount: 0, investValue: 0, stakettsvalue: 0, getfromstake: 0, mining: 0,
         tradeCount: 0, tradeValue: 0, totalcommissionvalue: 0, totalprofitvalue: 0, isEmpty: true
     };
-    if (id && wallet_address !== null) {
+    // console.log("myIndexes", id, wallet_address)
+    if (id && wallet_address) {
         const goodsDatas = await myIndex({ id: id, address: wallet_address.toLowerCase() }, ssionChian);
         let goodQuantity = goodsDatas.data.goodState.currentQuantity / goodsDatas.data.goodState.currentValue;
         let tokendecimals = powerIterative(10, 6);
@@ -521,8 +522,8 @@ export async function minThreshold(id: string, ssionChian: number): Promise<obje
     if (id !== undefined) {
         const goodsDatas = await goodStateMin({ address: id.toLowerCase() }, ssionChian);
         let data = goodsDatas.data.goodState;
-        const quantity= 500000000 * (data.currentQuantity/data.currentValue) /powerIterative(10, data.tokendecimals);
-        items.minThreshold = quantity+" " + data.tokensymbol;
+        const quantity = 500000000 * (data.currentQuantity / data.currentValue) / powerIterative(10, data.tokendecimals);
+        items.minThreshold = quantity + " " + data.tokensymbol;
     }
     return items;
 }
