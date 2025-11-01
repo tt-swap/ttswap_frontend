@@ -235,7 +235,7 @@
         "common.mess.TTSwapError.36": "执行失败,初始化代币数量太小或者太大",
         "common.mess.TTSwapError.37": "执行失败,",
         "common.mess.TTSwapError.38": "执行失败,投资价值太低",
-        "common.mess.TTSwapError.39": "执行失败,",
+        "common.mess.TTSwapError.39": "执行失败,交易者与执行者不是同一人",
         "common.mess.TTSwapError.40": "执行失败,",
         "common.mess.TTSwapError.61": "执行失败,不是主网",
         "common.mess.TTSwapError.62": "执行失败,不是DAO管理员",

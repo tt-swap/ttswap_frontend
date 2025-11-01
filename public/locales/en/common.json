@@ -236,7 +236,7 @@
         "common.mess.TTSwapError.36": "Execute Error, the initial quantity is too big or to small",
         "common.mess.TTSwapError.37": "Execute Error,",
         "common.mess.TTSwapError.38": "Execute Error, the invest value of the good is to small",
-        "common.mess.TTSwapError.39": "Execute Error,",
+        "common.mess.TTSwapError.39": "Execute Error, the excuter and the msgsender is not same",
         "common.mess.TTSwapError.40": "Execute Error,",
         "common.mess.TTSwapError.61": "Execute Error, not be mainnet",
         "common.mess.TTSwapError.62": "Execute Error, not a DAO administrator",

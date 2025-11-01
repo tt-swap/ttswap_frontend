@@ -1320,8 +1320,9 @@ const useWallet = () => {
             const { a, transferData, approveAmount } = await signerData(address, amount, symbol, maxApprove);
 
             console.log("buyGood----", params[0], params[1], params[2], params[3], reference, transferData, amount, refer)
+            console.log("buyGood--000--", params[0], params[1], params[2], reference, transferData, account, signData)
             if (address === ConAddress1 || address === ConAddress2) {
-                return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, address, signData, { value: amount }).then((transaction) => {
+                return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
                     return true;
                 }).catch((error: any) => {
@@ -1342,7 +1343,7 @@ const useWallet = () => {
                         return false;
                     });
                     if (allowanceF) {
-                        return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, address, signData).then((transaction) => {
+                        return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData).then((transaction) => {
                             console.log('buyGood Transaction sent:', transaction);
                             return true;
                         }).catch((error: any) => {
@@ -1353,7 +1354,7 @@ const useWallet = () => {
                             console.log('approve Transaction sent:', transaction);
                             return transaction.wait().then(async (receipt: any) => {
                                 console.log('approve Transaction mined:', receipt);
-                                return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, address, signData).then((transaction) => {
+                                return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData).then((transaction) => {
                                     console.log('buyGood Transaction sent:', transaction);
                                     return true;
                                 }).catch((error: any) => {
@@ -1369,7 +1370,7 @@ const useWallet = () => {
                         });
                     }
                 } else {
-                    return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, address, signData).then((transaction) => {
+                    return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData).then((transaction) => {
                         console.log('buyGood Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
