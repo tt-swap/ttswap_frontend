@@ -1,23 +1,30 @@
-import { BrowserProvider, JsonRpcSigner,FallbackProvider, JsonRpcProvider } from 'ethers'
+import { BrowserProvider, JsonRpcSigner, FallbackProvider, JsonRpcProvider } from 'ethers'
 import { useMemo } from 'react'
 import type { Account, Chain, Client, Transport } from 'viem'
-import { type Config, useConnectorClient,useClient  } from 'wagmi'
+import { type Config, useConnectorClient, useClient } from 'wagmi'
 
 export function clientToProvider(client: Client<Transport, Chain>) {
-  const { chain, transport } = client
+  const { chain, transport } = client as any
   const network = {
     chainId: chain.id,
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   }
+
+  // 设置请求超时
+  const providerOptions = {
+    timeout: 30000, // 30秒超时
+    ...network
+  };
+
   if (transport.type === 'fallback') {
     const providers = (transport.transports as ReturnType<Transport>[]).map(
-      ({ value }) => new JsonRpcProvider(value?.url, network),
+      ({ value }) => new JsonRpcProvider(value?.url, providerOptions),
     )
     if (providers.length === 1) return providers[0]
-    return new FallbackProvider(providers)
+    return new FallbackProvider(providers, 1) // 最少只需要1个提供商成功
   }
-  return new JsonRpcProvider(transport.url, network)
+  return new JsonRpcProvider(transport.url, providerOptions)
 }
 
 /** Action to convert a viem Client to an ethers.js Provider. */
@@ -27,13 +34,20 @@ export function useEthersProvider({ chainId }: { chainId?: number } = {}) {
 }
 
 export function clientToSigner(client: Client<Transport, Chain, Account>) {
-  const { account, chain, transport } = client
+  const { account, chain, transport } = client as any
   const network = {
     chainId: chain.id,
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   }
-  const provider = new BrowserProvider(transport, network)
+
+  // 设置请求超时
+  const providerOptions = {
+    timeout: 30000, // 30秒超时
+    ...network
+  };
+
+  const provider = new BrowserProvider(transport, providerOptions)
   const signer = new JsonRpcSigner(provider, account.address)
   return signer
 }
