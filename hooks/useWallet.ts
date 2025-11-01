@@ -22,6 +22,8 @@ interface BalanceResult {
 }
 const useWallet = () => {
 
+    const signAddress = ""; //x402
+    const signData = "0x";  //x402
     const defaultData = "0x";
     const MarketManager = TTSwapMarket;
     const ConAddress0 = "0x0000000000000000000000000000000000000000";
@@ -613,7 +615,7 @@ const useWallet = () => {
 
     const balanceSel = useCallback((ConAddress: string): BalanceResult => {
         console.log("===balanceSel----", ConAddress)
-        if (!ConAddress || !isConnected) {console.log("===11balanceSel----", ConAddress); return { amount: 0, decimals: 18 };}
+        if (!ConAddress || !isConnected) { console.log("===11balanceSel----", ConAddress); return { amount: 0, decimals: 18 }; }
         if (ConAddress === swaps?.from?.address) {
             console.log("===1221balanceSel----", sawpFromTokenData?.[0]?.error);
             return {
@@ -731,7 +733,7 @@ const useWallet = () => {
             //const signer = await provider.getSigner()
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
             console.log(ids);
-            return await contract.collectCommission(ids).then((transaction) => {
+            return await contract.collectCommission(ids, address, signData).then((transaction) => {
                 console.log('Transaction sent:', transaction);
                 return true;
             }).catch((error: any) => {
@@ -778,7 +780,7 @@ const useWallet = () => {
         const contract = new ethers.Contract(contractAddress, MarketManager, signer);
 
         console.log("disinvest-----", pid, qut, portal);
-        return await contract.disinvestProof(pid, qut, portal).then((transaction) => {
+        return await contract.disinvestProof(pid, qut, portal, address, signData).then((transaction) => {
             console.log('Transaction sent:', transaction);
             return true;
         }).catch((error: any) => {
@@ -905,7 +907,7 @@ const useWallet = () => {
                 if (aT === 1) {
                     const contractAllow = new ethers.Contract(addr, erc20, provider);
                     allowanceB = await contractAllow.allowance(account, contractAddress).then((allowance) => {
-                        console.log("aT--",addr,allowance,tAmount)
+                        console.log("aT--", addr, allowance, tAmount)
                         if (allowance > tAmount || allowance === tAmount) {
                             return true;
                         } else {
@@ -920,7 +922,7 @@ const useWallet = () => {
                 if (aF === 1) {
                     const contractAllowV = new ethers.Contract(goodVaddr, erc20, provider);
                     allowanceV = await contractAllowV.allowance(account, contractAddress).then((allowance) => {
-                        console.log("aF--",addr,allowance, fAmount)
+                        console.log("aF--", addr, allowance, fAmount)
                         if (allowance > fAmount || allowance === fAmount) {
                             return true;
                         } else {
@@ -1006,7 +1008,7 @@ const useWallet = () => {
                 }
                 if (initGoodVA) {
                     console.log(2222, vgood, qunt, addr, config, transferDataT, transferDataF, initGoodV)
-                    return await contract.initGood(vgood, qunt, addr, config, transferDataT, transferDataF, { value: initGoodV }).then((transaction) => {
+                    return await contract.initGood(vgood, qunt, addr, config, transferDataT, transferDataF, address, signData, { value: initGoodV }).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
@@ -1014,7 +1016,7 @@ const useWallet = () => {
                     });
                 } else {
                     console.log(3333, vgood, qunt, addr, config, transferDataT, transferDataF)
-                    return await contract.initGood(vgood, qunt, addr, config, transferDataT, transferDataF).then((transaction) => {
+                    return await contract.initGood(vgood, qunt, addr, config, transferDataT, transferDataF, address, signData).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
@@ -1258,14 +1260,14 @@ const useWallet = () => {
             if (approveF && approveT) {
                 if (isValueGood) {
                     if (investGoodVA) {
-                        return await contract.investGood(invest.from.id, ConAddress0, famount, transferDataF, transferDataT, { value: investGoodV }).then((transaction) => {
+                        return await contract.investGood(invest.from.id, ConAddress0, famount, transferDataF, transferDataT, address, signData, { value: investGoodV }).then((transaction) => {
                             console.log('Transaction sent1:', transaction);
                             return true;
                         }).catch((error: any) => {
                             return errorData(error);
                         });
                     } else {
-                        return await contract.investGood(invest.from.id, ConAddress0, famount, transferDataF, transferDataT).then((transaction) => {
+                        return await contract.investGood(invest.from.id, ConAddress0, famount, transferDataF, transferDataT, address, signData).then((transaction) => {
                             console.log('Transaction sent2:', transaction);
                             return true;
                         }).catch((error: any) => {
@@ -1274,14 +1276,14 @@ const useWallet = () => {
                     }
                 } else {
                     if (investGoodVA) {
-                        return await contract.investGood(invest.from.id, invest.to.id, famount, transferDataF, transferDataT, { value: investGoodV }).then((transaction) => {
+                        return await contract.investGood(invest.from.id, invest.to.id, famount, transferDataF, transferDataT, address, signData, { value: investGoodV }).then((transaction) => {
                             console.log('Transaction sent1:', transaction);
                             return true;
                         }).catch((error: any) => {
                             return errorData(error);
                         });
                     } else {
-                        return await contract.investGood(invest.from.id, invest.to.id, famount, transferDataF, transferDataT).then((transaction) => {
+                        return await contract.investGood(invest.from.id, invest.to.id, famount, transferDataF, transferDataT, address, signData).then((transaction) => {
                             console.log('Transaction sent2:', transaction);
                             return true;
                         }).catch((error: any) => {
@@ -1319,7 +1321,7 @@ const useWallet = () => {
 
             console.log("buyGood----", params[0], params[1], params[2], params[3], reference, transferData, amount, refer)
             if (address === ConAddress1 || address === ConAddress2) {
-                return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, { value: amount }).then((transaction) => {
+                return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, address, signData, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
                     return true;
                 }).catch((error: any) => {
@@ -1340,7 +1342,7 @@ const useWallet = () => {
                         return false;
                     });
                     if (allowanceF) {
-                        return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData).then((transaction) => {
+                        return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, address, signData).then((transaction) => {
                             console.log('buyGood Transaction sent:', transaction);
                             return true;
                         }).catch((error: any) => {
@@ -1351,7 +1353,7 @@ const useWallet = () => {
                             console.log('approve Transaction sent:', transaction);
                             return transaction.wait().then(async (receipt: any) => {
                                 console.log('approve Transaction mined:', receipt);
-                                return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData).then((transaction) => {
+                                return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, address, signData).then((transaction) => {
                                     console.log('buyGood Transaction sent:', transaction);
                                     return true;
                                 }).catch((error: any) => {
@@ -1367,7 +1369,7 @@ const useWallet = () => {
                         });
                     }
                 } else {
-                    return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData).then((transaction) => {
+                    return await contract.buyGood(params[0], params[1], params[2], params[3], reference, transferData, address, signData).then((transaction) => {
                         console.log('buyGood Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {

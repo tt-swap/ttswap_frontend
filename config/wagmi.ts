@@ -175,7 +175,7 @@ const hoodiTestnet = {
     symbol: 'ETH',
   },
   rpcUrls: {
-    default: { http: ['https://hoodi.drpc.org'] },
+    default: { http: ['	https://rpc.hoodi.ethpandaops.io'] },
   },
   blockExplorers: {
     default: {
