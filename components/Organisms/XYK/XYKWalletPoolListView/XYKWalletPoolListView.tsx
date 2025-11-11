@@ -179,7 +179,7 @@ export const XYKWalletPoolListView: React.FC<XYKPoolListViewProps> = ({
                 const valueFormatted = prettifyCurrencys(
                     row.original.price
                 );
-                return <div className="text-right">{valueFormatted}</div>;
+                return <div className="text-right">{valueFormatted}{" "}{row.original.valueSymbol}</div>;
             },
         },
         {

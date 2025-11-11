@@ -127,7 +127,7 @@ export const XYKWalletCommissionListView: React.FC<XYKPoolListViewProps> = ({
                         pageSize: page_size,
                         address: wallet_address,
                     }, chain_id);
-                console.log(response, value_good_id, "myCommissions")
+                console.log("myCommissions",response, value_good_id)
                 setHasMore(response.pagination.has_more);
                 setError({ error: false, error_message: "" });
                 setResult(prev => {

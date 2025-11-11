@@ -6,6 +6,8 @@ import { myInvestGoodDatas, myTransactions, myDisInvestProof, myGoodDatas, myInd
 import { timestampdToDateSub, powerIterative, iconUrl, timestampSubH, withoutRounding } from '@/graphql/util';
 import BigNumber from 'bignumber.js';
 import { goodState } from '../graphql';
+import { useEthersSigner, useEthersProvider } from '@/connectors/wagmiEthersV6';
+import { t } from 'i18next';
 
 // 我的投资列表
 export async function myInvestGoodsDatas(params: { id: string; address: string; pageNumber: number; pageSize: number; }, ssionChian: number): Promise<object> {
@@ -29,6 +31,7 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
         goodsDatas.data.proofStates.forEach((e: any) => {
             let base_decimals1 = powerIterative(10, e.good1.tokendecimals);
             let base_decimals2 = powerIterative(10, e.good2.tokendecimals);
+            let value_decimals = powerIterative(10, 12);
             // let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
 
             let map = {
@@ -42,9 +45,9 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
 
             let proofValue = 0;
             if (e.good2Quantity > 0) {
-                proofValue = e.proofValue / tokendecimals;// * 2;
+                proofValue = e.proofValue / value_decimals;// * 2;
             } else {
-                proofValue = e.proofValue / tokendecimals;
+                proofValue = e.proofValue / value_decimals;
             }
             map.id = e.id;
             map.name = e.good1.tokenname;
@@ -274,6 +277,7 @@ export async function myIndexes(id: string, wallet_address: any, ssionChian: num
         const goodsDatas = await myIndex({ id: id, address: wallet_address.toLowerCase() }, ssionChian);
         let goodQuantity = goodsDatas.data.goodState.currentQuantity / goodsDatas.data.goodState.currentValue;
         let tokendecimals = powerIterative(10, 6);
+        let tokendecimals1 = powerIterative(10, 12);
         let data = goodsDatas.data.customer;
         items.isEmpty = false;
         items.disinvestCount = data.disinvestCount;
@@ -285,8 +289,8 @@ export async function myIndexes(id: string, wallet_address: any, ssionChian: num
         items.totalcommissionvalue = data.totalcommissionvalue / tokendecimals * goodQuantity;
         items.totalprofitvalue = data.totalprofitvalue / tokendecimals * goodQuantity;
         items.stakettsvalue = data.stakettsvalue / tokendecimals * goodQuantity;
-        items.getfromstake = data.getfromstake / tokendecimals;
-        items.mining = ((goodsDatas.data.ttsEnv.poolasset / goodsDatas.data.ttsEnv.poolvalue) * data.stakettsvalue - data.stakettscontruct) / tokendecimals;
+        items.getfromstake = data.getfromstake / tokendecimals1;
+        items.mining = ((goodsDatas.data.ttsEnv.poolasset / goodsDatas.data.ttsEnv.poolvalue) * data.stakettsvalue - data.stakettscontruct) / tokendecimals1;
     }
     return items;
 }
@@ -335,7 +339,7 @@ export async function myGoodsDatas(params: { id: string; pageNumber: number; pag
             map.id = e.id;
             map.name = e.tokenname;
             map.symbol = e.tokensymbol;
-            map.valueSymbol = goodsDatas.data.goodStates.tokensymbol;
+            map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
             map.decimals = e.tokendecimals;
             map.unitPrice = (e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals);
             map.investQuantity = e.investQuantity / base_decimals;
@@ -395,6 +399,7 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
     let ids: number[] = [];
     item.items = items;
     item.ids = ids;
+    console.log("======0", item);
     if (goodsDatas.data.goodStates.length < params.pageSize || goodsDatas.data.goodStates.length === 0) {
         item.pagination.has_more = false;
     }
@@ -426,37 +431,49 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
         items.push(map);
     });
 
-    const { ethereum } = window;
-    const provider = new ethers.BrowserProvider(ethereum);
-    const contractAddress = getContractAddress(ssionChian);
-    const signer = await provider.getSigner()
-    const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-    console.log(item.ids);
+    // console.log("======1" + ssionChian, item);
+    try {
+        const { ethereum } = window;
+        const provider = new ethers.BrowserProvider(ethereum);
+        const contractAddress = getContractAddress(ssionChian);
+        const signer = await provider.getSigner()
 
-    let feeQs: number[] = [];
-    await contract.queryCommission(item.ids, params.address).then((transaction) => {
-        transaction.map((num: any) => {
-            feeQs.push(Number(num));
-        })
-        console.log('Transaction sent:', transaction, feeQs, item.ids, params.address);
-    }).catch((error: any) => {
-        console.error('出错:', error);
-    });
-    ids.length = 0;
-    items.map((value, index) => {
-        // console.log('items:', value,index);
-        if (feeQs[index] > 0) {
-            // @ts-ignore
-            value.myFeeQuanity = feeQs[index] / 10 ** value.tokendecimals;
-            // @ts-ignore
-            value.myFeeAmount = value.myFeeQuanity * value.price;
-            // @ts-ignore
-            if (value.myFeeAmount > 0.1) {
+        // console.log("======000");
+        // @ts-ignore
+        // const signer = useEthersSigner(ssionChian);
+        // console.log("======0001");
+        const contract = new ethers.Contract(contractAddress, MarketManager, signer);
+        // console.log("======0002");
+
+        let feeQs: number[] = [];
+        await contract.queryCommission(item.ids, params.address).then((transaction) => {
+            transaction.map((num: any) => {
+                feeQs.push(Number(num));
+            })
+            console.log('Transaction sent:', transaction, feeQs, item.ids, params.address);
+        }).catch((error: any) => {
+            console.error('出错:', error);
+        });
+        console.log("-------", item, feeQs);
+        ids.length = 0;
+        items.map((value, index) => {
+            // console.log('items:', value,index);
+            if (feeQs[index] > 0) {
                 // @ts-ignore
-                ids.push(value.id);
+                value.myFeeQuanity = feeQs[index] / 10 ** value.tokendecimals;
+                // @ts-ignore
+                value.myFeeAmount = value.myFeeQuanity * value.price;
+                // @ts-ignore
+                if (value.myFeeAmount > 0.1) {
+                    // @ts-ignore
+                    ids.push(value.id);
+                }
             }
-        }
-    })
+        })
+    } catch (error) {
+        console.error('出错error:', error);
+    }
+    console.log("======2", item);
     return item;
 }
 
