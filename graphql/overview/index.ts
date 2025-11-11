@@ -25,7 +25,7 @@ export async function ecosystemChartDatas(id: string, ssionChian: number): Promi
     if (id !== "") {
         const data = await ecosystemChartData({ id: id, eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) }, ssionChian);
         let goodValue = data.data.goodState.currentValue / data.data.goodState.currentQuantity;
-        let tokendecimals = powerIterative(10, 6);
+        let tokendecimals = powerIterative(10, 18);
         item.quote_currency = data.data.goodState.tokensymbol;
         // let volume_chart_7d: object[] = [];
         // let volume_chart_30d: object[] = [];

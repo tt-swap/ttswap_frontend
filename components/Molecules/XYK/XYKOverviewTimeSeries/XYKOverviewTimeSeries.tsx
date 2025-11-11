@@ -91,6 +91,7 @@ export const XYKOverviewTimeSeries: React.FC<XYKOverviewTimeSeriesProps> = ({
             setResult(None);
             try {
                 const response = await ecosystemChartDatas(value_good_id, chain_id);
+                console.log('response', response);
                 // @ts-ignore
                 if (response) {
                     setResult(new Some(response as UniswapLikeEcosystemCharts));
