@@ -9,8 +9,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 
 import { ArrowDownOutlined, DownOutlined, UpOutlined, LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, Spin, Switch, message, Tooltip } from 'antd';
-import Message from '@/components/MessModal/index';
+import { Button, Spin, Switch, message, Tooltip } from 'antd'; 
 // import { useSwitchChain } from "hooks";
 // import { useWeb3React } from "@web3-react/core";
 import { useAccount } from 'wagmi';
@@ -23,6 +22,7 @@ import { useValueGood, useGoodId } from "@/stores/valueGood";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { useMaxApprove } from '@/hooks/useMaxApprove';
 import { useErrorMess } from '@/hooks/useErrorMess';
+import Message from '@/components/MessModal/index';
 
 const styles = {
     wrapper:
