@@ -98,6 +98,7 @@ import {
 import { http, createConfig } from 'wagmi';
 import mantle_Logo from "@/assets/images/mantle_Logo.png";
 import hoodi_Logo from "@/assets/images/ethereum_Logo.png";
+import ethereum_Logo from "@/assets/images/ethereum_Logo1.png";
 
 const projectId = 'fba1325852fabad486bab619f8300d1c';
 
@@ -167,7 +168,7 @@ const mantleSepolia = {
 
 const hoodiTestnet = {
   id: 560048,
-  name: 'Hoodi Testnet',
+  name: 'Hoodi',
   iconUrl: hoodi_Logo,
   nativeCurrency: {
     decimals: 18,
@@ -199,7 +200,7 @@ const hoodiTestnet = {
 const ethereum = {
   id: 1,
   name: 'Ethereum',
-  // iconUrl: hoodi_Logo,
+  iconUrl: ethereum_Logo,
   nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
   rpcUrls: {
     default: {

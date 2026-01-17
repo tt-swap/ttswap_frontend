@@ -22,8 +22,8 @@ export default defineConfig({
     cssCodeSplit: true, // 启用CSS代码拆分
     terserOptions: {
       compress: {
-        drop_console: true,
-        drop_debugger: true,
+        drop_console: false,
+        drop_debugger: false,
         pure_funcs: ['console.log', 'console.info', 'console.warn'],
       },
     },

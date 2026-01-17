@@ -70,7 +70,7 @@ const useSwap = () => {
                         currentQuantity: swaps.from.currentQuantity,
                         currentValue: swaps.from.currentValue,
                         decimals: swaps.from.decimals,
-                        isvaluegood: swaps.to.isvaluegood,
+                        isvaluegood: swaps.from.isvaluegood,
                     },
                     to: {
                         id: value.id,

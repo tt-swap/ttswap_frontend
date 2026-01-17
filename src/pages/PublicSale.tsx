@@ -631,7 +631,7 @@ export default function PublicSale() {
                       className="w-full bg-[#0fb981] hover:bg-[#22c55e] text-white btn-modern hover-glow transition-all duration-300"
                       disabled={
                         !investmentAmount ||
-                        parseFloat(investmentAmount) < 100 ||
+                        parseFloat(investmentAmount) < 1 ||
                         parseFloat(investmentAmount) > 10000
                       }
                       onClick={() =>
@@ -666,7 +666,7 @@ export default function PublicSale() {
                         {t("sale.mod3.tip")}
                       </h4>
                       <ul className="text-sm text-blue-700 space-y-1">
-                        <li>• {t("sale.mod3.tip.label1")}: 100(USDT)</li>
+                        <li>• {t("sale.mod3.tip.label1")}: 1(USDT)</li>
                         <li>• {t("sale.mod3.tip.label2")}: 10,000(USDT)</li>
                         <li>• {t("sale.mod3.tip.label3")}</li>
                         <li>• {t("sale.mod3.tip.label4")}</li>

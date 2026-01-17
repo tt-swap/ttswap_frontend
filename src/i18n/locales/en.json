@@ -294,6 +294,7 @@
         "account.index.mining": "Mining TTS Amount",
         "account.create.title": "Create Token",
         "account.create.title.desc": "Please fill in the basic configuration information for the token",
+        "account.create.title.desc1": "Set investment parameters",
         "account.create.step": "Step",
         "account.create.seting.base": "Basic Configuration",
         "account.create.seting.value": "Value Configuration",
