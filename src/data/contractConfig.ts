@@ -41,11 +41,11 @@ export const contractCon: {
 } = {
   1: {
     chainId: "1",
-    contractAddress: "0x8E2FF92834C75D3132ad5CED6482E660822f5EF6",
-    theGraphApi: "https://api.studio.thegraph.com/query/1685388/ttswap-ethereum/version/latest",
+    contractAddress: "0x5C70a413fcb7ea8c8D478D06F31f8963cE4EE635",
+    theGraphApi: "https://ttswap.io/thegraph/mit",
     permit2Address:"0x000000000022D473030F116dDEE9F6B43aC78BA3",
     weth9:"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-    tts:"0x441D5687245EE9E7388c51159770736fb142Ea9c",
+    tts:"0xE9D469b641bDCC9967AC19aefC038710d98F0B5d",
     usdt:"0xdac17f958d2ee523a2206206994597c13d831ec7"
   },
   11155111: {
@@ -190,7 +190,7 @@ export const contractCon: {
   560048: {
     chainId: "560048",
     contractAddress: "0x3Dcd9C893aC962bE5d77eE9DD99ddE0F3280f132",
-    theGraphApi: "https://api.studio.thegraph.com/query/57827/ttswap/version/latest",
+    theGraphApi: "https://ttswap.io/thegraph/hoodi",
     permit2Address:"0x9588F74Df5BbC1CD3a45720Cb944A4b1048A4450",
     weth9:"0x2387fD72C1DA19f6486B843F5da562679FbB4057",
     tts:"0x9f01cba9ce7Acf87A896A394f016297ce141A989",

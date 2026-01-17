@@ -295,6 +295,7 @@
   "account.index.mining": "挖矿TTS数量",
   "account.create.title": "创建代币",
   "account.create.title.desc": "请填写代币的基础配置信息",
+  "account.create.title.desc1": "设置投资相关参数",
   "account.create.step": "步骤",
   "account.create.seting.base": "基础配置",
   "account.create.seting.value": "价值配置",

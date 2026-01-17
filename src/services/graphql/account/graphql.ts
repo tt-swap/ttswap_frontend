@@ -405,7 +405,10 @@ export function createToken(params: { id: string }, ssionChian: number) {
                 tokensymbol
 				erc20Address
             }
-			goodStates(where: {isvaluegood: true, islockgood: false}) {
+			goodStates(where: {isvaluegood: true, islockgood: false}
+                            orderBy: currentValue
+                            orderDirection: desc
+							) {
                 currentValue
                 currentQuantity
                 id

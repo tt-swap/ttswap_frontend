@@ -19,7 +19,10 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; par
                         tokensymbol
                         tokendecimals
                     }
-                    goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true, islockgood: false}) {
+                    goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true, islockgood: false}
+                            orderBy: currentValue
+                            orderDirection: desc
+                            ) {
                         id
                         isvaluegood
                         tokenname
@@ -61,7 +64,10 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; par
                             tokensymbol
                             tokendecimals
                         }
-                        goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true, islockgood: false}) {
+                        goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true, islockgood: false}
+                            orderBy: currentValue
+                            orderDirection: desc
+                            ) {
                             id
                             isvaluegood
                             tokenname
@@ -105,7 +111,10 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; par
                             tokensymbol
                             tokendecimals
                         }
-                        goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true, islockgood: false}) {
+                        goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", isvaluegood: true, islockgood: false}
+                            orderBy: currentValue
+                            orderDirection: desc
+                            ) {
                             id
                             isvaluegood
                             tokenname
