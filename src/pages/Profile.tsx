@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { TokenTable } from "@/components/tables/TokenTable";
 import {
@@ -29,7 +29,7 @@ import {
     // Freeze
 } from "@/components/dialogs";
 import { useTranslation } from 'react-i18next';
-import { myIndexes,refereesDatas } from '@/services/graphql/account';
+import { myIndexes, refereesDatas } from '@/services/graphql/account';
 import { useValueGood } from "@/stores/valueGood";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { useAccount } from 'wagmi';
@@ -85,7 +85,7 @@ export default function Profile() {
             setReferees(result.referralnum);
             // console.log("referees：address：",referees,data)
         })();
-    }, [address, ssionChian]);
+    }, [address, ssionChian, info.id]);
 
 
     function fallbackCopyTextToClipboard(text: string): void {
@@ -290,7 +290,7 @@ export default function Profile() {
             </div>
 
             <div className="mb-2.5">
-                <PortfolioOverview datas={myInfo}/>
+                <PortfolioOverview datas={myInfo} />
             </div>
             <div className="mb-6 animate-slide-in-left">
                 <h1 className="mb-[0.175rem]">

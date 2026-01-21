@@ -126,7 +126,7 @@ export function WithdrawDialog({
       if (investmentId > 0 && open) {
         setSpinning(true);
         let tokens: any = await myDisInvestProofGood(investmentId, walletAddress, ssionChian);
-        console.log(tokens, 99)
+        console.log("*************##############", tokens, 99)
         setDisgood(tokens);
         disAmount(tokens, 0, 0, 0);
         setSpinning(false);
@@ -868,7 +868,8 @@ export function WithdrawDialog({
                           {t("account.divest.details.mining.tip")}
                         </span>
                         <span className="font-medium text-yellow-700">
-                          {prettifyCurrencys(disgood.good1.mining + disgood.good2.mining)}
+                          {
+                            disgood.isvaluegood ? prettifyCurrencys(disgood.good1.mining) : prettifyCurrencys(Number(disgood.good1.mining) + Number(disgood.good2.mining))}
                         </span>
                       </div>
                       {/* <div className="flex justify-between">

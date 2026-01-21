@@ -251,50 +251,52 @@ export async function myDisInvestProofGood(id: number, address: string, ssionChi
     map.currentValue = good1.currentValue;
 
     let good2 = good.good2;
-    let decimals2 = powerIterative(10, good2.tokendecimals);
-    let disfeeL2 = BigNumber(good2.goodConfig).mod(m217).div(m211).integerValue(1).div(10000).toNumber();
-    let click2 = BigNumber(good2.goodConfig).mod(m187).div(m177).integerValue(1).div(10000).toNumber();
-    let unitV2 = (good2.currentValue / decimals) / (good2.currentQuantity / decimals2);
-    let good2N1: number;
-    let good2N2: any;
-    let maxNum2 = good2.currentQuantity / decimals2;
-    if (click2 > 0) {
-        good2N1 = (good2.currentQuantity / decimals2) / click2;
-        // good2N2 = (good2.currentValue / decimals) / click2 / unitV2;
-        maxNum2 = good2N1;// > good2N2 ? good2N2 : good2N1;
-    }
+    if (good2.id != "0x0000000000000000000000000000000000000000") {
+        let decimals2 = powerIterative(10, good2.tokendecimals);
+        let disfeeL2 = BigNumber(good2.goodConfig).mod(m217).div(m211).integerValue(1).div(10000).toNumber();
+        let click2 = BigNumber(good2.goodConfig).mod(m187).div(m177).integerValue(1).div(10000).toNumber();
+        let unitV2 = (good2.currentValue / decimals) / (good2.currentQuantity / decimals2);
+        let good2N1: number;
+        let good2N2: any;
+        let maxNum2 = good2.currentQuantity / decimals2;
+        if (click2 > 0) {
+            good2N1 = (good2.currentQuantity / decimals2) / click2;
+            // good2N2 = (good2.currentValue / decimals) / click2 / unitV2;
+            maxNum2 = good2N1;// > good2N2 ? good2N2 : good2N1;
+        }
 
-    map1.id = good2.id;
-    map1.symbol = good2.tokensymbol;
-    map1.isvaluegood = good2.isvaluegood;
-    map1.decimals = good2.tokendecimals;
-    map1.quantity = good.good2Quantity / decimals2;
-    map1.investActualQuantity = good.good2ActualQuantity / decimals2;
-    map1.investShares = good.good2Shares / decimals2;
-    map1.investQuantity = good2.investQuantity / decimals2;
-    map1.allInvestShares = good2.investShares / decimals2;
-    map1.nowNAVPS = good2.investQuantity / good2.investShares;
-    map1.NAVPS = good.good2Quantity / good.good2Shares;
-    // map1.unitV = unitV2;
-    if (good2.id != 0) {
-        map1.logo_url = iconUrl(chainName, good2.erc20Address);
+        map1.id = good2.id;
+        map1.symbol = good2.tokensymbol;
+        map1.isvaluegood = good2.isvaluegood;
+        map1.decimals = good2.tokendecimals;
+        map1.quantity = good.good2Quantity / decimals2;
+        map1.investActualQuantity = good.good2ActualQuantity / decimals2;
+        map1.investShares = good.good2Shares / decimals2;
+        map1.investQuantity = good2.investQuantity / decimals2;
+        map1.allInvestShares = good2.investShares / decimals2;
+        map1.nowNAVPS = good2.investQuantity / good2.investShares;
+        map1.NAVPS = good.good2Quantity / good.good2Shares;
+        // map1.unitV = unitV2;
+        if (good2.id != 0) {
+            map1.logo_url = iconUrl(chainName, good2.erc20Address);
+        }
+        map1.address = good2.erc20Address;
+        // map1.nowNAVPS = good2.feeQuantity / good2.investQuantity;
+        // map1.contructFee = good.good2ContructFee / decimals2;
+        // map1.profit = map1.nowNAVPS * map1.quantity - map1.contructFee;
+        map1.profit = (map1.nowNAVPS - map1.NAVPS) * map1.investShares;
+        map1.earningRate = (map1.nowNAVPS - map1.NAVPS) / map1.NAVPS;
+        map1.APY = (map1.profit / (map1.quantity * timestampSubH(good.createTime))) * 365;
+        map1.disfee = map1.quantity * disfeeL2;
+        let czfs2 = maxNum2 / map1.nowNAVPS;
+        map1.maxNum = withoutRounding(czfs2, 6);
+        map1.rate = disfeeL2;
+        let good2v = good2.currentValue / good2.currentQuantity * good.good2ActualQuantity;
+        map1.mining = (good2v * data.ttsp - good2v * data.ttsc) / tokendecimals1;
+        map1.currentQuantity = good2.currentQuantity;
+        map1.currentValue = good2.currentValue;
+        // map1.earningRate = map1.profit / map1.quantity;
     }
-    map1.address = good2.erc20Address;
-    // map1.nowNAVPS = good2.feeQuantity / good2.investQuantity;
-    // map1.contructFee = good.good2ContructFee / decimals2;
-    // map1.profit = map1.nowNAVPS * map1.quantity - map1.contructFee;
-    map1.profit = (map1.nowNAVPS - map1.NAVPS) * map1.investShares;
-    map1.earningRate = (map1.nowNAVPS - map1.NAVPS) / map1.NAVPS;
-    map1.APY = (map1.profit / (map1.quantity * timestampSubH(good.createTime))) * 365;
-    map1.disfee = map1.quantity * disfeeL2;
-    let czfs2 = maxNum2 / map1.nowNAVPS;
-    map1.maxNum = withoutRounding(czfs2, 6);
-    map1.rate = disfeeL2;
-    let good2v = good2.currentValue / good2.currentQuantity * good.good2ActualQuantity;
-    map1.mining = (good2v * data.ttsp - good2v * data.ttsc) / tokendecimals1;
-    map1.currentQuantity = good2.currentQuantity;
-    map1.currentValue = good2.currentValue;
-    // map1.earningRate = map1.profit / map1.quantity;
     // console.log("??????", good1.investQuantity,good1.investShares,good2.investQuantity,good2.investShares,data)
     return data;
 }
@@ -309,24 +311,29 @@ export async function myIndexes(id: string, wallet_address: any, ssionChian: num
     };
     // console.log("myIndexes", id, wallet_address)
     if (id && wallet_address) {
-        const goodsDatas = await myIndex({ id: id, address: wallet_address.toLowerCase() }, ssionChian);
-        let goodQuantity = goodsDatas.data.goodState.currentQuantity / goodsDatas.data.goodState.currentValue;
-        let tokendecimals = powerIterative(10, 6);
-        let tokendecimals1 = powerIterative(10, 12);
-        let data = goodsDatas.data.customer;
-        items.isEmpty = false;
-        items.disinvestCount = data.disinvestCount;
-        items.investCount = data.investCount;
-        items.tradeCount = data.tradeCount;
-        items.disinvestValue = data.disinvestValue / tokendecimals * goodQuantity;
-        items.investValue = data.investValue / tokendecimals * goodQuantity;
-        items.tradeValue = data.tradeValue / tokendecimals * goodQuantity;
-        items.totalcommissionvalue = data.totalcommissionvalue / tokendecimals * goodQuantity;
-        items.totalprofitvalue = data.totalprofitvalue / tokendecimals * goodQuantity;
-        items.stakettsvalue = data.stakettsvalue / tokendecimals * goodQuantity;
-        items.getfromstake = data.getfromstake / tokendecimals1;
-        items.mining = ((goodsDatas.data.ttsEnv.poolasset / goodsDatas.data.ttsEnv.poolvalue) * data.stakettsvalue - data.stakettscontruct) / tokendecimals1;
-        items.referralnum = data.referralnum;
+        try {
+
+            const goodsDatas = await myIndex({ id: id, address: wallet_address.toLowerCase() }, ssionChian);
+            let goodQuantity = goodsDatas.data.goodState.currentQuantity / goodsDatas.data.goodState.currentValue;
+            let tokendecimals = powerIterative(10, 6);
+            let tokendecimals1 = powerIterative(10, 12);
+            let data = goodsDatas.data.customer;
+            items.isEmpty = false;
+            items.disinvestCount = data.disinvestCount;
+            items.investCount = data.investCount;
+            items.tradeCount = data.tradeCount;
+            items.disinvestValue = data.disinvestValue / tokendecimals * goodQuantity;
+            items.investValue = data.investValue / tokendecimals * goodQuantity;
+            items.tradeValue = data.tradeValue / tokendecimals * goodQuantity;
+            items.totalcommissionvalue = data.totalcommissionvalue / tokendecimals * goodQuantity;
+            items.totalprofitvalue = data.totalprofitvalue / tokendecimals * goodQuantity;
+            items.stakettsvalue = data.stakettsvalue / tokendecimals * goodQuantity;
+            items.getfromstake = data.getfromstake / tokendecimals1;
+            items.mining = ((goodsDatas.data.ttsEnv.poolasset / goodsDatas.data.ttsEnv.poolvalue) * data.stakettsvalue - data.stakettscontruct) / tokendecimals1;
+            items.referralnum = data.referralnum;
+        } catch (error) {
+
+        }
     }
     return items;
 }

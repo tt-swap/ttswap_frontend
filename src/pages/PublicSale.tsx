@@ -138,8 +138,8 @@ export default function PublicSale() {
         setSellT(data.totalT);
       } else {
         setPublicSaleRecords(mockPublicSaleRecords);
-        setRaiseT(2550);
-        setSellT(63750);
+        setRaiseT(0);
+        setSellT(0);
       }
     })()
   }, [ssionChian]);
