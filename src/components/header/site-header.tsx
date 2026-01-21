@@ -12,6 +12,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useChainId } from 'wagmi';
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { useMuneName } from "@/stores/menu";
+import useWallet from "@/hooks/useWallet";
 
 
 export function SiteHeader() {
@@ -25,10 +26,20 @@ export function SiteHeader() {
     // @ts-ignore
     const { ssionChian, setSsionChian } = useLocalStorage();
     const chainId = useChainId();
+    const { updateNetworkVia } = useWallet();
 
     const handleTabSwitch = (route: string) => {
         navigate('/' + route);
     }
+
+    // useEffect(() => {
+    //     if (!isConnected) return;
+
+    //     (async () => {
+    //         const a = await updateNetworkVia(ssionChian);
+    //         console.log("sssss", a)
+    //     })();
+    // }, [ssionChian,isConnected]);
 
 
     const items: MenuProps['items'] = [

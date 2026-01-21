@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 // import { COLORS } from "../../utils/constants";
 // import type { PortfolioOverview as PortfolioOverviewData } from "@/types";
 import { useValueGood } from "@/stores/valueGood";
-// import { useLocalStorage } from "@/utils/LocalStorageManager";
+import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { useTranslation } from 'react-i18next';
 // import { myIndexes } from '@/services/graphql/account';
 import { prettifyCurrencys } from '@/services/graphql/util';
@@ -46,7 +46,7 @@ export function PortfolioOverview({
 
   const { t } = useTranslation();
   const { info } = useValueGood();
-  // const { ssionChian } = useLocalStorage();
+  const { ssionChian } = useLocalStorage();
   // const { isConnected, address } = useAccount();
   const [tokenLogo, setTokenLogo] = useState<string | undefined>(
     useValueCionLogo(info)
@@ -59,6 +59,7 @@ export function PortfolioOverview({
   }, [info.symbol]);
 
   useEffect(() => {
+    console.log("#########datas-----", datas);
     // (async () => {
     //   if (ssionChian && address && info.id) {
         const result = datas//await myIndexes(info.id, address, ssionChian);

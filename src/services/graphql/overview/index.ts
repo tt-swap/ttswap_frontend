@@ -16,129 +16,132 @@ export async function AggregateIndex(id: string, ssionChian: number): Promise<ob
         liquidity_chart_7d: [{ dt: 0, quote_currency: "", volume: 0 }],
         liquidity_chart_30d: [{ dt: 0, quote_currency: "", volume: 0 }]
     };
-    if (id !== "") {
-        const goodsDatas = await AggregateIndexQ({ id: id, eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29), time: timestampdToDateSub(0) }, ssionChian);
+    try {
+        if (id !== "") {
+            const goodsDatas = await AggregateIndexQ({ id: id, eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29), time: timestampdToDateSub(0) }, ssionChian);
 
-        let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
-        let tokendecimals = powerIterative(10, 18);
-        const market = goodsDatas.data.marketStates[0];
-        // console.log(goodsDatas.data.marketStates ,"********")
+            let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
+            let tokendecimals = powerIterative(10, 18);
+            const market = goodsDatas.data.marketStates[0];
+            // console.log(goodsDatas.data.marketStates ,"********")
 
-        hero.trdeV = market.totalTradeValue * goodValue / tokendecimals;
-        hero.invertV = market.totalInvestValue * goodValue / tokendecimals;
-        hero.users = market.userCount - 100000;
-        hero.Tokens = market.goodCount;
-        hero.vSymbol = goodsDatas.data.goodState.tokensymbol;
-        // const data = await ecosystemChartData({ id: id, eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) }, ssionChian);
-        // let goodValue = data.data.goodState.currentValue / data.data.goodState.currentQuantity;
-        // let tokendecimals = powerIterative(10, 18);
-        chart.quote_currency = goodsDatas.data.goodState.tokensymbol;
+            hero.trdeV = market.totalTradeValue * goodValue / tokendecimals;
+            hero.invertV = market.totalInvestValue * goodValue / tokendecimals;
+            hero.users = market.userCount - 100000;
+            hero.Tokens = market.goodCount;
+            hero.vSymbol = goodsDatas.data.goodState.tokensymbol;
+            // const data = await ecosystemChartData({ id: id, eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) }, ssionChian);
+            // let goodValue = data.data.goodState.currentValue / data.data.goodState.currentQuantity;
+            // let tokendecimals = powerIterative(10, 18);
+            chart.quote_currency = goodsDatas.data.goodState.tokensymbol;
 
-        let volume_chart_7d: { dt: number; quote_currency: string; volume: number; }[] = [];
-        let volume_chart_30d: { dt: number; quote_currency: string; volume: number; }[] = [];
-        let liquidity_chart_7d: { dt: number; quote_currency: string; volume: number; }[] = [];
-        let liquidity_chart_30d: { dt: number; quote_currency: string; volume: number; }[] = [];
+            let volume_chart_7d: { dt: number; quote_currency: string; volume: number; }[] = [];
+            let volume_chart_30d: { dt: number; quote_currency: string; volume: number; }[] = [];
+            let liquidity_chart_7d: { dt: number; quote_currency: string; volume: number; }[] = [];
+            let liquidity_chart_30d: { dt: number; quote_currency: string; volume: number; }[] = [];
 
 
-        const quote_currency = goodsDatas.data.goodState.tokensymbol;
-        if (goodsDatas.data.days70.length > 0) {
-            const e7 = goodsDatas.data.days70[0];
-            let v7 = e7.totalInvestValue * goodValue / tokendecimals;
-            let v71 = e7.totalTradeValue * goodValue / tokendecimals;
-            liquidity_chart_7d.push({ dt: timestampdToDateSub(6) * 1000, quote_currency: quote_currency, volume: v7 });
-            volume_chart_7d.push({ dt: timestampdToDateSub(6) * 1000, quote_currency: quote_currency, volume: v71 });
-        } else {
-            liquidity_chart_7d.push({ dt: timestampdToDateSub(6) * 1000, quote_currency: quote_currency, volume: 0 });
-            volume_chart_7d.push({ dt: timestampdToDateSub(6) * 1000, quote_currency: quote_currency, volume: 0 });
-        }
-        if (goodsDatas.data.days7.length > 0) {
-            goodsDatas.data.days7.forEach((e: any) => {
-                let map = { dt: 0, quote_currency: "", volume: 0 };
-                let jz = e.totalInvestValue * goodValue / tokendecimals;
-                map.dt = e.modifiedTime * 1000;
-                map.volume = jz;
-                // map.liquidity_quote = jz;
-                map.quote_currency = quote_currency;
-                liquidity_chart_7d.push(map);
+            const quote_currency = goodsDatas.data.goodState.tokensymbol;
+            if (goodsDatas.data.days70.length > 0) {
+                const e7 = goodsDatas.data.days70[0];
+                let v7 = e7.totalInvestValue * goodValue / tokendecimals;
+                let v71 = e7.totalTradeValue * goodValue / tokendecimals;
+                liquidity_chart_7d.push({ dt: timestampdToDateSub(6) * 1000, quote_currency: quote_currency, volume: v7 });
+                volume_chart_7d.push({ dt: timestampdToDateSub(6) * 1000, quote_currency: quote_currency, volume: v71 });
+            } else {
+                liquidity_chart_7d.push({ dt: timestampdToDateSub(6) * 1000, quote_currency: quote_currency, volume: 0 });
+                volume_chart_7d.push({ dt: timestampdToDateSub(6) * 1000, quote_currency: quote_currency, volume: 0 });
+            }
+            if (goodsDatas.data.days7.length > 0) {
+                goodsDatas.data.days7.forEach((e: any) => {
+                    let map = { dt: 0, quote_currency: "", volume: 0 };
+                    let jz = e.totalInvestValue * goodValue / tokendecimals;
+                    map.dt = e.modifiedTime * 1000;
+                    map.volume = jz;
+                    // map.liquidity_quote = jz;
+                    map.quote_currency = quote_currency;
+                    liquidity_chart_7d.push(map);
 
-                let map1 = { dt: 0, quote_currency: "", volume: 0 };
-                let jz1 = e.totalTradeValue * goodValue / tokendecimals;
-                map1.dt = e.modifiedTime * 1000;
-                map1.volume = jz1;
-                // map1.volume_quote = jz1;
-                map1.quote_currency = quote_currency;
-                volume_chart_7d.push(map1);
+                    let map1 = { dt: 0, quote_currency: "", volume: 0 };
+                    let jz1 = e.totalTradeValue * goodValue / tokendecimals;
+                    map1.dt = e.modifiedTime * 1000;
+                    map1.volume = jz1;
+                    // map1.volume_quote = jz1;
+                    map1.quote_currency = quote_currency;
+                    volume_chart_7d.push(map1);
+                });
+            }
+            if (goodsDatas.data.days31.length > 0) {
+                const e30 = goodsDatas.data.days31[0];
+                let v3 = e30.totalInvestValue * goodValue / tokendecimals;
+                let v31 = e30.totalTradeValue * goodValue / tokendecimals;
+                liquidity_chart_30d.push({ dt: timestampdToDateSub(29) * 1000, quote_currency: quote_currency, volume: v3 });
+                volume_chart_30d.push({ dt: timestampdToDateSub(29) * 1000, quote_currency: quote_currency, volume: v31 });
+            } else {
+                liquidity_chart_30d.push({ dt: timestampdToDateSub(29) * 1000, quote_currency: quote_currency, volume: 0 });
+                volume_chart_30d.push({ dt: timestampdToDateSub(29) * 1000, quote_currency: quote_currency, volume: 0 });
+            }
+            if (goodsDatas.data.days30.length > 0) {
+                goodsDatas.data.days30.forEach((e: any) => {
+                    let map = { dt: 0, quote_currency: "", volume: 0 };
+                    let jz = e.totalInvestValue * goodValue / tokendecimals;
+                    map.dt = e.modifiedTime * 1000;
+                    map.volume = jz;
+                    // map.liquidity_quote = jz;
+                    map.quote_currency = quote_currency;
+                    liquidity_chart_30d.push(map);
+
+                    let map1 = { dt: 0, quote_currency: "", volume: 0 };
+                    let jz1 = e.totalTradeValue * goodValue / tokendecimals;
+                    map1.dt = e.modifiedTime * 1000;
+                    map1.volume = jz1;
+                    // map1.volume_quote = jz1;
+                    map1.quote_currency = quote_currency;
+                    volume_chart_30d.push(map1);
+                });
+            }
+            liquidity_chart_7d = complete7DayData(liquidity_chart_7d, 7);
+            volume_chart_7d = complete7DayData(volume_chart_7d, 7);
+            liquidity_chart_30d = complete7DayData(liquidity_chart_30d, 30);
+            volume_chart_30d = complete7DayData(volume_chart_30d, 30);
+
+            chart.volume_chart_7d = volume_chart_7d;
+            chart.volume_chart_30d = volume_chart_30d;
+            chart.liquidity_chart_7d = liquidity_chart_7d;
+            chart.liquidity_chart_30d = liquidity_chart_30d;
+
+            // const goodsDatas = await GoodsSearch({ id: params.id, sel: params.sel.toLowerCase(), time: timestampdToDateSub(0) }, ssionChian);
+
+            // const goodState = goodsDatas.data.goodState;
+            // console.log("***&&", goodState.goodData[0].currentValue)
+            // const goodValue = goodState.currentValue / goodState.currentQuantity;
+            // const goodValue24 = goodState.goodData[0].currentValue / goodState.goodData[0].currentQuantity;
+            const tokendecimals1 = powerIterative(10, 6);
+
+            goodsDatas.data.goodStates.forEach((en: any) => {
+                let map1 = {
+                    id: "", name: "", decimals: 0, symbol: "", price: 0, logo_url: "",
+                    address: "", isvaluegood: false, valueSymbol: "", h24: 0, trade24hValue: 0
+                };
+                let base_decimals = powerIterative(10, en.tokendecimals1);
+                let current_price = ((en.currentValue / tokendecimals1) / (en.currentQuantity / base_decimals)) / goodValue;
+                let current_price24 = ((en.goodData[0].currentValue / tokendecimals1) / (en.goodData[0].currentQuantity / base_decimals)) / goodValue;
+                let t24 = (en.totalTradeQuantity - en.goodData[0].totalTradeQuantity) / base_decimals
+                map1.id = en.id;
+                map1.name = en.tokenname;
+                map1.decimals = en.tokendecimals1;
+                map1.symbol = en.tokensymbol;
+                map1.valueSymbol = goodsDatas.data.goodState.tokensymbol;
+                map1.logo_url = iconUrl(chainName, en.erc20Address);
+                map1.address = en.erc20Address;
+                map1.isvaluegood = en.isvaluegood;
+                map1.price = current_price;
+                map1.h24 = (current_price - current_price24) / current_price24;
+                map1.trade24hValue = t24 * current_price;
+                item.over.push(map1);
             });
         }
-        if (goodsDatas.data.days31.length > 0) {
-            const e30 = goodsDatas.data.days31[0];
-            let v3 = e30.totalInvestValue * goodValue / tokendecimals;
-            let v31 = e30.totalTradeValue * goodValue / tokendecimals;
-            liquidity_chart_30d.push({ dt: timestampdToDateSub(29) * 1000, quote_currency: quote_currency, volume: v3 });
-            volume_chart_30d.push({ dt: timestampdToDateSub(29) * 1000, quote_currency: quote_currency, volume: v31 });
-        } else {
-            liquidity_chart_30d.push({ dt: timestampdToDateSub(29) * 1000, quote_currency: quote_currency, volume: 0 });
-            volume_chart_30d.push({ dt: timestampdToDateSub(29) * 1000, quote_currency: quote_currency, volume: 0 });
-        }
-        if (goodsDatas.data.days30.length > 0) {
-            goodsDatas.data.days30.forEach((e: any) => {
-                let map = { dt: 0, quote_currency: "", volume: 0 };
-                let jz = e.totalInvestValue * goodValue / tokendecimals;
-                map.dt = e.modifiedTime * 1000;
-                map.volume = jz;
-                // map.liquidity_quote = jz;
-                map.quote_currency = quote_currency;
-                liquidity_chart_30d.push(map);
-
-                let map1 = { dt: 0, quote_currency: "", volume: 0 };
-                let jz1 = e.totalTradeValue * goodValue / tokendecimals;
-                map1.dt = e.modifiedTime * 1000;
-                map1.volume = jz1;
-                // map1.volume_quote = jz1;
-                map1.quote_currency = quote_currency;
-                volume_chart_30d.push(map1);
-            });
-        }
-        liquidity_chart_7d = complete7DayData(liquidity_chart_7d, 7);
-        volume_chart_7d = complete7DayData(volume_chart_7d, 7);
-        liquidity_chart_30d = complete7DayData(liquidity_chart_30d, 30);
-        volume_chart_30d = complete7DayData(volume_chart_30d, 30);
-
-        chart.volume_chart_7d = volume_chart_7d;
-        chart.volume_chart_30d = volume_chart_30d;
-        chart.liquidity_chart_7d = liquidity_chart_7d;
-        chart.liquidity_chart_30d = liquidity_chart_30d;
-
-        // const goodsDatas = await GoodsSearch({ id: params.id, sel: params.sel.toLowerCase(), time: timestampdToDateSub(0) }, ssionChian);
-
-        // const goodState = goodsDatas.data.goodState;
-        // console.log("***&&", goodState.goodData[0].currentValue)
-        // const goodValue = goodState.currentValue / goodState.currentQuantity;
-        // const goodValue24 = goodState.goodData[0].currentValue / goodState.goodData[0].currentQuantity;
-        const tokendecimals1 = powerIterative(10, 6);
-
-        goodsDatas.data.goodStates.forEach((en: any) => {
-            let map1 = {
-                id: "", name: "", decimals: 0, symbol: "", price: 0, logo_url: "",
-                address: "", isvaluegood: false, valueSymbol: "", h24: 0, trade24hValue: 0
-            };
-            let base_decimals = powerIterative(10, en.tokendecimals1);
-            let current_price = ((en.currentValue / tokendecimals1) / (en.currentQuantity / base_decimals)) / goodValue;
-            let current_price24 = ((en.goodData[0].currentValue / tokendecimals1) / (en.goodData[0].currentQuantity / base_decimals)) / goodValue;
-            let t24 = (en.totalTradeQuantity - en.goodData[0].totalTradeQuantity) / base_decimals
-            map1.id = en.id;
-            map1.name = en.tokenname;
-            map1.decimals = en.tokendecimals1;
-            map1.symbol = en.tokensymbol;
-            map1.valueSymbol = goodsDatas.data.goodState.tokensymbol;
-            map1.logo_url = iconUrl(chainName, en.erc20Address);
-            map1.address = en.erc20Address;
-            map1.isvaluegood = en.isvaluegood;
-            map1.price = current_price;
-            map1.h24 = (current_price - current_price24) / current_price24;
-            map1.trade24hValue = t24 * current_price;
-            item.over.push(map1);
-        });
+    } catch (error) {
     }
     item.hero = hero;
     item.chart = chart;

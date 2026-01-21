@@ -16,7 +16,7 @@ import { useEthersSigner, useEthersProvider } from '@/config/wagmiEthersV6';
 
 import { useAccount, useReadContracts, useWalletClient } from 'wagmi';
 import { erc20Abi } from "viem";
-import { getChainName } from '@/data/networks';
+import { getChainName, getAddChainParameters } from '@/data/networks';
 import { iconUrl } from '@/services/graphql/util';
 
 interface BalanceResult {
@@ -1590,6 +1590,51 @@ const useWallet = () => {
             return false;
         }
     }
+
+
+    const updateNetworkVia = async (id: any) => {
+        const params: any = getAddChainParameters(id);
+        console.log("upTokenSet", params);
+
+        try {
+            // 先尝试切换到网络，如果失败再尝试添加网络
+            if (typeof window !== 'undefined' && window.ethereum) {
+                // 确保chainId是数字，然后转换为十六进制格式
+                let chainIdNum: number;
+                if (typeof params.chainId === 'string') {
+                    // 如果chainId已经是十六进制字符串，则解析它；否则假设它是十进制字符串
+                    if (params.chainId.startsWith('0x')) {
+                        chainIdNum = parseInt(params.chainId, 16);
+                    } else {
+                        chainIdNum = parseInt(params.chainId, 10);
+                    }
+                } else {
+                    chainIdNum = params.chainId;
+                }
+                const hexChainId = `0x${chainIdNum.toString(16)}`;
+
+                try {
+                    const addChainParams = {
+                        chainId: hexChainId,
+                        chainName: params.chainName,
+                        nativeCurrency: params.nativeCurrency,
+                        rpcUrls: params.rpcUrls,
+                        blockExplorerUrls: params.blockExplorerUrls,
+                    };
+
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [addChainParams]
+                    });
+                } catch (switchError: any) {
+                }
+            } else {
+                console.warn('Ethereum object not found in window');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
     // console.log(networkCost)
     return {
         balanceMap,
@@ -1600,7 +1645,7 @@ const useWallet = () => {
         newGoods, disinvest, faucetTestCion,
         checkContractExists, collect,
         upTokenSet, tokenDesc, ttsPublic, tokenBalance,
-        handleAddToken, lockToken, setingToken, setingTokenAdmin
+        handleAddToken, lockToken, setingToken, setingTokenAdmin, updateNetworkVia
     };
 };
 

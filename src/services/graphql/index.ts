@@ -43,9 +43,9 @@ export async function publicSaleData(ssionChian: number) {
 
     goodsDatas.data.ttswapPublicsellLogs.forEach((e: any) => {
         let a = 1;
-        if (t > a1 && t <= (a1 + a2)) {
+        if (u > a1 && u <= (a1 + a2)) {
             a = 2;
-        } else if (t > (a1 + a2)) {
+        } else if (u > (a1 + a2)) {
             a = 3;
         }
         let map = {
@@ -61,6 +61,7 @@ export async function publicSaleData(ssionChian: number) {
         t += map.ttsamount;
         u += map.usdtamount;
     });
+    data.items.sort((a, b) => b.create_time - a.create_time);
     data.totalT = t;
     data.totalU = u;
     return data;
