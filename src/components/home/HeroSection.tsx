@@ -103,18 +103,20 @@ export function HeroSection(data: any) {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
               <div className="stagger-item">
                 <div className="text-2xl sm:text-3xl text-[#0fb981] mb-1 transition-transform duration-200 hover:scale-110">
-                  {prettifyCurrencys(marketData?.trdeV)}{" "}{marketData?.vSymbol}
+                  {prettifyCurrencys(marketData?.trdeV)}
+                  {/* {" "}{marketData?.vSymbol} */}
                 </div>
                 <div className="text-sm text-gray-500">
-                  {t("home.HeroSection.volume")}
+                  {t("home.HeroSection.volume")+"("+marketData?.vSymbol+")"}
                 </div>
               </div>
               <div className="stagger-item">
                 <div className="text-2xl sm:text-3xl text-[#0fb981] mb-1 transition-transform duration-200 hover:scale-110">
-                  {prettifyCurrencys(marketData?.invertV)}{" "}{marketData?.vSymbol}
+                  {prettifyCurrencys(marketData?.invertV)}
+                  {/* {" "}{marketData?.vSymbol} */}
                 </div>
                 <div className="text-sm text-gray-500">
-                  {t("home.HeroSection.liquidity")}
+                  {t("home.HeroSection.liquidity")+"("+marketData?.vSymbol+")"}
                 </div>
               </div>
               <div className="stagger-item">

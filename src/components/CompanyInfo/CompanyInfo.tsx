@@ -87,7 +87,7 @@ const CompanyInfo: FC = () => {
             children: [
                 {
                     key: '1-1',
-                    label: (<a target="_blank" rel="noopener noreferrer" href="//ttswap.io">
+                    label: (<a target="_blank" rel="noopener noreferrer" href="//docs.ttswap.io">
                         {t('footer.title2')}
                     </a>),
                 },
@@ -169,7 +169,7 @@ const CompanyInfo: FC = () => {
             children: [
                 {
                     key: '1-1',
-                    label: (<a target="_blank" rel="noopener noreferrer" href="//ttswap.io">
+                    label: (<a target="_blank" rel="noopener noreferrer" href="//docs.ttswap.io">
                         {t('footer.title2')}
                     </a>),
                 },
