@@ -932,7 +932,7 @@ const useWallet = () => {
                 tAmount = BigInt(num1 * powerIterative(10, decimals));
             }
             const qunt = BigInt(tAmount * BigInt(2 ** 128) + fAmount);
-            // console.log(1111, decimals, fAmount, tAmount, qunt)
+            console.log("*****111111****", decimals, fAmount, tAmount, qunt)
 
             let allowanceV;
             let allowanceB;
