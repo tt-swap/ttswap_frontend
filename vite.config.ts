@@ -71,11 +71,17 @@ export default defineConfig({
             'react-jazzicon',
             'embla-carousel-react',
           ],
+          'web3-other': [
+            'ethers',
+          ],
+          'viem': [
+            'viem',
+          ],
+          'wagmi': [
+            'wagmi',
+          ],
           // Web3 相关
           'web3-core': [
-            'wagmi',
-            'viem',
-            'ethers',
             '@web3-react/core',
             '@web3-react/types',
           ],

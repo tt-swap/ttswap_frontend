@@ -94,7 +94,7 @@ export default function TokenInvest({ defaultTab, token, selectToken, openTokenS
     useEffect(() => {
         if (goodId.invest.id !== "" && goodId.invest.id !== undefined) {
             setToken("from", token?.tokens[0]);
-            setIsValueGood(token?.tokens[0].isvaluegood);
+            setIsValueGood(token?.tokens[0]?.isvaluegood);
         } else {
             setToken("from", token?.tokenValue[0]);
             setIsValueGood(token?.tokenValue[0].isvaluegood);

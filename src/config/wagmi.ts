@@ -60,7 +60,7 @@ import {
   zealWallet,
   zerionWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { publicActions } from 'viem';
+import { publicActions,createPublicClient } from 'viem';
 import {
   arbitrum,
   arbitrumSepolia,
@@ -95,7 +95,7 @@ import {
   zora,
   zoraSepolia,
 } from 'wagmi/chains';
-import { http, createConfig } from 'wagmi';
+import { http, createConfig,fallback } from 'wagmi';
 import mantle_Logo from "@/assets/images/mantle_Logo.png";
 import hoodi_Logo from "@/assets/images/ethereum_Logo.png";
 import ethereum_Logo from "@/assets/images/ethereum_Logo1.png";
@@ -177,7 +177,9 @@ const hoodiTestnet = {
   },
   rpcUrls: {
     default: {
-      http: ['https://rpc.hoodi.ethpandaops.io',
+      http: [
+        'https://ttswap.io/hoodi',
+        'https://rpc.hoodi.ethpandaops.io',
         'https://hoodi.drpc.org']
     },
   },
@@ -235,6 +237,26 @@ const ethereum = {
   },
 } as const satisfies Chain;
 
+const ethereum01 = {
+  id: 1,
+  name: 'Ethereum',
+  iconUrl: ethereum_Logo,
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: [
+        'https://eth-mainnet.nodereal.io/v1/86983b52236c42449dfe843874949407',
+      ],
+    },
+  },
+} as const satisfies Chain;
+
+// Create a separate public client for read operations
+
+export const readPublicClient = createPublicClient({
+  chain: ethereum01,
+  transport: http()
+}).extend(publicActions);
 
 // Enable Smart Wallet and EOA
 // Testing `preference` type
@@ -343,6 +365,7 @@ export const config = getDefaultConfig({
   ],
   transports: {
     [ethereum.id]: http(),
+    // [ethereum.id]: http(),
     // [sepolia.id]: http(),
     [hoodiTestnet.id]: http(),
     // [mantleSepoliaTestnet.id]: http(),

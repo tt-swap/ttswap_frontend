@@ -16,6 +16,7 @@ import { useEthersSigner, useEthersProvider } from '@/config/wagmiEthersV6';
 
 import { useAccount, useReadContracts, useWalletClient } from 'wagmi';
 import { erc20Abi } from "viem";
+import { readPublicClient } from '@/config/wagmi';
 import { getChainName, getAddChainParameters } from '@/data/networks';
 import { iconUrl } from '@/services/graphql/util';
 
@@ -459,7 +460,8 @@ const useWallet = () => {
                 abi: erc20 as any,
                 functionName: 'decimals'
             }
-        ]
+        ],
+        client: readPublicClient
     } as any);
 
     const { data: sawpToTokenData } = useReadContracts({
@@ -487,7 +489,8 @@ const useWallet = () => {
                 abi: erc20 as any,
                 functionName: 'decimals'
             }
-        ]
+        ],
+        client: readPublicClient
     } as any);
 
     const { data: investFromTokenData } = useReadContracts({
@@ -515,7 +518,8 @@ const useWallet = () => {
                 abi: erc20 as any,
                 functionName: 'decimals'
             }
-        ]
+        ],
+        client: readPublicClient
     } as any);
 
     const { data: investToTokenData } = useReadContracts({
@@ -543,7 +547,8 @@ const useWallet = () => {
                 abi: erc20 as any,
                 functionName: 'decimals'
             }
-        ]
+        ],
+        client: readPublicClient
     } as any);
 
     useEffect(() => {
