@@ -435,197 +435,255 @@ const useWallet = () => {
     // 在组件顶层使用 useReadContracts
 
 
-    const { data: sawpFromTokenData } = useReadContracts({
-        contracts: swaps?.from?.address === ConAddress3 ? [
-            {
-                address: SWETH as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'balanceOf',
-                args: [address as `0x${string}`],
-            },
-            {
-                address: SWETH as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'decimals'
-            }
-        ] : [
-            {
-                address: swaps.from.address as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'balanceOf',
-                args: [address as `0x${string}`],
-            },
-            {
-                address: swaps.from.address as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'decimals'
-            }
-        ],
-        client: readPublicClient
-    } as any);
+    // const { data: sawpFromTokenData } = useReadContracts({
+    //     contracts: swaps?.from?.address === ConAddress3 ? [
+    //         {
+    //             address: SWETH as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'balanceOf',
+    //             args: [address as `0x${string}`],
+    //         },
+    //         {
+    //             address: SWETH as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'decimals'
+    //         }
+    //     ] : [
+    //         {
+    //             address: swaps.from.address as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'balanceOf',
+    //             args: [address as `0x${string}`],
+    //         },
+    //         {
+    //             address: swaps.from.address as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'decimals'
+    //         }
+    //     ],
+    //     // client: readPublicClient
+    // } as any);
 
-    const { data: sawpToTokenData } = useReadContracts({
-        contracts: swaps?.to?.address === ConAddress3 ? [
-            {
-                address: SWETH as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'balanceOf',
-                args: [address as `0x${string}`],
-            },
-            {
-                address: SWETH as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'decimals'
-            }
-        ] : [
-            {
-                address: swaps.to.address as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'balanceOf',
-                args: [address as `0x${string}`],
-            },
-            {
-                address: swaps.to.address as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'decimals'
-            }
-        ],
-        client: readPublicClient
-    } as any);
+    // const { data: sawpToTokenData } = useReadContracts({
+    //     contracts: swaps?.to?.address === ConAddress3 ? [
+    //         {
+    //             address: SWETH as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'balanceOf',
+    //             args: [address as `0x${string}`],
+    //         },
+    //         {
+    //             address: SWETH as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'decimals'
+    //         }
+    //     ] : [
+    //         {
+    //             address: swaps.to.address as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'balanceOf',
+    //             args: [address as `0x${string}`],
+    //         },
+    //         {
+    //             address: swaps.to.address as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'decimals'
+    //         }
+    //     ],
+    //     // client: readPublicClient
+    // } as any);
 
-    const { data: investFromTokenData } = useReadContracts({
-        contracts: invest?.from?.address === ConAddress3 ? [
-            {
-                address: SWETH as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'balanceOf',
-                args: [address as `0x${string}`],
-            },
-            {
-                address: SWETH as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'decimals'
-            }
-        ] : [
-            {
-                address: invest.from.address as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'balanceOf',
-                args: [address as `0x${string}`],
-            },
-            {
-                address: invest.from.address as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'decimals'
-            }
-        ],
-        client: readPublicClient
-    } as any);
+    // const { data: investFromTokenData } = useReadContracts({
+    //     contracts: invest?.from?.address === ConAddress3 ? [
+    //         {
+    //             address: SWETH as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'balanceOf',
+    //             args: [address as `0x${string}`],
+    //         },
+    //         {
+    //             address: SWETH as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'decimals'
+    //         }
+    //     ] : [
+    //         {
+    //             address: invest.from.address as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'balanceOf',
+    //             args: [address as `0x${string}`],
+    //         },
+    //         {
+    //             address: invest.from.address as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'decimals'
+    //         }
+    //     ],
+    //     // client: readPublicClient
+    // } as any);
 
-    const { data: investToTokenData } = useReadContracts({
-        contracts: invest?.to?.address === ConAddress3 ? [
-            {
-                address: SWETH as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'balanceOf',
-                args: [address as `0x${string}`],
-            },
-            {
-                address: SWETH as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'decimals'
+    // const { data: investToTokenData } = useReadContracts({
+    //     contracts: invest?.to?.address === ConAddress3 ? [
+    //         {
+    //             address: SWETH as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'balanceOf',
+    //             args: [address as `0x${string}`],
+    //         },
+    //         {
+    //             address: SWETH as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'decimals'
+    //         }
+    //     ] : [
+    //         {
+    //             address: invest.to.address as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'balanceOf',
+    //             args: [address as `0x${string}`],
+    //         },
+    //         {
+    //             address: invest.to.address as `0x${string}`,
+    //             abi: erc20 as any,
+    //             functionName: 'decimals'
+    //         }
+    //     ],
+    //     // client: readPublicClient
+    // } as any);
+
+    const tokensBalance = async (token: string) => {
+
+        const tokenData = {
+            balance: "0",
+            decimals: "0"
+        };
+        let balance = "0";
+        if (isConnected) {
+            if (token === ConAddress3) {
+                token = SWETH;
             }
-        ] : [
-            {
-                address: invest.to.address as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'balanceOf',
-                args: [address as `0x${string}`],
-            },
-            {
-                address: invest.to.address as `0x${string}`,
-                abi: erc20 as any,
-                functionName: 'decimals'
-            }
-        ],
-        client: readPublicClient
-    } as any);
+            const contract = new ethers.Contract(token, erc20, provider);
+            let decimals = await contract.decimals();
+            balance = await contract.balanceOf(address);
+            tokenData.balance = ethers.formatUnits(balance, decimals);
+            tokenData.decimals = decimals;
+        }
+        console.log("token====", tokenData)
+        return tokenData;
+    };
 
     useEffect(() => {
-        // console.log(simulateData, "-----------", MarketManagerContract, ssionChian)
-        let from: any = 0;
-        let to: any = 0;
+        let cancelled = false; // 防止在组件卸载后设置状态
+
         (async () => {
             if (isConnected) {
                 const SWETHc = new ethers.Contract(SWETH, erc20, provider);
                 let fromAddress = swaps?.from?.address;
                 let toAddress = swaps?.to?.address;
-                if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
-                    // @ts-ignore
-                    const senderBalanceBefore = await provider.getBalance(address); //账户1余额
-                    console.log(fromAddress, "ConAddress", senderBalanceBefore)
-                    from = ethers.formatEther(senderBalanceBefore);
-                }
-                else {
-                    const fromBalance = balanceSel(fromAddress);
-                    if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
-                        from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
+                let from: any = 0;
+                let to: any = 0;
+
+                try {
+                    if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
+                        // @ts-ignore
+                        const senderBalanceBefore = await provider.getBalance(address); //账户1余额
+                        console.log(fromAddress, "ConAddress", senderBalanceBefore);
+                        from = ethers.formatEther(senderBalanceBefore);
+                    } else {
+                        const fromBalance = await balanceSel(fromAddress);
+                        if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
+                            from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
+                        }
+                    }
+
+                    if (toAddress === ConAddress1 || toAddress === ConAddress2) {
+                        // @ts-ignore
+                        const senderBalanceBefore = await provider.getBalance(address); //账户1余额
+                        console.log(toAddress, "ConAddress", senderBalanceBefore);
+                        to = ethers.formatEther(senderBalanceBefore);
+                    } else {
+                        const toBalance = await balanceSel(toAddress);
+                        if (toBalance.amount !== undefined && toBalance.amount !== null) {
+                            to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
+                        }
+                    }
+
+                    if (!cancelled) {
+                        setbalanceMap({ from, to });
+                    }
+                } catch (error) {
+                    console.error("Error fetching swap balances:", error);
+                    if (!cancelled) {
+                        setbalanceMap({ from: 0, to: 0 });
                     }
                 }
-                if (toAddress === ConAddress1 || toAddress === ConAddress2) {
-                    // (async () => {
-                    // @ts-ignore
-                    const senderBalanceBefore = await provider.getBalance(address); //账户1余额
-                    console.log(toAddress, "ConAddress", senderBalanceBefore)
-                    to = ethers.formatEther(senderBalanceBefore);
-                }
-                else {
-                    const toBalance = balanceSel(toAddress);
-                    if (toBalance.amount !== undefined && toBalance.amount !== null) {
-                        to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
-                    }
+            } else {
+                if (!cancelled) {
+                    setbalanceMap({ from: 0, to: 0 });
                 }
             }
-            setbalanceMap({ from: from, to: to });
         })();
-    }, [isConnected, swaps, sawpFromTokenData, sawpToTokenData, address]);
+
+        return () => {
+            cancelled = true;
+        };
+    }, [isConnected, swaps, address, ssionChian]); // 添加ssionChian到依赖数组
 
     useEffect(() => {
-        let from: any = 0;
-        let to: any = 0;
+        let cancelled = false; // 防止在组件卸载后设置状态
 
         (async () => {
             if (isConnected) {
                 let fromAddress = invest?.from?.address;
                 let toAddress = invest?.to?.address;
-                if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
-                    // @ts-ignore
-                    const senderBalanceBefore = await provider.getBalance(address); //账户1余额
-                    console.log(fromAddress, "ConAddress", senderBalanceBefore)
-                    from = ethers.formatEther(senderBalanceBefore);
-                } else {
-                    const fromBalance = balanceSelI(fromAddress);
-                    if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
-                        from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
+                let from: any = 0;
+                let to: any = 0;
+
+                try {
+                    if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
+                        // @ts-ignore
+                        const senderBalanceBefore = await provider.getBalance(address); //账户1余额
+                        console.log(fromAddress, "ConAddress", senderBalanceBefore);
+                        from = ethers.formatEther(senderBalanceBefore);
+                    } else {
+                        const fromBalance = await balanceSelI(fromAddress);
+                        if (fromBalance.amount !== undefined && fromBalance.amount !== null) {
+                            from = ethers.formatUnits(fromBalance.amount, fromBalance.decimals);
+                        }
+                    }
+
+                    if (toAddress === ConAddress1 || toAddress === ConAddress2) {
+                        // @ts-ignore
+                        const senderBalanceBefore = await provider.getBalance(address); //账户1余额
+                        console.log(toAddress, "ConAddress", senderBalanceBefore);
+                        to = ethers.formatEther(senderBalanceBefore);
+                    } else {
+                        const toBalance = await balanceSelI(toAddress);
+                        if (toBalance.amount !== undefined && toBalance.amount !== null) {
+                            to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
+                        }
+                    }
+
+                    if (!cancelled) {
+                        setbalanceMap1({ from, to });
+                    }
+                } catch (error) {
+                    console.error("Error fetching invest balances:", error);
+                    if (!cancelled) {
+                        setbalanceMap1({ from: 0, to: 0 });
                     }
                 }
-                if (toAddress === ConAddress1 || toAddress === ConAddress2) {
-                    // (async () => {
-                    // @ts-ignore
-                    const senderBalanceBefore = await provider.getBalance(address); //账户1余额
-                    console.log(toAddress, "ConAddress", senderBalanceBefore)
-                    to = ethers.formatEther(senderBalanceBefore);
-                } else {
-                    const toBalance = balanceSelI(toAddress);
-                    if (toBalance.amount !== undefined && toBalance.amount !== null) {
-                        to = ethers.formatUnits(toBalance.amount, toBalance.decimals);
-                    }
+            } else {
+                if (!cancelled) {
+                    setbalanceMap1({ from: 0, to: 0 });
                 }
-                setbalanceMap1({ from: from, to: to });
             }
         })();
-        // console.log("investFromTokenData---------", investFromTokenData)
-    }, [investFromTokenData, investToTokenData, invest, isConnected, address]);
+
+        return () => {
+            cancelled = true;
+        };
+    }, [isConnected, invest, address, ssionChian]);
 
     // 使用 useSimulateContract 预估 gas
     // 添加一个状态来跟踪是否可以进行模拟
@@ -715,42 +773,61 @@ const useWallet = () => {
     // }, [gasEstimate]);
 
 
-    const balanceSel = useCallback((ConAddress: string): BalanceResult => {
-        console.log("===balanceSel----", ConAddress)
-        if (!ConAddress || !isConnected) { console.log("===11balanceSel----", ConAddress); return { amount: 0, decimals: 18 }; }
-        if (ConAddress === swaps?.from?.address) {
-            console.log("===1221balanceSel----", sawpFromTokenData?.[0]?.error);
-            return {
-                amount: sawpFromTokenData?.[0]?.result,
-                decimals: sawpFromTokenData?.[1]?.result
-            };
-        } else if (ConAddress === swaps?.to?.address) {
-            return {
-                amount: sawpToTokenData?.[0]?.result,
-                decimals: sawpToTokenData?.[1]?.result
-            };
-        }
-        return { amount: 0, decimals: 18 };
-    }, [sawpFromTokenData, sawpToTokenData, swaps, isConnected, address]);
-
-
-    const balanceSelI = useCallback((ConAddress: string): BalanceResult => {
-        if (!ConAddress || !isConnected) return { amount: 0, decimals: 18 };
-
-        if (ConAddress === invest?.from?.address) {
-            return {
-                amount: investFromTokenData?.[0]?.result,
-                decimals: investFromTokenData?.[1]?.result
-            };
-        } else if (ConAddress === invest?.to?.address) {
-            return {
-                amount: investToTokenData?.[0]?.result,
-                decimals: investToTokenData?.[1]?.result
-            };
+    const balanceSel = useCallback(async (ConAddress: string): Promise<BalanceResult> => {
+        console.log("===balanceSel----", ConAddress);
+        if (!ConAddress || !isConnected) {
+            console.log("===11balanceSel----", ConAddress);
+            return { amount: 0, decimals: 18 };
         }
 
-        return { amount: 0, decimals: 18 };
-    }, [investFromTokenData, investToTokenData, invest, isConnected, address]);
+        try {
+            const { balance, decimals } = await tokensBalance(ConAddress);
+
+            if (ConAddress === swaps?.from?.address) {
+                // console.log("===1221balanceSel----", sawpFromTokenData?.[0]?.error);
+                return {
+                    amount: ethers.parseUnits(balance, decimals),
+                    decimals: decimals
+                };
+            } else if (ConAddress === swaps?.to?.address) {
+                return {
+                    amount: ethers.parseUnits(balance, decimals),
+                    decimals: decimals
+                };
+            }
+            return { amount: 0, decimals: 18 };
+        } catch (error) {
+            console.error("Error in balanceSel:", error);
+            return { amount: 0, decimals: 18 };
+        }
+    }, [swaps, isConnected, address]);
+
+    const balanceSelI = useCallback(async (ConAddress: string): Promise<BalanceResult> => {
+        if (!ConAddress || !isConnected) {
+            return { amount: 0, decimals: 18 };
+        }
+
+        try {
+            const { balance, decimals } = await tokensBalance(ConAddress);
+
+            if (ConAddress === invest?.from?.address) {
+                return {
+                    amount: ethers.parseUnits(balance, decimals),
+                    decimals: decimals
+                };
+            } else if (ConAddress === invest?.to?.address) {
+                return {
+                    amount: ethers.parseUnits(balance, decimals),
+                    decimals: decimals
+                };
+            }
+
+            return { amount: 0, decimals: 18 };
+        } catch (error) {
+            console.error("Error in balanceSelI:", error);
+            return { amount: 0, decimals: 18 };
+        }
+    }, [invest, isConnected, address]);
 
 
 

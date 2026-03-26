@@ -4,7 +4,7 @@ import { I18nextProvider } from 'react-i18next'
 import i18n from './i18n'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider } from 'wagmi';
-import { config } from '@/config/wagmi';
+import { config,readPublicClient } from '@/config/wagmi';
 import App from "./App.tsx";
 import LocalStorageManager from "@/utils/LocalStorageManager";
 import { useState } from 'react';

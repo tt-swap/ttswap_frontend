@@ -60,12 +60,12 @@ export function timestampdToDateYear(year: number): number {
 // 物品图标地址
 export function iconUrl(chainName: string | undefined, address: string) {
 
-    return `https://raw.githubusercontent.com/ttswap/assets/master/blockchains/${chainName}/assets/${ethers.getAddress(address)}/logo.png`;
+    return `https://ttswap.io/github/ttswap/assets/master/blockchains/${chainName}/assets/${ethers.getAddress(address)}/logo.png`;
 }
 // 物品info.json地址
 export function infoUrl(chainName: string | undefined, address: string) {
 
-    return `https://raw.githubusercontent.com/ttswap/assets/master/blockchains/${chainName}/assets/${ethers.getAddress(address)}/info.json`;
+    return `https://ttswap.io/github/ttswap/assets/master/blockchains/${chainName}/assets/${ethers.getAddress(address)}/info.json`;
 }
 
 // 数字处理
