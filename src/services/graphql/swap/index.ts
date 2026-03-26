@@ -22,81 +22,86 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string;
         tokens: []
     };
     if (params.id !== "") {
+        try {
 
-        const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel, gid: params.gid, par: params.par }, ssionChian);
+            const goodsDatas = await parGoodDatas({ id: params.id, sel: params.sel, gid: params.gid, par: params.par }, ssionChian);
 
-        let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
-        let tokendecimals = powerIterative(10, 6);
-        let jz = goodValue;
-
-
-        let items: object[] = [];
-        let items1: object[] = [];
-
-        // @ts-ignore
-        item.tokenValue = items;
-        // @ts-ignore
-        item.tokens = items1;
-
-        const m211 = new BigNumber(2).pow(211);
-        const m204 = new BigNumber(2).pow(204);
-        const m197 = new BigNumber(2).pow(197);
-        const m217 = new BigNumber(2).pow(217);
-        const m223 = new BigNumber(2).pow(223);
-
-        goodsDatas.data.goodStates.forEach((e: any) => {
-            let base_decimals = powerIterative(10, e.tokendecimals);
-            let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
-
-            let map = {
-                id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0, currentValue: 0,
-                buyFee: 0, sellFee: 0, price: 0, logo_url: "", address: "",isvaluegood: false,investFee:0,
-            };
-            const goodConfig = new BigNumber(e.goodConfig);
-            map.id = e.id;
-            map.name = e.tokenname;
-            map.decimals = e.tokendecimals;
-            map.symbol = e.tokensymbol;
-            map.isvaluegood = e.isvaluegood;
-            map.currentQuantity = e.currentQuantity;
-            map.currentValue = e.currentValue;
-            map.logo_url = iconUrl(chainName, e.erc20Address);
-            map.address = e.erc20Address;
-            map.price = current_price;
-            map.buyFee = goodConfig.mod(m211).div(m204).integerValue(1).div(10000).toNumber(); //Math.floor(e.goodConfig % (2 ** 211) / (2 ** 204)) / 10000;
-            map.sellFee = goodConfig.mod(m204).div(m197).integerValue(1).div(10000).toNumber(); //Math.floor(e.goodConfig % (2 ** 204) / (2 ** 197)) / 10000;
-            map.investFee = goodConfig.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
-            items.push(map);
-
-            // console.log(goodConfig.mod(m211).div(m204).integerValue(1).div(10000).toString(),555555555,BigNumber(12.89).integerValue(1).toNumber())
-        });
-
-        goodsDatas.data.parGoodStates.forEach((en: any) => {
-            let map1 = {
-                id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0, currentValue: 0,
-                buyFee: 0, sellFee: 0, price: 0, logo_url: "", address: "",isvaluegood: false,investFee:0,
-            };
-            const goodConfig1 = new BigNumber(en.goodConfig);
-            let base_decimals = powerIterative(10, en.tokendecimals);
-            let current_price = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
+            let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
+            let tokendecimals = powerIterative(10, 6);
+            let jz = goodValue;
 
 
-            map1.id = en.id;
-            map1.name = en.tokenname;
-            map1.decimals = en.tokendecimals;
-            map1.symbol = en.tokensymbol;
-            map1.isvaluegood = en.isvaluegood;
-            map1.currentQuantity = en.currentQuantity;
-            map1.currentValue = en.currentValue;
-            map1.logo_url = iconUrl(chainName, en.erc20Address);
-            map1.address = en.erc20Address;
-            map1.price = current_price;
-            map1.buyFee = goodConfig1.mod(m211).div(m204).integerValue(1).div(10000).toNumber(); // Math.floor(en.goodConfig % (2 ** 211) / (2 ** 204)) / 10000;
+            let items: object[] = [];
+            let items1: object[] = [];
+
             // @ts-ignore
-            map1.sellFee = goodConfig1.mod(m204).div(m197).integerValue(1).div(10000).toNumber(); //Math.floor(en.goodConfig % (2 ** 204) / (2 ** 197)) / 10000;
-            map1.investFee = goodConfig1.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
-            items1.push(map1);
-        });
+            item.tokenValue = items;
+            // @ts-ignore
+            item.tokens = items1;
+
+            const m211 = new BigNumber(2).pow(211);
+            const m204 = new BigNumber(2).pow(204);
+            const m197 = new BigNumber(2).pow(197);
+            const m217 = new BigNumber(2).pow(217);
+            const m223 = new BigNumber(2).pow(223);
+
+            goodsDatas.data.goodStates.forEach((e: any) => {
+                let base_decimals = powerIterative(10, e.tokendecimals);
+                let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
+
+                let map = {
+                    id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0, currentValue: 0,
+                    buyFee: 0, sellFee: 0, price: 0, logo_url: "", address: "", isvaluegood: false, investFee: 0,
+                };
+                const goodConfig = new BigNumber(e.goodConfig);
+                map.id = e.id;
+                map.name = e.tokenname;
+                map.decimals = e.tokendecimals;
+                map.symbol = e.tokensymbol;
+                map.isvaluegood = e.isvaluegood;
+                map.currentQuantity = e.currentQuantity;
+                map.currentValue = e.currentValue;
+                map.logo_url = iconUrl(chainName, e.erc20Address);
+                map.address = e.erc20Address;
+                map.price = current_price;
+                map.buyFee = goodConfig.mod(m211).div(m204).integerValue(1).div(10000).toNumber(); //Math.floor(e.goodConfig % (2 ** 211) / (2 ** 204)) / 10000;
+                map.sellFee = goodConfig.mod(m204).div(m197).integerValue(1).div(10000).toNumber(); //Math.floor(e.goodConfig % (2 ** 204) / (2 ** 197)) / 10000;
+                map.investFee = goodConfig.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
+                items.push(map);
+
+                // console.log(goodConfig.mod(m211).div(m204).integerValue(1).div(10000).toString(),555555555,BigNumber(12.89).integerValue(1).toNumber())
+            });
+
+            goodsDatas.data.parGoodStates.forEach((en: any) => {
+                let map1 = {
+                    id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0, currentValue: 0,
+                    buyFee: 0, sellFee: 0, price: 0, logo_url: "", address: "", isvaluegood: false, investFee: 0,
+                };
+                const goodConfig1 = new BigNumber(en.goodConfig);
+                let base_decimals = powerIterative(10, en.tokendecimals);
+                let current_price = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
+
+
+                map1.id = en.id;
+                map1.name = en.tokenname;
+                map1.decimals = en.tokendecimals;
+                map1.symbol = en.tokensymbol;
+                map1.isvaluegood = en.isvaluegood;
+                map1.currentQuantity = en.currentQuantity;
+                map1.currentValue = en.currentValue;
+                map1.logo_url = iconUrl(chainName, en.erc20Address);
+                map1.address = en.erc20Address;
+                map1.price = current_price;
+                map1.buyFee = goodConfig1.mod(m211).div(m204).integerValue(1).div(10000).toNumber(); // Math.floor(en.goodConfig % (2 ** 211) / (2 ** 204)) / 10000;
+                // @ts-ignore
+                map1.sellFee = goodConfig1.mod(m204).div(m197).integerValue(1).div(10000).toNumber(); //Math.floor(en.goodConfig % (2 ** 204) / (2 ** 197)) / 10000;
+                map1.investFee = goodConfig1.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
+                items1.push(map1);
+            });
+        } catch (error) {
+
+        }
+
     }
 
     // console.log(item,"***&&")
@@ -108,7 +113,7 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string;
 export async function newGoodsPrice(params: { id: string; from: string; to: string }, ssionChian: number): Promise<object> {
 
     let item = {
-        fromPrice: 0, toPrice: 0, fromValue: 0, toValue: 0, fromQuan: 0, toQuan: 0, swapChips: 0,valueV: 0,valueQ: 0,valueD:0
+        fromPrice: 0, toPrice: 0, fromValue: 0, toValue: 0, fromQuan: 0, toQuan: 0, swapChips: 0, valueV: 0, valueQ: 0, valueD: 0
     };
     if (params.id !== "") {
 

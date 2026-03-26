@@ -99,6 +99,22 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
     let item = { items: {}, error: false, error_message: "" };
 
     if (id !== "") {
+        let items: object[] = [];
+        item.items = items;
+
+        const data = {
+            id: "", name: "", decimals: 0, symbol: "", logo_url: "", vlogo_url: "", exp_url: "", address: "", valueSymbol: "",
+            price: 0, NAVPS: 0, APY: 0, price_24h: 0, tokenInfo: "0",
+            currentQuantity: 0, currentValue: 0, investQuantity: 0, investValue: 0, currentFee: 0, currentFeeValue: 0,
+            tradeQuantity24: 0, tradeValue24: 0, fee24: 0, feeValue24: 0, investQuantity24: 0, investValue24: 0,
+            totalInvestQuantity: 0, totalInvestValue: 0, totalTradeQuantity: 0, totalTradeValue: 0, totalDisinvestQuantity: 0, totalDisinvestValue: 0,
+            totalTradeCount: 0, totalInvestCount: 0, owner: "", isvaluegood: false,
+            buyFee: 0, sellFee: 0, investFee: 0, divestFee: 0, swapChips: 0, divestChips: 0,
+            investor: 0, operator: 0, portal: 0, referrer: 0, user: 0, protocol: 0, maxLiquidity: 0,
+            // chart_data: { volume_chart_7d: {}, volume_chart_30d: {}, quote_currency: "" }
+        };
+        try {
+
         // console.log(params,99999)
         const goodsDatas = await goodDataView({ id: id, time: timestampdToDateYear(1), time24: timestampdToDateSub(0), address: address.toLowerCase(), eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) }, ssionChian);
 
@@ -106,145 +122,135 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
         let tokendecimals = powerIterative(10, 6);
         let jz = goodValue;
 
-        let items: object[] = [];
-        item.items = items;
+            goodsDatas.data.goodStates.forEach((e: any) => {
+                let base_decimals = powerIterative(10, e.tokendecimals);
+                let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
 
-        goodsDatas.data.goodStates.forEach((e: any) => {
-            let base_decimals = powerIterative(10, e.tokendecimals);
-            let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
+                let map = data;
 
-            let map = {
-                id: "", name: "", decimals: 0, symbol: "", logo_url: "", vlogo_url: "", exp_url: "", address: "", valueSymbol: "",
-                price: 0, NAVPS: 0, APY: 0, price_24h: 0, tokenInfo: "",
-                currentQuantity: 0, currentValue: 0, investQuantity: 0, investValue: 0, currentFee: 0, currentFeeValue: 0,
-                tradeQuantity24: 0, tradeValue24: 0, fee24: 0, feeValue24: 0, investQuantity24: 0, investValue24: 0,
-                totalInvestQuantity: 0, totalInvestValue: 0, totalTradeQuantity: 0, totalTradeValue: 0, totalDisinvestQuantity: 0, totalDisinvestValue: 0,
-                totalTradeCount: 0, totalInvestCount: 0, owner: "", isvaluegood: false,
-                buyFee: 0, sellFee: 0, investFee: 0, divestFee: 0, swapChips: 0, divestChips: 0,
-                investor: 0, operator: 0, portal: 0, referrer: 0, user: 0, protocol: 0, maxLiquidity: 0,
-                // chart_data: { volume_chart_7d: {}, volume_chart_30d: {}, quote_currency: "" }
-            };
+                // let volume_chart_7d: object[] = [];
+                // let volume_chart_30d: object[] = [];
 
-            // let volume_chart_7d: object[] = [];
-            // let volume_chart_30d: object[] = [];
+                // map.chart_data.volume_chart_7d = volume_chart_7d;
+                // map.chart_data.volume_chart_30d = volume_chart_30d;
 
-            // map.chart_data.volume_chart_7d = volume_chart_7d;
-            // map.chart_data.volume_chart_30d = volume_chart_30d;
+                // map.chart_data.quote_currency = e.tokensymbol;
+                // e.days7.forEach((e: any) => {
+                //     let map1 = { dt: 0, quote_currency: "", pretty_volume_quote: 0, volume_quote: 0 };
+                //     // let jz1 = e.currentValue * e.currentQuantity / tokendecimals;
+                //     map1.dt = e.modifiedTime * 1000;
+                //     map1.volume_quote = e.currentQuantity / base_decimals;
+                //     map1.pretty_volume_quote = map1.volume_quote * current_price;
+                //     // map1.quote_currency = map.symbol;
+                //     volume_chart_7d.push(map1);
+                // });
+                // e.days30.forEach((e: any) => {
+                //     let map1 = { dt: 0, quote_currency: "", pretty_volume_quote: 0, volume_quote: 0 };
+                //     map1.dt = e.modifiedTime * 1000;
+                //     map1.volume_quote = e.currentQuantity / base_decimals;
+                //     map1.pretty_volume_quote = map1.volume_quote * current_price;
+                //     // map1.quote_currency = map.symbol;
+                //     volume_chart_30d.push(map1);
+                // });
 
-            // map.chart_data.quote_currency = e.tokensymbol;
-            // e.days7.forEach((e: any) => {
-            //     let map1 = { dt: 0, quote_currency: "", pretty_volume_quote: 0, volume_quote: 0 };
-            //     // let jz1 = e.currentValue * e.currentQuantity / tokendecimals;
-            //     map1.dt = e.modifiedTime * 1000;
-            //     map1.volume_quote = e.currentQuantity / base_decimals;
-            //     map1.pretty_volume_quote = map1.volume_quote * current_price;
-            //     // map1.quote_currency = map.symbol;
-            //     volume_chart_7d.push(map1);
-            // });
-            // e.days30.forEach((e: any) => {
-            //     let map1 = { dt: 0, quote_currency: "", pretty_volume_quote: 0, volume_quote: 0 };
-            //     map1.dt = e.modifiedTime * 1000;
-            //     map1.volume_quote = e.currentQuantity / base_decimals;
-            //     map1.pretty_volume_quote = map1.volume_quote * current_price;
-            //     // map1.quote_currency = map.symbol;
-            //     volume_chart_30d.push(map1);
-            // });
+                map.id = e.id;
+                map.name = e.tokenname;
+                map.symbol = e.tokensymbol;
+                if (e.erc20Address === address3) {
+                    map.address = SWETH;
+                } else {
+                    map.address = e.erc20Address;
+                }
+                map.isvaluegood = e.isvaluegood;
+                // map.address = e.erc20Address;
+                map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
+                map.logo_url = iconUrl(chainName, e.erc20Address);
+                map.tokenInfo = infoUrl(chainName, e.erc20Address);
+                map.vlogo_url = iconUrl(chainName, goodsDatas.data.goodState.id);
+                // @ts-ignore
+                map.exp_url = blockExplorerUrls[0] + "/address/" + map.address;
+                map.decimals = e.tokendecimals;
+                map.price = current_price;
+                map.investQuantity = e.investQuantity / base_decimals;
+                map.investValue = map.investQuantity * current_price;
+                map.currentQuantity = e.currentQuantity / base_decimals;
+                map.currentValue = map.currentQuantity * current_price;
+                map.currentFee = e.feeQuantity / base_decimals;
+                map.currentFeeValue = map.currentFee * current_price;
+                map.NAVPS = e.investQuantity / e.investShares;
+                map.totalInvestQuantity = e.totalInvestQuantity / base_decimals;
+                map.totalInvestValue = map.totalInvestQuantity * current_price;
+                map.totalTradeQuantity = e.totalTradeQuantity / base_decimals;
+                map.totalTradeValue = map.totalTradeQuantity * current_price;
+                map.totalDisinvestQuantity = e.totalDisinvestQuantity / base_decimals;
+                map.totalDisinvestValue = map.totalDisinvestQuantity * current_price;
+                map.totalTradeCount = e.totalTradeCount;
+                map.totalInvestCount = e.totalInvestCount;
+                map.owner = e.owner;
 
-            map.id = e.id;
-            map.name = e.tokenname;
-            map.symbol = e.tokensymbol;
-            if (e.erc20Address === address3) {
-                map.address = SWETH;
-            } else {
-                map.address = e.erc20Address;
-            }
-            map.isvaluegood = e.isvaluegood;
-            // map.address = e.erc20Address;
-            map.valueSymbol = goodsDatas.data.goodState.tokensymbol;
-            map.logo_url = iconUrl(chainName, e.erc20Address);
-            map.tokenInfo = infoUrl(chainName, e.erc20Address);
-            map.vlogo_url = iconUrl(chainName, goodsDatas.data.goodState.id);
-            // @ts-ignore
-            map.exp_url = blockExplorerUrls[0] + "/address/" + map.address;
-            map.decimals = e.tokendecimals;
-            map.price = current_price;
-            map.investQuantity = e.investQuantity / base_decimals;
-            map.investValue = map.investQuantity * current_price;
-            map.currentQuantity = e.currentQuantity / base_decimals;
-            map.currentValue = map.currentQuantity * current_price;
-            map.currentFee = e.feeQuantity / base_decimals;
-            map.currentFeeValue = map.currentFee * current_price;
-            map.NAVPS = e.investQuantity / e.investShares;
-            map.totalInvestQuantity = e.totalInvestQuantity / base_decimals;
-            map.totalInvestValue = map.totalInvestQuantity * current_price;
-            map.totalTradeQuantity = e.totalTradeQuantity / base_decimals;
-            map.totalTradeValue = map.totalTradeQuantity * current_price;
-            map.totalDisinvestQuantity = e.totalDisinvestQuantity / base_decimals;
-            map.totalDisinvestValue = map.totalDisinvestQuantity * current_price;
-            map.totalTradeCount = e.totalTradeCount;
-            map.totalInvestCount = e.totalInvestCount;
-            map.owner = e.owner;
+                const m254 = new BigNumber(2).pow(254);
+                const m251 = new BigNumber(2).pow(251);
+                const m247 = new BigNumber(2).pow(247);
+                const m244 = new BigNumber(2).pow(244);
+                const m239 = new BigNumber(2).pow(239);
+                const m234 = new BigNumber(2).pow(234);
+                const m229 = new BigNumber(2).pow(229);
+                const m224 = new BigNumber(2).pow(224);
+                const m223 = new BigNumber(2).pow(223);
+                const m217 = new BigNumber(2).pow(217);
+                const m211 = new BigNumber(2).pow(211);
+                const m204 = new BigNumber(2).pow(204);
+                const m197 = new BigNumber(2).pow(197);
+                const m187 = new BigNumber(2).pow(187);
+                const m177 = new BigNumber(2).pow(177);
+                const goodConfig = new BigNumber(e.goodConfig);
+                map.investor = goodConfig.mod(m254).div(m251).integerValue(1).toNumber() * 10;
+                map.operator = goodConfig.mod(m251).div(m247).integerValue(1).toNumber() * 2;
+                map.portal = goodConfig.mod(m247).div(m244).integerValue(1).toNumber() * 4;
+                map.referrer = goodConfig.mod(m244).div(m239).integerValue(1).toNumber();
+                map.user = goodConfig.mod(m239).div(m234).integerValue(1).toNumber();
+                map.protocol = goodConfig.mod(m234).div(m229).integerValue(1).toNumber();
+                map.maxLiquidity = goodConfig.mod(m229).div(m224).integerValue(1).toNumber();
+                if (map.maxLiquidity === 0) {
+                    map.maxLiquidity = 1
+                }
+                map.investFee = goodConfig.mod(m223).div(m217).integerValue(1).div(100).toNumber();
+                map.divestFee = goodConfig.mod(m217).div(m211).integerValue(1).div(100).toNumber();
+                map.buyFee = goodConfig.mod(m211).div(m204).integerValue(1).div(100).toNumber();
+                map.sellFee = goodConfig.mod(m204).div(m197).integerValue(1).div(100).toNumber();
+                // map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
+                map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).toNumber();
+                map.divestChips = goodConfig.mod(m187).div(m177).integerValue(1).toNumber();
+                let uintF = (Number(e.feeQuantity) + Number(e.investQuantity)) / e.investQuantity;
+                if (e.goodData.length > 0) {
+                    let en = e.date24[0];
+                    let enY = e.goodData[0];
+                    let current_price_24h = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
+                    map.investQuantity24 = (e.investQuantity - en.investQuantity) / base_decimals;
+                    map.fee24 = (e.feeQuantity - en.feeQuantity) / base_decimals;
+                    map.investValue24 = map.investQuantity24 * current_price_24h;
+                    map.feeValue24 = map.fee24 * current_price_24h;
+                    map.tradeQuantity24 = (e.totalTradeQuantity - en.totalTradeQuantity) / base_decimals;
+                    map.tradeValue24 = map.tradeQuantity24 * current_price_24h;
+                    map.price_24h = (current_price - current_price_24h) / current_price_24h;
+                    let uintFY = (enY.feeQuantity + enY.investQuantity) / enY.investQuantity;
+                    map.APY = uintF / uintFY - 1;
+                    console.log(e.feeQuantity + e.investQuantity, uintF, uintFY, map.APY, "sdfsdfsd")
+                } else {
+                    map.investQuantity24 = map.investQuantity;
+                    map.fee24 = map.currentFee;
+                    map.investValue24 = map.investValue;
+                    map.feeValue24 = map.currentFeeValue;
+                    map.price_24h = 0;
+                    map.APY = 0;
+                }
 
-            const m254 = new BigNumber(2).pow(254);
-            const m251 = new BigNumber(2).pow(251);
-            const m247 = new BigNumber(2).pow(247);
-            const m244 = new BigNumber(2).pow(244);
-            const m239 = new BigNumber(2).pow(239);
-            const m234 = new BigNumber(2).pow(234);
-            const m229 = new BigNumber(2).pow(229);
-            const m224 = new BigNumber(2).pow(224);
-            const m223 = new BigNumber(2).pow(223);
-            const m217 = new BigNumber(2).pow(217);
-            const m211 = new BigNumber(2).pow(211);
-            const m204 = new BigNumber(2).pow(204);
-            const m197 = new BigNumber(2).pow(197);
-            const m187 = new BigNumber(2).pow(187);
-            const m177 = new BigNumber(2).pow(177);
-            const goodConfig = new BigNumber(e.goodConfig);
-            map.investor = goodConfig.mod(m254).div(m251).integerValue(1).toNumber() * 10;
-            map.operator = goodConfig.mod(m251).div(m247).integerValue(1).toNumber() * 2;
-            map.portal = goodConfig.mod(m247).div(m244).integerValue(1).toNumber() * 4;
-            map.referrer = goodConfig.mod(m244).div(m239).integerValue(1).toNumber();
-            map.user = goodConfig.mod(m239).div(m234).integerValue(1).toNumber();
-            map.protocol = goodConfig.mod(m234).div(m229).integerValue(1).toNumber();
-            map.maxLiquidity = goodConfig.mod(m229).div(m224).integerValue(1).toNumber();
-            if (map.maxLiquidity === 0) {
-                map.maxLiquidity = 1
-            }
-            map.investFee = goodConfig.mod(m223).div(m217).integerValue(1).div(100).toNumber();
-            map.divestFee = goodConfig.mod(m217).div(m211).integerValue(1).div(100).toNumber();
-            map.buyFee = goodConfig.mod(m211).div(m204).integerValue(1).div(100).toNumber();
-            map.sellFee = goodConfig.mod(m204).div(m197).integerValue(1).div(100).toNumber();
-            // map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
-            map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).toNumber();
-            map.divestChips = goodConfig.mod(m187).div(m177).integerValue(1).toNumber();
-            let uintF = (Number(e.feeQuantity) + Number(e.investQuantity)) / e.investQuantity;
-            if (e.goodData.length > 0) {
-                let en = e.date24[0];
-                let enY = e.goodData[0];
-                let current_price_24h = ((en.currentValue / tokendecimals) / (en.currentQuantity / base_decimals)) / jz;
-                map.investQuantity24 = (e.investQuantity - en.investQuantity) / base_decimals;
-                map.fee24 = (e.feeQuantity - en.feeQuantity) / base_decimals;
-                map.investValue24 = map.investQuantity24 * current_price_24h;
-                map.feeValue24 = map.fee24 * current_price_24h;
-                map.tradeQuantity24 = (e.totalTradeQuantity - en.totalTradeQuantity) / base_decimals;
-                map.tradeValue24 = map.tradeQuantity24 * current_price_24h;
-                map.price_24h = (current_price - current_price_24h) / current_price_24h;
-                let uintFY = (enY.feeQuantity + enY.investQuantity) / enY.investQuantity;
-                map.APY = uintF / uintFY - 1;
-                console.log(e.feeQuantity + e.investQuantity, uintF, uintFY, map.APY, "sdfsdfsd")
-            } else {
-                map.investQuantity24 = map.investQuantity;
-                map.fee24 = map.currentFee;
-                map.investValue24 = map.investValue;
-                map.feeValue24 = map.currentFeeValue;
-                map.price_24h = 0;
-                map.APY = 0;
-            }
-
-            items.push(map);
-            // console.log(items,8686868)
-        });
+                items.push(map);
+                // console.log(items,8686868)
+            });
+        } catch (error) {
+            items.push(data);
+        }
 
 
         // return item;
@@ -311,7 +317,7 @@ export async function GoodKLineData(params: { id: string; sel: string }, ssionCh
         const goodValue = goodState.currentValue / goodState.currentQuantity;
         const goodValue24 = goodState.goodData[0].currentValue / goodState.goodData[0].currentQuantity;
         const tokendecimals = powerIterative(10, 6);
-        const tokendecimals1 = powerIterative(10, goodsDatas.data.h24[0].decimals);
+        const tokendecimals1 = powerIterative(10, goodsDatas.data.h24[0]?.decimals);
 
         const m128 = new BigNumber(2).pow(128);
         const time = timestampParser(timestamp * 1000, "DD hh:mm");

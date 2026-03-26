@@ -142,7 +142,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
           );
         setTokenDataState(response.items[0]);
         console.log("XYKTokenDetailView ", response.items[0]);
-        const json = await (await fetch(response.items[0].tokenInfo)).json();
+        const json = await (await fetch(response.items[0]?.tokenInfo)).json();
         setJsonData(json);
         console.log("json", json);
         // if (response.error) {

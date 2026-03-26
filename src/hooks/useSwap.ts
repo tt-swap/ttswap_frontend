@@ -100,22 +100,22 @@ const useSwap = () => {
     const cionNum = (value: number, data: any, type: number) => {
         if (type === 0) {
             let fa = value * 10 ** swaps.from.decimals;
-            fa = fa - fa * swaps.from.buyFee;
+            fa = fa - fa * swaps.from.sellFee;
             const rv = 2 * Number(data.fromValue) * Number(data.toQuan) * fa;
             const rv1 = 2 * Number(data.toValue) * Number(data.fromQuan) + Number(data.toValue) * fa + Number(data.fromValue) * fa;
             const ta = rv / rv1;
-            let tnum = (ta - ta * swaps.to.sellFee) / 10 ** swaps.to.decimals;
+            let tnum = (ta - ta * swaps.to.buyFee) / 10 ** swaps.to.decimals;
             tnum = Math.floor(tnum * 1e6) / 1e6;
             // tnum = Number(tnum.toFixed(6));
             console.log(fa, rv, rv1, ta, tnum, swaps, 8980)
             return tnum;
         } else if (type === 1) {
             let ta = value * 10 ** swaps.to.decimals;
-            ta = ta + ta * swaps.to.sellFee;
+            ta = ta + ta * swaps.to.buyFee;
             const rv = 2 * ta * Number(data.fromQuan) * Number(data.toValue);
             const rv1 = 2 * Number(data.fromValue) * Number(data.toQuan) - Number(data.fromValue) * ta - ta * Number(data.toValue);
             const fa = rv / rv1;
-            let tnum = (fa + fa * swaps.from.buyFee) / 10 ** swaps.from.decimals;
+            let tnum = (fa + fa * swaps.from.sellFee) / 10 ** swaps.from.decimals;
             tnum = Math.ceil(tnum * 1e6) / 1e6;
             console.log(ta, rv, rv1, fa, tnum, 8981)
             return tnum;
