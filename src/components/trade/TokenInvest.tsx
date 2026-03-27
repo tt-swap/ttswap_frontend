@@ -97,7 +97,7 @@ export default function TokenInvest({ defaultTab, token, selectToken, openTokenS
             setIsValueGood(token?.tokens[0]?.isvaluegood);
         } else {
             setToken("from", token?.tokenValue[0]);
-            setIsValueGood(token?.tokenValue[0].isvaluegood);
+            setIsValueGood(token?.tokenValue[0]?.isvaluegood);
         }
     }, [token]);
 
