@@ -359,7 +359,7 @@ export function WithdrawDialog({
     let b = 0;
     let av = disgood.good1.currentValue / disgood.good1.currentQuantity * Number(goodQ) * 10 ** disgood.good1.decimals;
     a = (av * disgood.ttsp - av * disgood.ttsc) / 10 ** 12;
-    if (!disgood.isvaluegood) {
+    if (!disgood.isvaluegood && disgood.good2.address!=="") {
       let bv = disgood.good2.currentValue / disgood.good2.currentQuantity * Number(goodVQ) * 10 ** disgood.good2.decimals;
       b = (bv * disgood.ttsp - bv * disgood.ttsc) / 10 ** 12;
     }
@@ -476,7 +476,7 @@ export function WithdrawDialog({
                       </div>
 
                       {/* 第二个代币信息 */}
-                      {!disgood.isvaluegood && (
+                      {!disgood.isvaluegood && disgood.good2.address!=="" && (
                         <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
                           <div className="flex items-center gap-3">
                             <TokenIcon
@@ -524,7 +524,7 @@ export function WithdrawDialog({
                         variant="outline"
                         className="text-[#0fb981] border-[#0fb981]"
                       >
-                        {!disgood.isvaluegood
+                        {!disgood.isvaluegood && disgood.good2.address!==""
                           ? t("account.divest.invest.title2")
                           : t("account.divest.invest.title1")}
                       </Badge>
@@ -620,7 +620,7 @@ export function WithdrawDialog({
                   </div>
 
                   {/* 第二个代币撤资设置 */}
-                  {!disgood.isvaluegood && (
+                  {!disgood.isvaluegood && disgood.good2.address!=="" && (
                     <div className="bg-gray-50 rounded-xl p-4">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
@@ -702,7 +702,7 @@ export function WithdrawDialog({
                           {disgood.good1.symbol}
                         </span>
                       </div>
-                      {!disgood.isvaluegood && (
+                      {!disgood.isvaluegood && disgood.good2.address!=="" && (
                         <div className="flex justify-between">
                           <span>
                             {t("account.divest.divest.preview.label")}{" "}
@@ -791,7 +791,7 @@ export function WithdrawDialog({
                     )}
 
                     {/* 第二个代币详情 */}
-                    {Number(goodVQ) > 0 && (
+                    {Number(goodVQ) > 0 && disgood.good2.address!=="" && (
                       <div className="space-y-2 text-sm">
                         <div className="font-medium text-gray-900 flex items-center gap-2">
                           <TokenIcon

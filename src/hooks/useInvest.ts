@@ -43,61 +43,61 @@ const useInvest = () => {
                     },
                 });
             } else {
-                setInvest({
-                    from: {
-                        id: invest.from.id,
-                        symbol: invest.from.symbol,
-                        name: invest.from.name,
-                        investFee: invest.from.investFee,
-                        price: invest.from.price,
-                        logo_url: invest.from.logo_url,
-                        address: invest.from.address,
-                        isvaluegood: invest.from.isvaluegood,
-                        decimals: invest.from.decimals,
-                        currentQuantity: invest.from.currentQuantity,
-                        currentValue: invest.from.currentValue,
-                    },
-                    to: {
-                        id: value.id,
-                        symbol: value.symbol,
-                        name: value.name,
-                        investFee: value.investFee,
-                        price: value.price,
-                        logo_url: value.logo_url,
-                        address: value.address,
-                        isvaluegood: value.isvaluegood,
-                        decimals: value.decimals,
-                        currentQuantity: value.currentQuantity,
-                        currentValue: value.currentValue,
-                    },
-                });
+                // setInvest({
+                //     from: {
+                //         id: invest.from.id,
+                //         symbol: invest.from.symbol,
+                //         name: invest.from.name,
+                //         investFee: invest.from.investFee,
+                //         price: invest.from.price,
+                //         logo_url: invest.from.logo_url,
+                //         address: invest.from.address,
+                //         isvaluegood: invest.from.isvaluegood,
+                //         decimals: invest.from.decimals,
+                //         currentQuantity: invest.from.currentQuantity,
+                //         currentValue: invest.from.currentValue,
+                //     },
+                //     to: {
+                //         id: value.id,
+                //         symbol: value.symbol,
+                //         name: value.name,
+                //         investFee: value.investFee,
+                //         price: value.price,
+                //         logo_url: value.logo_url,
+                //         address: value.address,
+                //         isvaluegood: value.isvaluegood,
+                //         decimals: value.decimals,
+                //         currentQuantity: value.currentQuantity,
+                //         currentValue: value.currentValue,
+                //     },
+                // });
             }
         }
     };
 
     const setAmount = (element: string, value: number | '' | null,data:any) => {
         let fromPrice = 0;
-        let toPrice =0;
+        // let toPrice =0;
         if (data!==0) {
             fromPrice = data.fromPrice;
-            if (data.toPrice>0) {
-                toPrice = data.toPrice;
-            }
+            // if (data.toPrice>0) {
+            //     toPrice = data.toPrice;
+            // }
         }
-        let num=0;
+        // let num=0;
         if (element === SwapKeys.From) {
             // @ts-ignore
-            if (value > 0) {
-                // @ts-ignore
-                num = fromPrice / toPrice * value;
-                num = Number(num.toFixed(6));
-            }
+            // if (value > 0) {
+            //     // @ts-ignore
+            //     num = fromPrice / toPrice * value;
+            //     num = Number(num.toFixed(6));
+            // }
             // @ts-ignore
             const priceF = value * fromPrice * (1 - invest.from.investFee);
             // @ts-ignore
-            const priceT = num * toPrice;
+            // const priceT = num * toPrice;
             // @ts-ignore
-            num = invest.from.price / invest.to.price * value;
+            // num = invest.from.price / invest.to.price * value;
             setInvestAmount({
                 from: {
                     token: invest.from.symbol,
@@ -109,44 +109,44 @@ const useInvest = () => {
                     price:priceF > 0 ? Number(priceF.toFixed(6)) : 0
                 },
                 to: {
-                    token: invest.to.symbol,
-                    amount: Number(num.toFixed(6)),
-                    id: invest.to.id,
-                    currentQuantity: data.toQuan,
-                    currentValue: data.toValue,
-                    price:priceT > 0 ? Number(priceT.toFixed(6)) : 0
+                    token: "",
+                    amount: 0,
+                    id: "",
+                    currentQuantity: 0,
+                    currentValue: 0,
+                    price:0
                 },
             });
         } else {
             // @ts-ignore
-            if (value > 0) {
-                // @ts-ignore
-                num = toPrice / fromPrice * value;
-                num = Number(num.toFixed(6));
-            }
-            // @ts-ignore
-            const priceF = num * fromPrice * (1 - invest.from.investFee);
-            // @ts-ignore
-            const priceT = value * toPrice*(1 - invest.to.investFee);
-            setInvestAmount({
-                from: {
-                    token: invest.from.symbol,
-                    amount: Number(num.toFixed(6)),
-                    id: invest.from.id,
-                    currentQuantity: data.fromQuan,
-                    currentValue: data.fromValue,
-                    price:priceF > 0 ? Number(priceF.toFixed(6)) : 0
-                },
-                to: {
-                    token: invest.to.symbol,
-                    // @ts-ignore
-                    amount: value,
-                    id: invest.to.id,
-                    currentQuantity: data.toQuan,
-                    currentValue: data.toValue,
-                    price:priceT > 0 ? Number(priceT.toFixed(6)) : 0
-                },
-            });
+            // if (value > 0) {
+            //     // @ts-ignore
+            //     num = toPrice / fromPrice * value;
+            //     num = Number(num.toFixed(6));
+            // }
+            // // @ts-ignore
+            // const priceF = num * fromPrice * (1 - invest.from.investFee);
+            // // @ts-ignore
+            // const priceT = value * toPrice*(1 - invest.to.investFee);
+            // setInvestAmount({
+            //     from: {
+            //         token: invest.from.symbol,
+            //         amount: Number(num.toFixed(6)),
+            //         id: invest.from.id,
+            //         currentQuantity: data.fromQuan,
+            //         currentValue: data.fromValue,
+            //         price:priceF > 0 ? Number(priceF.toFixed(6)) : 0
+            //     },
+            //     to: {
+            //         token: invest.to.symbol,
+            //         // @ts-ignore
+            //         amount: value,
+            //         id: invest.to.id,
+            //         currentQuantity: data.toQuan,
+            //         currentValue: data.toValue,
+            //         price:priceT > 0 ? Number(priceT.toFixed(6)) : 0
+            //     },
+            // });
         }
     };
 

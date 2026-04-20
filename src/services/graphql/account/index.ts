@@ -481,7 +481,7 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
     const provider = new ethers.BrowserProvider(ethereum);
     const contractAddress = getContractAddress(ssionChian);
     const signer = await provider.getSigner()
-    const contract = new ethers.Contract(contractAddress, MarketManager, signer);
+    const contract = new ethers.Contract(contractAddress, MarketManager, provider);
     console.log(item.ids);
 
     let feeQs: number[] = [];

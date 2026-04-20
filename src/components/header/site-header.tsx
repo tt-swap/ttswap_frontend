@@ -10,9 +10,9 @@ import GoodsSearch from "@/components/Search/GoodsSearch";
 import CompanyInfo from "@/components/CompanyInfo/CompanyInfo";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useChainId } from 'wagmi';
-import { useLocalStorage } from "@/utils/LocalStorageManager";
+// import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { useMuneName } from "@/stores/menu";
-import useWallet from "@/hooks/useWallet";
+// import useWallet from "@/hooks/useWallet";
 
 
 export function SiteHeader() {
@@ -24,9 +24,9 @@ export function SiteHeader() {
     const [skeleton, setSkeleton] = useState(false);
     const { isConnected, address } = useAccount();
     // @ts-ignore
-    const { ssionChian, setSsionChian } = useLocalStorage();
+    // const { ssionChian, setSsionChian } = useLocalStorage();
     const chainId = useChainId();
-    const { updateNetworkVia } = useWallet();
+    // const { updateNetworkVia } = useWallet();
 
     const handleTabSwitch = (route: string) => {
         navigate('/' + route);
