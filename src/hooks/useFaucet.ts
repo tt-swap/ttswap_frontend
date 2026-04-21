@@ -12,8 +12,8 @@ const useFaucet = () => {
 
     const faucetTestCion = async (amount: any, contractA: string, account: any, decimals: number) => {
         try {
-            const num = Number(amount) * 10 ** decimals;
-            const mintAmount = ethers.parseUnits(amount, decimals);
+            // const num = Number(amount) * 10 ** decimals;
+            const mintAmount = amount;//ethers.parseUnits(amount, decimals);
 
             console.log("Mint parameters:",ssionChian, {
                 contractAddress: contractA,
@@ -27,6 +27,7 @@ const useFaucet = () => {
 
             // 先检查合约是否有mint方法
             const contractInterface = new ethers.Interface(erc20);
+            console.log("Contract interface:", contractInterface,contractInterface.hasFunction("mint"));
             if (!contractInterface.hasFunction("mint")) {
                 console.error("Contract does not have mint function");
                 return { success: false, error: "Contract does not have mint function" };
@@ -77,13 +78,14 @@ const useFaucet = () => {
                     error: "Gas估算失败，可能是参数错误或合约异常",
                     code: error.code
                 };
+            } else {
+                return {
+                    success: false,
+                    error: "获取测试币失败",
+                    code: error.code
+                };
             }
 
-            return {
-                success: false,
-                error: error.message || "获取测试币失败",
-                code: error.code
-            };
         }
     };
 
