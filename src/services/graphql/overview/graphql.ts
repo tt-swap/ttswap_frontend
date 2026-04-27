@@ -305,6 +305,7 @@ export function InvestGoodDatas(params: {
 						investShares
 						isvaluegood
 						islockgood
+						investActualQuantity
 						goodData(
 							orderBy: modifiedTime
 							orderDirection: desc
@@ -322,6 +323,7 @@ export function InvestGoodDatas(params: {
 							currentQuantity
 							currentValue
 							investShares
+							investActualQuantity
 						}
 						date24: goodData(
 							orderBy: modifiedTime
@@ -339,6 +341,7 @@ export function InvestGoodDatas(params: {
 							investQuantity
 							currentQuantity
 							currentValue
+							investActualQuantity
 						}
 				  }
 			}`,
@@ -376,6 +379,7 @@ export function InvestGoodDatas(params: {
 						investShares
 						isvaluegood
 						islockgood
+						investActualQuantity
 						goodData(
 							orderBy: modifiedTime
 							orderDirection: desc
@@ -393,6 +397,7 @@ export function InvestGoodDatas(params: {
 							currentQuantity
 							currentValue
 							investShares
+							investActualQuantity
 						}
 						date24: goodData(
 							orderBy: modifiedTime
@@ -410,6 +415,7 @@ export function InvestGoodDatas(params: {
 							investQuantity
 							currentQuantity
 							currentValue
+							investActualQuantity
 						}
 				  }
 			}`,

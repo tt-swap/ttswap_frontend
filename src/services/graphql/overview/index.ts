@@ -405,13 +405,13 @@ export async function investGoodsDatas(params: { id: string; pageNumber: number;
             map.currentValue = e.currentQuantity / base_decimals * current_price;
             map.logo_url = iconUrl(chainName, e.erc20Address);
             map.price = current_price;
-            map.NAVPS = e.investQuantity / e.investShares;
+            map.NAVPS = e.investActualQuantity / e.investShares;
             // let uintF = (Number(e.feeQuantity) + Number(e.investQuantity)) / e.investQuantity;
             let en = e.goodData[0];
             let d24 = e.date24[0];
             console.log("investGoodsData-----s", en);
             // let uintFY = (en.feeQuantity + en.investQuantity) / en.investQuantity;
-            let NAVPS = en.investQuantity / en.investShares;
+            let NAVPS = en.investActualQuantity / en.investShares;
             console.log(22222222, jz)
             let current_price_24h = ((d24.currentValue / tokendecimals) / (d24.currentQuantity / base_decimals)) / jz;
             map.price_24h = current_price_24h;

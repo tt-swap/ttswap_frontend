@@ -115,12 +115,12 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
         };
         try {
 
-        // console.log(params,99999)
-        const goodsDatas = await goodDataView({ id: id, time: timestampdToDateYear(1), time24: timestampdToDateSub(0), address: address.toLowerCase(), eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) }, ssionChian);
+            // console.log(params,99999)
+            const goodsDatas = await goodDataView({ id: id, time: timestampdToDateYear(1), time24: timestampdToDateSub(0), address: address.toLowerCase(), eq7: timestampdToDateSub(6), eq30: timestampdToDateSub(29) }, ssionChian);
 
-        let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
-        let tokendecimals = powerIterative(10, 6);
-        let jz = goodValue;
+            let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
+            let tokendecimals = powerIterative(10, 6);
+            let jz = goodValue;
 
             goodsDatas.data.goodStates.forEach((e: any) => {
                 let base_decimals = powerIterative(10, e.tokendecimals);
@@ -177,7 +177,7 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
                 map.currentValue = map.currentQuantity * current_price;
                 map.currentFee = e.feeQuantity / base_decimals;
                 map.currentFeeValue = map.currentFee * current_price;
-                map.NAVPS = e.investQuantity / e.investShares;
+                map.NAVPS = e.investActualQuantity / e.investShares;
                 map.totalInvestQuantity = e.totalInvestQuantity / base_decimals;
                 map.totalInvestValue = map.totalInvestQuantity * current_price;
                 map.totalTradeQuantity = e.totalTradeQuantity / base_decimals;
@@ -233,9 +233,10 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
                     map.tradeQuantity24 = (e.totalTradeQuantity - en.totalTradeQuantity) / base_decimals;
                     map.tradeValue24 = map.tradeQuantity24 * current_price_24h;
                     map.price_24h = (current_price - current_price_24h) / current_price_24h;
-                    let uintFY = (enY.feeQuantity + enY.investQuantity) / enY.investQuantity;
-                    map.APY = uintF / uintFY - 1;
-                    console.log(e.feeQuantity + e.investQuantity, uintF, uintFY, map.APY, "sdfsdfsd")
+                    // let uintFY = (enY.feeQuantity + enY.investQuantity) / enY.investQuantity;
+                    let NAVPS = enY.investActualQuantity / enY.investShares;
+                    map.APY = map.NAVPS / NAVPS - 1;//uintF / uintFY - 1;
+                    // console.log(e.feeQuantity + e.investQuantity, uintF, uintFY, map.APY, "sdfsdfsd")
                 } else {
                     map.investQuantity24 = map.investQuantity;
                     map.fee24 = map.currentFee;

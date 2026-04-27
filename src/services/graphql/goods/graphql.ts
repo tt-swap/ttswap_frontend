@@ -147,6 +147,7 @@ export function goodDataView(params: { id: string; time: number; time24: number;
                     goodConfig
 				  	investShares
                     isvaluegood
+                    investActualQuantity
                     goodData(
                         orderBy: modifiedTime
                         orderDirection: desc
@@ -165,6 +166,7 @@ export function goodDataView(params: { id: string; time: number; time24: number;
                         currentQuantity
                         currentValue
 				  	    investShares
+                        investActualQuantity
                     }
                     date24: goodData(
                         orderBy: modifiedTime
@@ -184,6 +186,7 @@ export function goodDataView(params: { id: string; time: number; time24: number;
                         currentValue
                         totalTradeQuantity
 				  	    investShares
+                        investActualQuantity
                     }
                     days7: goodData(
                         orderBy: modifiedTime
