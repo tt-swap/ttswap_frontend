@@ -331,7 +331,7 @@ const useWallet = () => {
         // const { value, deadline, v, r, s } = await PermitSigner(address, amount, symbol);
         const a = await checkContractSupport(address, amount);
         console.log("1110----", amount, a)
-        let transferData;
+        let transferData: string;
         let approveAmount = amount;
         if (maxApprove) {
             approveAmount = defaultAmount;
@@ -982,9 +982,9 @@ const useWallet = () => {
         });
     }
 
-    const newGoods = async (goodVaddr: string, goodVName: string, goodDec: number, num1: number, num2: number, addr: string, config: string, accounts: string, maxApprove: boolean) => {
+    const newGoods = async (num1: number, num2: number, addr: string, config: string, accounts: string, maxApprove: boolean) => {
         addr = addr.toLowerCase();
-        console.log("newGoods-----", goodVaddr, goodVName, goodVaddr, goodDec, num1, num2, addr, config, accounts, maxApprove);
+        console.log("newGoods-----", num1, num2, addr, config, accounts, maxApprove);
         // return true;
         // const contractAddress = '0x9d0108882640990941FbC5677C1D9e3281a4e74C'; // multicall 合约地址
         try {
@@ -992,14 +992,12 @@ const useWallet = () => {
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
 
             let decimals = 18;
-            let nameG;
+            let nameG: string;
             if (addr === ConAddress3) {
                 addr = SWETH;
             }
             if (addr === ConAddress1 || addr === ConAddress2) {
                 decimals = 18;
-            } else if (addr === goodVaddr) {
-                decimals = goodDec;
             } else if (ethers.isAddress(addr)) {
                 decimals = await new ethers.Contract(addr, erc20, provider).decimals();
                 nameG = await new ethers.Contract(addr, erc20, provider).name();
@@ -1008,29 +1006,29 @@ const useWallet = () => {
             let fAmount = BigInt(0);
             let tAmount = BigInt(0);
             if (num2 > 0) {
-                fAmount = BigInt(num2 * powerIterative(10, goodDec));
+                fAmount = BigInt(num2 * num1 * powerIterative(10, 12));
             }
             if (num1 > 0) {
                 tAmount = BigInt(num1 * powerIterative(10, decimals));
             }
-            const qunt = BigInt(tAmount * BigInt(2 ** 128) + fAmount);
+            const qunt = BigInt(fAmount * BigInt(2 ** 128) + tAmount);
             console.log("*****111111****", decimals, fAmount, tAmount, qunt)
 
-            let allowanceV;
-            let allowanceB;
-            let approveV;
-            let approveB;
-            let approveS;
-            let initGoodVA;
+            let allowanceV: any;
+            let allowanceB: boolean;
+            let approveV: any;
+            let approveB: boolean;
+            let approveS: any;
+            let initGoodVA: boolean;
             let initGoodV = BigInt(0);
 
-            const f = await signerData(goodVaddr, fAmount, goodVName, maxApprove);
+            // const f = await signerData(goodVaddr, fAmount, goodVName, maxApprove);
             // console.log(444444,f)
             const t = await signerData(addr, tAmount, nameG, maxApprove);
             // console.log(555555,t)
-            const aF = f.a;
-            const approveAmountF = f.approveAmount;
-            const transferDataF = f.transferData;
+            // const aF = f.a;
+            // const approveAmountF = f.approveAmount;
+            // const transferDataF = f.transferData;
             const aT = t.a;
             const approveAmountT = t.approveAmount;
             const transferDataT = t.transferData;
@@ -1042,61 +1040,61 @@ const useWallet = () => {
                 initGoodV = tAmount;
                 initGoodVA = true;
                 allowanceB = true;
-                if (aF === 1) {
-                    const contractAllowV = new ethers.Contract(goodVaddr, erc20, provider);
-                    allowanceV = await contractAllowV.allowance(account, contractAddress).then((allowance) => {
-                        console.log(allowance, fAmount)
-                        if (allowance > fAmount || allowance === fAmount) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }).catch((error) => {
-                        return false;
-                    });
-                } else {
-                    allowanceV = true;
-                }
-            } else if (addr === ConAddress1 && goodVaddr === ConAddress1 || addr === ConAddress2 && goodVaddr === ConAddress2) {
-                initGoodV = tAmount + fAmount;
-                initGoodVA = true;
-                allowanceV = true;
-                allowanceB = true;
-            } else if (goodVaddr === ConAddress1 || goodVaddr === ConAddress2) {
-                initGoodV = fAmount;
-                initGoodVA = true;
-                allowanceV = true;
-                if (aT === 1) {
-                    const contractAllow = new ethers.Contract(addr, erc20, provider);
-                    allowanceB = await contractAllow.allowance(account, contractAddress).then((allowance) => {
-                        if (allowance > tAmount || allowance === tAmount) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }).catch((error) => {
-                        return false;
-                    });
-                } else {
-                    allowanceB = true;
-                }
-            } else if (addr === goodVaddr) {
-                console.log(goodVaddr)
-                const contractAllowV = new ethers.Contract(goodVaddr, erc20, provider);
-                allowanceV = await contractAllowV.allowance(account, contractAddress).then((allowance) => {
-                    console.log(allowance, (fAmount + tAmount))
-                    if (allowance > (fAmount + tAmount) || allowance === (fAmount + tAmount)) {
-                        allowanceB = true;
-                        return true;
-                    } else {
-                        approveS = true;
-                        return false;
-                    }
-                }).catch((error) => {
-                    console.log(error)
-                    approveS = true;
-                    return false;
-                });
+                // if (aF === 1) {
+                //     const contractAllowV = new ethers.Contract(goodVaddr, erc20, provider);
+                //     allowanceV = await contractAllowV.allowance(account, contractAddress).then((allowance) => {
+                //         console.log(allowance, fAmount)
+                //         if (allowance > fAmount || allowance === fAmount) {
+                //             return true;
+                //         } else {
+                //             return false;
+                //         }
+                //     }).catch((error) => {
+                //         return false;
+                //     });
+                // } else {
+                //     allowanceV = true;
+                // }
+                // } else if (addr === ConAddress1 && goodVaddr === ConAddress1 || addr === ConAddress2 && goodVaddr === ConAddress2) {
+                //     initGoodV = tAmount + fAmount;
+                //     initGoodVA = true;
+                //     allowanceV = true;
+                //     allowanceB = true;
+                // } else if (goodVaddr === ConAddress1 || goodVaddr === ConAddress2) {
+                //     initGoodV = fAmount;
+                //     initGoodVA = true;
+                //     allowanceV = true;
+                //     if (aT === 1) {
+                //         const contractAllow = new ethers.Contract(addr, erc20, provider);
+                //         allowanceB = await contractAllow.allowance(account, contractAddress).then((allowance) => {
+                //             if (allowance > tAmount || allowance === tAmount) {
+                //                 return true;
+                //             } else {
+                //                 return false;
+                //             }
+                //         }).catch((error) => {
+                //             return false;
+                //         });
+                //     } else {
+                //         allowanceB = true;
+                //     }
+                // } else if (addr === goodVaddr) {
+                //     console.log(goodVaddr)
+                //     const contractAllowV = new ethers.Contract(goodVaddr, erc20, provider);
+                //     allowanceV = await contractAllowV.allowance(account, contractAddress).then((allowance) => {
+                //         console.log(allowance, (fAmount + tAmount))
+                //         if (allowance > (fAmount + tAmount) || allowance === (fAmount + tAmount)) {
+                //             allowanceB = true;
+                //             return true;
+                //         } else {
+                //             approveS = true;
+                //             return false;
+                //         }
+                //     }).catch((error) => {
+                //         console.log(error)
+                //         approveS = true;
+                //         return false;
+                //     });
             } else {
                 if (aT === 1) {
                     const contractAllow = new ethers.Contract(addr, erc20, provider);
@@ -1113,28 +1111,57 @@ const useWallet = () => {
                 } else {
                     allowanceB = true;
                 }
-                if (aF === 1) {
-                    const contractAllowV = new ethers.Contract(goodVaddr, erc20, provider);
-                    allowanceV = await contractAllowV.allowance(account, contractAddress).then((allowance) => {
-                        console.log("aF--", addr, allowance, fAmount)
-                        if (allowance > fAmount || allowance === fAmount) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }).catch((error) => {
-                        return false;
-                    });
-                } else {
-                    allowanceV = true;
-                }
+                // if (aF === 1) {
+                //     const contractAllowV = new ethers.Contract(goodVaddr, erc20, provider);
+                //     allowanceV = await contractAllowV.allowance(account, contractAddress).then((allowance) => {
+                //         console.log("aF--", addr, allowance, fAmount)
+                //         if (allowance > fAmount || allowance === fAmount) {
+                //             return true;
+                //         } else {
+                //             return false;
+                //         }
+                //     }).catch((error) => {
+                //         return false;
+                //     });
+                // } else {
+                //     allowanceV = true;
+                // }
             }
 
-            if (approveS) {
-                const contractF = new ethers.Contract(goodVaddr, erc20, signer);
-                approveV = await contractF.approve(contractAddress, fAmount + tAmount).then((transaction) => {
+            // if (approveS) {
+            //     const contractF = new ethers.Contract(goodVaddr, erc20, signer);
+            //     approveV = await contractF.approve(contractAddress, fAmount + tAmount).then((transaction) => {
+            //         return transaction.wait().then(() => {
+            //             allowanceB = true;
+            //             return true;
+            //         }).catch(() => {
+            //             return false;
+            //         });
+            //     }).catch(() => {
+            //         return false;
+            //     });
+            // } else {
+            //     if (allowanceV) {
+            //         approveV = true;
+            //     } else {
+            //         const contractF = new ethers.Contract(goodVaddr, erc20, signer);
+            //         approveV = await contractF.approve(contractAddress, approveAmountF).then((transaction) => {
+            //             return transaction.wait().then(() => {
+            //                 return true;
+            //             }).catch(() => {
+            //                 return false;
+            //             });
+            //         }).catch(() => {
+            //             return false;
+            //         });
+            //     }
+            //     if (approveV) {
+            if (allowanceB) {
+                approveB = true;
+            } else {
+                const contractT = new ethers.Contract(addr, erc20, signer);
+                approveB = await contractT.approve(contractAddress, approveAmountT).then((transaction) => {
                     return transaction.wait().then(() => {
-                        allowanceB = true;
                         return true;
                     }).catch(() => {
                         return false;
@@ -1142,55 +1169,26 @@ const useWallet = () => {
                 }).catch(() => {
                     return false;
                 });
-            } else {
-                if (allowanceV) {
-                    approveV = true;
-                } else {
-                    const contractF = new ethers.Contract(goodVaddr, erc20, signer);
-                    approveV = await contractF.approve(contractAddress, approveAmountF).then((transaction) => {
-                        return transaction.wait().then(() => {
-                            return true;
-                        }).catch(() => {
-                            return false;
-                        });
-                    }).catch(() => {
-                        return false;
-                    });
-                }
-                if (approveV) {
-                    if (allowanceB) {
-                        approveB = true;
-                    } else {
-                        const contractT = new ethers.Contract(addr, erc20, signer);
-                        approveB = await contractT.approve(contractAddress, approveAmountT).then((transaction) => {
-                            return transaction.wait().then(() => {
-                                return true;
-                            }).catch(() => {
-                                return false;
-                            });
-                        }).catch(() => {
-                            return false;
-                        });
-                        if (!approveB) return false;
-                    }
-                } else return false;
+                if (!approveB) return false;
             }
+            //     } else return false;
+            // }
             console.log(1111, allowanceV, allowanceB, approveS, initGoodV, initGoodVA, approveV, approveB)
-            if (approveV && approveB) {
+            if (approveB) {
                 if (addr === SWETH) {
                     addr = ConAddress3;
                 }
                 if (initGoodVA) {
-                    console.log(2222, goodVaddr, qunt, addr, config, transferDataT, transferDataF, initGoodV)
-                    return await contract.initGood(goodVaddr, qunt, addr, config, transferDataT, transferDataF, address, signData, { value: initGoodV }).then((transaction) => {
+                    console.log(2222, addr, qunt, config, transferDataT, address, signData, initGoodV)
+                    return await contract.initGoodWithPrice(addr, qunt, config, transferDataT, address, signData, { value: initGoodV }).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
                         return errorData(error);
                     });
                 } else {
-                    console.log(3333, goodVaddr, qunt, addr, config, transferDataT, transferDataF)
-                    return await contract.initGood(goodVaddr, qunt, addr, config, transferDataT, transferDataF, address, signData).then((transaction) => {
+                    console.log(3333, addr, qunt, config, transferDataT, address, signData)
+                    return await contract.initGoodWithPrice(addr, qunt, config, transferDataT, address, signData).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
@@ -1204,33 +1202,167 @@ const useWallet = () => {
         }
     }
 
+    // ... existing code ...
+
     function errorData(error: unknown) {
         console.error('Transaction failed:', error);
-        if (error instanceof Error && 'data' in error) {
-            const errorData = error.data; // 获取错误中的 data 字段
-            console.error('Transaction failed with data:', errorData);
-            // 如果需要解析 data 字段（例如 ABI 编码的错误信息）
-            if (typeof errorData === 'string') {
-                const firstErrorData = errorData.slice(0, 10);
-                if (firstErrorData === "0xd1b51911") {
-                    const errorArgsData = "0x" + errorData.slice(10);
-                    const [code] = abiCoder.decode(["uint256"], errorArgsData);
-                    return Number(code.toString());
-                } else {
-                    return firstErrorData;
-                }
-                // console.error('Error data (hex):', errorData);
-                // const errorArgsData = "0x" + errorData.slice(10);
-                // // 如果需要进一步解析，可以使用 ethers.js 或 web3.js
-                // const [code] = abiCoder.decode(["uint256"], errorArgsData);
-                // console.error('Decoded error:', code.toString());
-                // return code.toString();
+
+        // 检查错误对象是否有 data 属性
+        if (error instanceof Error) {
+            // 处理不同类型的错误对象
+            let errorDataField = null;
+
+            // 检查错误对象本身是否有 data 属性
+            if ('data' in error && error.data) {
+                errorDataField = error.data;
             }
-        } else {
-            console.error('An unknown error occurred:', error);
-            return false;
+            // 检查错误对象是否有 error 属性，这在某些 RPC 错误中常见
+            else if ('error' in error && typeof error.error === 'object' && error.error && 'data' in error.error) {
+                errorDataField = error.error.data;
+            }
+            // 对于一些其他常见的错误格式
+            else if ('info' in error && typeof error.info === 'object' && error.info && 'error' in error.info && typeof error.info.error === 'object' && error.info.error && 'data' in error.info.error) {
+                errorDataField = error.info.error.data;
+            }
+            console.error('errorDataField:', errorDataField);
+            if (errorDataField) {
+                console.error('Transaction failed with data:', errorDataField);
+
+                // 根据错误数据的类型进行处理
+                if (typeof errorDataField === 'string') {
+                    // 处理字符串类型的错误数据（通常是十六进制编码）
+                    if (errorDataField.startsWith('0x')) {
+                        // 如果只是简单的错误函数签名（如 "0xf27f64e4"），则去掉 "0x" 并返回
+                        if (errorDataField.length === 10) { // "0x" + 8个字符 = 10个字符
+                            const errorSignature = errorDataField.substring(2); // 去掉 "0x" 前缀
+                            console.error('Simple error signature:', errorSignature);
+                            return errorSignature;
+                        }
+
+                        // 处理更复杂的错误数据（包含参数）
+                        if (errorDataField.length > 10) {
+                            try {
+                                const errorSignature = errorDataField.slice(0, 10); // 获取错误函数签名（前4字节）
+                                const errorArgsData = "0x" + errorDataField.slice(10); // 获取参数数据
+
+                                console.error('Error signature:', errorSignature);
+                                console.error('Error args data (hex):', errorArgsData);
+
+                                // 解析错误参数
+                                let decodedError = null;
+
+                                // 尝试解码为 uint256（原代码逻辑）
+                                if (errorArgsData.length >= 64) { // 至少有32字节的数据
+                                    try {
+                                        const [code] = abiCoder.decode(["uint256"], errorArgsData);
+                                        console.error('Decoded uint256 error code:', code.toString());
+                                        decodedError = code.toString();
+                                    } catch (decodeError) {
+                                        console.warn('Could not decode as uint256:', decodeError);
+                                    }
+                                }
+
+                                // 如果上面的解码失败，尝试作为字符串错误消息
+                                if (!decodedError) {
+                                    try {
+                                        // 尝试解码为字符串
+                                        const [errorMessage] = abiCoder.decode(["string"], errorArgsData);
+                                        console.error('Decoded string error message:', errorMessage);
+                                        decodedError = errorMessage;
+                                    } catch (decodeError) {
+                                        console.warn('Could not decode as string:', decodeError);
+                                    }
+                                }
+
+                                // 如果还是无法解码，返回原始错误签名（去掉0x前缀）
+                                if (!decodedError) {
+                                    decodedError = errorSignature.substring(2); // 去掉 "0x" 前缀
+                                }
+
+                                return decodedError;
+                            } catch (parseError) {
+                                console.error('Failed to parse error data:', parseError);
+                                // 如果解析复杂数据失败，返回去掉0x前缀的原始数据
+                                return errorDataField.substring(2); // 去掉 "0x" 前缀
+                            }
+                        } else {
+                            // 只有 "0x" 前缀但长度不足10的情况，返回去掉0x前缀的原始数据
+                            return errorDataField.substring(2); // 去掉 "0x" 前缀
+                        }
+                    } else {
+                        // 不是有效的十六进制错误数据，直接返回
+                        return errorDataField;
+                    }
+                }
+                // 如果错误数据是一个对象
+                else if (typeof errorDataField === 'object') {
+                    console.error('Complex error data object:', errorDataField);
+
+                    // 检查是否是包含 message 的对象
+                    if ('message' in errorDataField && typeof errorDataField.message === 'string') {
+                        return errorDataField.message;
+                    }
+                    // 检查是否是包含 data 字段的对象（嵌套情况）
+                    else if ('data' in errorDataField && typeof errorDataField.data === 'string') {
+                        const errorStr = errorDataField.data;
+                        // 应用相同的十六进制数据处理逻辑
+                        if (errorStr.startsWith('0x')) {
+                            if (errorStr.length === 10) { // "0x" + 8个字符 = 10个字符
+                                return errorStr.substring(2); // 去掉 "0x" 前缀
+                            } else if (errorStr.length > 10) {
+                                try {
+                                    const errorArgsData = "0x" + errorStr.slice(10);
+                                    let decodedError = null;
+
+                                    if (errorArgsData.length >= 64) {
+                                        try {
+                                            const [code] = abiCoder.decode(["uint256"], errorArgsData);
+                                            decodedError = code.toString();
+                                        } catch (decodeError) {
+                                            console.warn('Could not decode as uint256:', decodeError);
+                                        }
+                                    }
+
+                                    if (!decodedError) {
+                                        decodedError = errorStr.substring(2); // 去掉 "0x" 前缀
+                                    }
+
+                                    return decodedError;
+                                } catch (parseError) {
+                                    console.error('Failed to parse nested error data:', parseError);
+                                    return errorStr.substring(2); // 去掉 "0x" 前缀
+                                }
+                            } else {
+                                return errorStr.substring(2); // 去掉 "0x" 前缀
+                            }
+                        } else {
+                            return errorStr;
+                        }
+                    }
+                    // 返回整个对象的字符串表示
+                    else {
+                        return false;
+                        // try {
+                        //     return JSON.stringify(errorDataField);
+                        // } catch (stringifyError) {
+                        //     console.error('Could not stringify error object:', stringifyError);
+                        //     return String(errorDataField);
+                        // }
+                    }
+                }
+                // 其他类型的错误数据
+                else {
+                    return String(errorDataField);
+                }
+            }
         }
+
+        // 如果没有找到错误数据或不是 Error 实例，则返回 false
+        console.error('An unknown error occurred:', error);
+        return false;
     }
+
+    // ... existing code ...
 
     const investGoods = async (invest: any, famount: any, tamount: any, isValueGood: boolean, maxApprove: boolean) => {
 
@@ -1239,12 +1371,12 @@ const useWallet = () => {
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
             console.log(0)
 
-            let allowanceF;
-            let allowanceT;
-            let approveF;
-            let approveT;
-            let approveS;
-            let investGoodVA;
+            let allowanceF: boolean;
+            // let allowanceT;
+            let approveF: boolean;
+            // let approveT;
+            // let approveS;
+            let investGoodVA: boolean;
             let investGoodV = BigInt(0);
 
             let fromAddress = invest.from.address;
@@ -1255,141 +1387,157 @@ const useWallet = () => {
             if (toAddress === ConAddress3) {
                 toAddress = SWETH;
             }
+            const qunt = BigInt(tamount * BigInt(2 ** 128) + famount);
             const f = await signerData(fromAddress, famount, invest.from.symbol, maxApprove);
             const aF = f.a;
             const approveAmountF = f.approveAmount;
             const transferDataF = f.transferData;
-            let aT;
-            let approveAmountT;
-            let transferDataT = defaultData;
-            if (isValueGood) {
-                if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
-                    allowanceF = true;
-                    investGoodV = famount;
-                    investGoodVA = true;
-                    allowanceT = true;
-                } else {
-                    allowanceT = true;
-                    if (aF === 1) {
-                        const contractAllowF = new ethers.Contract(fromAddress, erc20, provider);
-                        allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
-                            if (allowance > famount || allowance === famount) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }).catch((error) => {
-                            return false;
-                        });
-                    } else {
-                        allowanceF = true;
-                    }
-                }
+            // let aT;
+            // let approveAmountT;
+            // let transferDataT = defaultData;
+            // if (isValueGood) {
+            if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
+                allowanceF = true;
+                investGoodV = famount;
+                investGoodVA = true;
+                // allowanceT = true;
             } else {
-                const t = await signerData(toAddress, tamount, invest.to.symbol, maxApprove);
-                aT = t.a;
-                approveAmountT = t.approveAmount;
-                transferDataT = t.transferData;
-
-                if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
-                    allowanceF = true;
-                    investGoodV = famount;
-                    investGoodVA = true;
-                    if (aT === 1) {
-                        const contractAllowT = new ethers.Contract(toAddress, erc20, provider);
-                        allowanceT = await contractAllowT.allowance(account, contractAddress).then((allowance) => {
-                            console.log(allowance, tamount)
-                            if (allowance > tamount || allowance === tamount) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }).catch((error) => {
-                            return false;
-                        });
-                    } else {
-                        allowanceT = true;
-                    }
-                } else if (toAddress === ConAddress1 || toAddress === ConAddress2) {
-                    allowanceT = true;
-                    investGoodV = tamount;
-                    investGoodVA = true;
-                    if (aF === 1) {
-                        const contractAllowF = new ethers.Contract(fromAddress, erc20, provider);
-                        allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
-                            if (allowance > famount || allowance === famount) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }).catch((error) => {
-                            return false;
-                        });
-                    } else {
-                        allowanceF = true;
-                    }
-
-                } else if (toAddress === ConAddress1 || toAddress === ConAddress2 || fromAddress === ConAddress1 || fromAddress === ConAddress2) {
-                    investGoodV = tamount + famount;
-                    investGoodVA = true;
-                    allowanceT = true;
-                    allowanceF = true;
-                } else if (toAddress === fromAddress) {
+                // allowanceT = true;
+                if (aF === 1) {
                     const contractAllowF = new ethers.Contract(fromAddress, erc20, provider);
                     allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
-                        console.log(allowance, (famount + tamount))
-                        if (allowance > (famount + tamount) || allowance === (famount + tamount)) {
-                            allowanceT = true;
+                        if (allowance > famount || allowance === famount) {
                             return true;
                         } else {
-                            approveS = true;
                             return false;
                         }
                     }).catch((error) => {
-                        console.log(error)
-                        approveS = true;
                         return false;
                     });
                 } else {
-
-                    if (aT === 1) {
-                        const contractAllowT = new ethers.Contract(toAddress, erc20, provider);
-                        allowanceT = await contractAllowT.allowance(account, contractAddress).then((allowance) => {
-                            console.log(allowance, tamount)
-                            if (allowance > tamount || allowance === tamount) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }).catch((error) => {
-                            return false;
-                        });
-                    } else {
-                        allowanceT = true;
-                    }
-                    if (aF === 1) {
-                        const contractAllowF = new ethers.Contract(fromAddress, erc20, provider);
-                        allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
-                            if (allowance > famount || allowance === famount) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }).catch((error) => {
-                            return false;
-                        });
-                    } else {
-                        allowanceF = true;
-                    }
+                    allowanceF = true;
                 }
             }
+            // }
+            // } else {
+            //     const t = await signerData(toAddress, tamount, invest.to.symbol, maxApprove);
+            //     aT = t.a;
+            //     approveAmountT = t.approveAmount;
+            //     transferDataT = t.transferData;
+
+            //     if (fromAddress === ConAddress1 || fromAddress === ConAddress2) {
+            //         allowanceF = true;
+            //         investGoodV = famount;
+            //         investGoodVA = true;
+            //         if (aT === 1) {
+            //             const contractAllowT = new ethers.Contract(toAddress, erc20, provider);
+            //             allowanceT = await contractAllowT.allowance(account, contractAddress).then((allowance) => {
+            //                 console.log(allowance, tamount)
+            //                 if (allowance > tamount || allowance === tamount) {
+            //                     return true;
+            //                 } else {
+            //                     return false;
+            //                 }
+            //             }).catch((error) => {
+            //                 return false;
+            //             });
+            //         } else {
+            //             allowanceT = true;
+            //         }
+            //     } else if (toAddress === ConAddress1 || toAddress === ConAddress2) {
+            //         allowanceT = true;
+            //         investGoodV = tamount;
+            //         investGoodVA = true;
+            //         if (aF === 1) {
+            //             const contractAllowF = new ethers.Contract(fromAddress, erc20, provider);
+            //             allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
+            //                 if (allowance > famount || allowance === famount) {
+            //                     return true;
+            //                 } else {
+            //                     return false;
+            //                 }
+            //             }).catch((error) => {
+            //                 return false;
+            //             });
+            //         } else {
+            //             allowanceF = true;
+            //         }
+
+            //     } else if (toAddress === ConAddress1 || toAddress === ConAddress2 || fromAddress === ConAddress1 || fromAddress === ConAddress2) {
+            //         investGoodV = tamount + famount;
+            //         investGoodVA = true;
+            //         allowanceT = true;
+            //         allowanceF = true;
+            //     } else if (toAddress === fromAddress) {
+            //         const contractAllowF = new ethers.Contract(fromAddress, erc20, provider);
+            //         allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
+            //             console.log(allowance, (famount + tamount))
+            //             if (allowance > (famount + tamount) || allowance === (famount + tamount)) {
+            //                 allowanceT = true;
+            //                 return true;
+            //             } else {
+            //                 approveS = true;
+            //                 return false;
+            //             }
+            //         }).catch((error) => {
+            //             console.log(error)
+            //             approveS = true;
+            //             return false;
+            //         });
+            //     } else {
+
+            //         if (aT === 1) {
+            //             const contractAllowT = new ethers.Contract(toAddress, erc20, provider);
+            //             allowanceT = await contractAllowT.allowance(account, contractAddress).then((allowance) => {
+            //                 console.log(allowance, tamount)
+            //                 if (allowance > tamount || allowance === tamount) {
+            //                     return true;
+            //                 } else {
+            //                     return false;
+            //                 }
+            //             }).catch((error) => {
+            //                 return false;
+            //             });
+            //         } else {
+            //             allowanceT = true;
+            //         }
+            //         if (aF === 1) {
+            //             const contractAllowF = new ethers.Contract(fromAddress, erc20, provider);
+            //             allowanceF = await contractAllowF.allowance(account, contractAddress).then((allowance) => {
+            //                 if (allowance > famount || allowance === famount) {
+            //                     return true;
+            //                 } else {
+            //                     return false;
+            //                 }
+            //             }).catch((error) => {
+            //                 return false;
+            //             });
+            //         } else {
+            //             allowanceF = true;
+            //         }
+            //     }
+            // }
 
 
-            if (approveS) {
+            // if (approveS) {
+            //     const contractF = new ethers.Contract(fromAddress, erc20, signer);
+            //     approveF = await contractF.approve(contractAddress, famount + tamount).then((transaction) => {
+            //         return transaction.wait().then(() => {
+            //             allowanceT = true;
+            //             return true;
+            //         }).catch(() => {
+            //             return false;
+            //         });
+            //     }).catch(() => {
+            //         return false;
+            //     });
+            // } else {
+            if (allowanceF) {
+                approveF = true;
+            } else {
                 const contractF = new ethers.Contract(fromAddress, erc20, signer);
-                approveF = await contractF.approve(contractAddress, famount + tamount).then((transaction) => {
+                approveF = await contractF.approve(contractAddress, approveAmountF).then((transaction) => {
                     return transaction.wait().then(() => {
-                        allowanceT = true;
                         return true;
                     }).catch(() => {
                         return false;
@@ -1397,75 +1545,62 @@ const useWallet = () => {
                 }).catch(() => {
                     return false;
                 });
-            } else {
-                if (allowanceF) {
-                    approveF = true;
+            }
+            // if (approveF) {
+            //     if (allowanceT) {
+            //         approveT = true;
+            //     } else {
+            //         const contractT = new ethers.Contract(toAddress, erc20, signer);
+            //         approveT = await contractT.approve(contractAddress, approveAmountT).then((transaction) => {
+            //             return transaction.wait().then(() => {
+            //                 return true;
+            //             }).catch(() => {
+            //                 return false;
+            //             });
+            //         }).catch(() => {
+            //             return false;
+            //         });
+            //         if (!approveT) return false;
+            //     }
+            // } else return false;
+            // }
+
+            if (approveF) {
+                // if (isValueGood) { 
+                console.log('oneTokenInvest params:', invest.from.id, qunt, transferDataF, signData, address);
+                if (investGoodVA) {
+                    return await contract.oneTokenInvest(invest.from.id, qunt, transferDataF, signData, address, { value: investGoodV }).then((transaction) => {
+                        console.log('Transaction sent1:', transaction);
+                        return true;
+                    }).catch((error: any) => {
+                        return errorData(error);
+                    });
                 } else {
-                    const contractF = new ethers.Contract(fromAddress, erc20, signer);
-                    approveF = await contractF.approve(contractAddress, approveAmountF).then((transaction) => {
-                        return transaction.wait().then(() => {
-                            return true;
-                        }).catch(() => {
-                            return false;
-                        });
-                    }).catch(() => {
-                        return false;
+                    return await contract.oneTokenInvest(invest.from.id, qunt, transferDataF, signData, address).then((transaction) => {
+                        console.log('Transaction sent2:', transaction);
+                        return true;
+                    }).catch((error: any) => {
+                        return errorData(error);
                     });
                 }
-                if (approveF) {
-                    if (allowanceT) {
-                        approveT = true;
-                    } else {
-                        const contractT = new ethers.Contract(toAddress, erc20, signer);
-                        approveT = await contractT.approve(contractAddress, approveAmountT).then((transaction) => {
-                            return transaction.wait().then(() => {
-                                return true;
-                            }).catch(() => {
-                                return false;
-                            });
-                        }).catch(() => {
-                            return false;
-                        });
-                        if (!approveT) return false;
-                    }
-                } else return false;
-            }
+                // } else {
+                //     if (investGoodVA) {
+                //         return await contract.investGood(invest.from.id, invest.to.id, famount, transferDataF, transferDataT, address, signData, { value: investGoodV }).then((transaction) => {
+                //             console.log('Transaction sent1:', transaction);
+                //             return true;
+                //         }).catch((error: any) => {
+                //             return errorData(error);
+                //         });
+                //     } else {
+                //         return await contract.investGood(invest.from.id, invest.to.id, famount, transferDataF, transferDataT, address, signData).then((transaction) => {
+                //             console.log('Transaction sent2:', transaction);
+                //             return true;
+                //         }).catch((error: any) => {
+                //             return errorData(error);
+                //         });
+                //     }
 
-            if (approveF && approveT) {
-                if (isValueGood) {
-                    if (investGoodVA) {
-                        return await contract.investGood(invest.from.id, ConAddress0, famount, transferDataF, transferDataT, address, signData, { value: investGoodV }).then((transaction) => {
-                            console.log('Transaction sent1:', transaction);
-                            return true;
-                        }).catch((error: any) => {
-                            return errorData(error);
-                        });
-                    } else {
-                        return await contract.investGood(invest.from.id, ConAddress0, famount, transferDataF, transferDataT, address, signData).then((transaction) => {
-                            console.log('Transaction sent2:', transaction);
-                            return true;
-                        }).catch((error: any) => {
-                            return errorData(error);
-                        });
-                    }
-                } else {
-                    if (investGoodVA) {
-                        return await contract.investGood(invest.from.id, invest.to.id, famount, transferDataF, transferDataT, address, signData, { value: investGoodV }).then((transaction) => {
-                            console.log('Transaction sent1:', transaction);
-                            return true;
-                        }).catch((error: any) => {
-                            return errorData(error);
-                        });
-                    } else {
-                        return await contract.investGood(invest.from.id, invest.to.id, famount, transferDataF, transferDataT, address, signData).then((transaction) => {
-                            console.log('Transaction sent2:', transaction);
-                            return true;
-                        }).catch((error: any) => {
-                            return errorData(error);
-                        });
-                    }
-
-                }
+                // }
             }
         } catch (error) {
             return errorData(error);
@@ -1500,7 +1635,7 @@ const useWallet = () => {
             console.log("buyGood----", params[0], params[1], params[2], params[3], reference, transferData, amount, refer)
             console.log("buyGood--000--", params[0], params[1], params[2], reference, transferData, account, signData)
             if (address === ConAddress1 || address === ConAddress2) {
-                return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData, { value: amount }).then((transaction) => {
+                return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData, 0, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
                     return true;
                 }).catch((error: any) => {
@@ -1521,7 +1656,7 @@ const useWallet = () => {
                         return false;
                     });
                     if (allowanceF) {
-                        return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData).then((transaction) => {
+                        return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData, 0).then((transaction) => {
                             console.log('buyGood Transaction sent:', transaction);
                             return true;
                         }).catch((error: any) => {
@@ -1532,7 +1667,7 @@ const useWallet = () => {
                             console.log('approve Transaction sent:', transaction);
                             return transaction.wait().then(async (receipt: any) => {
                                 console.log('approve Transaction mined:', receipt);
-                                return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData).then((transaction) => {
+                                return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData, 0).then((transaction) => {
                                     console.log('buyGood Transaction sent:', transaction);
                                     return true;
                                 }).catch((error: any) => {
@@ -1548,7 +1683,7 @@ const useWallet = () => {
                         });
                     }
                 } else {
-                    return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData).then((transaction) => {
+                    return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData, 0).then((transaction) => {
                         console.log('buyGood Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {

@@ -71,18 +71,18 @@ export default function TokenInvest({ defaultTab, token, selectToken, openTokenS
 
 
     useEffect(() => {
-        if (isValueGood) {
+        // if (isValueGood) {
             // @ts-ignore
             if (Number(investAmount.from.amount) > balanceMap1.from || balanceMap1.from === 0 || Number(investAmount.from.amount) === 0 || Number(investAmount.from.amount) < 0 || investAmount.from.amount === "" || investAmount.from.amount === null) {
                 setisDisabled(true);
             } else { setisDisabled(disabled); }
 
-        } else {
-            // @ts-ignore
-            if (Number(investAmount.from.amount) > balanceMap1.from || Number(investAmount.to.amount) > balanceMap1.to || balanceMap1.from === 0 || balanceMap1.to === 0 || Number(investAmount.from.amount) === 0 || Number(investAmount.from.amount) < 0 || investAmount.from.amount === "" || investAmount.from.amount === null) {
-                setisDisabled(true);
-            } else { setisDisabled(disabled); }
-        }
+        // } else {
+        //     // @ts-ignore
+        //     if (Number(investAmount.from.amount) > balanceMap1.from || Number(investAmount.to.amount) > balanceMap1.to || balanceMap1.from === 0 || balanceMap1.to === 0 || Number(investAmount.from.amount) === 0 || Number(investAmount.from.amount) < 0 || investAmount.from.amount === "" || investAmount.from.amount === null) {
+        //         setisDisabled(true);
+        //     } else { setisDisabled(disabled); }
+        // }
         // return disabled;
     }, [investAmount, disabled, balanceMap1]);
 
@@ -152,7 +152,7 @@ export default function TokenInvest({ defaultTab, token, selectToken, openTokenS
             fAmount = investAmount.from.amount * powerIterative(10, invest.from.decimals);
         }
         if (investAmount.to.amount !== "" && investAmount.to.amount > 0 && !isValueGood) {
-            tAmount = investAmount.to.amount * powerIterative(10, invest.to.decimals);
+            tAmount = investAmount.to.amount * powerIterative(10, 12);
         }
         const isSuccess = await investGoods(invest, BigInt(Math.round(fAmount)), BigInt(Math.round(tAmount)), isValueGood, maxApprove);
         if (isSuccess === true) {
@@ -317,7 +317,7 @@ export default function TokenInvest({ defaultTab, token, selectToken, openTokenS
                 {/* <Separator className="bg-green-200" /> */}
 
                 {/* 投资代币B */}
-                {!isValueGood && (
+                {/* {!isValueGood && (
                     <div className="bg-gray-50 rounded-xl p-4">
                         <div className="flex items-center justify-between mb-3">
                             <Label className="text-sm text-muted-foreground">
@@ -403,7 +403,7 @@ export default function TokenInvest({ defaultTab, token, selectToken, openTokenS
                             </div>
                         )}
                     </div>
-                )}
+                )} */}
 
                 {/* Investment Summary */}
                 {!isDisabled ? (
@@ -424,7 +424,7 @@ export default function TokenInvest({ defaultTab, token, selectToken, openTokenS
                                     {investAmount.from.amount}{" "}{invest.from.symbol}
                                 </span>
                             </div>
-                            {!isValueGood && (
+                            {/* {!isValueGood && (
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">
                                         {invest.to.symbol} {t('common.invest')}
@@ -433,7 +433,7 @@ export default function TokenInvest({ defaultTab, token, selectToken, openTokenS
                                         {investAmount.to.amount}{" "}{invest.to.symbol}
                                     </span>
                                 </div>
-                            )}
+                            )} */}
 
                             {/* <Separator className="my-2" />
 
@@ -461,9 +461,7 @@ export default function TokenInvest({ defaultTab, token, selectToken, openTokenS
                         >
                             <div className="flex items-center gap-2">
                                 <span>
-                                    {!isValueGood
-                                        ? `${t('common.invest')}${" "}${invest.from.symbol} + ${invest.to.symbol}`
-                                        : `${t('common.invest')}${" "}${invest.from.symbol}`}
+                                    {`${t('common.invest')}${" "}${invest.from.symbol}`}
                                 </span>
                                 <Badge
                                     variant="secondary"

@@ -24,6 +24,13 @@ const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
     <Jazzicons seed={address} />
   )
 };
+const getString = (str: string): string | null => {
+  const index = str.indexOf('?');
+  if (index === -1) {
+    return null; // 如果未找到"?"，则返回null
+  }
+  return str.substring(index + 1); // 返回"?"之后的所有字符
+}
 function App() {
   const { isConnected } = useAccount();
   const chainId = useChainId();
@@ -31,47 +38,8 @@ function App() {
   const { ssionChian, setSsionChian } = useLocalStorage();
   const { info, setValueGood } = useValueGood();
   const { currentLanguage, changeLanguage } = useLanguage();
-  const { disconnect } = useDisconnect();
+  // const { disconnect } = useDisconnect();
 
-  const getString = (str: string): string | null => {
-    const index = str.indexOf('?');
-    if (index === -1) {
-      return null; // 如果未找到"?"，则返回null
-    }
-    return str.substring(index + 1); // 返回"?"之后的所有字符
-  }
-
-  // 初始化时检查是否需要断开连接
-  const [shouldForceDisconnect, setShouldForceDisconnect] = useState(false);
-
-  // 页面加载时立即检查并清除自动连接
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const wasManuallyDisconnected = localStorage.getItem('manually_disconnected');
-      if (wasManuallyDisconnected === 'true') {
-        setShouldForceDisconnect(true);
-      }
-    }
-  }, []);
-
-  // 执行强制断开
-  useEffect(() => {
-    if (shouldForceDisconnect && isConnected) {
-      disconnect();
-      localStorage.removeItem('manually_disconnected');
-      clearAllWalletStorage();
-      setShouldForceDisconnect(false);
-    }
-  }, [shouldForceDisconnect, isConnected, disconnect]);
-
-  // 监听用户手动断开连接
-  useEffect(() => {
-    if (!isConnected) {
-      // 标记为用户手动断开
-      localStorage.setItem('manually_disconnected', 'true');
-      clearAllWalletStorage();
-    }
-  }, [isConnected]);
 
   useEffect(() => {
     changeLanguage(localStorage.getItem("language"));
@@ -167,47 +135,6 @@ function App() {
       </RainbowKitProvider>
     </Suspense>
   )
-}
-
-
-function clearAllWalletStorage() {
-  if (typeof window === 'undefined') return;
-
-  const keysToClear = [
-    'wagmi.store',
-    'wagmi.connected',
-    'walletconnect',
-    'walletconnect-connector',
-    'injected-connector',
-    'coinbaseWalletConnector',
-    'metaMask-connector',
-    'rainbow-connector',
-    'safe-connector',
-    'uniswap-connector',
-    'argent-connector',
-    'binance-connector',
-  ];
-
-  keysToClear.forEach((key) => {
-    localStorage.removeItem(key);
-    sessionStorage.removeItem(key);
-  });
-
-  Object.keys(localStorage).forEach((key) => {
-    if (key.toLowerCase().includes('wagmi') ||
-      key.toLowerCase().includes('walletconnect') ||
-      key.toLowerCase().includes('connector')) {
-      localStorage.removeItem(key);
-    }
-  });
-
-  Object.keys(sessionStorage).forEach((key) => {
-    if (key.toLowerCase().includes('wagmi') ||
-      key.toLowerCase().includes('walletconnect') ||
-      key.toLowerCase().includes('connector')) {
-      sessionStorage.removeItem(key);
-    }
-  });
 }
 
 export default App

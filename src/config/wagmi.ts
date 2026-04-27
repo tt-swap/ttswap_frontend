@@ -10,9 +10,9 @@ import {
   uniswapWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { publicActions,createPublicClient } from 'viem';
-import { http, createConfig,fallback } from 'wagmi';
-import { injected } from 'wagmi/connectors';
+// import { publicActions,createPublicClient } from 'viem';
+import { http } from 'wagmi';
+// import { injected } from 'wagmi/connectors';
 import hoodi_Logo from "@/assets/images/ethereum_Logo.png";
 import ethereum_Logo from "@/assets/images/ethereum_Logo1.png";
 
@@ -135,10 +135,10 @@ export const config = getDefaultConfig({
     {
       groupName: 'Popular',
       wallets: [
+        metaMaskWallet,
         safeWallet,
         rainbowWallet,
         coinbaseWallet,
-        metaMaskWallet,
         walletConnectWallet,
       ],
     },

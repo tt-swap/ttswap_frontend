@@ -97,6 +97,7 @@ export function myInvestGoodDatas(params: { id: string; first: number; skip: num
 				  investShares
 				  isvaluegood
 				  islockgood
+				  investActualQuantity
 				}
 				good2 {
 					tokendecimals
@@ -111,6 +112,7 @@ export function myInvestGoodDatas(params: { id: string; first: number; skip: num
 					investShares
 				    isvaluegood
 					islockgood
+					investActualQuantity
 				}
 			  }
 		}`,

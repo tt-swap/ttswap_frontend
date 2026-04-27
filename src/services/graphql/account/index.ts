@@ -62,8 +62,8 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
             map.logo_url = iconUrl(chainName, e.good1.erc20Address);
             map.investQuantity = e.good1Quantity / base_decimals1;
             map.investActualQuantity = e.good1ActualQuantity / base_decimals1;
-            map.NAVPS = e.good1Quantity / e.good1Shares;//e.good1.feeQuantity / e.good1.investQuantity;
-            map.allNAVPS = e.good1.investQuantity / e.good1.investShares;
+            map.NAVPS = e.good1ActualQuantity / e.good1Shares;//e.good1.feeQuantity / e.good1.investQuantity;
+            map.allNAVPS = e.good1.investActualQuantity / e.good1.investShares;
             map.profit = (map.allNAVPS - map.NAVPS) * e.good1Shares / base_decimals1;//map.NAVPS * map.investQuantity - (e.good1ContructFee / base_decimals1);
             // map.APY = (map.profit / (map.investQuantity * timestampSubH(e.good1.modifiedTime))) * 365 * 100;
             map.earningRate = (map.allNAVPS - map.NAVPS) / map.NAVPS;//map.profit / map.investQuantity;
@@ -87,8 +87,8 @@ export async function myInvestGoodsDatas(params: { id: string; address: string; 
                 map1.logo_url = iconUrl(chainName, e.good2.erc20Address);
                 map1.investQuantity = e.good2Quantity / base_decimals2;
                 map1.investActualQuantity = e.good2ActualQuantity / base_decimals2;
-                map1.NAVPS = e.good2Quantity / e.good2Shares;
-                map1.allNAVPS = e.good2.investQuantity / e.good2.investShares;//e.good2.feeQuantity / e.good2.investQuantity;
+                map1.NAVPS = e.good2ActualQuantity / e.good2Shares;
+                map1.allNAVPS = e.good2.investActualQuantity / e.good2.investShares;//e.good2.feeQuantity / e.good2.investQuantity;
                 map1.profit = (map1.allNAVPS - map1.NAVPS) * e.good2Shares / base_decimals2;//map1.NAVPS * map1.investQuantity - (e.good2ContructFee / base_decimals2);
                 // map1.APY = (map1.profit / (map1.investQuantity * timestampSubH(e.good2.modifiedTime))) * 365;
                 map1.earningRate = (map1.allNAVPS - map1.NAVPS) / map1.NAVPS;//map1.profit / map1.investQuantity;
@@ -481,7 +481,7 @@ export async function myCommissions(params: { id: string; pageNumber: number; pa
     const provider = new ethers.BrowserProvider(ethereum);
     const contractAddress = getContractAddress(ssionChian);
     const signer = await provider.getSigner()
-    const contract = new ethers.Contract(contractAddress, MarketManager, signer);
+    const contract = new ethers.Contract(contractAddress, MarketManager, provider);
     console.log(item.ids);
 
     let feeQs: number[] = [];

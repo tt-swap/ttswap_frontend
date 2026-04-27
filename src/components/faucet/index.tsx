@@ -215,8 +215,8 @@ export const Faucet = ({ }: Props) => {
             // console.log(goodC, goodVAddr)
             const isSuccess = await faucetTestCion(goodC, goodVAddr, address,decimals);
 
-            // console.log("isSuccess:", isSuccess)
-            if (isSuccess) {
+            console.log("isSuccess:", isSuccess)
+            if (isSuccess.success) {
                 messageApi.open({
                     type: 'success',
                     content: 'Receive success',
@@ -225,7 +225,7 @@ export const Faucet = ({ }: Props) => {
             } else {
                 messageApi.open({
                     type: 'error',
-                    content: 'Receive fail',
+                    content: isSuccess.error,
                 });
             }
             setSpinning(false);

@@ -78,19 +78,19 @@ export function CreateTokenDialog({
 
   const { checkContractExists, newGoods, tokenDesc } = useWallet();
 
-  useEffect(() => {
-    if (!open) return;
-    (async () => {
-      // let tokens: any = await GoodsDatas(ssionChian);
-      const data = await createTokenV(info.id, ssionChian);
-      setSelectVgood(data);
-      const { balance } = await tokenDesc(data[0].id);
-      let a: tokeninfo = { ...data[0], balance: balance };
-      // a.balance = balance;
-      console.log("0-0-0-0", a)
-      setTokenInfoT(a);
-    })();
-  }, [ssionChian, open]);
+  // useEffect(() => {
+  //   if (!open) return;
+  //   (async () => {
+  //     // let tokens: any = await GoodsDatas(ssionChian);
+  //     const data = await createTokenV(info.id, ssionChian);
+  //     setSelectVgood(data);
+  //     const { balance } = await tokenDesc(data[0].id);
+  //     let a: tokeninfo = { ...data[0], balance: balance };
+  //     // a.balance = balance;
+  //     console.log("0-0-0-0", a)
+  //     setTokenInfoT(a);
+  //   })();
+  // }, [ssionChian, open]);
 
   useMemo(() => {
     setBuyF(8);
@@ -102,56 +102,11 @@ export function CreateTokenDialog({
     setGoodC("");
   }, [open]);
 
-
-  const menuProps = () => {
-    let items: MenuProps['items'] = [];
-    selectVgood.map((item: any) => {
-      items.push({
-        key: item.id,
-        label: (
-          <div className="flex items-center space-x-4">
-            <TokenIcon
-              isValueToken={true}
-              icon={item?.logo_url}
-              color=""
-              size={GRK_SIZES.EXTRA_SMALL}
-              showPulse={true}
-            />
-            <div className="text-left min-w-0 flex-1">
-              <div className="font-medium text-sm sm:text-base">
-                {item.symbol}
-              </div>
-              <div className="text-xs text-muted-foreground truncate">
-                {item.name}
-              </div>
-            </div>
-          </div>
-        ),
-      });
-    });
-    return { items };
-  }
-
-  const handleMenuClick: MenuProps['onClick'] = async (e) => {
-
-    setSpinning(true);
-    // setGoodVAddr(e.key);
-    // const data = await createTokenV(info.id, e.key, ssionChian);
-    // setGoodVName(data.name);
-    const { balance } = await tokenDesc(e.key);
-    const data = selectVgood.filter((item: any) => item.id === e.key);
-    console.log('click=======', e,data);
-    let a: tokeninfo = { ...data[0], balance: balance };
-    setTokenInfoT(a);
-    // message.info('Click on menu item.');
-    // console.log('click', e,data);
-    setSpinning(false);
-  };
   const isDisabled = () => {
 
     if (Number(stakeAmountFrom) > 0 && Number(stakeAmountTo) > 0
-      && Number(stakeAmountFrom) <= Number(tokenInfoF.balance)
-      && Number(stakeAmountTo) <= Number(tokenInfoT.balance))
+      // && Number(stakeAmountFrom) <= Number(tokenInfoF.balance)
+      && (Number(stakeAmountTo) * Number(stakeAmountFrom)) >= 500)
       return true;
     return false;
   }
@@ -163,8 +118,8 @@ export function CreateTokenDialog({
     const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
 
     // @ts-ignore
-    const isSuccess = await newGoods(tokenInfoT.address, tokenInfoT.name, tokenInfoT.decimals, stakeAmountFrom, stakeAmountTo, goodC, BigInt(config).toString(), "0", maxApprove);
-    console.log("isSuccess:", isSuccess, useErrorMess(isSuccess, t))
+    const isSuccess = await newGoods(stakeAmountFrom, stakeAmountTo, goodC, BigInt(config).toString(), "0", maxApprove);
+    console.log("isSuccess:--", isSuccess, useErrorMess(isSuccess, t))
     if (isSuccess === true) {
       messageApi.open({
         type: 'success',
@@ -179,9 +134,9 @@ export function CreateTokenDialog({
     } else {
       let yz = "";
       if (isSuccess === 35) {
-        const tokens: any = await minThreshold(tokenInfoT.address, ssionChian);
-        console.log("35--: ", tokens);
-        yz = "; >=" + tokens.minThreshold;
+        // const tokens: any = await minThreshold(tokenInfoT.address, ssionChian);
+        console.log("35--: 500");
+        yz = "; >= 500";
       }
       messageApi.open({
         type: 'error',
@@ -208,11 +163,6 @@ export function CreateTokenDialog({
   // 质押最大金额 - Token A
   const handleStakeMaxAmountFrom = () => {
     handleStakeAmountFromChange(tokenInfoF?.balance);
-  };
-
-  // 质押最大金额 - Token B
-  const handleStakeMaxAmountTo = () => {
-    setStakeAmountTo(tokenInfoT?.balance)
   };
 
 
@@ -284,7 +234,7 @@ export function CreateTokenDialog({
           </div>
           <div className="flex items-center gap-1 text-xs sm:text-sm">
             <span className="text-muted-foreground">
-            {t('account.create.step')}
+              {t('account.create.step')}
             </span>
             <span style={{ color: COLORS.PRIMARY }}>
               {currentStep}
@@ -375,7 +325,7 @@ export function CreateTokenDialog({
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <Label className="text-sm font-medium">
-                  {t('account.create.rateconfig')}
+                    {t('account.create.rateconfig')}
                   </Label>
                 </div>
 
@@ -543,7 +493,7 @@ export function CreateTokenDialog({
                         }}
                         onClick={handleStakeMaxAmountFrom}
                       >
-                       {t('account.create.max')}
+                        {t('account.create.max')}
                       </Button>
                     </div>
                   </div>
@@ -597,9 +547,10 @@ export function CreateTokenDialog({
                 <div className="bg-gray-50/80 rounded-xl p-3 border border-gray-100">
                   <div className="flex items-start justify-between mb-3">
                     <Label className="text-sm text-muted-foreground font-medium">
-                      {tokenInfoT?.symbol}
+                      {/* {tokenInfoF?.symbol} */}
+                      {t('account.create.token.price')}(USDT)
                     </Label>
-                    <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 ml-1 sm:ml-2">
+                    {/* <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 ml-1 sm:ml-2">
                       <div className="text-xs text-muted-foreground text-right">
                       {t('account.create.balance')}:{" "}{tokenInfoT?.balance}
                       </div>
@@ -620,11 +571,11 @@ export function CreateTokenDialog({
                       >
                         {t('account.create.max')}
                       </Button>
-                    </div>
+                    </div> */}
                   </div>
 
                   <div className="flex items-center gap-2 sm:gap-3">
-                    <Dropdown menu={{ ...menuProps(), onClick: handleMenuClick }} >
+                    {/* <Dropdown menu={{ ...menuProps(), onClick: handleMenuClick }} >
                       <Button
                         variant="ghost"
                         className="flex items-center gap-2 h-auto p-2 hover:bg-white flex-shrink-0 justify-start min-w-[120px] sm:min-w-0"
@@ -648,7 +599,7 @@ export function CreateTokenDialog({
                           <DownOutlined />
                         </Space>
                       </Button>
-                    </Dropdown>
+                    </Dropdown> */}
 
                     <div className="flex-1 min-w-[100px]">
                       <Input
@@ -674,11 +625,11 @@ export function CreateTokenDialog({
                   </div>
 
                   {/* 分佣信息 */}
-                  <div className="mt-2 sm:mt-3">
+                  {/* <div className="mt-2 sm:mt-3">
                     <div className="text-xs text-[#26a17b] font-medium">
                       {t("account.create.token.tip1")}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -710,19 +661,20 @@ export function CreateTokenDialog({
                     {stakeAmountTo &&
                       Number(stakeAmountTo) > 0 && (
                         <>
-                          <div className="flex justify-between items-center">
+                          {/* <div className="flex justify-between items-center">
                             <span className="text-muted-foreground">
                               {tokenInfoT?.symbol}
                             </span>
                             <span className="font-medium text-right">
                               {stakeAmountTo}
                             </span>
-                          </div>
+                          </div> */}
                           <div className="flex justify-between items-center">
                             <span className="text-muted-foreground">
-                              {tokenInfoF?.symbol}{t("account.create.preview.label")}
+                              {/* {tokenInfoF?.symbol} */}
+                              {t("account.create.preview.label")}(USDT)
                             </span>
-                            <span className="font-medium">{prettifyCurrencys(Number(stakeAmountTo) / Number(stakeAmountFrom) * Number(tokenInfoT?.price))}</span>
+                            <span className="font-medium">{prettifyCurrencys(Number(stakeAmountTo) * Number(stakeAmountFrom))}</span>
                           </div></>
                       )}
 
@@ -731,14 +683,14 @@ export function CreateTokenDialog({
 
                     <div className="flex flex-col gap-1">
                       <span className="font-medium text-sm">
-                      {t("account.create.preview.label1")}
+                        {t("account.create.preview.label1")}
                       </span>
                       <div className="text-green-600 text-xs sm:text-sm">
                         {stakeAmountFrom &&
                           Number(stakeAmountFrom) > 0
                           ? `${tokenInfoF?.symbol}${t("account.create.token.tip")}2%`
                           : ""}
-                        {Number(stakeAmountFrom) > 0 &&
+                        {/* {Number(stakeAmountFrom) > 0 &&
                           stakeAmountTo &&
                           Number(stakeAmountTo) > 0
                           ? " + "
@@ -746,13 +698,22 @@ export function CreateTokenDialog({
                         {stakeAmountTo &&
                           Number(stakeAmountTo) > 0
                           ? `${tokenInfoT?.symbol}${t("account.create.token.tip1")}`
-                          : ""}
+                          : ""} */}
                       </div>
                     </div>
                   </div>
                 </div>
               ) : null}
 
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <h4 className="font-medium mb-2 text-blue-800">
+                  {t("sale.mod3.tip")}
+                </h4>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>•
+                    {t('account.create.token.warning')}(USDT)</li>
+                </ul>
+              </div>
               {/* 最大授权 */}
               <div className="flex items-center justify-between p-3 bg-gray-50/50 rounded-lg border border-gray-100">
                 <Label
@@ -792,7 +753,7 @@ export function CreateTokenDialog({
               className="flex items-center justify-center gap-2 bg-[#0fb981] hover:bg-[#22c55e] text-white border-0 shadow-sm order-1 sm:order-2 h-9 sm:h-10 btn-modern hover-glow transition-all duration-300"
             >
               <span className="text-sm sm:text-base">
-              {t("common.next")}
+                {t("common.next")}
               </span>
               <ArrowRight className="h-4 w-4" />
             </Button>
