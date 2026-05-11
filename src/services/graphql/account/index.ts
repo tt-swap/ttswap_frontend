@@ -706,7 +706,7 @@ export async function createTokenV(id: string, ssionChian: number) {
 
 
 //钱包余额列表
-export async function tokensBalance(params: { id: string; wallet: string }, ssionChian: number): Promise<object> {
+export async function useTokensBalance(params: { id: string; wallet: string }, ssionChian: number): Promise<object> {
     const chainName = getChainName(ssionChian);
     let item = { tokens: [], transactions: [] };
     if (params.id !== "") {

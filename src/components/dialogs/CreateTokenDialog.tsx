@@ -189,13 +189,20 @@ export function CreateTokenDialog({
           });
           return
         };
-        console.log(staust)
+        console.log("==--==staust:", staust)
       }
-      const data = await tokenDesc(goodC);
-      setTokenInfoF(data);
-      console.log("=====data:", data)
+      try {
+        const data = await tokenDesc(goodC);
+        setTokenInfoF(data);
+        console.log("=====data:", data)
+        setCurrentStep(currentStep + 1);
+      } catch (error) {
+        messageApi.open({
+          type: 'error',
+          content: t('common.mess.error'),
+        });
+      }
       setSpinning(false);
-      setCurrentStep(currentStep + 1);
     }
   };
 
