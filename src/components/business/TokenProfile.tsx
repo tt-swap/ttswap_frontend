@@ -76,7 +76,7 @@ interface TokenProfileData {
   sellFee: number;
   investFee: number;
   divestFee: number;
-  swapChips: number;
+  investM: number;
   divestChips: number
 
   investor: number;
@@ -102,7 +102,7 @@ let map = {
   tradeQuantity24: 0, tradeValue24: 0, fee24: 0, feeValue24: 0, investQuantity24: 0, investValue24: 0,
   totalInvestQuantity: 0, totalInvestValue: 0, totalTradeQuantity: 0, totalTradeValue: 0, totalDisinvestQuantity: 0, totalDisinvestValue: 0,
   totalTradeCount: 0, totalInvestCount: 0, owner: "", isvaluegood: false,
-  buyFee: 0, sellFee: 0, investFee: 0, divestFee: 0, swapChips: 0, divestChips: 0,
+  buyFee: 0, sellFee: 0, investFee: 0, divestFee: 0, investM: 0, divestChips: 0,
   investor: 0, operator: 0, portal: 0, referrer: 0, user: 0, protocol: 0, maxLiquidity: 0,
 };
 
@@ -136,7 +136,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
       try {
         response =
           await getLpTokenView(
-            info.address,
+            info.id,
             tokenId,
             ssionChian
           );
@@ -171,6 +171,9 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
 
   const formatPercent = (value: number) => {
     return `${value}%`;
+  };
+  const formatPercents = (value: number) => {
+    return `${value}‱`;
   };
 
   const tokenLinks = (data: any, class1: string, class2: string) => {
@@ -1153,7 +1156,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
                     {t("token.level4.buyfee")}
                   </div>
                   <div className="font-medium text-[115%]">
-                    {formatPercent(tokenDataState?.buyFee)}
+                    {formatPercents(tokenDataState?.buyFee)}
                   </div>
                 </div>
               </Tooltip>
@@ -1163,7 +1166,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
                     {t("token.level4.sellfee")}
                   </div>
                   <div className="font-medium text-[115%]">
-                    {formatPercent(tokenDataState?.sellFee)}
+                    {formatPercents(tokenDataState?.sellFee)}
                   </div>
                 </div>
               </Tooltip>
@@ -1173,7 +1176,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
                     {t("token.level4.investfee")}
                   </div>
                   <div className="font-medium text-[115%]">
-                    {formatPercent(tokenDataState?.investFee)}
+                    {formatPercents(tokenDataState?.investFee)}
                   </div>
                 </div>
               </Tooltip>
@@ -1183,7 +1186,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
                     {t("token.level4.divestfee")}
                   </div>
                   <div className="font-medium text-[115%]">
-                    {formatPercent(tokenDataState?.divestFee)}
+                    {formatPercents(tokenDataState?.divestFee)}
                   </div>
                 </div>
               </Tooltip>
@@ -1193,7 +1196,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
                     {t("token.level4.strengthen")}
                   </div>
                   <div className="font-medium text-[115%]">
-                    {tokenDataState?.swapChips}
+                    {tokenDataState?.investM}
                   </div>
                 </div>
               </Tooltip>
@@ -1218,7 +1221,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
                   </div>
                   <div className="text-right">
                     <div className="font-medium text-sm">
-                      {formatPercent(tokenDataState?.buyFee)}
+                      {formatPercents(tokenDataState?.buyFee)}
                     </div>
                   </div>
                 </div>
@@ -1230,7 +1233,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
                   </div>
                   <div className="text-right">
                     <div className="font-medium text-sm">
-                      {formatPercent(tokenDataState?.sellFee)}
+                      {formatPercents(tokenDataState?.sellFee)}
                     </div>
                   </div>
                 </div>
@@ -1242,7 +1245,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
                   </div>
                   <div className="text-right">
                     <div className="font-medium text-sm">
-                      {formatPercent(tokenDataState?.investFee)}
+                      {formatPercents(tokenDataState?.investFee)}
                     </div>
                   </div>
                 </div>
@@ -1254,7 +1257,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
                   </div>
                   <div className="text-right">
                     <div className="font-medium text-sm">
-                      {formatPercent(tokenDataState?.divestFee)}
+                      {formatPercents(tokenDataState?.divestFee)}
                     </div>
                   </div>
                 </div>
@@ -1266,7 +1269,7 @@ export function TokenProfile({ handleBack, tokenId }: TokenProfileProps) {
                   </div>
                   <div className="text-right">
                     <div className="font-medium text-sm">
-                      {tokenDataState?.swapChips}
+                      {tokenDataState?.investM}
                     </div>
                   </div>
                 </div>

@@ -39,18 +39,18 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string;
             // @ts-ignore
             item.tokens = items1;
 
-            const m211 = new BigNumber(2).pow(211);
-            const m204 = new BigNumber(2).pow(204);
-            const m197 = new BigNumber(2).pow(197);
-            const m217 = new BigNumber(2).pow(217);
-            const m223 = new BigNumber(2).pow(223);
+            const m154 = new BigNumber(2).pow(154);
+            const m148 = new BigNumber(2).pow(148);
+            const m142 = new BigNumber(2).pow(142);
+            const m135 = new BigNumber(2).pow(135);
+            const m128 = new BigNumber(2).pow(128);
 
             goodsDatas.data.goodStates.forEach((e: any) => {
                 let base_decimals = powerIterative(10, e.tokendecimals);
                 let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
 
                 let map = {
-                    id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0, currentValue: 0,
+                    id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0, currentValue: 0, no: 0, type: 0,
                     buyFee: 0, sellFee: 0, price: 0, logo_url: "", address: "", isvaluegood: false, investFee: 0,
                 };
                 const goodConfig = new BigNumber(e.goodConfig);
@@ -64,9 +64,12 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string;
                 map.logo_url = iconUrl(chainName, e.erc20Address);
                 map.address = e.erc20Address;
                 map.price = current_price;
-                map.buyFee = goodConfig.mod(m211).div(m204).integerValue(1).div(10000).toNumber(); //Math.floor(e.goodConfig % (2 ** 211) / (2 ** 204)) / 10000;
-                map.sellFee = goodConfig.mod(m204).div(m197).integerValue(1).div(10000).toNumber(); //Math.floor(e.goodConfig % (2 ** 204) / (2 ** 197)) / 10000;
-                map.investFee = goodConfig.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
+                map.no = Number(e.goodno);
+                map.type = Number(e.goodtype);
+
+                map.investFee = goodConfig.mod(m154).div(m148).integerValue(1).div(10000).toNumber();    //154-148
+                map.buyFee = goodConfig.mod(m142).div(m135).integerValue(1).div(10000).toNumber();   //142-135
+                map.sellFee = goodConfig.mod(m135).div(m128).integerValue(1).div(10000).toNumber();  //135-128
                 items.push(map);
 
                 // console.log(goodConfig.mod(m211).div(m204).integerValue(1).div(10000).toString(),555555555,BigNumber(12.89).integerValue(1).toNumber())
@@ -74,7 +77,7 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string;
 
             goodsDatas.data.parGoodStates.forEach((en: any) => {
                 let map1 = {
-                    id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0, currentValue: 0,
+                    id: "", name: "", decimals: 0, symbol: "", currentQuantity: 0, currentValue: 0, no: 0, type: 0,
                     buyFee: 0, sellFee: 0, price: 0, logo_url: "", address: "", isvaluegood: false, investFee: 0,
                 };
                 const goodConfig1 = new BigNumber(en.goodConfig);
@@ -92,10 +95,11 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string;
                 map1.logo_url = iconUrl(chainName, en.erc20Address);
                 map1.address = en.erc20Address;
                 map1.price = current_price;
-                map1.buyFee = goodConfig1.mod(m211).div(m204).integerValue(1).div(10000).toNumber(); // Math.floor(en.goodConfig % (2 ** 211) / (2 ** 204)) / 10000;
-                // @ts-ignore
-                map1.sellFee = goodConfig1.mod(m204).div(m197).integerValue(1).div(10000).toNumber(); //Math.floor(en.goodConfig % (2 ** 204) / (2 ** 197)) / 10000;
-                map1.investFee = goodConfig1.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
+                map1.no = Number(en.goodno);
+                map1.type = Number(en.goodtype);
+                map1.investFee = goodConfig1.mod(m154).div(m148).integerValue(1).div(10000).toNumber();    //154-148
+                map1.buyFee = goodConfig1.mod(m142).div(m135).integerValue(1).div(10000).toNumber();   //142-135
+                map1.sellFee = goodConfig1.mod(m135).div(m128).integerValue(1).div(10000).toNumber();  //135-128
                 items1.push(map1);
             });
         } catch (error) {
@@ -104,7 +108,7 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string;
 
     }
 
-    // console.log(item,"***&&")
+    console.log(item,"***&&")
     return item;
 }
 
@@ -120,8 +124,8 @@ export async function newGoodsPrice(params: { id: string; from: string; to: stri
         const goodsDatas = await newGoodsPrices({ id: params.id, from: params.from, to: params.to }, ssionChian);
 
         let map = item;
-        const m197 = new BigNumber(2).pow(197);
-        const m187 = new BigNumber(2).pow(187);
+        // const m197 = new BigNumber(2).pow(197);
+        // const m187 = new BigNumber(2).pow(187);
         const goodsValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
         const tokendecimals = powerIterative(10, 6);
         map.valueV = goodsDatas.data.goodState.currentValue;
@@ -129,21 +133,21 @@ export async function newGoodsPrice(params: { id: string; from: string; to: stri
         map.valueD = goodsDatas.data.goodState.tokendecimals;
         if (goodsDatas.data.from.length > 0) {
             const from = goodsDatas.data.from[0];
-            const goodConfig = new BigNumber(from.goodConfig);
+            // const goodConfig = new BigNumber(from.goodConfig);
             const goodsFValue = (from.currentValue / tokendecimals) / (from.currentQuantity / 10 ** from.tokendecimals);
             map.fromQuan = from.currentQuantity;
             map.fromValue = from.currentValue;
             map.fromPrice = goodsFValue / goodsValue;
-            map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
+            // map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
         }
         if (goodsDatas.data.to.length > 0) {
             const to = goodsDatas.data.to[0];
-            const goodConfig = new BigNumber(to.goodConfig);
+            // const goodConfig = new BigNumber(to.goodConfig);
             const goodsTValue = (to.currentValue / tokendecimals) / (to.currentQuantity / 10 ** to.tokendecimals);
             map.toQuan = to.currentQuantity;
             map.toValue = to.currentValue;
             map.toPrice = goodsTValue / goodsValue;
-            map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
+            // map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
         }
     }
     return item;

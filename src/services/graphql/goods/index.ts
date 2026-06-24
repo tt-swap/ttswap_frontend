@@ -13,9 +13,9 @@ export async function goodsTransactionsDatas(params: { id: string; address: stri
     if (params.id !== "") {
         const goodsDatas = await goodsTransactions({ id: params.id, first: params.pageSize, skip: params.pageSize * params.pageNumber, address: params.address.toLowerCase(), walletAddress: params.walletAddress.toLowerCase() }, ssionChian);
 
-        let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
-        let tokendecimals = powerIterative(10, 6);
-        let jz = goodValue;
+        // let goodValue = goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity;
+        // let tokendecimals = powerIterative(10, 6);
+        // let jz = goodValue;
 
 
 
@@ -31,7 +31,7 @@ export async function goodsTransactionsDatas(params: { id: string; address: stri
 
         goodsDatas.data.transactions.forEach((e: any) => {
             let from_decimals = powerIterative(10, e.fromgood.tokendecimals);
-            let to_decimals = powerIterative(10, e.togood.tokendecimals);
+            // let to_decimals = powerIterative(10, e.togood.tokendecimals);
             // let from_price = 0;
             // if (e.fromgood.currentValue > 0 || e.fromgood.currentQuantity > 0 || e.fromgood.tokendecimals > 0) {
             //     from_price = ((e.fromgood.currentValue / tokendecimals) / (e.fromgood.currentQuantity / from_decimals)) / jz;
@@ -54,7 +54,7 @@ export async function goodsTransactionsDatas(params: { id: string; address: stri
             // @ts-ignore
             map.hash = blockExplorerUrls[0] + "/tx/" + e.hash;
             map.symbol1 = e.fromgood.tokensymbol;
-            map.symbol2 = e.togood.tokensymbol;
+            // map.symbol2 = e.togood.tokensymbol;
             if (from_decimals > 0) {
                 map.fromgoodQuanity = e.fromgoodQuanity / from_decimals;
                 map.fromgoodActualQuanity = e.fromgoodActualQuanity / from_decimals;
@@ -62,15 +62,22 @@ export async function goodsTransactionsDatas(params: { id: string; address: stri
                 map.fromgoodQuanity = 0;
                 map.fromgoodActualQuanity = 0;
             }
-            if (to_decimals > 0) {
-                map.togoodQuantity = e.togoodQuantity / to_decimals;
-                map.togoodActualQuantity = e.togoodActualQuantity / to_decimals;
+            if (Number(e.togoodQuantity) > 0) {
+                map.symbol2 = e.togood.tokensymbol;
+                let to_decimals = powerIterative(10, e.togood.tokendecimals);
+                if (to_decimals > 0) {
+                    map.togoodQuantity = e.togoodQuantity / to_decimals;
+                    map.togoodActualQuantity = e.togoodActualQuantity / to_decimals;
+                } else {
+                    map.togoodQuantity = 0;
+                    map.togoodActualQuantity = 0;
+                }
             } else {
+                map.symbol2 = "#";
                 map.togoodQuantity = 0;
                 map.togoodActualQuantity = 0;
             }
-
-            map.totalValue = e.transvalue / tokendecimals;
+            // map.totalValue = e.transvalue / tokendecimals;
             // if (e.transtype === "buy" || e.transtype === "pay") {
             //     map.totalValue = map.fromgoodQuanity * from_price;
             // } else {
@@ -109,7 +116,7 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
             tradeQuantity24: 0, tradeValue24: 0, fee24: 0, feeValue24: 0, investQuantity24: 0, investValue24: 0,
             totalInvestQuantity: 0, totalInvestValue: 0, totalTradeQuantity: 0, totalTradeValue: 0, totalDisinvestQuantity: 0, totalDisinvestValue: 0,
             totalTradeCount: 0, totalInvestCount: 0, owner: "", isvaluegood: false,
-            buyFee: 0, sellFee: 0, investFee: 0, divestFee: 0, swapChips: 0, divestChips: 0,
+            buyFee: 0, sellFee: 0, investFee: 0, divestFee: 0, investM: 0, divestChips: 0,
             investor: 0, operator: 0, portal: 0, referrer: 0, user: 0, protocol: 0, maxLiquidity: 0,
             // chart_data: { volume_chart_7d: {}, volume_chart_30d: {}, quote_currency: "" }
         };
@@ -127,31 +134,6 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
                 let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / jz;
 
                 let map = data;
-
-                // let volume_chart_7d: object[] = [];
-                // let volume_chart_30d: object[] = [];
-
-                // map.chart_data.volume_chart_7d = volume_chart_7d;
-                // map.chart_data.volume_chart_30d = volume_chart_30d;
-
-                // map.chart_data.quote_currency = e.tokensymbol;
-                // e.days7.forEach((e: any) => {
-                //     let map1 = { dt: 0, quote_currency: "", pretty_volume_quote: 0, volume_quote: 0 };
-                //     // let jz1 = e.currentValue * e.currentQuantity / tokendecimals;
-                //     map1.dt = e.modifiedTime * 1000;
-                //     map1.volume_quote = e.currentQuantity / base_decimals;
-                //     map1.pretty_volume_quote = map1.volume_quote * current_price;
-                //     // map1.quote_currency = map.symbol;
-                //     volume_chart_7d.push(map1);
-                // });
-                // e.days30.forEach((e: any) => {
-                //     let map1 = { dt: 0, quote_currency: "", pretty_volume_quote: 0, volume_quote: 0 };
-                //     map1.dt = e.modifiedTime * 1000;
-                //     map1.volume_quote = e.currentQuantity / base_decimals;
-                //     map1.pretty_volume_quote = map1.volume_quote * current_price;
-                //     // map1.quote_currency = map.symbol;
-                //     volume_chart_30d.push(map1);
-                // });
 
                 map.id = e.id;
                 map.name = e.tokenname;
@@ -188,40 +170,43 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
                 map.totalInvestCount = e.totalInvestCount;
                 map.owner = e.owner;
 
-                const m254 = new BigNumber(2).pow(254);
-                const m251 = new BigNumber(2).pow(251);
+                const m154 = new BigNumber(2).pow(154);
+                const m148 = new BigNumber(2).pow(148);
+                const m142 = new BigNumber(2).pow(142);
+                const m135 = new BigNumber(2).pow(135);
+                const m160 = new BigNumber(2).pow(160);
+                const m128 = new BigNumber(2).pow(128);
+                const m173 = new BigNumber(2).pow(173);
+                const m168 = new BigNumber(2).pow(168);
+                const m250 = new BigNumber(2).pow(250);
                 const m247 = new BigNumber(2).pow(247);
-                const m244 = new BigNumber(2).pow(244);
-                const m239 = new BigNumber(2).pow(239);
-                const m234 = new BigNumber(2).pow(234);
-                const m229 = new BigNumber(2).pow(229);
-                const m224 = new BigNumber(2).pow(224);
-                const m223 = new BigNumber(2).pow(223);
-                const m217 = new BigNumber(2).pow(217);
-                const m211 = new BigNumber(2).pow(211);
-                const m204 = new BigNumber(2).pow(204);
-                const m197 = new BigNumber(2).pow(197);
-                const m187 = new BigNumber(2).pow(187);
-                const m177 = new BigNumber(2).pow(177);
+                const m243 = new BigNumber(2).pow(243);
+                const m240 = new BigNumber(2).pow(240);
+                const m235 = new BigNumber(2).pow(235);
+                const m230 = new BigNumber(2).pow(230);
+                const m225 = new BigNumber(2).pow(225);
+                const m220 = new BigNumber(2).pow(220);
                 const goodConfig = new BigNumber(e.goodConfig);
-                map.investor = goodConfig.mod(m254).div(m251).integerValue(1).toNumber() * 10;
-                map.operator = goodConfig.mod(m251).div(m247).integerValue(1).toNumber() * 2;
-                map.portal = goodConfig.mod(m247).div(m244).integerValue(1).toNumber() * 4;
-                map.referrer = goodConfig.mod(m244).div(m239).integerValue(1).toNumber();
-                map.user = goodConfig.mod(m239).div(m234).integerValue(1).toNumber();
-                map.protocol = goodConfig.mod(m234).div(m229).integerValue(1).toNumber();
-                map.maxLiquidity = goodConfig.mod(m229).div(m224).integerValue(1).toNumber();
+
+                map.investFee = goodConfig.mod(m154).div(m148).integerValue(1).toNumber();    //154-148
+                map.divestFee = goodConfig.mod(m148).div(m142).integerValue(1).toNumber();    //148-142
+                map.buyFee = goodConfig.mod(m142).div(m135).integerValue(1).toNumber();   //142-135
+                map.sellFee = goodConfig.mod(m135).div(m128).integerValue(1).toNumber();  //135-128
+                map.divestChips = goodConfig.mod(m168).div(m160).integerValue(1).toNumber() * 4;  //168-160
+                map.investM = goodConfig.mod(m173).div(m168).integerValue(1).toNumber();  //173-168
+
+
+                map.investor = goodConfig.mod(m250).div(m247).integerValue(1).toNumber() * 10;    //250-247
+                map.operator = goodConfig.mod(m247).div(m243).integerValue(1).toNumber() * 2;     //247-243
+                map.portal = goodConfig.mod(m243).div(m240).integerValue(1).toNumber() * 4;   //243-240
+                map.referrer = goodConfig.mod(m240).div(m235).integerValue(1).toNumber();  //240-235
+                map.user = goodConfig.mod(m235).div(m230).integerValue(1).toNumber(); //235-230
+                map.protocol = goodConfig.mod(m230).div(m225).integerValue(1).toNumber();    //230-225
+                map.maxLiquidity = goodConfig.mod(m225).div(m220).integerValue(1).toNumber(); //225-220
                 if (map.maxLiquidity === 0) {
                     map.maxLiquidity = 1
                 }
-                map.investFee = goodConfig.mod(m223).div(m217).integerValue(1).div(100).toNumber();
-                map.divestFee = goodConfig.mod(m217).div(m211).integerValue(1).div(100).toNumber();
-                map.buyFee = goodConfig.mod(m211).div(m204).integerValue(1).div(100).toNumber();
-                map.sellFee = goodConfig.mod(m204).div(m197).integerValue(1).div(100).toNumber();
-                // map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).times(BigNumber(10)).toNumber();
-                map.swapChips = goodConfig.mod(m197).div(m187).integerValue(1).toNumber();
-                map.divestChips = goodConfig.mod(m187).div(m177).integerValue(1).toNumber();
-                let uintF = (Number(e.feeQuantity) + Number(e.investQuantity)) / e.investQuantity;
+
                 if (e.goodData.length > 0) {
                     let en = e.date24[0];
                     let enY = e.goodData[0];

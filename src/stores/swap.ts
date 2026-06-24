@@ -34,7 +34,9 @@ const initDefaultSwapF = (): SwapStateF => ({
     currentQuantity: 0,
     currentValue: 0,
     decimals: 0,
-    isvaluegood: false
+    isvaluegood: false,
+    no: 0,
+    type: 0
   }
 });
 
@@ -65,7 +67,9 @@ const initDefaultSwapT = (): SwapStateT => ({
     currentQuantity: 0,
     currentValue: 0,
     decimals: 0,
-    isvaluegood: false
+    isvaluegood: false,
+    no: 0,
+    type: 0
   },
 });
 

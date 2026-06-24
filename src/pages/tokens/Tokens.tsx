@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import { TokenTable } from "@/components/tables/TokenTable";
@@ -6,6 +6,7 @@ import { SwapDialog } from "@/components/dialogs";
 import { useValueGood } from "@/stores/valueGood";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 import { useMuneName } from "@/stores/menu";
+import type { TokenV2Volume } from "@/types/XykServiceTypes";
 
 
 export default function Tokens() {
@@ -16,33 +17,43 @@ export default function Tokens() {
     const [isSwapDialogOpen, setIsSwapDialogOpen] =
         useState(false);
     const [swapDialogTab, setSwapDialogTab] = useState<"swap" | "invest">("swap");
-    const [selectedToken, setSelectedToken] = useState(null);
-    const { name, setName } = useMuneName();
+    const { setName } = useMuneName();
+    const [selectedToken, setSelectedToken] = useState<TokenV2Volume | null>(null);
+
     useEffect(() => {
         setName('tokens');
     }, []);
     // 处理代币交换点击
-    const handleTokenSwap = (
-        token: any,
+    const handleTokenSwap = useCallback((
+        token: TokenV2Volume,
     ) => {
         setSelectedToken(token);
         setSwapDialogTab("swap");
         setIsSwapDialogOpen(true);
-    };
+    }, []);
 
     // 处理代币投资点击
-    const handleTokenInvest = (
-        token: any,
+    const handleTokenInvest = useCallback((
+        token: TokenV2Volume,
     ) => {
         setSelectedToken(token);
         setSwapDialogTab("invest");
         setIsSwapDialogOpen(true);
-    };
+    }, []);
 
     // 处理代币行点击跳转到TokenProfile
-    const handleTokenRowClick = (token: string) => {
-        navigate('/tokens/' + token);
-    };
+    const handleTokenRowClick = useCallback((token: string) => {
+        navigate(`/tokens/${token}`);
+    }, [navigate]);
+
+    // 处理弹窗关闭
+    const handleDialogOpenChange = useCallback((open: boolean) => {
+        setIsSwapDialogOpen(open);
+        if (!open) {
+            // 弹窗关闭时延迟清空选中的 token，避免关闭动画时数据闪烁
+            setTimeout(() => setSelectedToken(null), 200);
+        }
+    }, []);
 
     return (
         <div>
@@ -71,7 +82,7 @@ export default function Tokens() {
                 />
                 <SwapDialog
                     open={isSwapDialogOpen}
-                    onOpenChange={setIsSwapDialogOpen}
+                    onOpenChange={handleDialogOpenChange}
                     defaultTab={swapDialogTab}
                     tokenId={selectedToken?.id}
                 />

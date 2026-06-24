@@ -99,7 +99,7 @@ export default function TradingPage() {
       const tokensWithBalance = await Promise.allSettled(
         (balance.tokens || []).map(async (item: any): Promise<TokenItem> => {
           try {
-            const tokenBalanceValue = await tokenBalance(item.address);
+            const tokenBalanceValue = await tokenBalance(item);
             return {
               ...item,
               price: prettifyCurrencys(item.price),

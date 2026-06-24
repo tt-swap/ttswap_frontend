@@ -105,7 +105,7 @@ const useWallet = () => {
         let lastError: any;
 
         for (let i = 0; i < retries; i++) {
-            if (!mountedRef.current) { 
+            if (!mountedRef.current) {
                 throw new Error("Component unmounted");
             }
 
@@ -131,7 +131,7 @@ const useWallet = () => {
     // ============ 余额查询（核心优化）============
 
     // 统一获取代币余额和精度（仅返回原始数据）
-    const fetchTokenBalance = useCallback(async (tokenAddress: string): Promise<{
+    const fetchTokenBalance = useCallback(async (tokenAddress: string, no: number, type: number): Promise<{
         balance: bigint;
         decimals: number;
     }> => {
@@ -140,14 +140,18 @@ const useWallet = () => {
         }
 
         const resolvedAddress = resolveTokenAddress(tokenAddress);
-        const contract = new ethers.Contract(resolvedAddress, erc20, provider);
 
-        const [balance, decimals] = await Promise.all([
-            fetchWithRetry(() => contract.balanceOf(address)),
-            fetchWithRetry(() => contract.decimals()),
-        ]);
+        if (type === 1) {
+            const contract = new ethers.Contract(resolvedAddress, erc20, provider);
+            const [balance, decimals] = await Promise.all([
+                fetchWithRetry(() => contract.balanceOf(address)),
+                fetchWithRetry(() => contract.decimals()),
+            ]);
 
-        return { balance, decimals: Number(decimals) };
+            return { balance, decimals: Number(decimals) };
+        } else {
+            //erc1155 3:erc6909
+        }
     }, [isConnected, address, provider, resolveTokenAddress, fetchWithRetry]);
 
     // 获取原生代币余额
@@ -171,7 +175,7 @@ const useWallet = () => {
         }
 
         try {
-            const { balance, decimals } = await fetchTokenBalance(token);
+            const { balance, decimals } = await fetchTokenBalance(token, 0, 1);
             return {
                 balance: formatBalance(balance, decimals),
                 decimals
@@ -182,19 +186,19 @@ const useWallet = () => {
         }
     }, [isConnected, fetchTokenBalance, formatBalance]);
 
-    const tokenBalance = useCallback(async (token: string): Promise<string> => {
+    const tokenBalance = useCallback(async (token: any): Promise<string> => {
         if (!isConnected) return "0";
 
         try {
-            if (isNativeToken(token)) {
+            if (isNativeToken(token.address)) {
                 const balance = await fetchNativeBalance(address!);
                 return formatBalance(balance, DEFAULT_DECIMALS);
             }
 
-            const { balance, decimals } = await fetchTokenBalance(token);
+            const { balance, decimals } = await fetchTokenBalance(token.address, token.no, token.type);
             return formatBalance(balance, decimals);
         } catch (error) {
-            console.error(`获取 ${token} 余额失败:`, error);
+            console.error(`获取 ${token.address} 余额失败:`, error);
             return "0";
         }
     }, [isConnected, address, fetchNativeBalance, fetchTokenBalance, formatBalance]);
@@ -226,7 +230,7 @@ const useWallet = () => {
                 };
             }
 
-            const resolvedAddress =  (token);
+            const resolvedAddress = (token);
             const contract = new ethers.Contract(resolvedAddress, erc20, provider);
 
             const [decimals, balance, name, symbol] = await Promise.all([
@@ -276,7 +280,7 @@ const useWallet = () => {
                     promises.push(
                         isNativeToken(fromAddress)
                             ? fetchNativeBalance(address).then(b => formatBalance(b, DEFAULT_DECIMALS))
-                            : fetchTokenBalance(fromAddress).then(({ balance, decimals }) => formatBalance(balance, decimals))
+                            : fetchTokenBalance(fromAddress, swaps?.from?.no, swaps?.from?.type).then(({ balance, decimals }) => formatBalance(balance, decimals))
                     );
                 } else {
                     promises.push(Promise.resolve("0"));
@@ -286,7 +290,7 @@ const useWallet = () => {
                     promises.push(
                         isNativeToken(toAddress)
                             ? fetchNativeBalance(address).then(b => formatBalance(b, DEFAULT_DECIMALS))
-                            : fetchTokenBalance(toAddress).then(({ balance, decimals }) => formatBalance(balance, decimals))
+                            : fetchTokenBalance(toAddress, swaps?.to?.no, swaps?.to?.type).then(({ balance, decimals }) => formatBalance(balance, decimals))
                     );
                 } else {
                     promises.push(Promise.resolve("0"));
@@ -324,7 +328,7 @@ const useWallet = () => {
             try {
                 const fromBalance = isNativeToken(fromAddress)
                     ? await fetchNativeBalance(address).then(b => formatBalance(b, DEFAULT_DECIMALS))
-                    : await fetchTokenBalance(fromAddress).then(({ balance, decimals }) => formatBalance(balance, decimals));
+                    : await fetchTokenBalance(fromAddress, invest?.from?.no, invest?.from?.type).then(({ balance, decimals }) => formatBalance(balance, decimals));
 
                 if (!cancelled) {
                     setBalanceMap1({ from: fromBalance, to: "0" });
@@ -662,7 +666,7 @@ const useWallet = () => {
         try {
             //const signer = await provider.getSigner()
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-            return await contract.updateGoodConfig(id, config, wallet, signData).then((transaction) => {
+            return await contract.modifyGoodByGoodOwner(id, config, wallet, signData).then((transaction) => {
                 console.log('Transaction sent:', transaction);
                 return true;
             }).catch((error: any) => {
@@ -733,9 +737,10 @@ const useWallet = () => {
         });
     }
 
-    const newGoods = async (num1: number, num2: number, addr: string, config: string, accounts: string, maxApprove: boolean) => {
+    const newGoods = async (num1: number, num2: number, addr: string, ercType: number, ercId: number, maxApprove: boolean) => {
         addr = addr.toLowerCase();
-        console.log("newGoods-----", num1, num2, addr, config, accounts, maxApprove);
+        console.log("newGoods-----", num1, num2, addr, ercType, ercId, maxApprove);
+        const goodKey = { ercType: ercType, contractAddress: addr, id: ercId };
         try {
             //const signer = await provider.getSigner()
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
@@ -821,16 +826,16 @@ const useWallet = () => {
                     addr = CON_ADDRESS_3;
                 }
                 if (initGoodVA) {
-                    console.log(2222, addr, qunt, config, transferDataT, address, signData, initGoodV)
-                    return await contract.initGoodWithPrice(addr, qunt, config, transferDataT, address, signData, { value: initGoodV }).then((transaction) => {
+                    console.log(2222, goodKey, qunt, transferDataT, address, signData, initGoodV,contract)
+                    return await contract.initGood(goodKey, qunt, transferDataT, address, signData, { value: initGoodV }).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
                         return errorData(error);
                     });
                 } else {
-                    console.log(3333, addr, qunt, config, transferDataT, address, signData)
-                    return await contract.initGoodWithPrice(addr, qunt, config, transferDataT, address, signData).then((transaction) => {
+                    console.log(3333, goodKey, qunt, transferDataT, address, signData,contract)
+                    return await contract.initGood(goodKey, qunt, transferDataT, address, signData).then((transaction) => {
                         console.log('Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
@@ -1008,6 +1013,7 @@ const useWallet = () => {
 
     const investGoods = async (invest: any, famount: any, tamount: any, isValueGood: boolean, maxApprove: boolean) => {
 
+        const goodKey = { ercType: 1, contractAddress: invest.from.address, id: 0 };
         try {
 
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
@@ -1209,16 +1215,16 @@ const useWallet = () => {
 
             if (approveF) {
                 // if (isValueGood) { 
-                console.log('oneTokenInvest params:', invest.from.id, qunt, transferDataF, signData, address);
+                console.log('investGood params:', goodKey, qunt, transferDataF, signData, address);
                 if (investGoodVA) {
-                    return await contract.oneTokenInvest(invest.from.id, qunt, transferDataF, signData, address, { value: investGoodV }).then((transaction) => {
+                    return await contract.investGood(goodKey, qunt, transferDataF, signData, address, { value: investGoodV }).then((transaction) => {
                         console.log('Transaction sent1:', transaction);
                         return true;
                     }).catch((error: any) => {
                         return errorData(error);
                     });
                 } else {
-                    return await contract.oneTokenInvest(invest.from.id, qunt, transferDataF, signData, address).then((transaction) => {
+                    return await contract.investGood(goodKey, qunt, transferDataF, signData, address).then((transaction) => {
                         console.log('Transaction sent2:', transaction);
                         return true;
                     }).catch((error: any) => {
@@ -1252,6 +1258,8 @@ const useWallet = () => {
 
     const swapBuyGood = async (params: any, amount: any, address: string, symbol: string, maxApprove: boolean, refer: string) => {
 
+        const goodKey1 = { ercType: 1, contractAddress: params[0], id: 0 };
+        const goodKey2 = { ercType: 1, contractAddress: params[1], id: 0 };
         console.log("000000werwerwe", params)
         try {
 
@@ -1274,10 +1282,10 @@ const useWallet = () => {
             const { a, transferData, approveAmount } = await signerData(address, amount, symbol, maxApprove);
             console.log(2)
 
-            console.log("buyGood----", params[0], params[1], params[2], params[3], reference, transferData, amount, refer)
+            console.log("buyGood----", goodKey1, goodKey2, params[2], params[3], reference, transferData, amount, refer)
             console.log("buyGood--000--", params[0], params[1], params[2], reference, transferData, account, signData)
             if (address === CON_ADDRESS_1 || address === CON_ADDRESS_2) {
-                return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData, 0, { value: amount }).then((transaction) => {
+                return await contract.buyGood(goodKey1, goodKey2, params[2], reference, transferData, account, signData, 0, { value: amount }).then((transaction) => {
                     console.log('Transaction sent:', transaction);
                     return true;
                 }).catch((error: any) => {
@@ -1298,7 +1306,7 @@ const useWallet = () => {
                         return false;
                     });
                     if (allowanceF) {
-                        return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData, 0).then((transaction) => {
+                        return await contract.buyGood(goodKey1, goodKey2, params[2], reference, transferData, account, signData, 0).then((transaction) => {
                             console.log('buyGood Transaction sent:', transaction);
                             return true;
                         }).catch((error: any) => {
@@ -1309,7 +1317,7 @@ const useWallet = () => {
                             console.log('approve Transaction sent:', transaction);
                             return transaction.wait().then(async (receipt: any) => {
                                 console.log('approve Transaction mined:', receipt);
-                                return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData, 0).then((transaction) => {
+                                return await contract.buyGood(goodKey1, goodKey2, params[2], reference, transferData, account, signData, 0).then((transaction) => {
                                     console.log('buyGood Transaction sent:', transaction);
                                     return true;
                                 }).catch((error: any) => {
@@ -1325,7 +1333,7 @@ const useWallet = () => {
                         });
                     }
                 } else {
-                    return await contract.buyGood(params[0], params[1], params[2], reference, transferData, account, signData, 0).then((transaction) => {
+                    return await contract.buyGood(goodKey1, goodKey2, params[2], reference, transferData, account, signData, 0).then((transaction) => {
                         console.log('buyGood Transaction sent:', transaction);
                         return true;
                     }).catch((error: any) => {
@@ -1416,12 +1424,12 @@ const useWallet = () => {
 
 
     const setingToken = async (id: string, wallet: string, config: string) => {
-        console.log("upTokenSet", id, wallet, config);
+        console.log("upTokenSet-modifyGoodByManager", id, wallet, config);
 
         try {
             //const signer = await provider.getSigner()
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-            return await contract.modifyGoodConfig(id, config, wallet, signData).then((transaction) => {
+            return await contract.modifyGoodByManager(id, config, wallet, signData).then((transaction) => {
                 console.log('Transaction sent:', transaction);
                 return true;
             }).catch((error: any) => {
@@ -1434,12 +1442,12 @@ const useWallet = () => {
 
 
     const setingTokenAdmin = async (id: string, wallet: string, config: string) => {
-        console.log("upTokenSet", id, wallet, config);
+        console.log("upTokenSet-modifyGoodByAdmin", id, wallet, config);
 
         try {
             //const signer = await provider.getSigner()
             const contract = new ethers.Contract(contractAddress, MarketManager, signer);
-            return await contract.modifyGoodCoreConfig(id, config, wallet, signData).then((transaction) => {
+            return await contract.modifyGoodByAdmin(id, config, wallet, signData).then((transaction) => {
                 console.log('Transaction sent:', transaction);
                 return true;
             }).catch((error: any) => {

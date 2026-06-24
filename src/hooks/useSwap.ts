@@ -36,6 +36,8 @@ const useSwap = () => {
                         currentValue: value.currentValue,
                         decimals: value.decimals,
                         isvaluegood: value.isvaluegood,
+                        no: value.no,
+                        type: value.type,
                     },
                     to: {
                         id: swaps.to.id,
@@ -50,6 +52,8 @@ const useSwap = () => {
                         currentValue: swaps.to.currentValue,
                         decimals: swaps.to.decimals,
                         isvaluegood: swaps.to.isvaluegood,
+                        no: swaps.to.no,
+                        type: swaps.to.type,
                     },
                 });
             } else {
@@ -71,6 +75,8 @@ const useSwap = () => {
                         currentValue: swaps.from.currentValue,
                         decimals: swaps.from.decimals,
                         isvaluegood: swaps.from.isvaluegood,
+                        no: swaps.from.no,
+                        type: swaps.from.type,
                     },
                     to: {
                         id: value.id,
@@ -85,6 +91,8 @@ const useSwap = () => {
                         currentValue: value.currentValue,
                         decimals: value.decimals,
                         isvaluegood: value.isvaluegood,
+                        no: value.no,
+                        type: value.type,
                     },
                 });
             }
@@ -383,6 +391,9 @@ const useSwap = () => {
                 currentValue: swaps.to.currentValue,
                 decimals: swaps.to.decimals,
                 isvaluegood: swaps.to.isvaluegood,
+                no: swaps.to.no,
+                type: swaps.to.type,
+
             },
             to: {
                 id: swaps.from.id,
@@ -397,6 +408,8 @@ const useSwap = () => {
                 currentValue: swaps.from.currentValue,
                 decimals: swaps.from.decimals,
                 isvaluegood: swaps.from.isvaluegood,
+                no: swaps.from.no,
+                type: swaps.from.type,
             },
         });
         setIsHandleFlip(true);

@@ -27,6 +27,8 @@ const useInvest = () => {
                         decimals: value.decimals,
                         currentQuantity: value.currentQuantity,
                         currentValue: value.currentValue,
+                        no: value.no,
+                        type: value.type,
                     },
                     to: {
                         id: invest.to.id,
@@ -40,6 +42,8 @@ const useInvest = () => {
                         decimals: invest.to.decimals,
                         currentQuantity: invest.to.currentQuantity,
                         currentValue: invest.to.currentValue,
+                        no: invest.to.no,
+                        type: invest.to.type,
                     },
                 });
             } else {

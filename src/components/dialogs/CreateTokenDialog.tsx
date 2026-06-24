@@ -115,10 +115,10 @@ export function CreateTokenDialog({
   const newGood = async () => {
     setSpinning(true);
     // @ts-ignore
-    const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
+    // const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
 
-    // @ts-ignore
-    const isSuccess = await newGoods(stakeAmountFrom, stakeAmountTo, goodC, BigInt(config).toString(), "0", maxApprove);
+    // stakeAmountFrom,stakeAmountTo,goodC,ercType(1),ercId(0),maxApprove
+    const isSuccess = await newGoods(Number(stakeAmountFrom), Number(stakeAmountTo), goodC, 1, 0, maxApprove);
     console.log("isSuccess:--", isSuccess, useErrorMess(isSuccess, t))
     if (isSuccess === true) {
       messageApi.open({

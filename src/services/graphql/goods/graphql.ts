@@ -8,9 +8,10 @@ export function goodsTransactions(params: { id: string; first: number; skip: num
         return apolloClient(ssionChian).query({
             query: gql`query($id: BigInt,$address: String,$first: Int,$skip: Int) {
                 goodState(id: $id) {
+				    id
                     currentQuantity
                     currentValue
-                    id
+                    erc20Address
                     tokenname
                     tokensymbol
                     tokendecimals
