@@ -107,26 +107,110 @@ const useSwap = () => {
 
     const cionNum = (value: number, data: any, type: number) => {
         if (type === 0) {
-            let fa = value * 10 ** swaps.from.decimals;
-            fa = fa - fa * swaps.from.sellFee;
-            const rv = 2 * Number(data.fromValue) * Number(data.toQuan) * fa;
-            const rv1 = 2 * Number(data.toValue) * Number(data.fromQuan) + Number(data.toValue) * fa + Number(data.fromValue) * fa;
-            const ta = rv / rv1;
-            let tnum = (ta - ta * swaps.to.buyFee) / 10 ** swaps.to.decimals;
-            tnum = Math.floor(tnum * 1e6) / 1e6;
-            // tnum = Number(tnum.toFixed(6));
-            console.log(fa, rv, rv1, ta, tnum, swaps, 8980)
-            return tnum;
+            // let fa = value * 10 ** swaps.from.decimals;
+            // fa = fa - fa * swaps.from.sellFee;
+            // const rv = 2 * Number(data.fromValue) * Number(data.toQuan) * fa;
+            // const rv1 = 2 * Number(data.toValue) * Number(data.fromQuan) + Number(data.toValue) * fa + Number(data.fromValue) * fa;
+            // const ta = rv / rv1;
+            // let tnum = (ta - ta * swaps.to.buyFee) / 10 ** swaps.to.decimals;
+            // tnum = Math.floor(tnum * 1e6) / 1e6;
+            // // tnum = Number(tnum.toFixed(6));
+            // console.log(value, 8980);
+            if (value > 0) {
+                const baseAmount = value * 10 ** swaps.from.decimals;
+                let remainingAmount = baseAmount;
+                let fromQuantity = Number(data.fromQuan);
+                let totalValue = 0;
+
+                while (remainingAmount > 0) {
+                    const stepSize = Math.min(remainingAmount, fromQuantity / 100);
+
+                    totalValue += (2 * stepSize * Number(data.fromValue)) / (2 * fromQuantity + stepSize);
+
+                    // 更新池状态
+                    fromQuantity += stepSize;
+                    remainingAmount -= stepSize;
+                }
+
+                console.log("---ff--", remainingAmount, fromQuantity, totalValue, data);
+
+                // 步骤3：将累积的价值转换为目标代币数量
+                let toValue = Number(data.toValue);
+                let toQuantity = Number(data.toQuan);
+                let totalOutput = 0;
+                let remainingValue = totalValue;
+                let st1 = 0;
+
+                while (remainingValue > 0) {
+
+                    const stepSize = Math.min(remainingValue, toValue / 100);
+                    console.log("---ss--", stepSize, remainingValue);
+                    if (stepSize > 0) {
+                        st1 = (2 * stepSize * toQuantity) / (2 * toValue + stepSize);
+
+                        // 更新池状态
+                        toQuantity -= st1;
+                        remainingValue -= stepSize;
+                        totalOutput += st1;
+                    }
+                }
+
+                console.log("---tt--", toValue, toQuantity, remainingValue, totalOutput);
+                return ((totalOutput - totalOutput * swaps.to.buyFee) / 10 ** swaps.to.decimals).toFixed(6);
+                // return tnum;
+            }
         } else if (type === 1) {
-            let ta = value * 10 ** swaps.to.decimals;
-            ta = ta + ta * swaps.to.buyFee;
-            const rv = 2 * ta * Number(data.fromQuan) * Number(data.toValue);
-            const rv1 = 2 * Number(data.fromValue) * Number(data.toQuan) - Number(data.fromValue) * ta - ta * Number(data.toValue);
-            const fa = rv / rv1;
-            let tnum = (fa + fa * swaps.from.sellFee) / 10 ** swaps.from.decimals;
-            tnum = Math.ceil(tnum * 1e6) / 1e6;
-            console.log(ta, rv, rv1, fa, tnum, 8981)
-            return tnum;
+            // let ta = value * 10 ** swaps.to.decimals;
+            // ta = ta + ta * swaps.to.buyFee;
+            // const rv = 2 * ta * Number(data.fromQuan) * Number(data.toValue);
+            // const rv1 = 2 * Number(data.fromValue) * Number(data.toQuan) - Number(data.fromValue) * ta - ta * Number(data.toValue);
+            // const fa = rv / rv1;
+            // let tnum = (fa + fa * swaps.from.sellFee) / 10 ** swaps.from.decimals;
+            // tnum = Math.ceil(tnum * 1e6) / 1e6;
+            // console.log(ta, rv, rv1, fa, tnum, 8981)
+            // return tnum;
+            if (value > 0) {
+                const baseAmount = value * 10 ** swaps.to.decimals;
+                let remainingAmount = baseAmount;
+                let fromQuantity = Number(data.toQuan);
+                let totalValue = 0;
+
+                while (remainingAmount > 0) {
+                    const stepSize = Math.min(remainingAmount, fromQuantity / 100);
+
+                    totalValue += (2 * stepSize * Number(data.toValue)) / (2 * fromQuantity + stepSize);
+
+                    // 更新池状态
+                    fromQuantity += stepSize;
+                    remainingAmount -= stepSize;
+                }
+
+                console.log("---ff--", remainingAmount, fromQuantity, totalValue, data);
+
+                // 步骤3：将累积的价值转换为目标代币数量
+                let toValue = Number(data.fromValue);
+                let toQuantity = Number(data.fromQuan);
+                let totalOutput = 0;
+                let remainingValue = totalValue;
+                let st1 = 0;
+
+                while (remainingValue > 0) {
+
+                    const stepSize = Math.min(remainingValue, toValue / 100);
+                    console.log("---ss--", stepSize, remainingValue);
+                    if (stepSize > 0) {
+                        st1 = (2 * stepSize * toQuantity) / (2 * toValue + stepSize);
+
+                        // 更新池状态
+                        toQuantity -= st1;
+                        remainingValue -= stepSize;
+                        totalOutput += st1;
+                    }
+                }
+
+                console.log("---tt--", toValue, toQuantity, remainingValue, totalOutput);
+                return ((totalOutput - totalOutput * swaps.from.sellFee) / 10 ** swaps.from.decimals).toFixed(6);
+            }
         } else if (type === 2) {
             const fa = value * 10 ** swaps.from.decimals;
             // const rv = (Number(data.fromValue) / (Number(data.fromQuan) + fa)) * fa;

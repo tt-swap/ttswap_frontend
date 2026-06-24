@@ -361,10 +361,10 @@ export function WithdrawDialog({
     let b = 0;
     let av = disgood.good1.currentValue / disgood.good1.currentQuantity * Number(goodQ) * 10 ** disgood.good1.decimals;
     a = (av * disgood.ttsp - av * disgood.ttsc) / 10 ** 12;
-    if (!disgood.isvaluegood && disgood.good2.address!=="") {
-      let bv = disgood.good2.currentValue / disgood.good2.currentQuantity * Number(goodVQ) * 10 ** disgood.good2.decimals;
-      b = (bv * disgood.ttsp - bv * disgood.ttsc) / 10 ** 12;
-    }
+    // if (!disgood.isvaluegood && disgood.good2.address!=="") {
+    //   let bv = disgood.good2.currentValue / disgood.good2.currentQuantity * Number(goodVQ) * 10 ** disgood.good2.decimals;
+    //   b = (bv * disgood.ttsp - bv * disgood.ttsc) / 10 ** 12;
+    // }
 
     return a + b;
   };

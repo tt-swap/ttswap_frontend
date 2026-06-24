@@ -192,7 +192,9 @@ export default function TokenSwap({ timeKey, token, selectToken, openTokenSelect
 
         setSpinning(true);
         const a: bigint = BigInt(Math.round(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals));
-        const b: bigint = BigInt(Math.round(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals));
+        const b: bigint = BigInt(Math.round(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals*(1-Number(slippage)/100)));
+        console.log(a, "*****", b)
+        // const b1: bigint = BigInt(Math.round(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals)*(1-Number(slippage)/100));
         let swapquantity;
         if (antiMEV) {
             swapquantity = a * BigInt(2 ** 128) + b;
