@@ -125,7 +125,7 @@ const useSwap = () => {
                 while (remainingAmount > 0) {
                     const stepSize = Math.min(remainingAmount, fromQuantity / 100);
 
-                    totalValue += (2 * stepSize * Number(data.fromValue)) / (2 * fromQuantity + stepSize);
+                    totalValue += Math.trunc((2 * stepSize * Number(data.fromValue)) / (2 * fromQuantity + stepSize));
 
                     // 更新池状态
                     fromQuantity += stepSize;
@@ -178,7 +178,7 @@ const useSwap = () => {
                 while (remainingAmount > 0) {
                     const stepSize = Math.min(remainingAmount, fromQuantity / 100);
 
-                    totalValue += (2 * stepSize * Number(data.toValue)) / (2 * fromQuantity + stepSize);
+                    totalValue += Math.trunc((2 * stepSize * Number(data.toValue)) / (2 * fromQuantity + stepSize));
 
                     // 更新池状态
                     fromQuantity += stepSize;
