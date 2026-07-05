@@ -156,7 +156,7 @@ const useSwap = () => {
                 }
 
                 console.log("---tt--", toValue, toQuantity, remainingValue, totalOutput);
-                return ((totalOutput - totalOutput * swaps.to.buyFee) / 10 ** swaps.to.decimals).toFixed(6);
+                return +((totalOutput - totalOutput * swaps.to.buyFee) / 10 ** swaps.to.decimals).toFixed(6);
                 // return tnum;
             }
         } else if (type === 1) {
@@ -209,7 +209,7 @@ const useSwap = () => {
                 }
 
                 console.log("---tt--", toValue, toQuantity, remainingValue, totalOutput);
-                return ((totalOutput - totalOutput * swaps.from.sellFee) / 10 ** swaps.from.decimals).toFixed(6);
+                return +((totalOutput - totalOutput * swaps.from.sellFee) / 10 ** swaps.from.decimals).toFixed(6);
             }
         } else if (type === 2) {
             const fa = value * 10 ** swaps.from.decimals;
