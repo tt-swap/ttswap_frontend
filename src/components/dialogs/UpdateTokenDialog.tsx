@@ -15,6 +15,7 @@ import { Spin, message } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useGlobalLoading } from '@/stores/globalLoading';
 import CreatModal from "./creatModal";
+import { Slider } from "@/components/ui/slider";
 import {
   Tabs,
   TabsContent,
@@ -40,6 +41,7 @@ interface TokenConfig {
   divestChips: number;
   maxInvestM: number;
   islock: number;
+  investThreshold: number;
 }
 export function UpdateTokenDialog({
   open,
@@ -69,6 +71,7 @@ export function UpdateTokenDialog({
   const [leverageMultiplier, setLeverageMultiplier] = useState(1); // 放大倍数
   const [withdrawSlices, setWithdrawSlices] = useState(1); // 撤资切片数
   const [maxM, setMaxM] = useState(1); // 撤资切片数
+  const [investThreshold, setinvestThreshold] = useState(1); // 投资系数（70-100）
 
   useEffect(() => {
 
@@ -100,6 +103,7 @@ export function UpdateTokenDialog({
         setWithdrawSlices(result.divestChips);
         setMaxM(result.maxInvestM);
         setIsFrozen(result.islock === 1 ? true : false);
+        setinvestThreshold(result.investThreshold);
       }
     })();
   }, [ssionChian, token, open]);
@@ -113,7 +117,8 @@ export function UpdateTokenDialog({
     try {
 
       // @ts-ignore
-      const config = investFeeRate * 2 ** 217 + withdrawFeeRate * 2 ** 211 + buyFeeRate * 2 ** 204 + sellFeeRate * 2 ** 197 + leverageMultiplier * 2 ** 187 + withdrawSlices * 2 ** 177
+      const config = investFeeRate * 2 ** 148 + withdrawFeeRate * 2 ** 142 + buyFeeRate * 2 ** 135
+        + sellFeeRate * 2 ** 128 + leverageMultiplier * 2 ** 168 + (withdrawSlices / 4) * 2 ** 160
 
       // @ts-ignore
       const isSuccess = await upTokenSet(token.id, walletAddress, BigInt(config).toString());
@@ -366,7 +371,7 @@ export function UpdateTokenDialog({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="withdrawSlices"> {t("account.update.divest.chips")}</Label>
-                    <span className="text-xs text-muted-foreground">(1~1023)</span>
+                    <span className="text-xs text-muted-foreground">(1~1020)</span>
                   </div>
                   <Input
                     id="withdrawSlices"
@@ -376,10 +381,30 @@ export function UpdateTokenDialog({
                     placeholder="1"
                     className="pr-10"
                     min={1}
-                    max={1023}
+                    max={1020}
                   />
                 </div>
 
+                {/* 投资系数 */}
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
+                      <Label htmlFor="maxLeverageMultiplier" className="text-xs sm:text-sm whitespace-nowrap">{t("account.update.investThreshold")}</Label>
+                    </div>
+                    <span className="text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 bg-[#0fb981]/10 text-[#0fb981] rounded whitespace-nowrap flex-shrink-0">
+                      {investThreshold}
+                    </span>
+                  </div>
+                  <Slider
+                    id="maxLeverageMultiplier"
+                    value={[investThreshold]}
+                    onValueChange={(value) => setinvestThreshold(value[0])}
+                    min={0}
+                    max={100}
+                    step={1}
+                    className="w-full"
+                  />
+                </div>
                 {/* 更新按钮 */}
                 <div className="pt-3 sm:pt-4">
                   <Button
@@ -399,10 +424,10 @@ export function UpdateTokenDialog({
                 <div className="flex items-center justify-between py-2">
                   <div className="space-y-0.5">
                     <Label htmlFor="isFrozen" className="cursor-pointer">
-                    {t("account.update.freeze.label")}
+                      {t("account.update.freeze.label")}
                     </Label>
                     <p className="text-xs text-muted-foreground">
-                    {t("account.update.freeze.label.desc")}
+                      {t("account.update.freeze.label.desc")}
                     </p>
                   </div>
                   <Switch

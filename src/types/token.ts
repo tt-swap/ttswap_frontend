@@ -29,6 +29,8 @@ export interface TokenPayload {
   currentQuantity: number;
   currentValue: number;
   isvaluegood: boolean;
+  no: number;
+  type: number;
 }
 
 export interface SwapState {
@@ -133,6 +135,8 @@ export const initDefaultinvest = (): InvestState => ({
     currentQuantity: 0,
     currentValue: 0,
     decimals: 0,
+    no: 0,
+    type: 0
   },
   to: {
     id: 0,
@@ -146,6 +150,8 @@ export const initDefaultinvest = (): InvestState => ({
     currentQuantity: 0,
     currentValue: 0,
     decimals: 0,
+    no: 0,
+    type: 0
   },
 });
 
@@ -162,7 +168,9 @@ export const initDefaultSwap = (): SwapState => ({
     currentQuantity: 0,
     currentValue: 0,
     decimals: 0,
-    isvaluegood: false
+    isvaluegood: false,
+    no: 0,
+    type: 0
   },
   to: {
     symbol: DEFAULT_TOKEN,
@@ -176,6 +184,8 @@ export const initDefaultSwap = (): SwapState => ({
     currentQuantity: 0,
     currentValue: 0,
     decimals: 0,
-    isvaluegood: false
+    isvaluegood: false,
+    no: 0,
+    type: 0
   },
 });

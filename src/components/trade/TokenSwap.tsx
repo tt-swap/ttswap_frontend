@@ -192,7 +192,9 @@ export default function TokenSwap({ timeKey, token, selectToken, openTokenSelect
 
         setSpinning(true);
         const a: bigint = BigInt(Math.round(Number(swapsAmount.from.amount) * 10 ** swaps.from.decimals));
-        const b: bigint = BigInt(Math.round(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals));
+        const b: bigint = BigInt(Math.round(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals*(1-Number(slippage)/100)));
+        console.log(a, "*****", b)
+        // const b1: bigint = BigInt(Math.round(Number(swapsAmount.to.amount) * 10 ** swaps.to.decimals)*(1-Number(slippage)/100));
         let swapquantity;
         if (antiMEV) {
             swapquantity = a * BigInt(2 ** 128) + b;
@@ -202,7 +204,7 @@ export default function TokenSwap({ timeKey, token, selectToken, openTokenSelect
         // const s = await swapCount(swaps.from.id, a);
         const datas: any = await myRefer(address, ssionChian);
         // console.log(a, 2222222222, s, datas)
-        const isSuccess = await swapBuyGood([swaps.from.id, swaps.to.id, swapquantity, 1], a, swaps.from.address, swaps.from.symbol, maxApprove, datas.refer);
+        const isSuccess = await swapBuyGood([swaps.from.address, swaps.to.address, swapquantity, 1], a, swaps.from.address, swaps.from.symbol, maxApprove, datas.refer);
         console.log("isSuccess:", isSuccess)
         if (isSuccess === true) {
             setOpen(true);

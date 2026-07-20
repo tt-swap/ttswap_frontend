@@ -33,6 +33,8 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; par
                         currentQuantity
                         currentValue
                         feeQuantity
+                        goodno
+                        goodtype
                     }
                     parGoodStates: goodStates(where: {id: $gid}) {
                         id
@@ -45,6 +47,8 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; par
                         tokensymbol
                         tokendecimals
                         isvaluegood
+                        goodno
+                        goodtype
                     }
                 }`,
             variables: params
@@ -78,6 +82,8 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; par
                             currentQuantity
                             currentValue
                             feeQuantity
+                            goodno
+                            goodtype
                         }
                         parGoodStates: goodStates(
                             where: {and: [{islockgood: false}{
@@ -95,6 +101,8 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; par
                             tokensymbol
                             tokendecimals
                             isvaluegood
+                            goodno
+                            goodtype
                         }
                     }`,
                 variables: params
@@ -125,6 +133,8 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; par
                             currentQuantity
                             currentValue
                             feeQuantity
+                            goodno
+                            goodtype
                         }
                         parGoodStates: goodStates(where: {id_not: "0x0000000000000000000000000000000000000000", islockgood: false}, orderBy: currentValue, orderDirection: desc) {
                             id
@@ -137,6 +147,8 @@ export function parGoodDatas(params: { id: string; sel: string; gid: string; par
                             tokensymbol
                             tokendecimals
                             isvaluegood
+                            goodno
+                            goodtype
                         }
                     }`,
                 variables: params

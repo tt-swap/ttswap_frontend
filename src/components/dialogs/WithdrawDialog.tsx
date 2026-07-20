@@ -76,12 +76,12 @@ interface count {
     disfee: number;
     count: number;
   };
-  good2: {
-    quantity: number;
-    profit: number;
-    disfee: number;
-    count: number;
-  };
+  // good2: {
+  //   quantity: number;
+  //   profit: number;
+  //   disfee: number;
+  //   count: number;
+  // };
 }
 interface WithdrawDialogProps {
   open: boolean;
@@ -101,7 +101,7 @@ export function WithdrawDialog({
   const { ssionChian } = useLocalStorage();
   const { disinvest } = useWallet();
 
-  let count = { good1: { quantity: 0, profit: 0, disfee: 0, count: 0 }, good2: { quantity: 0, profit: 0, disfee: 0, count: 0 } };
+  let count = { good1: { quantity: 0, profit: 0, disfee: 0, count: 0 } };
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -138,7 +138,7 @@ export function WithdrawDialog({
   const isDisabled = useMemo(() => {
     // console.log(buyF, sellF, inF, disinF, swapS, disinS, goodQ, goodVQ, goodC, goodV)
     // @ts-ignore
-    if (goodQ === "" || goodQ === "0" || goodQ <= 0 || disgood.good1.maxNum < goodQ || goodVQ > disgood.good2.maxNum)
+    if (goodQ === "" || goodQ === "0" || goodQ <= 0 || disgood.good1.maxNum < goodQ)
       return true;
     return false;
   }, [goodQ, goodVQ])
@@ -150,10 +150,10 @@ export function WithdrawDialog({
       count.good1.profit = e.good1.profit;
       count.good1.disfee = e.good1.disfee;
       count.good1.count = e.good1.quantity + e.good1.profit - e.good1.disfee;
-      count.good2.quantity = e.good2.quantity;
-      count.good2.profit = e.good2.profit;
-      count.good2.disfee = e.good2.disfee;
-      count.good2.count = e.good2.quantity + e.good2.profit - e.good2.disfee;
+      // count.good2.quantity = e.good2.quantity;
+      // count.good2.profit = e.good2.profit;
+      // count.good2.disfee = e.good2.disfee;
+      // count.good2.count = e.good2.quantity + e.good2.profit - e.good2.disfee;
     } else if (zt == 1) {
       let g1da = e.good1.quantity / e.good1.investShares * amount;
       let g1ada = e.good1.investActualQuantity / e.good1.investShares * amount;
@@ -173,14 +173,14 @@ export function WithdrawDialog({
       count.good1.disfee = sxf;
       count.good1.count = sy + g1ada - sxf;
 
-      let g2da = e.good2.quantity / e.good1.investShares * amount;
-      let g2ada = e.good2.investActualQuantity / e.good1.investShares * amount;
-      let sy2 = e.good2.investQuantity / e.good2.allInvestShares * amount2 - g2da;
-      let sxf2 = g2da * e.good2.rate;
-      count.good2.quantity = g2ada;
-      count.good2.profit = sy2;
-      count.good2.disfee = sxf2;
-      count.good2.count = sy2 + g2ada - sxf2;
+      // let g2da = e.good2.quantity / e.good1.investShares * amount;
+      // let g2ada = e.good2.investActualQuantity / e.good1.investShares * amount;
+      // let sy2 = e.good2.investQuantity / e.good2.allInvestShares * amount2 - g2da;
+      // let sxf2 = g2da * e.good2.rate;
+      // count.good2.quantity = g2ada;
+      // count.good2.profit = sy2;
+      // count.good2.disfee = sxf2;
+      // count.good2.count = sy2 + g2ada - sxf2;
     }
     setDisgoodCot(count);
   }
@@ -229,7 +229,7 @@ export function WithdrawDialog({
     }
     // console.log("------00--",withoutRounding(2.111111111111111, g1));
     // @ts-ignore
-    if (disgood.isvaluegood) {
+    // if (disgood.isvaluegood) {
       // let num = 0;
       // @ts-ignore
       if (numg1 < disgood.good1.quantity && numg1 < disgood.good1.maxNum || numg1 == disgood.good1.maxNum) {
@@ -245,82 +245,84 @@ export function WithdrawDialog({
       // @ts-ignore
       disAmount(disgood, 1, numg1);
       console.log("00000", disgoodCot, 999)
-    } else {
-      // @ts-ignore
-      const g2 = disgood.good2.decimals;
-      let num = Number(numg1);
-      // @ts-ignore
-      let num1: any = disgood.good2.investShares / disgood.good1.investShares * num;
-      const ws = getDecimalPlaces(num1);
-      if (ws > g2) {
-        num1 = withoutRounding(Number(num1), g2);//num1.toFixed(g2);
-      }
-      // @ts-ignore
-      if (num < disgood.good1.quantity && num < disgood.good1.maxNum || num == disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum || num1 == disgood.good2.maxNum) {
-        if (e == "" && numg1 == 0) {
-        } else {
-          setGoodQ(numg1);
-        }
-        // @ts-ignore
-        setGoodVQ(num1);
-        num1 = Number(num1);
-      } else {
-        setGoodQ(goodQ);
-        setGoodVQ(goodVQ);
-        numg1 = Number(goodQ);
-        num1 = Number(goodVQ);
-      }
-      disAmount(disgood, 2, numg1, num1);
-      console.log("------", numg1, num1, count)
+    // }
+    //  else {
+    //   // @ts-ignore
+    //   const g2 = disgood.good2.decimals;
+    //   let num = Number(numg1);
+    //   // @ts-ignore
+    //   let num1: any = disgood.good2.investShares / disgood.good1.investShares * num;
+    //   const ws = getDecimalPlaces(num1);
+    //   if (ws > g2) {
+    //     num1 = withoutRounding(Number(num1), g2);//num1.toFixed(g2);
+    //   }
+    //   // @ts-ignore
+    //   if (num < disgood.good1.quantity && num < disgood.good1.maxNum || num == disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum || num1 == disgood.good2.maxNum) {
+    //     if (e == "" && numg1 == 0) {
+    //     } else {
+    //       setGoodQ(numg1);
+    //     }
+    //     // @ts-ignore
+    //     setGoodVQ(num1);
+    //     num1 = Number(num1);
+    //   } else {
+    //     setGoodQ(goodQ);
+    //     setGoodVQ(goodVQ);
+    //     numg1 = Number(goodQ);
+    //     num1 = Number(goodVQ);
+    //   }
+    //   disAmount(disgood, 2, numg1, num1);
+    //   console.log("------", numg1, num1, count)
 
-    }
+    // }
     // }
 
   };
   // @ts-ignore
-  const goodVQOn = (e: any) => {
-    // @ts-ignore
-    const g1: number = disgood.good1.decimals; const g2: number = disgood.good2.decimals;
+  // const goodVQOn = (e: any) => {
+  //   // @ts-ignore
+  //   const g1: number = disgood.good1.decimals;
+  //   //const g2: number = disgood.good2.decimals;
 
-    let num1 = e;
-    const pd = parseFloat(e);
-    if (Number(num1) < 0 || isNaN(pd)) {
-      num1 = 0;
-      setGoodVQ("");
-    }
-    // else {
-    const ws = getDecimalPlaces(num1);
-    if (ws > g2) {
-      num1 = withoutRounding(Number(num1), g2);//Number(num1).toFixed(g2);
-    }
-    // @ts-ignore
-    let num: any = num1 / (disgood.good2.investShares / disgood.good1.investShares);
-    console.log("++++++", num)
-    const ws1 = getDecimalPlaces(num);
-    if (ws1 > g1) {
-      num = withoutRounding(Number(num), g1);//Number(num).toFixed(g1);
-    }
-    // @ts-ignore
-    if (num < disgood.good1.quantity && num < disgood.good1.maxNum || num == disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum || num1 == disgood.good2.maxNum) {
+  //   let num1 = e;
+  //   const pd = parseFloat(e);
+  //   if (Number(num1) < 0 || isNaN(pd)) {
+  //     num1 = 0;
+  //     setGoodVQ("");
+  //   }
+  //   // else {
+  //   const ws = getDecimalPlaces(num1);
+  //   // if (ws > g2) {
+  //   //   num1 = withoutRounding(Number(num1), g2);//Number(num1).toFixed(g2);
+  //   // }
+  //   // @ts-ignore
+  //   let num: any = num1 / (disgood.good2.investShares / disgood.good1.investShares);
+  //   console.log("++++++", num)
+  //   const ws1 = getDecimalPlaces(num);
+  //   if (ws1 > g1) {
+  //     num = withoutRounding(Number(num), g1);//Number(num).toFixed(g1);
+  //   }
+  //   // @ts-ignore
+  //   if (num < disgood.good1.quantity && num < disgood.good1.maxNum || num == disgood.good1.maxNum && num1 < disgood.good2.quantity && num1 < disgood.good2.maxNum || num1 == disgood.good2.maxNum) {
 
-      if (e == "" && num1 == 0) {
-      } else {
-        setGoodVQ(num1);
-      }
-      setGoodQ(num);
-      // setGoodVQ(num1);
-      num = Number(num);
-      num1 = Number(num1);
-    } else {
-      setGoodQ(goodQ);
-      setGoodVQ(goodVQ);
-      num = Number(goodQ);
-      num1 = Number(goodVQ);
-    }
-    console.log("++++++", num, num1)
-    disAmount(disgood, 2, num, num1);
-    // }
-  };
+  //     if (e == "" && num1 == 0) {
+  //     } else {
+  //       setGoodVQ(num1);
+  //     }
+  //     setGoodQ(num);
+  //     // setGoodVQ(num1);
+  //     num = Number(num);
+  //     num1 = Number(num1);
+  //   } else {
+  //     setGoodQ(goodQ);
+  //     setGoodVQ(goodVQ);
+  //     num = Number(goodQ);
+  //     num1 = Number(goodVQ);
+  //   }
+  //   console.log("++++++", num, num1)
+  //   disAmount(disgood, 2, num, num1);
+  //   // }
+  // };
 
 
 
@@ -359,10 +361,10 @@ export function WithdrawDialog({
     let b = 0;
     let av = disgood.good1.currentValue / disgood.good1.currentQuantity * Number(goodQ) * 10 ** disgood.good1.decimals;
     a = (av * disgood.ttsp - av * disgood.ttsc) / 10 ** 12;
-    if (!disgood.isvaluegood && disgood.good2.address!=="") {
-      let bv = disgood.good2.currentValue / disgood.good2.currentQuantity * Number(goodVQ) * 10 ** disgood.good2.decimals;
-      b = (bv * disgood.ttsp - bv * disgood.ttsc) / 10 ** 12;
-    }
+    // if (!disgood.isvaluegood && disgood.good2.address!=="") {
+    //   let bv = disgood.good2.currentValue / disgood.good2.currentQuantity * Number(goodVQ) * 10 ** disgood.good2.decimals;
+    //   b = (bv * disgood.ttsp - bv * disgood.ttsc) / 10 ** 12;
+    // }
 
     return a + b;
   };
@@ -476,7 +478,7 @@ export function WithdrawDialog({
                       </div>
 
                       {/* 第二个代币信息 */}
-                      {!disgood.isvaluegood && disgood.good2.address!=="" && (
+                      {/* {!disgood.isvaluegood && disgood.good2.address!=="" && (
                         <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
                           <div className="flex items-center gap-3">
                             <TokenIcon
@@ -515,7 +517,7 @@ export function WithdrawDialog({
                             </div>
                           </div>
                         </div>
-                      )}
+                      )} */}
                     </div>
 
                     {/* 投资类型标识 */}
@@ -524,9 +526,7 @@ export function WithdrawDialog({
                         variant="outline"
                         className="text-[#0fb981] border-[#0fb981]"
                       >
-                        {!disgood.isvaluegood && disgood.good2.address!==""
-                          ? t("account.divest.invest.title2")
-                          : t("account.divest.invest.title1")}
+                        {t("account.divest.invest.title1")}
                       </Badge>
                     </div>
                   </div>
@@ -620,7 +620,7 @@ export function WithdrawDialog({
                   </div>
 
                   {/* 第二个代币撤资设置 */}
-                  {!disgood.isvaluegood && disgood.good2.address!=="" && (
+                  {/* {!disgood.isvaluegood && disgood.good2.address!=="" && (
                     <div className="bg-gray-50 rounded-xl p-4">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
@@ -683,7 +683,7 @@ export function WithdrawDialog({
                         </div>
                       </div>
                     </div>
-                  )}
+                  )} */}
 
                   {/* 实时预览 */}
                   <div className="bg-blue-50 rounded-lg p-4">
@@ -702,7 +702,7 @@ export function WithdrawDialog({
                           {disgood.good1.symbol}
                         </span>
                       </div>
-                      {!disgood.isvaluegood && disgood.good2.address!=="" && (
+                      {/* {!disgood.isvaluegood && disgood.good2.address!=="" && (
                         <div className="flex justify-between">
                           <span>
                             {t("account.divest.divest.preview.label")}{" "}
@@ -713,7 +713,7 @@ export function WithdrawDialog({
                             {disgood.good2!.symbol}
                           </span>
                         </div>
-                      )}
+                      )} */}
                     </div>
                   </div>
                 </div>
@@ -791,7 +791,7 @@ export function WithdrawDialog({
                     )}
 
                     {/* 第二个代币详情 */}
-                    {Number(goodVQ) > 0 && disgood.good2.address!=="" && (
+                    {/* {Number(goodVQ) > 0 && disgood.good2.address!=="" && (
                       <div className="space-y-2 text-sm">
                         <div className="font-medium text-gray-900 flex items-center gap-2">
                           <TokenIcon
@@ -853,7 +853,7 @@ export function WithdrawDialog({
                           </div>
                         </div>
                       </div>
-                    )}
+                    )} */}
                   </div>
 
                   {/* TTS挖矿状态 */}
@@ -868,8 +868,9 @@ export function WithdrawDialog({
                           {t("account.divest.details.mining.tip")}
                         </span>
                         <span className="font-medium text-yellow-700">
-                          {
-                            disgood.isvaluegood ? prettifyCurrencys(disgood.good1.mining) : prettifyCurrencys(Number(disgood.good1.mining) + Number(disgood.good2.mining))}
+                          {prettifyCurrencys(disgood.good1.mining)
+                            // disgood.isvaluegood ? prettifyCurrencys(disgood.good1.mining) : prettifyCurrencys(Number(disgood.good1.mining) + Number(disgood.good2.mining))
+                            }
                         </span>
                       </div>
                       {/* <div className="flex justify-between">

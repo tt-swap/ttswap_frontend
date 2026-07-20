@@ -87,7 +87,7 @@ export function TransactionRecords({
             pageNumber: pagination.page_number - 1,
             pageSize: page_size,
           }, ssionChian);
-        console.log(response, "***");
+        console.log("goodsTransactionsDatas",response, "***");
         setHasMore(response.pagination.has_more);
         setError({ error: false, error_message: "" });
         setRecords(response.items || []);

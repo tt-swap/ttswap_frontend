@@ -35,9 +35,9 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string 
         // @ts-ignore
         item.tokens = items1;
 
-        const m211 = new BigNumber(2).pow(211);
-        const m217 = new BigNumber(2).pow(217);
-        const m223 = new BigNumber(2).pow(223);
+        const m154 = new BigNumber(2).pow(154);
+        const m148 = new BigNumber(2).pow(148);
+        const m142 = new BigNumber(2).pow(142);
 
         goodsDatas.data.goodStates.forEach((e: any) => {
             let base_decimals = powerIterative(10, e.tokendecimals);
@@ -60,9 +60,9 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string 
             map.isvaluegood = e.isvaluegood;
             map.price = current_price;
             // @ts-ignore
-            map.investFee = goodConfig.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
+            map.investFee = goodConfig.mod(m154).div(m148).integerValue(1).div(10000).toNumber();
             // @ts-ignore
-            map.disinvestFee = goodConfig.mod(m217).div(m211).integerValue(1).div(10000).toNumber();
+            map.disinvestFee = goodConfig.mod(m148).div(m142).integerValue(1).div(10000).toNumber();
             items.push(map);
         });
 
@@ -87,9 +87,9 @@ export async function GoodsDatas(params: { id: string; sel: string; gid: string 
             map1.isvaluegood = en.isvaluegood;
             map1.price = current_price;
             // @ts-ignore
-            map1.investFee = goodConfig1.mod(m223).div(m217).integerValue(1).div(10000).toNumber();
+            map1.investFee = goodConfig1.mod(m142).div(m148).integerValue(1).div(10000).toNumber();
             // @ts-ignore
-            map1.disinvestFee = goodConfig1.mod(m217).div(m211).integerValue(1).div(10000).toNumber();
+            map1.disinvestFee = goodConfig1.mod(m148).div(m154).integerValue(1).div(10000).toNumber();
             if (en.goodData.length > 0) {
                 let enY = en.goodData[0];
                 let NAVPS = en.investQuantity / en.investShares;//(Number(map1.feeQuantity) + Number(map1.investQuantity)) / map1.investQuantity;

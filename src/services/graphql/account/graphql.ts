@@ -8,9 +8,10 @@ export function myTransactions(params: { id: string; first: number; skip: number
 	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$address: String,$first: Int,$skip: Int) {
 			goodState(id: $id) {
+				id
 				currentQuantity
 				currentValue
-				id
+				erc20Address
 				tokenname
 				tokensymbol
 				tokendecimals
@@ -60,9 +61,10 @@ export function myInvestGoodDatas(params: { id: string; first: number; skip: num
 	return apolloClient(ssionChian).query({
 		query: gql`query($id: BigInt,$address: String,$first: Int,$skip: Int) {
 			goodState(id: $id) {
+				id
 				currentValue
 				currentQuantity
-				id
+				erc20Address
 				tokendecimals
 				tokenname
 				tokensymbol
@@ -75,16 +77,13 @@ export function myInvestGoodDatas(params: { id: string; first: number; skip: num
 				skip: $skip
 				) {
 				createTime
-				good1Quantity
-				good1ActualQuantity
-				good2Quantity
-				good2ActualQuantity
+				goodQuantity
+				goodActualQuantity
 				id
 				owner
 				proofValue
-    			good1Shares
-    			good2Shares
-				good1 {
+    			goodShares
+				good {
 				  tokendecimals
 				  tokenname
 				  tokensymbol
@@ -98,21 +97,6 @@ export function myInvestGoodDatas(params: { id: string; first: number; skip: num
 				  isvaluegood
 				  islockgood
 				  investActualQuantity
-				}
-				good2 {
-					tokendecimals
-					tokenname
-					tokensymbol
-					feeQuantity
-					currentQuantity
-					modifiedTime
-					currentValue
-					erc20Address
-					investQuantity
-					investShares
-				    isvaluegood
-					islockgood
-					investActualQuantity
 				}
 			  }
 		}`,
@@ -190,14 +174,11 @@ export function myDisInvestProof(params: { id: number, address: string }, ssionC
 			proofState(id: $id) {
 				id
 				proofValue
-				good1Quantity
-				good1ActualQuantity
-				good2Quantity
-				good2ActualQuantity
+				goodQuantity
+				goodActualQuantity
 				createTime
-    			good1Shares
-    			good2Shares
-				good1 {
+    			goodShares
+				good {
 				  id
 				  tokendecimals
 				  tokensymbol
@@ -209,19 +190,7 @@ export function myDisInvestProof(params: { id: number, address: string }, ssionC
 				  investQuantity
 				  isvaluegood
 				  investShares
-				}
-				good2 {
-				  id
-				  tokendecimals
-				  tokensymbol
-				  goodConfig
-				  erc20Address
-				  currentQuantity
-				  currentValue
-				  feeQuantity
-				  isvaluegood
-				  investQuantity
-				  investShares
+				  investActualQuantity
 				}
 			  }
 			customer(id: $address) {
@@ -458,6 +427,8 @@ export function tokensBalanceData(params: { id: string, address: string, time: n
                         currentQuantity
                         currentValue
                         totalTradeQuantity
+						goodno
+                        goodtype
                             goodData(
                                 first: 1
                                 orderBy: modifiedTime

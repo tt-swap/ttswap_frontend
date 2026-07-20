@@ -1,6 +1,6 @@
 {
     "name": "ttswap-interface",
-    "version": "1.2.4",
+    "version": "1.3.7",
     "private": true,
     "scripts": {
         "dev": "vite",

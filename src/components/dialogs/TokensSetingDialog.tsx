@@ -43,6 +43,8 @@ interface TokenConfig {
     isvalue: number;
     islock: number;
     isapply: number;
+    safeLineUpper: number;
+    safeLineLower: number;
 }
 
 export function TokensSetingDialog({
@@ -73,6 +75,8 @@ export function TokensSetingDialog({
     const [userCommission, setUserCommission] = useState(10); // 用户分佣比例 - 一格1%，最多31格
     const [protocolCommission, setProtocolCommission] = useState(9); // 协议分佣比例 - 一格1%，最多31格
     const [maxLeverageMultiplier, setMaxLeverageMultiplier] = useState(1); // 最大流动性加强倍数 - 一格1倍，最多31格
+    const [safeLineUpper, setsafeLineUpper] = useState(100); // 最大流动性加强倍数 - 一格1倍，最多31格
+    const [safeLineLower, setsafeLineLower] = useState(60); // 最大流动性加强倍数 - 一格1倍，最多31格
 
     // 计算总分佣比例
     const totalCommission = liquidityCommission + operatorCommission + portalCommission +
@@ -91,6 +95,8 @@ export function TokensSetingDialog({
                 setUserCommission(result.user);
                 setProtocolCommission(result.agreement);
                 setMaxLeverageMultiplier(result.MaxLiquidity);
+                setsafeLineUpper(result.safeLineUpper);
+                setsafeLineLower(result.safeLineLower);
                 setIsValueToken(result.isvalue === 1 ? true : false);
                 setIsFrozen(result.islock === 1 ? true : false);
                 setIsApply(result.isapply === 1 ? true : false);
@@ -105,14 +111,17 @@ export function TokensSetingDialog({
 
         setSpinning(true);
         try {
-            const config = liquidityCommission / 10 * 2 ** 251
-                + operatorCommission / 2 * 2 ** 247
-                + portalCommission / 4 * 2 ** 244
-                + referrerCommission * 2 ** 239
-                + userCommission * 2 ** 234
-                + protocolCommission * 2 ** 229
-                + maxLeverageMultiplier * 2 ** 224
-                + (isApply ? 1 : 0) * 2 ** 223
+            const config = liquidityCommission / 10 * 2 ** 247
+                + operatorCommission / 2 * 2 ** 243
+                + portalCommission / 4 * 2 ** 240
+                + referrerCommission * 2 ** 235
+                + userCommission * 2 ** 230
+                + protocolCommission * 2 ** 225
+                + maxLeverageMultiplier * 2 ** 220
+                + (isApply ? 1 : 0) * 2 ** 250
+                + (isFrozen ? 1 : 0) * 2 ** 252
+                + safeLineUpper * 2 ** 212
+                + safeLineLower * 2 ** 204;
             console.log("---==444=", BigInt(config).toString());
             const a = await setingToken(token.id, walletAddress, BigInt(config).toString());
             if (a) {
@@ -142,8 +151,7 @@ export function TokensSetingDialog({
 
         setSpinning(true);
         try {
-            const config = (isFrozen ? 1 : 0) * 2 ** 254
-                + (isValueToken ? 1 : 0) * 2 ** 255
+            const config = (isValueToken ? 1 : 0) * 2 ** 255;
             console.log("---==444=", BigInt(config).toString());
             const a = await setingTokenAdmin(token.id, walletAddress, BigInt(config).toString());
             if (a) {
@@ -424,6 +432,58 @@ export function TokensSetingDialog({
                                             />
                                         </div>
 
+
+                                        {/* 分割线 */}
+                                        <div className="border-t pt-3 sm:pt-4">
+                                            <p className="text-xs sm:text-sm mb-2 sm:mb-3">安全阈值</p>
+                                        </div>
+
+                                        {/* 最大安全阈值 */}
+                                        <div className="space-y-2 sm:space-y-3">
+                                            <div className="flex items-center justify-between gap-2">
+                                                <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
+                                                    <Label htmlFor="maxLeverageMultiplier" className="text-xs sm:text-sm whitespace-nowrap">最大安全阈值</Label>
+                                                    {/* <span className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                                                        一格1倍，最多31格
+                                                    </span> */}
+                                                </div>
+                                                <span className="text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 bg-[#0fb981]/10 text-[#0fb981] rounded whitespace-nowrap flex-shrink-0">
+                                                    {safeLineUpper}
+                                                </span>
+                                            </div>
+                                            <Slider
+                                                id="maxLeverageMultiplier"
+                                                value={[safeLineUpper]}
+                                                onValueChange={(value) => setsafeLineUpper(value[0])}
+                                                min={0}
+                                                max={200}
+                                                step={1}
+                                                className="w-full"
+                                            />
+                                        </div>
+                                        {/* 最小安全阈值 */}
+                                        <div className="space-y-2 sm:space-y-3">
+                                            <div className="flex items-center justify-between gap-2">
+                                                <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
+                                                    <Label htmlFor="maxLeverageMultiplier" className="text-xs sm:text-sm whitespace-nowrap">最小安全阈值</Label>
+                                                    {/* <span className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                                                        一格1倍，最多31格
+                                                    </span> */}
+                                                </div>
+                                                <span className="text-xs sm:text-sm px-1.5 sm:px-2 py-0.5 bg-[#0fb981]/10 text-[#0fb981] rounded whitespace-nowrap flex-shrink-0">
+                                                    {safeLineLower}
+                                                </span>
+                                            </div>
+                                            <Slider
+                                                id="maxLeverageMultiplier"
+                                                value={[safeLineLower]}
+                                                onValueChange={(value) => setsafeLineLower(value[0])}
+                                                min={0}
+                                                max={100}
+                                                step={1}
+                                                className="w-full"
+                                            />
+                                        </div>
                                         {/* 是否申请 */}
                                         <div className="flex items-center justify-between py-2">
                                             <div className="space-y-0.5">
@@ -440,6 +500,24 @@ export function TokensSetingDialog({
                                                 onCheckedChange={setIsApply}
                                             />
                                         </div>
+
+                                        {/* 是否冻结 */}
+                                        <div className="flex items-center justify-between py-2">
+                                            <div className="space-y-0.5">
+                                                <Label htmlFor="isFrozen" className="cursor-pointer">
+                                                    是否冻结
+                                                </Label>
+                                                <p className="text-xs text-muted-foreground">
+                                                    冻结后将暂停所有交易操作
+                                                </p>
+                                            </div>
+                                            <Switch
+                                                id="isFrozen"
+                                                checked={isFrozen}
+                                                onCheckedChange={setIsFrozen}
+                                            />
+                                        </div>
+
                                         {/* 更新按钮 */}
                                         <div className="pt-3 sm:pt-4">
                                             <Button
@@ -470,23 +548,6 @@ export function TokensSetingDialog({
                                                 id="isValueToken"
                                                 checked={isValueToken}
                                                 onCheckedChange={setIsValueToken}
-                                            />
-                                        </div>
-
-                                        {/* 是否冻结 */}
-                                        <div className="flex items-center justify-between py-2">
-                                            <div className="space-y-0.5">
-                                                <Label htmlFor="isFrozen" className="cursor-pointer">
-                                                    是否冻结
-                                                </Label>
-                                                <p className="text-xs text-muted-foreground">
-                                                    冻结后将暂停所有交易操作
-                                                </p>
-                                            </div>
-                                            <Switch
-                                                id="isFrozen"
-                                                checked={isFrozen}
-                                                onCheckedChange={setIsFrozen}
                                             />
                                         </div>
 
