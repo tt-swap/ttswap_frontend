@@ -760,7 +760,7 @@ const useWallet = () => {
             let fAmount = BigInt(0);
             let tAmount = BigInt(0);
             if (num2 > 0) {
-                fAmount = BigInt(num2 * num1 * powerIterative(10, 12));
+                fAmount = BigInt(Math.floor(num2 * num1));
             }
             if (num1 > 0) {
                 tAmount = BigInt(num1 * powerIterative(10, decimals));
