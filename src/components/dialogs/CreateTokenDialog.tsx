@@ -19,11 +19,11 @@ import CreatModal from "./creatModal";
 import { useTranslation } from 'react-i18next';
 import { Space, Spin, message, Dropdown } from 'antd';
 import { LoadingOutlined, DownOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
+// import type { MenuProps } from 'antd';
 import useWallet from "@/hooks/useWallet";
 import { useMaxApprove } from '@/hooks/useMaxApprove';
 import { useErrorMess } from '@/hooks/useErrorMess';
-import { GoodsDatas } from '@/services/graphql';
+// import { GoodsDatas } from '@/services/graphql';
 import { minThreshold, createTokenV } from '@/services/graphql/account';
 import { getSWETH } from '@/data/contractConfig';
 import { useLocalStorage } from "@/utils/LocalStorageManager";
@@ -78,19 +78,19 @@ export function CreateTokenDialog({
 
   const { checkContractExists, newGoods, tokenDesc } = useWallet();
 
-  // useEffect(() => {
-  //   if (!open) return;
-  //   (async () => {
-  //     // let tokens: any = await GoodsDatas(ssionChian);
-  //     const data = await createTokenV(info.id, ssionChian);
-  //     setSelectVgood(data);
-  //     const { balance } = await tokenDesc(data[0].id);
-  //     let a: tokeninfo = { ...data[0], balance: balance };
-  //     // a.balance = balance;
-  //     console.log("0-0-0-0", a)
-  //     setTokenInfoT(a);
-  //   })();
-  // }, [ssionChian, open]);
+  useEffect(() => {
+    if (!open) return;
+    (async () => {
+      // let tokens: any = await GoodsDatas(ssionChian);
+      const data = await createTokenV(info.id, ssionChian);
+      setSelectVgood(data[0]);
+      // const { balance } = await tokenDesc(data[0].id);
+      // let a: tokeninfo = { ...data[0], balance: balance };
+      // // a.balance = balance;
+      console.log("0-0-0-0", data[0])
+      // setTokenInfoT(a);
+    })();
+  }, [ssionChian, open]);
 
   useMemo(() => {
     setBuyF(8);
@@ -118,7 +118,7 @@ export function CreateTokenDialog({
     // const config = inF * 2 ** 217 + disinF * 2 ** 211 + buyF * 2 ** 204 + sellF * 2 ** 197 + swapS * 2 ** 187 + disinS * 2 ** 177
 
     // stakeAmountFrom,stakeAmountTo,goodC,ercType(1),ercId(0),maxApprove
-    const isSuccess = await newGoods(Number(stakeAmountFrom), Number(stakeAmountTo), goodC, 1, 0, maxApprove);
+    const isSuccess = await newGoods(Number(stakeAmountFrom), Number(stakeAmountTo)*selectVgood.goodValue, goodC, 1, 0, maxApprove);
     console.log("isSuccess:--", isSuccess, useErrorMess(isSuccess, t))
     if (isSuccess === true) {
       messageApi.open({

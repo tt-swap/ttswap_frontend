@@ -526,7 +526,7 @@ export async function minThreshold(id: string, ssionChian: number): Promise<obje
 export async function upToken(id: string, ssionChian: number): Promise<object> {
 
     let items = {
-        investFee: 0, divestFee: 0, buyFee: 0, sellFee: 0, investM: 0, divestChips: 0, maxInvestM: 0, islock: 0,investThreshold: 0,
+        investFee: 0, divestFee: 0, buyFee: 0, sellFee: 0, investM: 0, divestChips: 0, maxInvestM: 0, islock: 0, investThreshold: 0,
     };
     // console.log("myIndexes", id, wallet_address)
     if (id) {
@@ -617,27 +617,27 @@ export async function createTokenV(id: string, ssionChian: number) {
     const goodsData = await createToken({ id }, ssionChian);
     const goodState = goodsData.data.goodState;
     const good = goodsData.data.goodStates;
-
-    const goodValue = goodState.currentValue / goodState.currentQuantity;
     const tokendecimals = powerIterative(10, 6);
 
+    const goodValue = goodState.currentValue / (goodState.currentQuantity / tokendecimals);
+
     let items = [];
-    good.forEach((e: any) => {
+    // good.forEach((e: any) => {
 
-        let base_decimals = powerIterative(10, e.tokendecimals);
-        let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / goodValue;
+    // let base_decimals = powerIterative(10, e.tokendecimals);
+    // let current_price = ((e.currentValue / tokendecimals) / (e.currentQuantity / base_decimals)) / goodValue;
 
-        let map = {
-            id: e.id,
-            name: e.tokenname,
-            decimals: e.tokendecimals,
-            symbol: e.tokensymbol,
-            logo_url: iconUrl(chainName, e.erc20Address),
-            address: e.erc20Address,
-            price: current_price
-        };
-        items.push(map);
-    });
+    let map = {
+        // id: e.id,
+        // name: e.tokenname,
+        // decimals: e.tokendecimals,
+        // symbol: e.tokensymbol,
+        // logo_url: iconUrl(chainName, e.erc20Address),
+        // address: e.erc20Address,
+        goodValue: goodValue
+    };
+    items.push(map);
+    // });
     return items;
 }
 
