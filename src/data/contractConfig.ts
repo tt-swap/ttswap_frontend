@@ -41,11 +41,11 @@ export const contractCon: {
 } = {
   1: {
     chainId: "1",
-    contractAddress: "0x49c49434Ec51EDB3730EcDdC5Fa75263dF5009ad",
+    contractAddress: "0x5E23ECEDb47cB233c681293ac322AD8a833aA799",
     theGraphApi: "https://ttswap.io/thegraph/mit",
     permit2Address:"0x000000000022D473030F116dDEE9F6B43aC78BA3",
     weth9:"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-    tts:"0x6254207772239F6c820FC6072dD433AC4E6023a4",
+    tts:"0x59e61865a293c4aaD4D0c6C72092Cb92e9EafcB8",
     usdt:"0xdac17f958d2ee523a2206206994597c13d831ec7"
   },
   11155111: {
