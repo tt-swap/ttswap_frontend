@@ -39,8 +39,8 @@ interface TokenConfig {
   sellFee: number;
   investM: number;
   divestChips: number;
-  maxInvestM: number;
-  islock: number;
+  limitPower: number;
+  isFreeze: number;
   investThreshold: number;
 }
 export function UpdateTokenDialog({
@@ -101,8 +101,8 @@ export function UpdateTokenDialog({
         setWithdrawFeeRate(result.divestFee);
         setLeverageMultiplier(result.investM);
         setWithdrawSlices(result.divestChips);
-        setMaxM(result.maxInvestM);
-        setIsFrozen(result.islock === 1 ? true : false);
+        setMaxM(result.limitPower);
+        setIsFrozen(result.isFreeze === 1 ? true : false);
         setinvestThreshold(result.investThreshold);
       }
     })();
@@ -119,6 +119,7 @@ export function UpdateTokenDialog({
       // @ts-ignore
       const config = investFeeRate * 2 ** 148 + withdrawFeeRate * 2 ** 142 + buyFeeRate * 2 ** 135
         + sellFeeRate * 2 ** 128 + leverageMultiplier * 2 ** 168 + (withdrawSlices / 4) * 2 ** 160
+        + (100 - investThreshold) * 2 ** 154;
 
       // @ts-ignore
       const isSuccess = await upTokenSet(token.id, walletAddress, BigInt(config).toString());
