@@ -527,6 +527,7 @@ export async function upToken(id: string, ssionChian: number): Promise<object> {
 
     let items = {
         investFee: 0, divestFee: 0, buyFee: 0, sellFee: 0, investM: 0, divestChips: 0, limitPower: 0, isFreeze: 0, investThreshold: 0,
+        tokenValue: 0,
     };
     // console.log("myIndexes", id, wallet_address)
     if (id) {
@@ -556,6 +557,7 @@ export async function upToken(id: string, ssionChian: number): Promise<object> {
             items.limitPower = 1
         }
         items.investThreshold = 100 - goodConfig.mod(m160).div(m154).integerValue(1).toNumber();//160-154
+        items.tokenValue = Math.floor(goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity);
 
 
     }

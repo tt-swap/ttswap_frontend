@@ -11,14 +11,14 @@ import {
     TrendingUp,
 } from "lucide-react";
 // import { toast } from "sonner";
-import { useState, useEffect, useRef  } from "react";
+import { useState, useEffect, useRef } from "react";
 // import { TokenSelectionDialog } from "@/components/dialogs/TokenSelectionDialog";
 import { useTranslation } from 'react-i18next';
 import { useValueGood, useGoodId } from "@/stores/valueGood";
 import { useLocalStorage } from "@/utils/LocalStorageManager";
 import useInvest from "@/hooks/useInvest";
 import useWallet from "@/hooks/useWallet";
-import { useAccount } from 'wagmi';
+// import { useAccount } from 'wagmi';
 import { prettifyBalance, Timestamp, powerIterative } from '@/services/graphql/util';
 import { newGoodsPrice } from '@/services/graphql/swap/index';
 // import { GoodsDatas } from '@/services/graphql/invest';
@@ -30,6 +30,7 @@ import { GRK_SIZES, DEFAULT_TOKEN } from "@/types/common";
 import Message from '@/components/MessModal/index';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin, message, Tooltip, InputNumber } from 'antd';
+import { upToken } from '@/services/graphql/account';
 
 interface TradingPageProps {
     defaultTab?: string;
@@ -72,10 +73,10 @@ export default function TokenInvest({ defaultTab, token, selectToken, openTokenS
 
     useEffect(() => {
         // if (isValueGood) {
-            // @ts-ignore
-            if (Number(investAmount.from.amount) > balanceMap1.from || balanceMap1.from === 0 || Number(investAmount.from.amount) === 0 || Number(investAmount.from.amount) < 0 || investAmount.from.amount === "" || investAmount.from.amount === null) {
-                setisDisabled(true);
-            } else { setisDisabled(disabled); }
+        // @ts-ignore
+        if (Number(investAmount.from.amount) > balanceMap1.from || balanceMap1.from === 0 || Number(investAmount.from.amount) === 0 || Number(investAmount.from.amount) < 0 || investAmount.from.amount === "" || investAmount.from.amount === null) {
+            setisDisabled(true);
+        } else { setisDisabled(disabled); }
 
         // } else {
         //     // @ts-ignore
@@ -154,7 +155,10 @@ export default function TokenInvest({ defaultTab, token, selectToken, openTokenS
         if (investAmount.to.amount !== "" && investAmount.to.amount > 0 && !isValueGood) {
             tAmount = investAmount.to.amount * powerIterative(10, 12);
         }
-        const isSuccess = await investGoods(invest, BigInt(Math.round(fAmount)), BigInt(Math.round(tAmount)), isValueGood, maxApprove);
+
+        const a: any = await upToken(invest.from.id, ssionChian);
+        console.log("00--00", a);
+        const isSuccess = await investGoods(invest, BigInt(Math.round(fAmount)), BigInt(Math.floor((a.tokenValue * a.investThreshold / 100) * fAmount)), isValueGood, maxApprove);
         if (isSuccess === true) {
             setOpen(true);
             setMesStatus("success");
