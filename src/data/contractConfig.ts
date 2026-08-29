@@ -189,11 +189,11 @@ export const contractCon: {
   },
   560048: {
     chainId: "560048",
-    contractAddress: "0x9b1249A120a6d42eDf1357F9F88678DB29219D85",
+    contractAddress: "0x20FEf042096E2aeF75F6DeFd8F1FCc3B3CFc185C",
     theGraphApi: "https://ttswap.io/thegraph/hoodi",
     permit2Address:"0x9588F74Df5BbC1CD3a45720Cb944A4b1048A4450",
     weth9:"0x2387fD72C1DA19f6486B843F5da562679FbB4057",
-    tts:"0xA1d04C3797D4e4E2D40D0C66143b2D0f5793570f",
+    tts:"0x0e74A7cC5C76b2BF4E1C1bcd9A360eD4A554B314",
     usdt:"0x9588f74df5bbc1cd3a45720cb944a4b1048a4450"
   }
 };
