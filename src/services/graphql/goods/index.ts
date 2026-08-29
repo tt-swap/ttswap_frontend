@@ -178,14 +178,15 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
                 const m128 = new BigNumber(2).pow(128);
                 const m173 = new BigNumber(2).pow(173);
                 const m168 = new BigNumber(2).pow(168);
-                const m250 = new BigNumber(2).pow(250);
-                const m247 = new BigNumber(2).pow(247);
-                const m243 = new BigNumber(2).pow(243);
-                const m240 = new BigNumber(2).pow(240);
-                const m235 = new BigNumber(2).pow(235);
-                const m230 = new BigNumber(2).pow(230);
-                const m225 = new BigNumber(2).pow(225);
-                const m220 = new BigNumber(2).pow(220);
+
+                const m234 = new BigNumber(2).pow(234);
+                const m231 = new BigNumber(2).pow(231);
+                const m227 = new BigNumber(2).pow(227);
+                const m224 = new BigNumber(2).pow(224);
+                const m219 = new BigNumber(2).pow(219);
+                const m214 = new BigNumber(2).pow(214);
+                const m209 = new BigNumber(2).pow(209);
+                const m204 = new BigNumber(2).pow(204);
                 const goodConfig = new BigNumber(e.goodConfig);
 
                 map.investFee = goodConfig.mod(m154).div(m148).integerValue(1).toNumber();    //154-148
@@ -196,13 +197,13 @@ export async function getLpTokenView(id: string, address: string, ssionChian: nu
                 map.investM = goodConfig.mod(m173).div(m168).integerValue(1).toNumber();  //173-168
 
 
-                map.investor = goodConfig.mod(m250).div(m247).integerValue(1).toNumber() * 10;    //250-247
-                map.operator = goodConfig.mod(m247).div(m243).integerValue(1).toNumber() * 2;     //247-243
-                map.portal = goodConfig.mod(m243).div(m240).integerValue(1).toNumber() * 4;   //243-240
-                map.referrer = goodConfig.mod(m240).div(m235).integerValue(1).toNumber();  //240-235
-                map.user = goodConfig.mod(m235).div(m230).integerValue(1).toNumber(); //235-230
-                map.protocol = goodConfig.mod(m230).div(m225).integerValue(1).toNumber();    //230-225
-                map.maxLiquidity = goodConfig.mod(m225).div(m220).integerValue(1).toNumber(); //225-220
+                map.investor = goodConfig.mod(m234).div(m231).integerValue(1).toNumber() * 10;    //234-231
+                map.operator = goodConfig.mod(m231).div(m227).integerValue(1).toNumber() * 2;     //231-227
+                map.portal = goodConfig.mod(m227).div(m224).integerValue(1).toNumber() * 4;   //227-224
+                map.referrer = goodConfig.mod(m224).div(m219).integerValue(1).toNumber();  //224-219
+                map.user = goodConfig.mod(m219).div(m214).integerValue(1).toNumber(); //219-214
+                map.protocol = goodConfig.mod(m214).div(m209).integerValue(1).toNumber();    //214-209
+                map.maxLiquidity = goodConfig.mod(m209).div(m204).integerValue(1).toNumber(); //209-204
                 if (map.maxLiquidity === 0) {
                     map.maxLiquidity = 1
                 }

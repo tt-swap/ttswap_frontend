@@ -305,6 +305,8 @@ export function updateToken(params: { id: string }, ssionChian: number) {
 			goodState(id: $id) {
 				id
     			goodConfig
+				currentQuantity
+				currentValue
 			}
 		}`,
 		variables: params

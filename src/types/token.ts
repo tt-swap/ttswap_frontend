@@ -3,7 +3,7 @@ import { DEFAULT_TOKEN } from "@/types/common";
 export type Token = { currency: string; file: string };
 
 export interface TokenAmount {
-  id: string | number | '';
+  id: string;
   token: string;
   amount: number | '';
   price: number;
@@ -16,7 +16,7 @@ export interface AmountState {
   to: TokenAmount;
 }
 export interface TokenPayload {
-  id: string | number;
+  id: string;
   name: string;
   symbol: string;
   decimals: number;
