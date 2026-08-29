@@ -526,16 +526,17 @@ export async function minThreshold(id: string, ssionChian: number): Promise<obje
 export async function upToken(id: string, ssionChian: number): Promise<object> {
 
     let items = {
-        investFee: 0, divestFee: 0, buyFee: 0, sellFee: 0, investM: 0, divestChips: 0, maxInvestM: 0, islock: 0, investThreshold: 0,
+        investFee: 0, divestFee: 0, buyFee: 0, sellFee: 0, investM: 0, divestChips: 0, limitPower: 0, isFreeze: 0, investThreshold: 0,
+        tokenValue: 0,
     };
     // console.log("myIndexes", id, wallet_address)
     if (id) {
         const goodsDatas = await updateToken({ id: id }, ssionChian);
         const goodConfig = new BigNumber(goodsDatas.data.goodState.goodConfig);
-        const m253 = new BigNumber(2).pow(253);
-        const m252 = new BigNumber(2).pow(252);
-        const m225 = new BigNumber(2).pow(225);
-        const m220 = new BigNumber(2).pow(220);
+        const m237 = new BigNumber(2).pow(237);
+        const m236 = new BigNumber(2).pow(236);
+        const m209 = new BigNumber(2).pow(209);
+        const m204 = new BigNumber(2).pow(204);
         const m154 = new BigNumber(2).pow(154);
         const m148 = new BigNumber(2).pow(148);
         const m142 = new BigNumber(2).pow(142);
@@ -544,18 +545,19 @@ export async function upToken(id: string, ssionChian: number): Promise<object> {
         const m128 = new BigNumber(2).pow(128);
         const m173 = new BigNumber(2).pow(173);
         const m168 = new BigNumber(2).pow(168);
-        items.islock = goodConfig.mod(m253).div(m252).integerValue(1).toNumber();   //252
+        items.isFreeze = goodConfig.mod(m237).div(m236).integerValue(1).toNumber();   //237-236
         items.investFee = goodConfig.mod(m154).div(m148).integerValue(1).toNumber();    //154-148
         items.divestFee = goodConfig.mod(m148).div(m142).integerValue(1).toNumber();    //148-142
         items.buyFee = goodConfig.mod(m142).div(m135).integerValue(1).toNumber();   //142-135
         items.sellFee = goodConfig.mod(m135).div(m128).integerValue(1).toNumber();  //135-128
         items.divestChips = goodConfig.mod(m168).div(m160).integerValue(1).toNumber() * 4;  //168-160
         items.investM = goodConfig.mod(m173).div(m168).integerValue(1).toNumber();  //173-168
-        items.maxInvestM = goodConfig.mod(m225).div(m220).integerValue(1).toNumber();   //225-220
-        if (items.maxInvestM === 0) {
-            items.maxInvestM = 1
+        items.limitPower = goodConfig.mod(m209).div(m204).integerValue(1).toNumber(); //209-204
+        if (items.limitPower === 0) {
+            items.limitPower = 1
         }
         items.investThreshold = 100 - goodConfig.mod(m160).div(m154).integerValue(1).toNumber();//160-154
+        items.tokenValue = Math.floor(goodsDatas.data.goodState.currentValue / goodsDatas.data.goodState.currentQuantity);
 
 
     }
@@ -566,44 +568,44 @@ export async function upToken(id: string, ssionChian: number): Promise<object> {
 export async function marketToken(id: string, ssionChian: number): Promise<object> {
 
     let items = {
-        investor: 0, operator: 0, portal: 0, recommender: 0, user: 0, agreement: 0, MaxLiquidity: 0,
-        isvalue: 0, islock: 0, isapply: 0, safeLineLower: 0, safeLineUpper: 0,
+        liquidFee: 0, operatorFee: 0, gateFee: 0, referFee: 0, customerFee: 0, platformFee: 0, limitPower: 0,
+        isValueGood: 0, isFreeze: 0, isPromise: 0, safeLineLower: 0, safeLineUpper: 0,
     };
     // console.log("myIndexes", id, wallet_address)
     if (id) {
         const goodsDatas = await updateToken({ id: id }, ssionChian);
         const goodConfig = new BigNumber(goodsDatas.data.goodState.goodConfig);
         const m255 = new BigNumber(2).pow(255);
-        const m253 = new BigNumber(2).pow(253);
-        const m252 = new BigNumber(2).pow(252);
-        const m251 = new BigNumber(2).pow(251);
-        const m250 = new BigNumber(2).pow(250);
         const m247 = new BigNumber(2).pow(247);
-        const m243 = new BigNumber(2).pow(243);
-        const m240 = new BigNumber(2).pow(240);
+        const m239 = new BigNumber(2).pow(239);
+        const m237 = new BigNumber(2).pow(237);
+        const m236 = new BigNumber(2).pow(236);
         const m235 = new BigNumber(2).pow(235);
-        const m230 = new BigNumber(2).pow(230);
-        const m225 = new BigNumber(2).pow(225);
-        const m220 = new BigNumber(2).pow(220);
-        const m212 = new BigNumber(2).pow(212);
+        const m234 = new BigNumber(2).pow(234);
+        const m231 = new BigNumber(2).pow(231);
+        const m227 = new BigNumber(2).pow(227);
+        const m224 = new BigNumber(2).pow(224);
+        const m219 = new BigNumber(2).pow(219);
+        const m214 = new BigNumber(2).pow(214);
+        const m209 = new BigNumber(2).pow(209);
         const m204 = new BigNumber(2).pow(204);
 
-        items.isvalue = goodConfig.div(m255).integerValue(1).toNumber();  //255
-        items.islock = goodConfig.mod(m253).div(m252).integerValue(1).toNumber();   //253-252
-        items.isapply = goodConfig.mod(m251).div(m250).integerValue(1).toNumber();  //251-250
+        items.isValueGood = goodConfig.div(m255).integerValue(1).toNumber();  //255
+        items.isFreeze = goodConfig.mod(m237).div(m236).integerValue(1).toNumber();   //237-236
+        items.isPromise = goodConfig.mod(m235).div(m234).integerValue(1).toNumber();  //235-234
 
-        items.investor = goodConfig.mod(m250).div(m247).integerValue(1).toNumber() * 10;    //250-247
-        items.operator = goodConfig.mod(m247).div(m243).integerValue(1).toNumber() * 2;     //247-243
-        items.portal = goodConfig.mod(m243).div(m240).integerValue(1).toNumber() * 4;   //243-240
-        items.recommender = goodConfig.mod(m240).div(m235).integerValue(1).toNumber();  //240-235
-        items.user = goodConfig.mod(m235).div(m230).integerValue(1).toNumber(); //235-230
-        items.agreement = goodConfig.mod(m230).div(m225).integerValue(1).toNumber();    //230-225
-        items.MaxLiquidity = goodConfig.mod(m225).div(m220).integerValue(1).toNumber(); //225-220
-        if (items.MaxLiquidity === 0) {
-            items.MaxLiquidity = 1
+        items.liquidFee = goodConfig.mod(m234).div(m231).integerValue(1).toNumber() * 10;    //234-231
+        items.operatorFee = goodConfig.mod(m231).div(m227).integerValue(1).toNumber() * 2;     //231-227
+        items.gateFee = goodConfig.mod(m227).div(m224).integerValue(1).toNumber() * 4;   //227-224
+        items.referFee = goodConfig.mod(m224).div(m219).integerValue(1).toNumber();  //224-219
+        items.customerFee = goodConfig.mod(m219).div(m214).integerValue(1).toNumber(); //219-214
+        items.platformFee = goodConfig.mod(m214).div(m209).integerValue(1).toNumber();    //214-209
+        items.limitPower = goodConfig.mod(m209).div(m204).integerValue(1).toNumber(); //209-204
+        if (items.limitPower === 0) {
+            items.limitPower = 1
         }
-        items.safeLineUpper = goodConfig.mod(m220).div(m212).integerValue(1).toNumber(); //220-212
-        items.safeLineLower = goodConfig.mod(m212).div(m204).integerValue(1).toNumber(); //212-204
+        items.safeLineUpper = goodConfig.mod(m255).div(m247).integerValue(1).toNumber(); //255-247
+        items.safeLineLower = goodConfig.mod(m247).div(m239).integerValue(1).toNumber(); //247-239
 
 
     }

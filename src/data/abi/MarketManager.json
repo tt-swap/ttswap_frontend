@@ -1,1082 +1,1249 @@
-[
-	{
-		"type": "constructor",
-		"inputs": [
-			{
-				"name": "_TTS_Contract",
-				"type": "address",
-				"internalType": "contract I_TTSwap_Token"
-			}
-		],
-		"stateMutability": "nonpayable"
-	},
-	{
-		"type": "function",
-		"name": "DOMAIN_SEPARATOR",
-		"inputs": [],
-		"outputs": [
-			{
-				"name": "",
-				"type": "bytes32",
-				"internalType": "bytes32"
-			}
-		],
-		"stateMutability": "view"
-	},
-	{
-		"type": "function",
-		"name": "buyGood",
-		"inputs": [
-			{
-				"name": "_goodKey1",
-				"type": "tuple",
-				"internalType": "struct T_GoodKey",
-				"components": [
-					{
-						"name": "ercType",
-						"type": "uint8",
-						"internalType": "uint8"
-					},
-					{
-						"name": "contractAddress",
-						"type": "address",
-						"internalType": "address"
-					},
-					{
-						"name": "id",
-						"type": "uint256",
-						"internalType": "uint256"
-					}
-				]
-			},
-			{
-				"name": "_goodKey2",
-				"type": "tuple",
-				"internalType": "struct T_GoodKey",
-				"components": [
-					{
-						"name": "ercType",
-						"type": "uint8",
-						"internalType": "uint8"
-					},
-					{
-						"name": "contractAddress",
-						"type": "address",
-						"internalType": "address"
-					},
-					{
-						"name": "id",
-						"type": "uint256",
-						"internalType": "uint256"
-					}
-				]
-			},
-			{
-				"name": "_swapQuantity",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_recipient",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "data",
-				"type": "bytes",
-				"internalType": "bytes"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "signature",
-				"type": "bytes",
-				"internalType": "bytes"
-			},
-			{
-				"name": "external_info",
-				"type": "uint256",
-				"internalType": "uint256"
-			}
-		],
-		"outputs": [
-			{
-				"name": "good1change",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "good2change",
-				"type": "uint256",
-				"internalType": "uint256"
-			}
-		],
-		"stateMutability": "payable"
-	},
-	{
-		"type": "function",
-		"name": "cancelNonce",
-		"inputs": [],
-		"outputs": [],
-		"stateMutability": "nonpayable"
-	},
-	{
-		"type": "function",
-		"name": "changeGoodOwner",
-		"inputs": [
-			{
-				"name": "_goodid",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_to",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "signature",
-				"type": "bytes",
-				"internalType": "bytes"
-			}
-		],
-		"outputs": [],
-		"stateMutability": "nonpayable"
-	},
-	{
-		"type": "function",
-		"name": "collectCommission",
-		"inputs": [
-			{
-				"name": "_goodid",
-				"type": "uint256[]",
-				"internalType": "uint256[]"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "signature",
-				"type": "bytes",
-				"internalType": "bytes"
-			}
-		],
-		"outputs": [],
-		"stateMutability": "nonpayable"
-	},
-	{
-		"type": "function",
-		"name": "disinvestProof",
-		"inputs": [
-			{
-				"name": "_proofid",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_goodshares",
-				"type": "uint128",
-				"internalType": "uint128"
-			},
-			{
-				"name": "_gate",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "signature",
-				"type": "bytes",
-				"internalType": "bytes"
-			}
-		],
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint128",
-				"internalType": "uint128"
-			}
-		],
-		"stateMutability": "nonpayable"
-	},
-	{
-		"type": "function",
-		"name": "getGoodState",
-		"inputs": [
-			{
-				"name": "good",
-				"type": "uint256",
-				"internalType": "uint256"
-			}
-		],
-		"outputs": [
-			{
-				"name": "",
-				"type": "tuple",
-				"internalType": "struct S_GoodTmpState",
-				"components": [
-					{
-						"name": "goodConfig",
-						"type": "uint256",
-						"internalType": "uint256"
-					},
-					{
-						"name": "owner",
-						"type": "address",
-						"internalType": "address"
-					},
-					{
-						"name": "currentState",
-						"type": "uint256",
-						"internalType": "uint256"
-					},
-					{
-						"name": "investState",
-						"type": "uint256",
-						"internalType": "uint256"
-					}
-				]
-			}
-		],
-		"stateMutability": "view"
-	},
-	{
-		"type": "function",
-		"name": "getProofState",
-		"inputs": [
-			{
-				"name": "proofid",
-				"type": "uint256",
-				"internalType": "uint256"
-			}
-		],
-		"outputs": [
-			{
-				"name": "",
-				"type": "tuple",
-				"internalType": "struct S_ProofState",
-				"components": [
-					{
-						"name": "currentgood",
-						"type": "uint256",
-						"internalType": "uint256"
-					},
-					{
-						"name": "shares",
-						"type": "uint256",
-						"internalType": "uint256"
-					},
-					{
-						"name": "state",
-						"type": "uint256",
-						"internalType": "uint256"
-					},
-					{
-						"name": "invest",
-						"type": "uint256",
-						"internalType": "uint256"
-					}
-				]
-			}
-		],
-		"stateMutability": "view"
-	},
-	{
-		"type": "function",
-		"name": "getRecentGoodState",
-		"inputs": [
-			{
-				"name": "good1",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "good2",
-				"type": "uint256",
-				"internalType": "uint256"
-			}
-		],
-		"outputs": [
-			{
-				"name": "good1currentstate",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "good2currentstate",
-				"type": "uint256",
-				"internalType": "uint256"
-			}
-		],
-		"stateMutability": "view"
-	},
-	{
-		"type": "function",
-		"name": "goodWelfare",
-		"inputs": [
-			{
-				"name": "goodid",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "welfare",
-				"type": "uint128",
-				"internalType": "uint128"
-			},
-			{
-				"name": "data",
-				"type": "bytes",
-				"internalType": "bytes"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "signature",
-				"type": "bytes",
-				"internalType": "bytes"
-			}
-		],
-		"outputs": [],
-		"stateMutability": "payable"
-	},
-	{
-		"type": "function",
-		"name": "initGood",
-		"inputs": [
-			{
-				"name": "_goodKey",
-				"type": "tuple",
-				"internalType": "struct T_GoodKey",
-				"components": [
-					{
-						"name": "ercType",
-						"type": "uint8",
-						"internalType": "uint8"
-					},
-					{
-						"name": "contractAddress",
-						"type": "address",
-						"internalType": "address"
-					},
-					{
-						"name": "id",
-						"type": "uint256",
-						"internalType": "uint256"
-					}
-				]
-			},
-			{
-				"name": "_initial",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_normaldata",
-				"type": "bytes",
-				"internalType": "bytes"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "_signature",
-				"type": "bytes",
-				"internalType": "bytes"
-			}
-		],
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool",
-				"internalType": "bool"
-			}
-		],
-		"stateMutability": "payable"
-	},
-	{
-		"type": "function",
-		"name": "investGood",
-		"inputs": [
-			{
-				"name": "_goodKey",
-				"type": "tuple",
-				"internalType": "struct T_GoodKey",
-				"components": [
-					{
-						"name": "ercType",
-						"type": "uint8",
-						"internalType": "uint8"
-					},
-					{
-						"name": "contractAddress",
-						"type": "address",
-						"internalType": "address"
-					},
-					{
-						"name": "id",
-						"type": "uint256",
-						"internalType": "uint256"
-					}
-				]
-			},
-			{
-				"name": "_invest",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_gooddata",
-				"type": "bytes",
-				"internalType": "bytes"
-			},
-			{
-				"name": "signature",
-				"type": "bytes",
-				"internalType": "bytes"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			}
-		],
-		"outputs": [
-			{
-				"name": "result",
-				"type": "bool",
-				"internalType": "bool"
-			}
-		],
-		"stateMutability": "payable"
-	},
-	{
-		"type": "function",
-		"name": "ishigher",
-		"inputs": [
-			{
-				"name": "goodid",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "valuegood",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "compareprice",
-				"type": "uint256",
-				"internalType": "uint256"
-			}
-		],
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool",
-				"internalType": "bool"
-			}
-		],
-		"stateMutability": "view"
-	},
-	{
-		"type": "function",
-		"name": "lockGood",
-		"inputs": [
-			{
-				"name": "_goodid",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "signature",
-				"type": "bytes",
-				"internalType": "bytes"
-			}
-		],
-		"outputs": [],
-		"stateMutability": "nonpayable"
-	},
-	{
-		"type": "function",
-		"name": "modifyGoodByAdmin",
-		"inputs": [
-			{
-				"name": "_goodid",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_goodConfig",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "signature",
-				"type": "bytes",
-				"internalType": "bytes"
-			}
-		],
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool",
-				"internalType": "bool"
-			}
-		],
-		"stateMutability": "nonpayable"
-	},
-	{
-		"type": "function",
-		"name": "modifyGoodByGoodOwner",
-		"inputs": [
-			{
-				"name": "_goodid",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_goodConfig",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "signature",
-				"type": "bytes",
-				"internalType": "bytes"
-			}
-		],
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool",
-				"internalType": "bool"
-			}
-		],
-		"stateMutability": "nonpayable"
-	},
-	{
-		"type": "function",
-		"name": "modifyGoodByManager",
-		"inputs": [
-			{
-				"name": "_goodid",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_goodConfig",
-				"type": "uint256",
-				"internalType": "uint256"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			},
-			{
-				"name": "signature",
-				"type": "bytes",
-				"internalType": "bytes"
-			}
-		],
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool",
-				"internalType": "bool"
-			}
-		],
-		"stateMutability": "nonpayable"
-	},
-	{
-		"type": "function",
-		"name": "nonces",
-		"inputs": [
-			{
-				"name": "_trader",
-				"type": "address",
-				"internalType": "address"
-			}
-		],
-		"outputs": [
-			{
-				"name": "nonce",
-				"type": "uint256",
-				"internalType": "uint256"
-			}
-		],
-		"stateMutability": "view"
-	},
-	{
-		"type": "function",
-		"name": "queryCommission",
-		"inputs": [
-			{
-				"name": "_goodid",
-				"type": "uint256[]",
-				"internalType": "uint256[]"
-			},
-			{
-				"name": "_recipient",
-				"type": "address",
-				"internalType": "address"
-			}
-		],
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256[]",
-				"internalType": "uint256[]"
-			}
-		],
-		"stateMutability": "view"
-	},
-	{
-		"type": "function",
-		"name": "refreshPromise",
-		"inputs": [
-			{
-				"name": "_proofid",
-				"type": "uint256",
-				"internalType": "uint256"
-			}
-		],
-		"outputs": [],
-		"stateMutability": "nonpayable"
-	},
-	{
-		"type": "event",
-		"name": "e_buyGood",
-		"inputs": [
-			{
-				"name": "sellgood",
-				"type": "uint256",
-				"indexed": true,
-				"internalType": "uint256"
-			},
-			{
-				"name": "forgood",
-				"type": "uint256",
-				"indexed": true,
-				"internalType": "uint256"
-			},
-			{
-				"name": "swapvalue",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "good1change",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "good2change",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"indexed": false,
-				"internalType": "address"
-			},
-			{
-				"name": "external_info",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			}
-		],
-		"anonymous": false
-	},
-	{
-		"type": "event",
-		"name": "e_changegoodowner",
-		"inputs": [
-			{
-				"name": "goodid",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "to",
-				"type": "address",
-				"indexed": false,
-				"internalType": "address"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"indexed": false,
-				"internalType": "address"
-			}
-		],
-		"anonymous": false
-	},
-	{
-		"type": "event",
-		"name": "e_collectcommission",
-		"inputs": [
-			{
-				"name": "_goodid",
-				"type": "uint256[]",
-				"indexed": false,
-				"internalType": "uint256[]"
-			},
-			{
-				"name": "_commisionamount",
-				"type": "uint256[]",
-				"indexed": false,
-				"internalType": "uint256[]"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"indexed": false,
-				"internalType": "address"
-			}
-		],
-		"anonymous": false
-	},
-	{
-		"type": "event",
-		"name": "e_disinvestProof",
-		"inputs": [
-			{
-				"name": "_proofNo",
-				"type": "uint256",
-				"indexed": true,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_normalGoodNo",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_gate",
-				"type": "address",
-				"indexed": false,
-				"internalType": "address"
-			},
-			{
-				"name": "_value",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_normalprofit",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_normaldisvest",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"indexed": false,
-				"internalType": "address"
-			}
-		],
-		"anonymous": false
-	},
-	{
-		"type": "event",
-		"name": "e_getPromiseProof",
-		"inputs": [
-			{
-				"name": "_goodid",
-				"type": "uint256",
-				"indexed": true,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_proofid",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			}
-		],
-		"anonymous": false
-	},
-	{
-		"type": "event",
-		"name": "e_goodWelfare",
-		"inputs": [
-			{
-				"name": "goodid",
-				"type": "uint256",
-				"indexed": true,
-				"internalType": "uint256"
-			},
-			{
-				"name": "welfare",
-				"type": "uint128",
-				"indexed": false,
-				"internalType": "uint128"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"indexed": false,
-				"internalType": "address"
-			}
-		],
-		"anonymous": false
-	},
-	{
-		"type": "event",
-		"name": "e_initGood",
-		"inputs": [
-			{
-				"name": "_proofNo",
-				"type": "uint256",
-				"indexed": true,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_goodid",
-				"type": "uint256",
-				"indexed": true,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_goodinfo",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_good_id",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_construct",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_normalinitial",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"indexed": false,
-				"internalType": "address"
-			}
-		],
-		"anonymous": false
-	},
-	{
-		"type": "event",
-		"name": "e_investGood",
-		"inputs": [
-			{
-				"name": "_proofNo",
-				"type": "uint256",
-				"indexed": true,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_goodid",
-				"type": "uint256",
-				"indexed": true,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_construct",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_value",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_invest",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"indexed": false,
-				"internalType": "address"
-			}
-		],
-		"anonymous": false
-	},
-	{
-		"type": "event",
-		"name": "e_modifyGoodConfig",
-		"inputs": [
-			{
-				"name": "_goodid",
-				"type": "uint256",
-				"indexed": true,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_goodconfig",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"indexed": false,
-				"internalType": "address"
-			}
-		],
-		"anonymous": false
-	},
-	{
-		"type": "event",
-		"name": "e_updateGoodConfig",
-		"inputs": [
-			{
-				"name": "_goodid",
-				"type": "uint256",
-				"indexed": true,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_goodConfig",
-				"type": "uint256",
-				"indexed": false,
-				"internalType": "uint256"
-			},
-			{
-				"name": "_trader",
-				"type": "address",
-				"indexed": false,
-				"internalType": "address"
-			}
-		],
-		"anonymous": false
-	},
-	{
-		"type": "error",
-		"name": "ERC20PermitFailed",
-		"inputs": []
-	},
-	{
-		"type": "error",
-		"name": "ERC20TransferFailed",
-		"inputs": []
-	},
-	{
-		"type": "error",
-		"name": "InvalidSignature",
-		"inputs": []
-	},
-	{
-		"type": "error",
-		"name": "InvalidSignatureLength",
-		"inputs": []
-	},
-	{
-		"type": "error",
-		"name": "InvalidSigner",
-		"inputs": []
-	},
-	{
-		"type": "error",
-		"name": "NativeETHTransferFailed",
-		"inputs": []
-	},
-	{
-		"type": "error",
-		"name": "TTSwapError",
-		"inputs": [
-			{
-				"name": "seq",
-				"type": "uint256",
-				"internalType": "uint256"
-			}
-		]
-	},
-	{
-		"type": "error",
-		"name": "TTSwapUINT256AddOverflow",
-		"inputs": []
-	},
-	{
-		"type": "error",
-		"name": "TTSwapUINT256AddSubOverflow",
-		"inputs": []
-	},
-	{
-		"type": "error",
-		"name": "TTSwapUINT256SubOverflow",
-		"inputs": []
-	},
-	{
-		"type": "error",
-		"name": "TTSwapUINT256ToUint128Overflow",
-		"inputs": []
-	},
-	{
-		"type": "error",
-		"name": "UnsupportedTransferType",
-		"inputs": []
-	}
-]
+	[
+		{
+			"type": "constructor",
+			"inputs": [
+				{
+					"name": "_TTS_Contract",
+					"type": "address",
+					"internalType": "contract I_TTSwap_Token"
+				}
+			],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "DOMAIN_SEPARATOR",
+			"inputs": [],
+			"outputs": [
+				{
+					"name": "",
+					"type": "bytes32",
+					"internalType": "bytes32"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "buyGood",
+			"inputs": [
+				{
+					"name": "_goodKey1",
+					"type": "tuple",
+					"internalType": "struct T_GoodKey",
+					"components": [
+						{
+							"name": "ercType",
+							"type": "uint8",
+							"internalType": "uint8"
+						},
+						{
+							"name": "contractAddress",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "id",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					]
+				},
+				{
+					"name": "_goodKey2",
+					"type": "tuple",
+					"internalType": "struct T_GoodKey",
+					"components": [
+						{
+							"name": "ercType",
+							"type": "uint8",
+							"internalType": "uint8"
+						},
+						{
+							"name": "contractAddress",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "id",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					]
+				},
+				{
+					"name": "_swapQuantity",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_recipient",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "data",
+					"type": "bytes",
+					"internalType": "bytes"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				},
+				{
+					"name": "external_info",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"outputs": [
+				{
+					"name": "good1change",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "good2change",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"stateMutability": "payable"
+		},
+		{
+			"type": "function",
+			"name": "cancelNonce",
+			"inputs": [],
+			"outputs": [],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "changeGoodOwner",
+			"inputs": [
+				{
+					"name": "_goodid",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_to",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				}
+			],
+			"outputs": [],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "collectCommission",
+			"inputs": [
+				{
+					"name": "_goodid",
+					"type": "uint256[]",
+					"internalType": "uint256[]"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				}
+			],
+			"outputs": [],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "disinvestProof",
+			"inputs": [
+				{
+					"name": "_proofid",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_goodshares",
+					"type": "uint128",
+					"internalType": "uint128"
+				},
+				{
+					"name": "_gate",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint128",
+					"internalType": "uint128"
+				}
+			],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "getGoodState",
+			"inputs": [
+				{
+					"name": "good",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "tuple",
+					"internalType": "struct S_GoodTmpState",
+					"components": [
+						{
+							"name": "goodConfig",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "owner",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "currentState",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "investState",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					]
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "getProofState",
+			"inputs": [
+				{
+					"name": "proofid",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "tuple",
+					"internalType": "struct S_ProofState",
+					"components": [
+						{
+							"name": "currentgood",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "shares",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "state",
+							"type": "uint256",
+							"internalType": "uint256"
+						},
+						{
+							"name": "invest",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					]
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "getRecentGoodState",
+			"inputs": [
+				{
+					"name": "good1",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "good2",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"outputs": [
+				{
+					"name": "good1currentstate",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "good2currentstate",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "goodWelfare",
+			"inputs": [
+				{
+					"name": "goodid",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "welfare",
+					"type": "uint128",
+					"internalType": "uint128"
+				},
+				{
+					"name": "data",
+					"type": "bytes",
+					"internalType": "bytes"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				}
+			],
+			"outputs": [],
+			"stateMutability": "payable"
+		},
+		{
+			"type": "function",
+			"name": "initGood",
+			"inputs": [
+				{
+					"name": "_goodKey",
+					"type": "tuple",
+					"internalType": "struct T_GoodKey",
+					"components": [
+						{
+							"name": "ercType",
+							"type": "uint8",
+							"internalType": "uint8"
+						},
+						{
+							"name": "contractAddress",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "id",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					]
+				},
+				{
+					"name": "_initial",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_normaldata",
+					"type": "bytes",
+					"internalType": "bytes"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "_signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool",
+					"internalType": "bool"
+				}
+			],
+			"stateMutability": "payable"
+		},
+		{
+			"type": "function",
+			"name": "investGood",
+			"inputs": [
+				{
+					"name": "_goodKey",
+					"type": "tuple",
+					"internalType": "struct T_GoodKey",
+					"components": [
+						{
+							"name": "ercType",
+							"type": "uint8",
+							"internalType": "uint8"
+						},
+						{
+							"name": "contractAddress",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "id",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					]
+				},
+				{
+					"name": "_invest",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_gooddata",
+					"type": "bytes",
+					"internalType": "bytes"
+				},
+				{
+					"name": "signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				}
+			],
+			"outputs": [
+				{
+					"name": "result",
+					"type": "bool",
+					"internalType": "bool"
+				}
+			],
+			"stateMutability": "payable"
+		},
+		{
+			"type": "function",
+			"name": "ishigher",
+			"inputs": [
+				{
+					"name": "goodid",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "valuegood",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "compareprice",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool",
+					"internalType": "bool"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "lockGood",
+			"inputs": [
+				{
+					"name": "_goodid",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				}
+			],
+			"outputs": [],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "modifyGoodByAdmin",
+			"inputs": [
+				{
+					"name": "_goodid",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_goodConfig",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool",
+					"internalType": "bool"
+				}
+			],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "modifyGoodByGoodOwner",
+			"inputs": [
+				{
+					"name": "_goodid",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_goodConfig",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool",
+					"internalType": "bool"
+				}
+			],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "modifyGoodByManager",
+			"inputs": [
+				{
+					"name": "_goodid",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_goodConfig",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "bool",
+					"internalType": "bool"
+				}
+			],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "function",
+			"name": "multicall",
+			"inputs": [
+				{
+					"name": "data",
+					"type": "bytes[]",
+					"internalType": "bytes[]"
+				}
+			],
+			"outputs": [
+				{
+					"name": "results",
+					"type": "bytes[]",
+					"internalType": "bytes[]"
+				}
+			],
+			"stateMutability": "payable"
+		},
+		{
+			"type": "function",
+			"name": "nonces",
+			"inputs": [
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				}
+			],
+			"outputs": [
+				{
+					"name": "nonce",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "payGood",
+			"inputs": [
+				{
+					"name": "_goodKey1",
+					"type": "tuple",
+					"internalType": "struct T_GoodKey",
+					"components": [
+						{
+							"name": "ercType",
+							"type": "uint8",
+							"internalType": "uint8"
+						},
+						{
+							"name": "contractAddress",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "id",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					]
+				},
+				{
+					"name": "_goodKey2",
+					"type": "tuple",
+					"internalType": "struct T_GoodKey",
+					"components": [
+						{
+							"name": "ercType",
+							"type": "uint8",
+							"internalType": "uint8"
+						},
+						{
+							"name": "contractAddress",
+							"type": "address",
+							"internalType": "address"
+						},
+						{
+							"name": "id",
+							"type": "uint256",
+							"internalType": "uint256"
+						}
+					]
+				},
+				{
+					"name": "_swapQuantity",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "_recipient",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "data",
+					"type": "bytes",
+					"internalType": "bytes"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"internalType": "address"
+				},
+				{
+					"name": "signature",
+					"type": "bytes",
+					"internalType": "bytes"
+				},
+				{
+					"name": "external_info",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"outputs": [
+				{
+					"name": "good1change",
+					"type": "uint256",
+					"internalType": "uint256"
+				},
+				{
+					"name": "good2change",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"stateMutability": "payable"
+		},
+		{
+			"type": "function",
+			"name": "queryCommission",
+			"inputs": [
+				{
+					"name": "_goodid",
+					"type": "uint256[]",
+					"internalType": "uint256[]"
+				},
+				{
+					"name": "_recipient",
+					"type": "address",
+					"internalType": "address"
+				}
+			],
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint256[]",
+					"internalType": "uint256[]"
+				}
+			],
+			"stateMutability": "view"
+		},
+		{
+			"type": "function",
+			"name": "refreshPromise",
+			"inputs": [
+				{
+					"name": "_proofid",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			],
+			"outputs": [],
+			"stateMutability": "nonpayable"
+		},
+		{
+			"type": "event",
+			"name": "e_buyGood",
+			"inputs": [
+				{
+					"name": "sellgood",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "forgood",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "swapvalue",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "good1change",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "good2change",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				},
+				{
+					"name": "external_info",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "event",
+			"name": "e_changegoodowner",
+			"inputs": [
+				{
+					"name": "goodid",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "to",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "event",
+			"name": "e_collectcommission",
+			"inputs": [
+				{
+					"name": "_goodid",
+					"type": "uint256[]",
+					"indexed": false,
+					"internalType": "uint256[]"
+				},
+				{
+					"name": "_commisionamount",
+					"type": "uint256[]",
+					"indexed": false,
+					"internalType": "uint256[]"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "event",
+			"name": "e_disinvestProof",
+			"inputs": [
+				{
+					"name": "_proofNo",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_normalGoodNo",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_gate",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				},
+				{
+					"name": "_value",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_normalprofit",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_normaldisvest",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_TTSValue",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "event",
+			"name": "e_getPromiseProof",
+			"inputs": [
+				{
+					"name": "_goodid",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_proofid",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "event",
+			"name": "e_goodWelfare",
+			"inputs": [
+				{
+					"name": "goodid",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "welfare",
+					"type": "uint128",
+					"indexed": false,
+					"internalType": "uint128"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "event",
+			"name": "e_initGood",
+			"inputs": [
+				{
+					"name": "_proofNo",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_goodid",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_goodinfo",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_good_id",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_normalinitial",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "event",
+			"name": "e_investGood",
+			"inputs": [
+				{
+					"name": "_proofNo",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_goodid",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_construct",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_value",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_invest",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "event",
+			"name": "e_modifyGoodConfig",
+			"inputs": [
+				{
+					"name": "_goodid",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_goodconfig",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "event",
+			"name": "e_payGood",
+			"inputs": [
+				{
+					"name": "sellgood",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "forgood",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "swapvalue",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "good1change",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "good2change",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				},
+				{
+					"name": "_recipient",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				},
+				{
+					"name": "external_info",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "event",
+			"name": "e_updateGoodConfig",
+			"inputs": [
+				{
+					"name": "_goodid",
+					"type": "uint256",
+					"indexed": true,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_goodConfig",
+					"type": "uint256",
+					"indexed": false,
+					"internalType": "uint256"
+				},
+				{
+					"name": "_trader",
+					"type": "address",
+					"indexed": false,
+					"internalType": "address"
+				}
+			],
+			"anonymous": false
+		},
+		{
+			"type": "error",
+			"name": "ERC20PermitFailed",
+			"inputs": []
+		},
+		{
+			"type": "error",
+			"name": "ERC20TransferFailed",
+			"inputs": []
+		},
+		{
+			"type": "error",
+			"name": "InvalidSignature",
+			"inputs": []
+		},
+		{
+			"type": "error",
+			"name": "InvalidSignatureLength",
+			"inputs": []
+		},
+		{
+			"type": "error",
+			"name": "InvalidSigner",
+			"inputs": []
+		},
+		{
+			"type": "error",
+			"name": "NativeETHTransferFailed",
+			"inputs": []
+		},
+		{
+			"type": "error",
+			"name": "SafelineLowerTransferFailed",
+			"inputs": []
+		},
+		{
+			"type": "error",
+			"name": "TTSwapError",
+			"inputs": [
+				{
+					"name": "seq",
+					"type": "uint256",
+					"internalType": "uint256"
+				}
+			]
+		},
+		{
+			"type": "error",
+			"name": "TTSwapUINT256AddOverflow",
+			"inputs": []
+		},
+		{
+			"type": "error",
+			"name": "TTSwapUINT256SubOverflow",
+			"inputs": []
+		},
+		{
+			"type": "error",
+			"name": "TTSwapUINT256ToUint128Overflow",
+			"inputs": []
+		},
+		{
+			"type": "error",
+			"name": "UnsupportedTransferType",
+			"inputs": []
+		}
+	]

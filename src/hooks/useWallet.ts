@@ -1013,6 +1013,7 @@ const useWallet = () => {
 
     const investGoods = async (invest: any, famount: any, tamount: any, isValueGood: boolean, maxApprove: boolean) => {
 
+        console.log("investGoods",famount,tamount)
         const goodKey = { ercType: 1, contractAddress: invest.from.address, id: 0 };
         try {
 
